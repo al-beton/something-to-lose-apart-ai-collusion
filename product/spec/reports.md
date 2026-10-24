@@ -2,19 +2,19 @@
 
 - **one-page:** One command turns any folder of runs (one run, a sweep, or several) into a single HTML page that can be shared as it is.
 - **header:** The report opens with its name and one line giving how many games and arms it holds and their total calls and cost, saying so when a cost is unknown.
-- **first-screen:** The first screen holds only a few plain sentences per arm (the price its firms settle on and in how many games, when they first agree, when they defect, and any breakdowns), the summary table and one small chart of every arm's mean price over rounds.
+- **first-screen:** The first screen holds only a few plain sentences per arm (the price its firms settle on and in how many games, when they first agree, when they defect, and any breakdowns), the summary table and one small chart comparing every arm's mean price with the Nash and joint-profit prices.
 - **contents-bar:** A contents bar stays at the top of the page to jump between its sections.
 - **setup:** A Setup section, folded away, says what was run (models, prompts, seeds, rounds and the market's Nash and joint-profit prices) and shows exactly what agents were told: each system prompt, the phase prompts as first sent, and any other text that appeared in their prompts, such as a notice, with the rounds it appeared in.
 - **summary:** The report shows the same table as `lab summary`, grouped by the swept values.
 - **price-chart:** Arms are compared side by side: each has a chart of the market price over rounds, one line per seed, on the same axes as the others, with the Nash and joint-profit prices marked; games played in different markets never share a chart.
-- **arm-tabs:** Each arm's highlights and games sit in a tab of their own, so one arm is read at a time.
+- **arm-tabs:** Each arm's highlights and games sit in a tab of their own, named as briefly as its swept values allow, so one arm is read at a time.
 - **highlights-in-context:** The report points out the moments worth reading, found by fixed rules and grouped by kind, each folded to its headline and opening to the messages, scratchpads and prices of its round and the round before; the first five of a kind are listed and the rest are behind "show all".
 - **proposal:** A game's first message naming a price on the grid is highlighted as a proposal.
 - **agreement:** A round in which every firm names the same price and then charges it is highlighted as an agreement, once for each new price agreed.
 - **overshoot:** A round in which a firm charges more than the joint-profit price is highlighted as an overshoot, once for each stretch of such rounds.
 - **defection:** A firm charging less than a price every firm charged in the round before is highlighted as a defection, in any round including the last.
 - **breakdowns:** Every reply that had to be retried or replaced by the fallback is highlighted as a breakdown.
-- **transcripts:** Every game's full transcript is in the report as a one-line card with a strip of each round's prices: choosing a round shows its messages, scratchpads, prices and profits, and the whole game unfolds as a chat.
+- **transcripts:** Every game's full transcript is in the report as a one-line card with a strip of each round's prices: choosing a round shows its messages, scratchpads, prices and profits and any notice its firms were shown, and the whole game unfolds as a chat.
 - **self-contained:** The report is one file that opens with no network and no script, reads on a phone, and follows the reader's light or dark mode.
 - **from-run-files:** A report is built only from the files each run writes, so it works offline and costs nothing.
 
