@@ -224,7 +224,7 @@ def _row(by, key, runs):
         "cost": round(sum(run_cost(r.manifest) for r in runs), 4),
         "scripted": ", ".join(scripted) or None,
         "eval-aware": _eval_aware(summaries),
-        **disclosure.rates(summaries),
+        **disclosure.rates(summaries, [_scripted(r) for r in played]),
     }
 
 
