@@ -11,6 +11,7 @@
 - **spend-cap:** A run can be given a spending cap: it refuses to start when its estimate is over the cap, stops cleanly once what it has actually spent passes it, and warns when a model has no price, since the cap can't count its calls.
 - **reasoning-setting:** Each agent can set its model's reasoning to off, low, medium or high, sweepable like any other value; the setting reaches the provider in that provider's own form, and models without the option still run.
 - **reasoning-in-estimate:** The estimate before a run counts reasoning tokens, billed like reply tokens: each call by an agent with reasoning low, medium or high adds a stated number of them for that level, so a reasoning-on batch isn't under-estimated; reasoning off or unset estimates as before.
+- **quiet-provider-logs:** The model library's info and debug logging stays off unless asked for, so the errors that matter stand out.
 - **tests-never-pay:** Tests never reach a real model; any call that isn't faked fails.
 
 ## Where this is enforced
@@ -28,4 +29,5 @@
 | `spend-asks-first` | `src/collusion_lab/runner.py`, `src/collusion_lab/cli.py`, `src/collusion_lab/estimate.py`, `src/collusion_lab/prices.py` | `test_spend_asks_first_counts_paid_calls`, `test_spend_asks_first_and_stops_without_a_yes`, `test_spend_asks_first_with_an_estimated_cost`, `test_spend_asks_first_says_when_a_price_is_unknown`, `test_spend_asks_first_estimate_within_a_quarter_of_actual`, `test_spend_asks_first_counts_audit_calls`, `test_spend_asks_first_estimates_audit_calls` |
 | `reasoning-setting` | `src/collusion_lab/config.py`, `src/collusion_lab/backends.py`, `src/collusion_lab/runner.py` | `test_reasoning_setting_reaches_openrouter_in_its_own_form`, `test_reasoning_setting_reaches_other_providers_as_reasoning_effort`, `test_reasoning_setting_left_out_when_unset`, `test_reasoning_setting_rejects_unknown_levels`, `test_reasoning_setting_sweeps_for_every_agent` |
 | `reasoning-in-estimate` | `src/collusion_lab/estimate.py` | `test_reasoning_in_estimate_adds_tokens_per_call`, `test_reasoning_in_estimate_rises_with_the_level`, `test_reasoning_in_estimate_off_or_unset_is_unchanged` |
+| `quiet-provider-logs` | `src/collusion_lab/backends.py` | `test_quiet_provider_logs_by_default`, `test_quiet_provider_logs_unless_asked_for` |
 | `tests-never-pay` | `tests/conftest.py` | `test_tests_never_pay_unfaked_calls_fail` |
