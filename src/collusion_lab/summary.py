@@ -1,4 +1,4 @@
-# Implements: runs/summary-table, reports/summary
+# Implements: runs/summary-table, runs/per-firm-summary, reports/summary
 """One table for a folder of runs, grouped by swept values or any config value.
 
 `summarize` reads every `summary.json` under a folder (and the `manifest.json`
@@ -6,7 +6,10 @@ beside it for cost and config). Rows group runs by the swept values (their
 labels) unless `by` names other keys: a label, or any config path such as
 `market.rounds` or `agents.*.model` (`*` joins every agent's value). Each row
 gives the number of runs, the mean market price and gain over their last
-rounds, total fallbacks and total cost. List and mapping values (`seeds`)
+rounds, total fallbacks and total cost, then which firms a script (a `mock/`
+model) played, and each firm's own mean price, gain, fallbacks and cost
+(from its turn and timing logs). When a run has both scripted and model
+firms, its headline mean price and gain are the model firms' alone. List and mapping values (`seeds`)
 group and print as JSON. `format_table` prints it as Markdown,
 which reads in a terminal and renders in a pull request comment.
 
@@ -18,6 +21,10 @@ import json
 from pathlib import Path
 from statistics import mean
 from typing import NamedTuple
+
+from collusion_lab.backends import is_mock
+
+FIRM_COLUMNS = ("price", "gain", "fallbacks", "cost")
 
 
 class Run(NamedTuple):
@@ -40,7 +47,10 @@ def group_runs(folder, by=None):
 
 def summarize(folder, by=None):
     by, groups = group_runs(folder, by)
-    return [_row(by, key, runs) for key, runs in groups]
+    firms = list(
+        dict.fromkeys(f for _, runs in groups for r in runs for f in _firms(r))
+    )
+    return [_row(by, key, runs) | _firm_columns(firms, runs) for key, runs in groups]
 
 
 def format_table(rows):
@@ -64,14 +74,67 @@ def _load(path):
 
 def _row(by, key, runs):
     summaries = [r.summary for r in runs]
+    headlines = [_headline(r) for r in runs]
+    scripted = sorted({f for r in runs for f in _scripted(r)})
     return {
         **dict(zip(by, key, strict=True)),
         "runs": len(runs),
-        "mean price": round(mean(s["market_mean_price"] for s in summaries), 2),
-        "gain": round(mean(s["market_gain"] for s in summaries), 3),
+        "mean price": round(mean(price for price, _ in headlines), 2),
+        "gain": round(mean(gain for _, gain in headlines), 3),
         "fallbacks": sum(s["fallbacks"] for s in summaries),
         "cost": round(sum(r.manifest.get("cost") or 0 for r in runs), 4),
+        "scripted": ", ".join(scripted) or None,
     }
+
+
+def _firms(run):
+    return list(run.summary.get("mean_price", {}))
+
+
+def _scripted(run):
+    agents = run.manifest.get("config", {}).get("agents", [])
+    return {a["id"] for a in agents if is_mock(a["model"])}
+
+
+def _headline(run):
+    """The run's mean price and gain: the model firms' when a script plays too."""
+    s = run.summary
+    models = [f for f in _firms(run) if f not in _scripted(run)]
+    if not models or len(models) == len(_firms(run)):
+        return s["market_mean_price"], s["market_gain"]
+    return mean(s["mean_price"][f] for f in models), mean(s["gain"][f] for f in models)
+
+
+def _firm_columns(firms, runs):
+    """Each firm's own mean price, gain, fallbacks and cost over these runs."""
+    columns = {}
+    for firm in firms:
+        played = [r for r in runs if firm in _firms(r)]
+        if not played:
+            columns |= dict.fromkeys(f"{firm} {c}" for c in FIRM_COLUMNS)
+            continue
+        turns = [t for r in played for t in _lines(r.dir / "turns.jsonl")]
+        calls = [t for r in played for t in _lines(r.dir / "timings.jsonl")]
+        columns |= {
+            f"{firm} price": round(
+                mean(r.summary["mean_price"][firm] for r in played), 2
+            ),
+            f"{firm} gain": round(mean(r.summary["gain"][firm] for r in played), 3),
+            f"{firm} fallbacks": sum(
+                1 for t in turns if t["agent"] == firm and t["error"]
+            ),
+            f"{firm} cost": round(
+                sum(c.get("cost") or 0 for c in calls if c["agent"] == firm), 4
+            ),
+        }
+    return columns
+
+
+def _lines(path):
+    if not path.exists():
+        return []
+    with path.open() as log:
+        return [json.loads(line) for line in log if line.strip()]
 
 
 def _value(summary, manifest, name):
