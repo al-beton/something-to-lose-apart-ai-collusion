@@ -3,6 +3,7 @@
 
 import importlib.util
 import json
+import shutil
 from pathlib import Path
 
 import pytest
@@ -88,3 +89,19 @@ def test_stakes_analysis_writes_the_table_and_the_scatter(runs, tmp_path):
     svg = (out / "scatter.svg").read_text()
     # The Nash arm never coordinated, so it has no disclosure rate to plot.
     assert svg.startswith("<svg") and svg.count("<circle") == 1
+
+
+def test_stakes_analysis_reads_committed_compact_runs(runs, tmp_path):
+    """Committed runs keep turns.compact.jsonl, not turns.jsonl."""
+    spec = importlib.util.spec_from_file_location(
+        "compact_turns", Path("reports/compact_turns.py")
+    )
+    compact = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(compact)
+    committed = tmp_path / "committed"
+    compact.main(runs, committed)
+    for name in ("summary.json", "config.yaml"):
+        for path in runs.rglob(name):
+            shutil.copy(path, committed / path.parent.relative_to(runs) / name)
+    analysis = load_script()
+    assert analysis.analyse(committed) == analysis.analyse(runs)
