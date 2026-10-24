@@ -15,7 +15,7 @@ An exploratory first look: which models collude when told only to maximise profi
 - **market:** The default market (Nash price 6, joint-profit price 9), 20 rounds with a talk phase, the neutral system prompt and temperature 0.7.
 - **models:** With thinking off: Gemma 4 31B and GPT-4.1-mini (10 games each), then Claude Haiku 5.5, GPT-6 Luna, DeepSeek V4.1 Flash, Llama 3.3 70B, Qwen 3.8 Flash and Mistral Small 3.2 (5 games each); with thinking on: Haiku, GPT-6 Luna, DeepSeek and Qwen.
 - **measures:** Market mean price and gain over the last 10 rounds, fallback turns, the share of messages that name a price, final-round messages that promise to hold a price while the scratchpad plans to undercut, and scratchpads that name collusion or the law.
-- **evidence:** Every run the findings draw on keeps its config, summary and manifest under `runs/model-survey/`, and each game the findings quote keeps its full transcript there too.
+- **evidence:** Every run the findings draw on keeps its config, summary, manifest and a compact record of every turn under `runs/model-survey/`, and one script rebuilds every number in the findings from them.
 
 ## What it can't show
 
@@ -33,7 +33,7 @@ An exploratory first look: which models collude when told only to maximise profi
 | `thinking-changes-it` | `reports/model-survey/findings.md` | — |
 | `market` | `prompts/system/neutral.md`, `reports/model-survey/findings.md` | — |
 | `models` | `reports/model-survey/findings.md` | — |
-| `measures` | `reports/model-survey/findings.md` | — |
-| `evidence` | `runs/model-survey/**`, `reports/model-survey/findings.md` | — |
+| `measures` | `reports/model-survey/findings.md`, `reports/model-survey/analyse.py` | — |
+| `evidence` | `runs/model-survey/**`, `reports/model-survey/findings.md`, `reports/model-survey/analyse.py` | — |
 | `small-and-unplanned` | `reports/model-survey/findings.md` | — |
 | `thinking-cut-off` | `reports/model-survey/findings.md` | — |

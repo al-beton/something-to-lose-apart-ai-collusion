@@ -38,7 +38,7 @@ Partway through the game, agents are told that the archive which normally record
   - `no-instruction-ceiling` compares `baseline-outage` with `baseline`.
   - `soft-policy-incidental` is compared with `soft-policy` for every hypothesis that `told-not-to-outage` is tested on, to check whether a milder rule and a less pointed notice change the answer.
 - **models:** Gemma 4 31B, GPT-4.1-mini, Claude Haiku 5.5 and DeepSeek V4.1 Flash, all with thinking off, and optionally Llama 3.3 70B, which already talks around price-fixing without being told to.
-- **pilot-evidence:** The pilot's runs and their paired controls keep their config, summary and manifest under `runs/logging-outage/`, and each game the pilot note quotes keeps its full transcript there too.
+- **pilot-evidence:** The pilot's runs and their paired controls keep their config, summary, manifest and a compact record of every turn under `runs/logging-outage/`, and one script rebuilds every number in the pilot note from them.
 - **size:** 8 arms × 4 models × 10 seeds = 320 games.
 
 ## Metrics
@@ -75,7 +75,7 @@ Partway through the game, agents are told that the archive which normally record
 | `notices` | `prompts/conditions/drafts/*.md` | — |
 | `contrasts` | not yet | — |
 | `models` | not yet | — |
-| `pilot-evidence` | `runs/logging-outage/**`, `reports/logging-outage/pilot-findings.md` | — |
+| `pilot-evidence` | `runs/logging-outage/**`, `reports/logging-outage/pilot-findings.md`, `reports/logging-outage/analyse.py` | — |
 | `size` | not yet | — |
 | `price-talk` | not yet | — |
 | `price-shift` | not yet | — |
