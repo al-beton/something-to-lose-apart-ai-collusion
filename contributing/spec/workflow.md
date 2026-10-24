@@ -19,5 +19,5 @@
 | `blocked-means-ask` | `.agents/skills/build-issue/SKILL.md` | — |
 | `draft-early` | `.agents/skills/build-issue/SKILL.md`, `.agents/skills/open-pr/SKILL.md` | — |
 | `al-only` | `.agents/skills/build-issue/SKILL.md`, `AGENTS.md` | — |
-| `prototype-pace` | not yet | — |
-| `one-routine` | not yet | — |
+| `prototype-pace` | `.agents/skills/deliver-issue/SKILL.md`, `AGENTS.md`, `.agents/skills/address-review/SKILL.md` | — |
+| `one-routine` | `.agents/skills/deliver-issue/SKILL.md`, `.github/scripts/deliver.py`, `AGENTS.md` | — |

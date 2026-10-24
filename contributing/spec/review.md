@@ -19,5 +19,5 @@
 | `inline-findings` | `.agents/skills/review-pr/SKILL.md` | — |
 | `resolve-with-commit` | `.agents/skills/address-review/SKILL.md` | — |
 | `every-reviewer-counts` | `.agents/skills/address-review/SKILL.md`, `.agents/skills/open-pr/SKILL.md` | — |
-| `review-finished` | not yet | — |
-| `bounded-rounds` | not yet | — |
+| `review-finished` | `.agents/skills/deliver-issue/SKILL.md`, `.github/scripts/deliver.py` | `test_review_finished_reads_the_state_marker_not_the_first_comment`, `test_review_finished_only_on_the_latest_commit` |
+| `bounded-rounds` | `.agents/skills/deliver-issue/SKILL.md`, `.agents/skills/address-review/SKILL.md` | — |
