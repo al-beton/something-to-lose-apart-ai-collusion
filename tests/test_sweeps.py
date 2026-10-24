@@ -1,9 +1,12 @@
 # Implements: runs/sweeps, runs/parallel, runs/summary-table, backends/spend-asks-first
 import asyncio
 import json
+
+import pytest
 from types import SimpleNamespace
 
 from collusion_lab import backends, cli
+from collusion_lab.config import ConfigError
 from collusion_lab.runner import paid_calls, run_config
 from collusion_lab.summary import format_table, summarize
 
@@ -90,3 +93,28 @@ def test_summary_table_from_the_lab_command(make_config, tmp_path, capsys):
 def test_spend_asks_first_counts_every_sweep_run(make_config):
     config = make_config(SWEEP.replace("mock/joint]", "openai/gpt-4.1-mini]"))
     assert paid_calls(config) == 3 * (2 + 3) * 2
+
+
+def test_sweeps_give_every_combination_its_own_directory(make_config, tmp_path):
+    sweep = SWEEP.replace(
+        "  agents.*.model: [mock/nash, mock/joint]\n  market.rounds: [2, 3]\n",
+        "  agents.*.api_base: [http://localhost:8000/v1, http://localhost:8000-v1]\n",
+    )
+    run_dirs = run_config(make_config(sweep), tmp_path)
+    assert len(run_dirs) == 6 == len(set(run_dirs))
+
+
+def test_parallel_needs_a_limit_of_at_least_one(make_config):
+    with pytest.raises(ConfigError, match="concurrency"):
+        make_config(overrides=["concurrency=0"])
+
+
+def test_summary_table_groups_by_list_values(make_config, tmp_path):
+    sweep = SWEEP.replace(
+        "  agents.*.model: [mock/nash, mock/joint]\n  market.rounds: [2, 3]\n",
+        "  seeds: [[0, 1], [2]]\n",
+    )
+    run_config(make_config(sweep), tmp_path)
+    rows = summarize(tmp_path / "grid")
+    assert [(r["seeds"], r["runs"]) for r in rows] == [("[0, 1]", 2), ("[2]", 1)]
+    assert len(summarize(tmp_path / "grid", by=["agents.*.model"])) == 1

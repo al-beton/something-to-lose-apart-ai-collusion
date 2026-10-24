@@ -182,6 +182,8 @@ def _label_names(paths):
 
 def _safe(value):
     return re.sub(r"[^A-Za-z0-9._=-]+", "-", str(value)).strip("-")
+
+
 def _check_market(m):
     try:
         Bertrand(m.a, m.b, m.c, m.price_min, m.price_max)
