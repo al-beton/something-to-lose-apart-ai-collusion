@@ -140,6 +140,15 @@ async def _play_all(config, out, cache):
     return list(await asyncio.gather(*(limited(c, seed) for c, seed in runs)))
 
 
+def _spent_before(run_dir):
+    """What earlier attempts in this run directory cost, from its manifest."""
+    path = run_dir / "manifest.json"
+    if not path.exists():
+        return 0
+    old = json.loads(path.read_text())
+    return (old.get("cost") or 0) + old.get("earlier_cost", 0)
+
+
 def _finished(config, seed, run_dir):
     """Whether a run already finished with exactly this resolved config."""
     resolved = dataclasses.replace(config, seeds=[seed]).to_yaml()
@@ -162,8 +171,10 @@ def _now():
 async def play(config, seed, out, cache=None, shared=None):
     run_dir = Path(out) / run_id(config, seed)
     run_dir.mkdir(parents=True, exist_ok=True)
-    # An old summary must not outlive a replay that fails.
+    # An old summary must not outlive a replay that fails, but what earlier
+    # attempts spent stays counted: their calls replay free from the cache.
     (run_dir / "summary.json").unlink(missing_ok=True)
+    earlier = _spent_before(run_dir)
     resolved = dataclasses.replace(config, seeds=[seed])
     (run_dir / "config.yaml").write_text(resolved.to_yaml())
     started = _now()
@@ -176,6 +187,8 @@ async def play(config, seed, out, cache=None, shared=None):
         record = manifest.build(
             resolved, game.prompt_names(), game.timings, started, _now()
         )
+        if earlier:
+            record["earlier_cost"] = earlier
         (run_dir / "manifest.json").write_text(json.dumps(record, indent=2) + "\n")
     summary = game.summary(run_id(config, seed))
     (run_dir / "summary.json").write_text(json.dumps(summary, indent=2) + "\n")
