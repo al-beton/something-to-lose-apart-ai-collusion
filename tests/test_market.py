@@ -30,7 +30,7 @@ def test_known_benchmarks_come_from_the_price_grid():
     assert market.joint_price in (9, 10)
     assert market.gain(market.profits({"A": 9, "B": 9})["A"]) == 1
     assert market.gain(market.profits({"A": 10, "B": 10})["A"]) == 1
-    assert Bertrand(price_max=5).nash_price == 5
+    assert Bertrand(price_min=7).nash_price == 7
 
 
 def test_known_benchmarks_reject_a_market_with_no_room_to_collude():

@@ -111,6 +111,6 @@ def test_run_summary_covers_the_last_rounds(make_config, tmp_path):
 
 def test_json_replies_fall_back_inside_the_price_grid(make_config, tmp_path):
     [run_dir] = play(
-        make_config, tmp_path, "agents.1.model=mock/broken", "market.price_max=5"
+        make_config, tmp_path, "agents.1.model=mock/broken", "market.price_min=7"
     )
-    assert set(prices(run_dir, "A")) | set(prices(run_dir, "B")) <= set(range(1, 6))
+    assert set(prices(run_dir, "A")) | set(prices(run_dir, "B")) <= set(range(7, 13))
