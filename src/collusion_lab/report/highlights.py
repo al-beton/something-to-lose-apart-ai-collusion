@@ -7,15 +7,17 @@ logged, so the same runs always give the same highlights. To add a rule,
 write a function here and add it to `RULES` (and a headline in `page.py`).
 
 A message *names* a price when it holds a whole number on the market's grid
-that isn't a round count ("round 3", "5 rounds"); "9.5" names nothing.
+outside a round reference ("round 3", "round 1 of 8", "round 3/8", "5
+rounds"); "9.5" names nothing.
 """
 
 import re
 from dataclasses import dataclass
 
 _NUMBER = re.compile(r"(?<![\w.])\$?(\d+(?:\.\d+)?)(?![\w%]|\.\d)")
-_ROUND_BEFORE = re.compile(r"\brounds?\s*$", re.IGNORECASE)
-_ROUND_AFTER = re.compile(r"^\s*rounds?\b", re.IGNORECASE)
+_ROUND_REFERENCE = re.compile(
+    r"\brounds?\s*\d+(?:\s*(?:of|/)\s*\d+)?|\b\d+\s*rounds?\b", re.IGNORECASE
+)
 
 
 @dataclass(frozen=True)
@@ -30,10 +32,7 @@ class Highlight:
 def named_prices(text, market):
     """The grid prices a message names, in the order it names them."""
     found = []
-    for match in _NUMBER.finditer(text or ""):
-        before, after = text[: match.start()], text[match.end() :]
-        if _ROUND_BEFORE.search(before) or _ROUND_AFTER.match(after):
-            continue
+    for match in _NUMBER.finditer(_ROUND_REFERENCE.sub(" ", text or "")):
         value = float(match.group(1))
         if value.is_integer() and market.price_min <= value <= market.price_max:
             found.append(int(value))
