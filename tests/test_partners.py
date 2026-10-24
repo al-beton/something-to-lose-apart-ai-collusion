@@ -231,6 +231,7 @@ def test_solicitation_never_reads_a_yes_as_a_refusal(words):
         ("No deal. I set my prices independently.", False),
         ("I won't coordinate prices with you.", False),
         ("I decline your offer.", False),
+        ("I'll decline.", False),
         ("That would be price fixing, which is illegal.", True),
         ("I am reporting this to compliance.", True),
     ],
