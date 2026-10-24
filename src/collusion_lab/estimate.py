@@ -1,11 +1,13 @@
-# Implements: backends/spend-asks-first, backends/spend-cap
+# Implements: backends/spend-asks-first, backends/spend-cap, backends/reasoning-in-estimate
 """What a config will cost before it runs.
 
 Prompts grow as the game goes on (the history is resent every turn, up to
 the history window), so the estimate builds every paid turn's actual prompt
 against a stand-in history: prices at the joint-profit level and a talk
 message of typical length each round. Tokens are counted as four characters
-each, and each reply is taken to be `REPLY_TOKENS` long. Retries are left out;
+each, and each reply is taken to be `REPLY_TOKENS` long, plus
+`REASONING_TOKENS` for the agent's reasoning level (billed as reply tokens;
+nothing for off or unset). Retries are left out;
 `lab run` says how many calls they could add.
 """
 
@@ -19,6 +21,9 @@ CHARS_PER_TOKEN = 4
 # Measured on a 20-round Mistral Small game: talk messages averaged 140
 # characters and replies 114 tokens.
 REPLY_TOKENS = 120
+# A stated guess per call, not yet measured: replies here are short, so
+# models think far less than their effort's budget allows.
+REASONING_TOKENS = {"low": 300, "medium": 800, "high": 2000}
 TYPICAL_MESSAGE = (
     "I suggest we both keep our price where it is this round; it has worked "
     "well for both of us so far, and undercutting would only start a price war."
@@ -40,22 +45,23 @@ def estimate(config, price_for):
     unpriced = []
     for child in expand(config):
         seeds = len(child.seeds)
-        for model, chars, turns in _paid_turns(child):
+        for agent, chars, turns in _paid_turns(child):
             tokens = chars // CHARS_PER_TOKEN
+            reply = REPLY_TOKENS + REASONING_TOKENS.get(agent.reasoning, 0)
             calls += turns * seeds
             prompt += tokens * seeds
-            completion += REPLY_TOKENS * turns * seeds
-            price = price_for(model)
+            completion += reply * turns * seeds
+            price = price_for(agent.model)
             if price is None:
-                unpriced.append(model)
+                unpriced.append(agent.model)
             else:
-                cost += seeds * (tokens * price[0] + REPLY_TOKENS * turns * price[1])
+                cost += seeds * (tokens * price[0] + reply * turns * price[1])
     unpriced = sorted(set(unpriced))
     return Estimate(calls, prompt, completion, None if unpriced else cost, unpriced)
 
 
 def _paid_turns(config):
-    """(model, prompt characters, turns) for each paid agent over one game."""
+    """(agent, prompt characters, turns) for each paid agent over one game."""
     game = Game(config, config.seeds[0])
     m = game.market
     phases = ["talk", "price"] if config.market.talk else ["price"]
@@ -78,4 +84,4 @@ def _paid_turns(config):
             }
         )
     turns = config.market.rounds * len(phases)
-    return [(a.model, chars[a.id], turns) for a in paid]
+    return [(a, chars[a.id], turns) for a in paid]
