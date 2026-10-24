@@ -6,7 +6,8 @@ beside it for cost and config). Rows group runs by the swept values (their
 labels) unless `by` names other keys: a label, or any config path such as
 `market.rounds` or `agents.*.model` (`*` joins every agent's value). Each row
 gives the number of runs, the mean market price and gain over their last
-rounds, total fallbacks and total cost. `format_table` prints it as Markdown,
+rounds, total fallbacks and total cost. List and mapping values (`seeds`)
+group and print as JSON. `format_table` prints it as Markdown,
 which reads in a terminal and renders in a pull request comment.
 """
 
@@ -59,8 +60,11 @@ def _row(by, key, runs):
 
 def _value(summary, manifest, name):
     if name in summary.get("labels", {}):
-        return summary["labels"][name]
-    return _lookup(manifest.get("config", {}), name.split("."))
+        value = summary["labels"][name]
+    else:
+        value = _lookup(manifest.get("config", {}), name.split("."))
+    # Lists and mappings group by their JSON text, which also reads well.
+    return json.dumps(value) if isinstance(value, list | dict) else value
 
 
 def _lookup(node, keys):
