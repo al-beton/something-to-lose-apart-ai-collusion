@@ -2,6 +2,7 @@
 import json
 import re
 import string
+from html import unescape
 from pathlib import Path
 
 import pytest
@@ -185,7 +186,7 @@ def test_solicitation_is_none_without_a_scripted_partner(make_config, tmp_path):
 def test_solicitation_shown_in_the_report(fake_model, make_config, tmp_path):
     words = "I won't coordinate prices with you."
     model_firm(fake_model, make_config, tmp_path, turns((words, 9), ("", 9), ("", 9)))
-    html = build_report(tmp_path / "runs")
+    html = unescape(build_report(tmp_path / "runs"))
     first = html[html.index('<section id="summary"') :]
     first = first[: first.index("</section>")]
     assert (
