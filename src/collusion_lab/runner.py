@@ -1,4 +1,4 @@
-# Implements: market/talk-then-price, agents/json-replies, agents/retry-once, backends/usage-logged, backends/spend-asks-first, runs/run-directory, logs/turn-log, logs/same-seed-same-log, logs/run-summary
+# Implements: market/talk-then-price, agents/json-replies, agents/retry-once, backends/usage-logged, backends/spend-asks-first, reproducibility/response-cache, reproducibility/manifest, runs/run-directory, logs/turn-log, logs/same-seed-same-log, logs/run-summary
 """Playing a config: one game per seed, each written to its own run directory.
 
 A round is a talk phase (each agent sends one message its rivals read; skipped
@@ -9,8 +9,9 @@ what an agent saw is exactly what its turn log line says.
 
 Each seed writes `<out>/<name>/seed-<n>/`: `config.yaml` (resolved, with only
 that seed), `turns.jsonl` (one line per agent turn), `timings.jsonl` and
-`summary.json`. Turn lines hold nothing that varies between identical runs;
-how long each call took goes in `timings.jsonl` instead.
+`summary.json` and `manifest.json`. Turn lines hold nothing that varies
+between identical runs; each call's time, cost and cache hit go in
+`timings.jsonl` instead. With a cache, model agents answer through it.
 
 A reply that can't be read is retried once: the agent sees its own reply and
 `prompts/phase/retry.md` saying what was wrong. If that fails too, the game
@@ -21,11 +22,14 @@ import asyncio
 import dataclasses
 import json
 import random
+from datetime import UTC, datetime
 from pathlib import Path
 from statistics import mean
 
+from collusion_lab import manifest
 from collusion_lab.agents import ReplyError, decision, fallback, parse_reply
 from collusion_lab.backends import backend_for, is_mock
+from collusion_lab.cache import CachedBackend
 from collusion_lab.market import Bertrand
 from collusion_lab.prompts import render
 
@@ -40,27 +44,43 @@ def paid_calls(config):
     return len(config.seeds) * config.market.rounds * phases * paid
 
 
-def run_config(config, out):
+def run_config(config, out, cache=None):
     """Play every seed in `config`; return the run directories, in seed order."""
-    return asyncio.run(_play_seeds(config, Path(out)))
+    return asyncio.run(_play_seeds(config, Path(out), cache))
 
 
-async def _play_seeds(config, out):
-    return [await play(config, seed, out) for seed in config.seeds]
+async def _play_seeds(config, out, cache):
+    return [await play(config, seed, out, cache) for seed in config.seeds]
 
 
-async def play(config, seed, out):
+def _now():
+    return datetime.now(UTC).isoformat(timespec="seconds")
+
+
+async def play(config, seed, out, cache=None):
     run_dir = Path(out) / config.name / f"seed-{seed}"
     run_dir.mkdir(parents=True, exist_ok=True)
     resolved = dataclasses.replace(config, seeds=[seed])
     (run_dir / "config.yaml").write_text(resolved.to_yaml())
-    game = Game(config, seed)
+    started = _now()
+    game = Game(config, seed, cache)
     await game.play()
     _write_lines(run_dir / "turns.jsonl", game.turns)
     _write_lines(run_dir / "timings.jsonl", game.timings)
+    record = manifest.build(
+        resolved, game.prompt_names(), game.timings, started, _now()
+    )
+    (run_dir / "manifest.json").write_text(json.dumps(record, indent=2) + "\n")
     summary = game.summary(f"{config.name}/seed-{seed}")
     (run_dir / "summary.json").write_text(json.dumps(summary, indent=2) + "\n")
     return run_dir
+
+
+def _backend(agent, rng, cache):
+    backend = backend_for(agent.model, rng, agent.api_base)
+    if cache is None or is_mock(agent.model):
+        return backend
+    return CachedBackend(backend, cache)
 
 
 def _write_lines(path, records):
@@ -70,19 +90,20 @@ def _write_lines(path, records):
 
 
 class Game:
-    def __init__(self, config, seed):
+    def __init__(self, config, seed, cache=None):
         m = config.market
         self.config = config
         self.seed = seed
         self.market = Bertrand(m.a, m.b, m.c, m.price_min, m.price_max)
         self.agents = {a.id: a for a in config.agents}
         self.backends = {
-            a.id: backend_for(a.model, random.Random(f"{seed}:{a.id}"), a.api_base)
+            a.id: _backend(a, random.Random(f"{seed}:{a.id}"), cache)
             for a in config.agents
         }
         self.history = []
         self.turns = []
         self.timings = []
+        self.used_prompts = set()
 
     async def play(self):
         for number in range(1, self.config.market.rounds + 1):
@@ -166,7 +187,7 @@ class Game:
         """One call to the agent's backend: the reply, and what it parsed to."""
         reply = await self.backends[agent.id].complete(
             messages,
-            context=context,
+            context={**context, "attempt": attempt},
             temperature=agent.temperature,
             max_tokens=agent.max_tokens,
             seed=self.seed,
@@ -176,8 +197,13 @@ class Game:
                 "round": context["round"],
                 "phase": context["phase"],
                 "agent": agent.id,
+                "model": agent.model,
                 "attempt": attempt,
                 "seconds": reply.seconds,
+                "cached": reply.cached,
+                "cost": reply.cost,
+                "usage": reply.usage,
+                "model_version": reply.model_version,
             }
         )
         m = self.market
@@ -188,7 +214,12 @@ class Game:
             return reply, None, str(problem)
 
     def _render(self, name, values):
+        self.used_prompts.add(name)
         return render(self.config.prompts_dir, name, values)
+
+    def prompt_names(self):
+        """Every prompt file this game actually sent, for the manifest."""
+        return sorted(self.used_prompts)
 
     def _last_price(self, agent_id):
         return self.history[-1]["prices"][agent_id] if self.history else None
