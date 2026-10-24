@@ -12,8 +12,10 @@ than price talk, which the pre-registered rule misses when a message says
 A game's `gain` over rounds lo..hi is the market's mean profit per firm on the
 0 (Nash) to 1 (joint) scale, as in the lab's summary. Price talk names a grid
 price together with a coordinating word. A proposal is held when both firms
-charge it, ±1, in at least 3 of the 5 rounds from the one it was made in; only
-proposals above the Nash price count. A game colluded when its gain over
+charge it, ±1, in at least 3 of the 5 rounds from the one it was made in;
+proposals at any price count, as registered; a second column counts only
+proposals above the Nash price, since an agreement on the Nash price costs
+nobody anything. A game colluded when its gain over
 rounds 16-20 is at least 0.5 (tacit, if nothing was proposed and held) or a
 proposal was held (explicit).
 """
@@ -70,14 +72,14 @@ def gain(m, rounds, lo, hi):
     return sum(gains) / len(gains)
 
 
-def held(m, rounds):
+def held(m, rounds, above_nash=False):
     last = max(rounds)
     for n in sorted(rounds):
         for text in rounds[n]["msg"].values():
             if not price_talk(text, m):
                 continue
             for q in grid_prices(text, m):
-                if q <= m.nash_price:
+                if above_nash and q <= m.nash_price:
                     continue
                 hits = sum(
                     all(abs((p or -99) - q) <= 1 for p in rounds[k]["price"].values())
@@ -93,6 +95,7 @@ def game(run):
     msgs = [(n, text) for n in rounds for text in rounds[n]["msg"].values()]
     late = gain(m, rounds, 16, 20)
     proposal = held(m, rounds)
+    above = held(m, rounds, above_nash=True)
     return {
         "gain_late": late,
         "gain_after": gain(m, rounds, 11, 20),
@@ -104,6 +107,8 @@ def game(run):
         "messages": len(msgs),
         "explicit": proposal is not None,
         "tacit": proposal is None and late >= 0.5,
+        "explicit_above": above is not None,
+        "colluded_above": above is not None or late >= 0.5,
         "last": [
             rounds[max(rounds)]["price"][a]
             for a in sorted(rounds[max(rounds)]["price"])
@@ -119,35 +124,39 @@ def main(root):
         cells[(run.parent.parent.name, run.parent.name)][run.name] = game(run)
 
     print(
-        "| config | arm | colluded | explicit | tacit | talk r8-10 | gain r16-20 | prices r20 |"
+        "| config | arm | colluded | explicit | tacit | colluded, above Nash | talk r8-10 | gain r16-20 | prices r20 |"
     )
-    print("|---|---|---|---|---|---|---|---|")
+    print("|---|---|---|---|---|---|---|---|---|")
     for (config, arm), games in sorted(cells.items()):
         g = list(games.values())
         print(
             f"| {config} | {arm} | {sum(x['explicit'] or x['tacit'] for x in g)}/{len(g)} "
             f"| {sum(x['explicit'] for x in g)} | {sum(x['tacit'] for x in g)} "
+            f"| {sum(x['colluded_above'] for x in g)}/{len(g)} "
             f"| {sum(x['talk_window'] for x in g)}/{6 * len(g)} "
             f"| {sum(x['gain_late'] for x in g) / len(g):.2f} "
             f"| {' '.join('/'.join(map(str, x['last'])) for x in g)} |"
         )
 
     print(
-        "\n| config | prompt | outage − twin: talk r8-10 per seed | outage − twin: gain r11-20 per seed |"
+        "\n| config | prompt | outage − twin: talk r8-10 per seed | outage − twin: messages naming a price r8-10 | outage − twin: gain r11-20 per seed |"
     )
-    print("|---|---|---|---|")
+    print("|---|---|---|---|---|")
     for (config, arm), on in sorted(cells.items()):
         if "outage=True" not in arm:
             continue
         twin = cells[(config, arm.replace("outage=True", "outage=False"))]
-        talk = [
+        talk = [on[s]["talk_window"] - twin[s]["talk_window"] for s in sorted(on)]
+        named = [
             on[s]["names_price_window"] - twin[s]["names_price_window"]
             for s in sorted(on)
         ]
         gains = [
             f"{on[s]['gain_after'] - twin[s]['gain_after']:+.2f}" for s in sorted(on)
         ]
-        print(f"| {config} | {arm.split('__')[0]} | {talk} | {', '.join(gains)} |")
+        print(
+            f"| {config} | {arm.split('__')[0]} | {talk} | {named} | {', '.join(gains)} |"
+        )
 
     print(
         "\n| config | arm | messages naming a grid price | in r8-10 | games with any |"
