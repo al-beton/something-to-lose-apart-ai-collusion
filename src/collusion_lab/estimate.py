@@ -75,8 +75,7 @@ def _paid_turns(config):
 
     def count(agent, model, phase, shown, added=None):  # in round `number`
         notices = game._notices(phase, number)
-        prompt = game._user_prompt(phase, number, added)
-        messages = game._messages(number, agent, shown, notices, prompt)
+        messages = game._messages(phase, number, agent, shown, notices, added)
         answering = dataclasses.replace(agent, model=model)
         _, chars, turns = counts.get((agent.id, model), (answering, 0, 0))
         chars += sum(len(x["content"]) for x in messages)
