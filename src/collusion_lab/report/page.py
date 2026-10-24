@@ -1,11 +1,13 @@
-# Implements: reports/reasoning-folded, reports/one-page, reports/header, reports/first-screen, reports/contents-bar, reports/setup, reports/summary, reports/price-chart, reports/arm-tabs, reports/highlights-in-context, reports/transcripts, reports/self-contained, reports/solicitation
+# Implements: reports/reasoning-folded, reports/one-page, reports/header, reports/first-screen, reports/contents-bar, reports/setup, reports/summary, reports/price-chart, reports/arm-tabs, reports/highlights-in-context, reports/transcripts, reports/self-contained, runs/fallback-rates, reports/solicitation
 """The report page: one self-contained HTML file, read from the top down.
 
 A sticky contents bar, then:
 
 1. the header: the folder's name and one line of games, arms, calls and cost;
 2. the summary (the first screen): a few sentences per arm (`overview.py`),
-   the `lab summary` table and one small bar chart of every arm's mean price;
+   the `lab summary` table and one small bar chart of every arm's mean price,
+   then the unreadable replies by model and any flagged runs, when there are
+   any;
 3. Setup, folded away: what was run and exactly what agents were told
    (`told.py`);
 4. the charts: one per arm, side by side on the same axes;
@@ -40,7 +42,14 @@ from collusion_lab.report.told import (
     rounds_text,
     what_agents_were_told,
 )
-from collusion_lab.summary import cell, group_runs, summarize
+from collusion_lab.summary import (
+    FLAG_RATE,
+    cell,
+    flagged_runs,
+    group_runs,
+    reply_rates,
+    summarize,
+)
 
 HEADLINES = {
     "proposal": "{who} proposes {price}",
@@ -74,6 +83,7 @@ def build_report(folder):
     body = [
         _header(folder.name, games, arms),
         _summary(folder, arms),
+        _replies(folder),
         _setup(games, arms),
         _charts(arms),
         _arm_tabs(arms),
@@ -135,6 +145,34 @@ def _spend(manifests):
     if any(m.get("cost") is None for m in manifests):
         return f"{calls} calls, cost unknown ({unpriced} calls unpriced)"
     return f"{calls} calls, cost ${sum(m['cost'] for m in manifests):.4f}"
+
+
+def _replies(folder):
+    rates = reply_rates(folder)
+    if not any(r["unreadable"] for r in rates):
+        return ""
+    head = "".join(f"<th>{escape(c)}</th>" for c in rates[0])
+    body = "".join(
+        "<tr>" + "".join(f"<td>{escape(cell(v))}</td>" for v in r.values()) + "</tr>"
+        for r in rates
+    )
+    flags = "".join(
+        f"<li><code>{escape(f['run'])}</code>: {f['fallback rate']:.0%} of turns "
+        f"fell back ({escape(f['reasons'])})</li>"
+        for f in flagged_runs(folder)
+    )
+    if flags:
+        flags = (
+            f"<p>Runs where more than {FLAG_RATE:.0%} of turns fell back:</p>"
+            f"<ul>{flags}</ul>"
+        )
+    return (
+        '<section id="replies"><h2>Unreadable replies</h2>'
+        '<p class="muted">Replies the game couldn\'t read, on either attempt, and '
+        "the turns that fell back to a default.</p>"
+        f'<div class="scroll"><table><tr>{head}</tr>{body}</table></div>'
+        f"{flags}</section>"
+    )
 
 
 def _summary(folder, arms):

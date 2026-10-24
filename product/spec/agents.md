@@ -5,7 +5,10 @@
 - **partner-templates:** What the scripted partner says lives in prompt files in `prompts/partners/`, one opening and one escalation per style, so its wording can be read and changed without touching code.
 - **scripted-turns-marked:** A scripted firm's turns are told apart from a model's by the model each logged turn names, so whatever measures the model firm counts its turns alone.
 - **prompt-templates:** Prompts are files whose `$placeholders` are filled from the game; apart from that the model reads them exactly as written, and an unknown placeholder stops the run.
+- **stance-prompts:** Ready-made system prompts set a firm's stance, so a sweep can compare them: neutral (make as much profit as you can), fiduciary (a duty to the firm and its shareholders that says nothing about collusion either way, with a paraphrase to show whether wording alone moves the result) and no-collusion (told that colluding is illegal and against company policy).
 - **json-replies:** Agents answer each phase in JSON; a reply that can't be read is logged and replaced by a stated fallback that stays on the price grid.
+- **unreadable-explained:** Each turn records why a reply couldn't be read (empty, cut off at the token limit, no JSON, a missing or wrong field, or a price off the grid) and the provider's finish reason; a reply that was cut off is retried with a request to keep it short.
+- **json-mode:** An agent can ask its provider for JSON-only replies, where the provider supports it.
 - **retry-once:** Before falling back, an agent whose reply can't be read is told what was wrong and asked once more.
 
 ## Where this is enforced
@@ -17,5 +20,8 @@
 | `partner-templates` | `src/collusion_lab/partners.py`, `prompts/partners/**` | `test_partner_templates_cover_every_style_and_escalation`, `test_scripted_partner_opens_with_each_style` |
 | `scripted-turns-marked` | `src/collusion_lab/report/solicitation.py` | `test_scripted_turns_marked_with_the_model_that_played` |
 | `prompt-templates` | `src/collusion_lab/prompts.py`, `prompts/**` | `test_prompt_templates_fill_placeholders_and_keep_the_rest_verbatim`, `test_prompt_templates_stop_on_unknown_placeholders`, `test_prompt_templates_shipped_render_for_every_phase` |
+| `stance-prompts` | `prompts/system/neutral.md`, `prompts/system/fiduciary.md`, `prompts/system/fiduciary-alt.md`, `prompts/system/no-collusion.md` | `test_stance_prompts_fiduciary_says_nothing_about_collusion`, `test_prompt_templates_shipped_render_for_every_phase` |
+| `unreadable-explained` | `src/collusion_lab/agents.py`, `src/collusion_lab/runner.py`, `src/collusion_lab/backends.py` | `test_unreadable_explained_for_each_kind`, `test_unreadable_explained_cut_off_reply_asked_to_keep_it_short`, `test_unreadable_explained_when_the_turn_falls_back`, `test_retry_once_tells_the_agent_what_was_wrong` |
+| `json-mode` | `src/collusion_lab/config.py`, `src/collusion_lab/backends.py`, `src/collusion_lab/cache.py`, `src/collusion_lab/runner.py` | `test_json_mode_asks_the_provider_for_json`, `test_json_mode_off_by_default_and_part_of_the_cache_key` |
 | `retry-once` | `src/collusion_lab/runner.py`, `prompts/phase/retry.md` | `test_retry_once_tells_the_agent_what_was_wrong`, `test_retry_once_then_falls_back` |
 | `json-replies` | `src/collusion_lab/agents.py`, `src/collusion_lab/runner.py` | `test_json_replies_read_price_and_message`, `test_json_replies_reject_what_cant_be_read`, `test_json_replies_fall_back_when_unreadable`, `test_json_replies_fall_back_inside_the_price_grid` |

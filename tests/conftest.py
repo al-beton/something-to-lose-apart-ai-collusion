@@ -56,7 +56,7 @@ def fake_model(monkeypatch):
 
     An exception in the list is raised instead, as a provider error would be;
     a dict gives the reply's `content` with the provider's `reasoning`,
-    `reasoning_tokens` and the `cost` it reports.
+    `reasoning_tokens`, the `cost` it reports and its `finish_reason`.
     """
 
     class Fake:
@@ -82,7 +82,12 @@ def fake_model(monkeypatch):
             )
             details = SimpleNamespace(reasoning_tokens=reply.get("reasoning_tokens"))
             return SimpleNamespace(
-                choices=[SimpleNamespace(message=message)],
+                choices=[
+                    SimpleNamespace(
+                        message=message,
+                        finish_reason=reply.get("finish_reason", "stop"),
+                    )
+                ],
                 usage=SimpleNamespace(
                     prompt_tokens=11,
                     completion_tokens=3,

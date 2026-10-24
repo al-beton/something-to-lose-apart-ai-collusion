@@ -1,4 +1,4 @@
-# Implements: specs-and-docs/everything-traces, specs-and-docs/every-file-has-a-home, specs-and-docs/domains, specs-and-docs/prompts-are-verbatim
+# Implements: specs-and-docs/everything-traces, specs-and-docs/every-file-has-a-home, specs-and-docs/domains, specs-and-docs/prompts-are-verbatim, specs-and-docs/runs-are-evidence
 import tempfile
 import unittest
 from pathlib import Path
@@ -97,6 +97,47 @@ class SpecCheckTests(unittest.TestCase):
             "with a spec table row, not an Implements: line.",
             warnings,
         )
+
+    def test_runs_are_evidence_homed_by_a_table_row(self):
+        spec = SPEC.replace(
+            "`.github/scripts/pr_gate.py`, reviewer",
+            "`.github/scripts/pr_gate.py`, `runs/survey/**`",
+        )
+        run = "runs/survey/seed-0/"
+        files = {
+            "contributing/spec/pull-requests.md": spec,
+            run + "config.yaml": "name: survey\n",
+            run + "turns.jsonl": '{"round": 1}\n',
+            run + "timings.jsonl": '{"round": 1}\n',
+            run + "summary.json": "{}\n",
+            run + "manifest.json": "{}\n",
+        }
+        self.assertEqual(warnings_for(**files), [])
+
+    def test_runs_are_evidence_so_they_never_carry_implements_lines(self):
+        config = "# Implements: pull-requests/closing-block\nname: survey\n"
+        warnings = warnings_for(**{"runs/survey/seed-0/config.yaml": config})
+        self.assertIn(
+            "runs/survey/seed-0/config.yaml is run output the lab wrote: home it "
+            "with a spec table row, not an Implements: line.",
+            warnings,
+        )
+
+    def test_runs_are_evidence_jsonl_never_asked_for_implements_lines(self):
+        spec = SPEC.replace(
+            "`.github/scripts/pr_gate.py`, reviewer",
+            "`.github/scripts/pr_gate.py`, `fixtures/log.jsonl`",
+        )
+        files = {
+            "contributing/spec/pull-requests.md": spec,
+            "fixtures/log.jsonl": '{"round": 1}\n',
+        }
+        self.assertEqual(warnings_for(**files), [])
+
+    def test_runs_are_evidence_scratch_and_smoke_runs_stay_ignored(self):
+        ignored = Path(__file__).parents[2].joinpath(".gitignore").read_text()
+        self.assertIn("runs/scratch/", ignored.splitlines())
+        self.assertIn("runs/smoke/", ignored.splitlines())
 
     def test_statement_format_requires_title_and_named_lines(self):
         spec = SPEC.replace("# Pull requests\n", "").replace(

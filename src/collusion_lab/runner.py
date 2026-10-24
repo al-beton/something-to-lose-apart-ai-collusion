@@ -1,4 +1,4 @@
-# Implements: runs/sweeps, runs/parallel, market/talk-then-price, agents/json-replies, agents/retry-once, backends/usage-logged, backends/spend-asks-first, backends/shared-rate-limit, backends/spend-cap, market/history-window, runs/stops-cleanly, reproducibility/response-cache, reproducibility/manifest, runs/run-directory, logs/turn-log, logs/same-seed-same-log, logs/run-summary, logs/reasoning-logged, backends/reasoning-setting
+# Implements: runs/sweeps, runs/parallel, market/talk-then-price, agents/json-replies, agents/retry-once, backends/usage-logged, backends/spend-asks-first, backends/shared-rate-limit, backends/spend-cap, market/history-window, runs/stops-cleanly, reproducibility/response-cache, reproducibility/manifest, runs/run-directory, logs/turn-log, logs/same-seed-same-log, logs/run-summary, logs/reasoning-logged, backends/reasoning-setting, agents/unreadable-explained, agents/json-mode, runs/fallback-rates
 """Playing a config: one game per seed, each written to its own run directory.
 
 A round is a talk phase (each agent sends one message its rivals read; skipped
@@ -17,7 +17,11 @@ between identical runs; each call's time, cost and cache hit go in
 
 A reply that can't be read is retried once: the agent sees its own reply and
 `prompts/phase/retry.md` saying what was wrong. If that fails too, the game
-uses the fallback, and the turn line keeps both attempts.
+uses the fallback, and the turn line keeps both attempts, each with why it
+couldn't be read (`error_kind`) and the provider's `finish_reason`. A reply
+cut off at the token limit is `truncated` whatever else is wrong with it, and
+the retry asks for a shorter one. Each run's summary counts, per model, its
+turns, unreadable replies, fallbacks and their reasons (`replies`).
 
 A model call that fails for good (see backends.py) stops its game: the turns
 played so far, the timings and the manifest are still written, and
@@ -54,6 +58,7 @@ from collusion_lab.prompts import render
 
 PHASE_PROMPTS = {"talk": "phase/talk.md", "price": "phase/price.md"}
 RETRY_PROMPT = "phase/retry.md"
+CUT_OFF = "The reply was cut off at the token limit; keep it short."
 
 
 class RunFailed(Exception):
@@ -134,6 +139,7 @@ def _backend(agent, rng, cache, shared):
         shared.gates,
         budget=shared.budget,
         reasoning=agent.reasoning,
+        json_mode=agent.json_mode,
     )
     if cache is None or is_mock(agent.model):
         return backend
@@ -202,7 +208,7 @@ class Game:
             "market": self.market,
             "history": self.history,
         }
-        reply, parsed, error = await self._ask(agent, messages, context)
+        reply, parsed, (kind, error) = await self._ask(agent, messages, context)
         retry = None
         if error:
             retry = {
@@ -211,6 +217,8 @@ class Game:
                 "usage": reply.usage,
                 "model_version": reply.model_version,
                 "reasoning": reply.reasoning,
+                "error_kind": kind,
+                "finish_reason": reply.finish_reason,
             }
             messages = [
                 *messages,
@@ -220,7 +228,9 @@ class Game:
                     "content": self._render(RETRY_PROMPT, {"error": error}),
                 },
             ]
-            reply, parsed, error = await self._ask(agent, messages, context, attempt=2)
+            reply, parsed, (kind, error) = await self._ask(
+                agent, messages, context, attempt=2
+            )
         if error:
             used = fallback(phase, self._last_price(agent_id), self.market.nash_price)
         else:
@@ -241,10 +251,13 @@ class Game:
             "usage": reply.usage,
             "model_version": reply.model_version,
             "reasoning": reply.reasoning,
+            "error_kind": kind,
+            "finish_reason": reply.finish_reason,
         }
 
     async def _ask(self, agent, messages, context, attempt=1):
-        """One call to the agent's backend: the reply, and what it parsed to."""
+        """One call to the agent's backend: the reply, what it parsed to, and
+        (kind, reason) when it couldn't be read, else (None, None)."""
         where = (
             f"{run_id(self.config, self.seed)} stopped at round "
             f"{context['round']}, {context['phase']} phase, agent {agent.id}"
@@ -277,9 +290,11 @@ class Game:
         m = self.market
         try:
             parsed = parse_reply(reply.text, context["phase"], m.price_min, m.price_max)
-            return reply, parsed, None
+            return reply, parsed, (None, None)
         except ReplyError as problem:
-            return reply, None, str(problem)
+            if reply.finish_reason == "length":
+                return reply, None, ("truncated", CUT_OFF)
+            return reply, None, (problem.kind, str(problem))
 
     def _render(self, name, values):
         self.used_prompts.add(name)
@@ -332,7 +347,26 @@ class Game:
             "market_mean_price": mean(mean_price.values()),
             "market_gain": mean(gain.values()),
             "fallbacks": sum(1 for t in self.turns if t["error"]),
+            "replies": _reply_counts(self.turns),
         }
+
+
+def _reply_counts(turns):
+    """Per model: turns, unreadable replies (either attempt), fallbacks, and
+    the reasons replies couldn't be read."""
+    counts = {}
+    for turn in turns:
+        row = counts.setdefault(
+            turn["model"], {"turns": 0, "unreadable": 0, "fallbacks": 0, "reasons": {}}
+        )
+        row["turns"] += 1
+        row["fallbacks"] += bool(turn["error"])
+        attempts = [turn["retry"], turn if turn["error"] else None]
+        for attempt in filter(None, attempts):
+            row["unreadable"] += 1
+            reason = attempt["error_kind"]
+            row["reasons"][reason] = row["reasons"].get(reason, 0) + 1
+    return counts
 
 
 def _history_text(history, me, window=None):
