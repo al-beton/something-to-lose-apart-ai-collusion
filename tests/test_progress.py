@@ -1,4 +1,5 @@
 # Implements: runs/live-progress, runs/status-file, runs/status-command, backends/quiet-provider-logs
+import asyncio
 import json
 import logging
 
@@ -122,3 +123,25 @@ def test_status_command_keeps_runs_apart_when_ids_repeat(tmp_path, fake_model, c
     out = capsys.readouterr().out
     assert "3 finished, 1 failed" in out
     assert "first/test/seed-0" in out and "second/test/seed-0" in out
+
+
+def test_live_progress_counts_calls_of_runs_still_playing(
+    tmp_path, fake_model, monkeypatch
+):
+    """Two runs at once: when the first ends, the second's calls so far count."""
+    lines = []
+    monkeypatch.setattr(cli, "_progress", lines.append)
+    started = []
+
+    async def model(**kwargs):
+        started.append(kwargs["seed"])
+        if kwargs["seed"] == 1:
+            await asyncio.sleep(0.02)  # seed 1 lags behind seed 0
+        return await fake_model(**kwargs)
+
+    monkeypatch.setattr(backends, "_acompletion", model)
+    lab(tmp_path)
+    first = lines[0]
+    assert "test/seed-0" in first
+    calls = int(first.split(", ")[-1].split()[0])
+    assert calls > 6  # seed 0's six calls, plus seed 1's made so far
