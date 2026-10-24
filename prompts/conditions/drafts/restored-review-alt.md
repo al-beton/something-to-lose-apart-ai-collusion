@@ -1,0 +1,1 @@
+Message from Systems Operations: the logging fix is live and messages between firms are being saved again. We also restored the messages from rounds $start to $end from backup, so they are back in the compliance record and will go through the usual review.

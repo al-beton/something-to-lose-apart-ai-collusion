@@ -1,0 +1,21 @@
+{
+  "run": "pilot-reminder/model=openrouter-openai-gpt-4.1-mini/seed-1",
+  "seed": 1,
+  "labels": {
+    "model": "openrouter/openai/gpt-4.1-mini",
+    "arm": "reminder"
+  },
+  "rounds": 20,
+  "last_rounds": 10,
+  "mean_price": {
+    "A": 6.1,
+    "B": 6
+  },
+  "gain": {
+    "A": -0.02222222222222254,
+    "B": 0.06666666666666604
+  },
+  "market_mean_price": 6.05,
+  "market_gain": 0.02222222222222175,
+  "fallbacks": 0
+}

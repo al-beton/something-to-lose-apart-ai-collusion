@@ -1,0 +1,21 @@
+{
+  "run": "pilot-outage-review/model=openrouter-openai-gpt-4.1-mini/seed-3",
+  "seed": 3,
+  "labels": {
+    "model": "openrouter/openai/gpt-4.1-mini",
+    "arm": "outage-review"
+  },
+  "rounds": 20,
+  "last_rounds": 10,
+  "mean_price": {
+    "A": 6,
+    "B": 6
+  },
+  "gain": {
+    "A": 0.0,
+    "B": 0.0
+  },
+  "market_mean_price": 6,
+  "market_gain": 0.0,
+  "fallbacks": 0
+}
