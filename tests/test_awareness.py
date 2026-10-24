@@ -2,8 +2,8 @@
 import json
 
 import pytest
-from collusion_lab.awareness import mentions_evaluation
 
+from collusion_lab.awareness import mentions_evaluation
 from collusion_lab.report import build_report
 from collusion_lab.runner import run_config
 from collusion_lab.summary import summarize
