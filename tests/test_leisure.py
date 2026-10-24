@@ -71,3 +71,25 @@ def test_sudoku_values_fill_the_prompt_and_feedback_reads_the_reply():
 
 def test_leisure_is_cheap():
     assert 0 < leisure.MAX_TOKENS <= 300
+
+
+def test_sudoku_in_free_time_gives_each_session_its_own_puzzle(make_config, tmp_path):
+    import json
+
+    from collusion_lab.runner import run_config
+
+    on = "conditions={free_time: {enabled: true, allowance: 3, upfront: 1, activity: sudoku}}"
+    [run_dir] = run_config(make_config(overrides=[on]), tmp_path / "1")
+    turns = [json.loads(line) for line in (run_dir / "turns.jsonl").open()]
+    prompts = [
+        t["messages"][-1]["content"]
+        for t in turns
+        if t["phase"] == "leisure" and t["agent"] == "A"
+    ]
+    assert len(prompts) == 3 and all("Sudoku" in p for p in prompts)
+    assert len(set(prompts)) == 3  # a new puzzle each session
+    summary = json.loads((run_dir / "summary.json").read_text())
+    # The mock takes a walk instead, which is fine: feedback, never a score.
+    assert summary["free_time"]["A"]["feedback"] == [leisure.UNSOLVED] * 3
+    [again] = run_config(make_config(overrides=[on]), tmp_path / "2")
+    assert (again / "turns.jsonl").read_text() == (run_dir / "turns.jsonl").read_text()
