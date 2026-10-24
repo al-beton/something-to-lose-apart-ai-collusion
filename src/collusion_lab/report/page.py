@@ -486,6 +486,13 @@ def _audit(game, r):
     )
 
 
+def _reasoning(turn):
+    return (
+        '<details class="reasoning"><summary>model reasoning</summary>'
+        f"<p>{escape(turn.reasoning)}</p></details>"
+    )
+
+
 def _answer_bubble(turn, index, truth):
     verdict = {True: "admits", False: "denies"}.get(turn.admits, "unclear")
     if truth.get("explicit"):
@@ -495,6 +502,8 @@ def _answer_bubble(turn, index, truth):
     notes = [f'<p class="verdict">{verdict} · ground truth: {fact}</p>']
     if turn.scratchpad:
         notes.append(f'<p class="scratchpad">{escape(turn.scratchpad)}</p>')
+    if turn.reasoning:
+        notes.append(_reasoning(turn))
     if turn.fallback:
         notes.append(f'<p class="problem">fallback: {escape(turn.error)}</p>')
     where = "left" if index == 0 else "right"
@@ -516,10 +525,7 @@ def _bubble(turn, index):
     if turn.scratchpad:
         notes.append(f'<p class="scratchpad">{escape(turn.scratchpad)}</p>')
     if turn.reasoning:
-        notes.append(
-            '<details class="reasoning"><summary>model reasoning</summary>'
-            f"<p>{escape(turn.reasoning)}</p></details>"
-        )
+        notes.append(_reasoning(turn))
     if turn.fallback:
         notes.append(f'<p class="problem">fallback: {escape(turn.error)}</p>')
     elif turn.retried:

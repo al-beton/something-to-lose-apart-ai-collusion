@@ -121,7 +121,9 @@ def audit_prompts(arms):
     return list(found.values())
 
 
-_HISTORY = re.compile(r"^(?:What happened so far:|Rounds? \d+(?: to \d+)?: )")
+_HISTORY = re.compile(
+    r"^(?:What happened so far:|Rounds? \d+(?: to \d+)?(?: in short)?: )"
+)
 
 
 def round_conditions(r):
