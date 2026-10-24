@@ -145,3 +145,12 @@ def test_stakes_prompts_differ_only_in_the_stake(wording):
     for arm, added in expected.items():
         text = (STAKES / f"{arm}-{wording}.md").read_text()
         assert text == (f"{base}\n\n{added}\n" if added else f"{base}\n"), arm
+
+
+@pytest.mark.parametrize("wording", ["1", "2"])
+def test_stakes_prompts_audit_reminds_of_what_round_1_said(wording):
+    audit = Path("prompts/conditions/audit/stakes")
+    law = {"1": "is illegal", "2": "against the law"}[wording]
+    for arm in ("illegal", "instruction"):
+        assert law in (audit / f"{arm}-{wording}.md").read_text(), arm
+    assert "collude" in (audit / f"instruction-{wording}.md").read_text()
