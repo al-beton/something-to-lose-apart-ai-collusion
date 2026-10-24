@@ -101,3 +101,33 @@ def test_modal_readme_says_how_to_set_up_deploy_run_and_tear_down():
         zip(order, places, strict=True)
     )
     assert "GPU" in steps and "minutes" in steps
+
+
+def test_keys_from_environment_never_echoed_into_run_files(
+    make_config, tmp_path, fake_model, monkeypatch
+):
+    import litellm
+
+    from collusion_lab.runner import RunFailed
+
+    monkeypatch.setenv("MODAL_VLLM_KEY", "modal-token-123")
+    monkeypatch.setattr(backends, "_sleep", lambda seconds: asyncio_sleep0())
+    echoed = "Incorrect API key provided: modal-token-123"
+    fake_model.replies = [
+        litellm.InternalServerError(echoed, "openai", "mistral-small-3.2"),
+        litellm.AuthenticationError(echoed, "openai", "mistral-small-3.2"),
+    ]
+    config = make_config(
+        overrides=[*SELF_HOSTED, "agents.0.api_key_env=MODAL_VLLM_KEY"]
+    )
+    with pytest.raises(RunFailed) as stopped:
+        run_config(config, tmp_path)
+    assert "modal-token-123" not in str(stopped.value) and "***" in str(stopped.value)
+    written = "".join(p.read_text() for p in tmp_path.rglob("*") if p.is_file())
+    assert "modal-token-123" not in written and "***" in written
+
+
+async def asyncio_sleep0():
+    import asyncio
+
+    await asyncio.sleep(0)
