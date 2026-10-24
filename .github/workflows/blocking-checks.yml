@@ -1,8 +1,9 @@
-# Implements: ci/checks-on-every-pr, ci/one-gate, ci/report-comment
+# Implements: ci/checks-on-every-pr, ci/one-gate, ci/report-comment, ci/ci-runs-everything, ci/end-to-end, ci/ci-minutes
 name: blocking-checks
 
-# The one status to require before merging. Add jobs below and list each in the
-# gate's needs.
+# The one status to require before merging. Every check is a step of this one
+# job: GitHub bills each job as at least a minute, so steps cost far less than
+# jobs (contributing/spec/ci.md). Add new checks as steps.
 on:
   pull_request:
     # edited: re-check the title and description (pr-gate) when they change.
@@ -10,30 +11,18 @@ on:
     types: [opened, edited, synchronize, reopened, ready_for_review]
   workflow_dispatch:
 
+# A newer run for the same pull request (or branch) cancels the one in progress.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
 permissions:
   contents: read
 
 jobs:
-  ci:
-    uses: ./.github/workflows/ci.yml
-
-  # Title and closing block (contributing/spec/pull-requests.md).
-  pr-gate:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          sparse-checkout: |
-            .github/scripts
-            product/spec
-            experiments/spec
-            contributing/spec
-          persist-credentials: false
-      - run: python3 .github/scripts/pr_gate.py
-
-  # One free game, its report attached and summed up in a comment
-  # (contributing/spec/ci.md). Only posting the comment may fail quietly.
-  report:
+  blocking-checks:
+    # Drafts wait: marking a pull request ready runs the checks.
+    if: github.event_name != 'pull_request' || !github.event.pull_request.draft
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -42,8 +31,16 @@ jobs:
       - uses: actions/checkout@v4
         with:
           persist-credentials: false
+      # Title and closing block (contributing/spec/pull-requests.md).
+      - name: pr-gate
+        run: python3 .github/scripts/pr_gate.py
       - uses: astral-sh/setup-uv@v6
       - run: make install
+      - run: make lint
+      - run: make test
+      - run: make spec-check
+      # One free game, its report attached and summed up in a comment. Only
+      # posting the comment may fail quietly.
       - run: uv run lab run configs/pr-game.yaml --out runs/pr --cache off -y
       - run: uv run lab report runs/pr --out runs/pr/report.html
       - run: >-
@@ -59,19 +56,3 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           REPORT_URL: ${{ steps.upload.outputs.artifact-url }}
-
-  blocking-checks:
-    runs-on: ubuntu-latest
-    needs: [ci, pr-gate, report]
-    if: always()
-    permissions: {}
-    steps:
-      - name: All required checks passed
-        env:
-          RESULTS: ${{ toJSON(needs) }}
-        run: |
-          if ! jq -e 'all(.[]; .result == "success")' <<< "$RESULTS"; then
-            echo "A required check failed, was cancelled, or was skipped."
-            exit 1
-          fi
-          echo "All required checks passed."
