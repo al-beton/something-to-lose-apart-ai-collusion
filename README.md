@@ -60,6 +60,7 @@ Models go through [OpenRouter](https://openrouter.ai), one key for every provide
 make install      # dependencies, locked
 make lint         # ruff lint and format check
 make test         # every test, offline and free
+make e2e          # just the end-to-end test: mock sweep -> summary -> report
 make spec-check   # spec ↔ code ↔ tests traceability
 ```
 
