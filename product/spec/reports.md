@@ -51,5 +51,5 @@
 | `markdown-first-screen` | `src/collusion_lab/report/markdown.py` | `test_markdown_first_screen_has_sentences_table_and_highlights`, `test_markdown_first_screen_of_the_pull_request_game` |
 | `audit-shown` | `src/collusion_lab/report/page.py`, `src/collusion_lab/report/told.py`, `src/collusion_lab/report/games.py` | `test_audit_shown_in_the_audited_round`, `test_audit_shown_in_setup_as_sent`, `test_audit_shown_without_a_short_history_window`, `test_audit_shown_with_the_models_reasoning`, `test_audit_shown_without_multiline_messages_from_the_history` |
 | `remembered-notices` | `src/collusion_lab/report/page.py`, `src/collusion_lab/report/told.py`, `src/collusion_lab/report/games.py` | `test_remembered_notices_marked_in_later_turns` |
-| `moments-cited` | `reports/check_moments.py` | `test_moments_cited_found_in_scratchpad_and_answer`, `test_moments_cited_fails_on_what_the_logs_dont_hold`, `test_moments_cited_from_the_command_line`, `test_moments_cited_in_the_repositorys_own_index` |
+| `moments-cited` | `reports/check_moments.py` | `test_moments_cited_found_in_the_named_field`, `test_moments_cited_fails_on_what_the_logs_dont_hold`, `test_moments_cited_from_the_command_line`, `test_moments_cited_in_the_repositorys_own_index` |
 | `from-run-files` | `src/collusion_lab/report/games.py` | `test_from_run_files_only` |
