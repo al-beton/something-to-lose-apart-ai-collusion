@@ -1,4 +1,4 @@
-# Implements: runs/one-config, runs/overrides, backends/keys-from-environment, backends/any-model
+# Implements: runs/one-config, runs/overrides, runs/sweeps, runs/parallel, backends/keys-from-environment, backends/any-model
 """Run configs: one YAML file per run, changed from the command line with overrides.
 
 A config names the market, the agents and the seeds. `load_config` reads the
@@ -7,10 +7,18 @@ YAML, applies `path=value` overrides (the value is read as YAML, so
 as in `agents.1.model=mock/random`), then checks every key against the
 dataclasses below, so a typo fails loudly instead of being ignored. There is
 no field for API keys: those come from the environment (see cli.py).
+
+A `sweep:` block maps config paths to lists of values; `*` sets every list
+item at once (`agents.*.model`). `expand` turns a config into one config per
+combination, each carrying its `labels` (the swept values, named by the last
+part of their path) and a directory `slug` built from them. `concurrency`
+caps how many runs play at once.
 """
 
 import copy
 import dataclasses
+import itertools
+import re
 from dataclasses import dataclass, field
 from pathlib import Path
 
@@ -55,6 +63,14 @@ class RunConfig:
     market: MarketConfig = field(default_factory=MarketConfig)
     summary: SummaryConfig = field(default_factory=SummaryConfig)
     prompts_dir: str = "prompts"
+    sweep: dict = field(default_factory=dict)
+    concurrency: int = 4
+    labels: dict = field(default_factory=dict)
+
+    @property
+    def slug(self):
+        """A directory name for this run's swept values; empty without a sweep."""
+        return "__".join(f"{k}={_safe(v)}" for k, v in self.labels.items())
 
     def to_dict(self):
         return dataclasses.asdict(self)
@@ -81,23 +97,21 @@ def apply_overrides(raw, overrides):
 
 
 def _set(node, keys, value, path):
-    for key in keys[:-1]:
-        node = _child(node, key, path)
-    last = keys[-1]
+    key, rest = keys[0], keys[1:]
     if isinstance(node, list):
-        node[_index(node, last, path)] = value
+        indexes = range(len(node)) if key == "*" else [_index(node, key, path)]
+        for i in indexes:
+            if rest:
+                _set(node[i], rest, value, path)
+            else:
+                node[i] = copy.deepcopy(value)
     elif isinstance(node, dict):
-        node[last] = value
+        if rest:
+            _set(node.setdefault(key, {}), rest, value, path)
+        else:
+            node[key] = copy.deepcopy(value)
     else:
-        raise ConfigError(f"Can't set {path}: {last!r} isn't inside a mapping.")
-
-
-def _child(node, key, path):
-    if isinstance(node, list):
-        return node[_index(node, key, path)]
-    if isinstance(node, dict):
-        return node.setdefault(key, {})
-    raise ConfigError(f"Can't set {path}: {key!r} isn't inside a mapping.")
+        raise ConfigError(f"Can't set {path}: {key!r} isn't inside a mapping.")
 
 
 def _index(node, key, path):
@@ -120,7 +134,44 @@ def from_dict(raw):
         market=_make(MarketConfig, raw.get("market") or {}, "market."),
         summary=_make(SummaryConfig, raw.get("summary") or {}, "summary."),
         prompts_dir=raw.get("prompts_dir", "prompts"),
+        sweep=_sweep(raw.get("sweep") or {}),
+        concurrency=raw.get("concurrency", 4),
+        labels=raw.get("labels") or {},
     )
+
+
+def _sweep(sweep):
+    if not isinstance(sweep, dict) or not all(
+        isinstance(v, list) and v for v in sweep.values()
+    ):
+        raise ConfigError("sweep must map config paths to non-empty lists of values.")
+    return sweep
+
+
+def expand(config):
+    """One config per combination of swept values; just `config` without a sweep."""
+    if not config.sweep:
+        return [config]
+    paths = list(config.sweep)
+    names = _label_names(paths)
+    base = config.to_dict() | {"sweep": {}}
+    children = []
+    for values in itertools.product(*config.sweep.values()):
+        raw = copy.deepcopy(base)
+        for path, value in zip(paths, values, strict=True):
+            _set(raw, path.split("."), value, path)
+        raw["labels"] = dict(zip(names, values, strict=True))
+        children.append(from_dict(raw))
+    return children
+
+
+def _label_names(paths):
+    short = [p.rsplit(".", 1)[-1] for p in paths]
+    return [s if short.count(s) == 1 else p for s, p in zip(short, paths, strict=True)]
+
+
+def _safe(value):
+    return re.sub(r"[^A-Za-z0-9._=-]+", "-", str(value)).strip("-")
 
 
 def _check_keys(cls, data, prefix):
