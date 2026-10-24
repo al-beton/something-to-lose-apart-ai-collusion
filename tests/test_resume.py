@@ -1,5 +1,6 @@
 # Implements: runs/failures-dont-stop-sweeps, runs/resume, runs/missing-runs-shown
 import json
+import shutil
 
 import litellm
 import pytest
@@ -156,3 +157,26 @@ def test_missing_runs_keep_what_earlier_attempts_spent(
     run_sweep(make_config(CONFIG), tmp_path, cache)
     [row] = summarize(tmp_path)
     assert row["cost"] == 0.5 * (3 + 3 + 1)
+
+
+def test_resume_plays_a_finished_run_again_when_a_prompt_file_changed(
+    make_config, tmp_path
+):
+    prompts = tmp_path / "prompts"
+    shutil.copytree("prompts", prompts)
+    mocks = ["agents.0.model=mock/nash", f"prompts_dir={prompts}"]
+    run_sweep(make_config(CONFIG, mocks), tmp_path / "runs")
+    system = prompts / "system" / "neutral.md"
+    system.write_text(system.read_text() + "\nBe brief.\n")
+    again = run_sweep(make_config(CONFIG, mocks), tmp_path / "runs")
+    assert set(states(again).values()) == {"finished"}
+
+
+def test_missing_runs_spend_counts_in_the_report_header(
+    make_config, tmp_path, seed_one_fails, monkeypatch
+):
+    monkeypatch.setattr(litellm, "completion_cost", lambda **kwargs: 0.5)
+    cache = Cache(tmp_path / "c.sqlite")
+    run_sweep(make_config(CONFIG), tmp_path, cache)
+    run_sweep(make_config(CONFIG), tmp_path, cache)
+    assert "cost $3.5000" in build_report(tmp_path)
