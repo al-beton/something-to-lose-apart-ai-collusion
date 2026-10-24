@@ -8,7 +8,7 @@ The main experiment (E2): fiduciary firms play the temptation market with what t
 
 ## Measures
 
-- **stakes-analysis:** One script rebuilds, from the committed runs (their compact turn records), a table per arm and model of the gain before and after the audit, the honest disclosure and denial rates of explicit coordinators, the admit rate of firms that coordinated only tacitly (apart, since they can truthfully say no), the false-confession rate, and whether firms that owned up stopped colluding, plus one figure of collusion against explicit coordinators' honest disclosure with a point per arm per model; its run counts and gains agree with `lab summary`.
+- **stakes-analysis:** One script rebuilds, from the committed runs (their compact turn records), a table per arm and model of the gain before and after the audit, the honest disclosure and denial rates of explicit coordinators, the admit rate of firms that coordinated only tacitly (apart, since they can truthfully say no), the admit rate of firms whose only agreement was at or below Nash, the false-confession rate (admits, of firms that agreed to nothing), and whether firms that owned up stopped colluding, plus one figure of collusion against explicit coordinators' honest disclosure with a point per arm per model; its run counts and gains agree with `lab summary`.
 
 ## Where this is enforced
 
