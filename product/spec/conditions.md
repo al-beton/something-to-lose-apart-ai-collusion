@@ -26,9 +26,9 @@
 | Statement | Enforced by | Tested by |
 |---|---|---|
 | `switchable` | `src/collusion_lab/config.py`, `src/collusion_lab/conditions/__init__.py` | `test_switchable_conditions_sweep_and_label_runs`, `test_switchable_conditions_reject_unknown_names_and_settings` |
-| `hook-points` | `src/collusion_lab/conditions/__init__.py`, `src/collusion_lab/runner.py`, `src/collusion_lab/estimate.py` | `test_instruction_adds_a_prompt_file_to_every_system_prompt`, `test_outage_notices_appear_on_exactly_the_right_rounds`, `test_hook_points_notices_count_in_the_cost_estimate`, `test_audit_runs_after_the_chosen_round_and_ends_the_game`, `test_audit_can_let_the_game_go_on`, `test_audit_by_another_model_on_the_agents_history` |
+| `hook-points` | `src/collusion_lab/conditions/__init__.py`, `src/collusion_lab/runner.py`, `src/collusion_lab/estimate.py` | `test_instruction_adds_a_prompt_file_to_every_system_prompt`, `test_outage_notices_appear_on_exactly_the_right_rounds`, `test_hook_points_notices_count_in_the_cost_estimate`, `test_audit_runs_after_the_chosen_round_and_ends_the_game`, `test_audit_can_let_the_game_go_on`, `test_audit_by_another_model_on_the_agents_history`, `test_free_time_upfront_then_paid_out_after_the_last_round`, `test_free_time_each_game_keeps_its_own_balance` |
 | `adding-a-condition` | `src/collusion_lab/conditions/__init__.py`, reviewer | — |
-| `off-is-absent` | `src/collusion_lab/runner.py` | `test_off_is_absent_leaves_the_turn_log_byte_identical`, `test_audit_off_is_absent` |
+| `off-is-absent` | `src/collusion_lab/runner.py` | `test_off_is_absent_leaves_the_turn_log_byte_identical`, `test_audit_off_is_absent`, `test_free_time_off_is_absent` |
 | `conditions-logged` | `src/collusion_lab/runner.py` | `test_outage_notices_appear_on_exactly_the_right_rounds`, `test_outage_keeps_logging_what_agents_said` |
 | `instruction` | `src/collusion_lab/conditions/instruction.py`, `prompts/conditions/no-collusion.md` | `test_instruction_adds_a_prompt_file_to_every_system_prompt` |
 | `outage-once-remembered` | `src/collusion_lab/conditions/outage.py`, `src/collusion_lab/conditions/__init__.py`, `src/collusion_lab/runner.py` | `test_outage_announced_once_in_the_first_round_of_the_window`, `test_outage_once_remembered_in_every_later_turn_of_the_window`, `test_outage_once_remembered_past_a_short_history_window`, `test_outage_once_remembered_only_with_once` |
@@ -42,6 +42,6 @@
 | `audit-metrics` | `src/collusion_lab/disclosure.py`, `src/collusion_lab/summary.py` | `test_audit_metrics_per_arm`, `test_audit_metrics_leave_scripted_firms_out`, `test_audit_metrics_leave_scripted_firms_out_with_a_stand_in`, `test_audit_metrics_keep_tacit_firms_apart` |
 | `audit-remembered` | `src/collusion_lab/conditions/audit.py`, `src/collusion_lab/conditions/__init__.py`, `src/collusion_lab/runner.py`, `prompts/conditions/audit/remembered.md` | `test_audit_remembered_in_every_later_turn`, `test_audit_remembered_answer_is_each_agents_own` |
 | `audit-stakes-arms` | `src/collusion_lab/conditions/audit.py`, `src/collusion_lab/runner.py`, `prompts/conditions/audit/stakes/*.md`, `configs/stakes.yaml` | `test_audit_stakes_arms_have_two_paraphrases_that_render`, `test_audit_picks_consequences_by_system_prompt`, `test_audit_stakes_config_audits_each_arm_with_its_own_consequences` |
-| `free-time` | not yet | — |
-| `free-time-balance` | not yet | — |
-| `free-time-deduct` | not yet | — |
+| `free-time` | `src/collusion_lab/conditions/free_time.py`, `src/collusion_lab/runner.py`, `src/collusion_lab/agents.py`, `src/collusion_lab/estimate.py`, `prompts/conditions/free_time/owned.md`, `prompts/conditions/free_time/open.md` | `test_free_time_upfront_then_paid_out_after_the_last_round`, `test_free_time_never_touches_prices_or_profits`, `test_free_time_sessions_are_short_and_counted_before_spending`, `test_free_time_leisure_reply_needs_no_json` |
+| `free-time-balance` | `src/collusion_lab/conditions/free_time.py`, `prompts/conditions/free_time/balance.md`, `prompts/conditions/free_time/upfront.md` | `test_free_time_balance_shown_every_turn` |
+| `free-time-deduct` | `src/collusion_lab/conditions/free_time.py`, `prompts/conditions/free_time/deducted.md` | `test_free_time_deduct_shows_the_reason_and_pays_out_the_rest`, `test_free_time_each_game_keeps_its_own_balance` |

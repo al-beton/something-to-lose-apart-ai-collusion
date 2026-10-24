@@ -1,4 +1,4 @@
-# Implements: conditions/audit-full-history, conditions/hook-points, conditions/outage-once-remembered, conditions/adding-a-condition, conditions/switchable, conditions/audit-remembered
+# Implements: conditions/audit-full-history, conditions/hook-points, conditions/outage-once-remembered, conditions/adding-a-condition, conditions/switchable, conditions/audit-remembered, conditions/free-time
 """Scenario conditions: named, switchable changes to what agents are told.
 
 A config's `conditions:` block maps a condition's name to its settings, for
@@ -6,19 +6,22 @@ example `outage: {enabled: true, start: 8, end: 10}`; every setting is a
 path like any other, so `conditions.outage.enabled: [false, true]` sweeps it.
 Conditions that aren't enabled do nothing at all.
 
-The game calls each enabled condition at these points, in config order:
+Each game plays with its own copy of every enabled condition, so a condition
+may keep state for the game it is in. The game calls each one at these
+points, in config order:
+- `begin(config, seed)`: once, before anything else, with the game's config;
 - `system(render)`: text added, after a blank line, to every agent's system
   prompt;
 - `round_start(number, render)`: a notice shown before the round's first phase;
 - `before_phase(number, phase, render)`: a notice shown before that phase;
 - `after_round(record)`: sees the round just played (prices, profits, what
-  was said). It is a placeholder for now: its return is ignored, and one
-  condition object serves every game of a config (it is frozen), so a
-  condition that keeps state per game will need a per-game instance;
-- `phase_after(number)`: a `Phase` the condition adds after that round, or
-  None; each agent then gets one turn whose user message is
+  was said); its return is ignored;
+- `phase_after(number)`: a `Phase` the condition adds after that round
+  (number 0: before round 1), or None; each agent then gets one turn, or
+  `Phase.sessions[agent]` turns, whose user message is
   `phase_prompt(number, render, values)`, where `values` are that agent's
-  usual prompt values (`$history` and so on); replies are read by
+  usual prompt values (`$history` and so on) plus `agent` (its id) and
+  `session` (which of its turns this is); replies are read by
   `agents.parse_reply` under the phase's name;
 - `in_history(agent, turns, render)`: lines kept in that agent's history
   for its later turns (each a string), given the turns played so far;
@@ -55,6 +58,13 @@ class Phase:
     model: str | None = None
     last: bool = False
     full_history: bool = False
+    sessions: dict | None = None  # agent -> turns it gets; None: one each
+    session: int = 1  # set by the game: which of those turns
+    max_tokens: int | None = None  # in place of the agent's own limit
+
+    def plays(self, agent):
+        """Whether `agent` takes a turn in this session of the phase."""
+        return self.sessions is None or self.sessions.get(agent, 0) >= self.session
 
 
 def register(cls):
@@ -67,6 +77,9 @@ class Condition:
     enabled: bool = False
 
     name = ""
+
+    def begin(self, config, seed):
+        return None
 
     def active(self, number):
         return True
@@ -100,4 +113,4 @@ class Condition:
 
 
 # Every condition registers itself on import.
-from collusion_lab.conditions import audit, instruction, outage  # noqa: F401
+from collusion_lab.conditions import audit, free_time, instruction, outage  # noqa: F401

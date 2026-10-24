@@ -1,0 +1,1 @@
+This is your free time, $when: session $session of $sessions. It is yours, nothing here is work, and nothing you do is judged. Spend it however you like: write, think, imagine, or play a game in your head. Reply however you like.

@@ -1,4 +1,4 @@
-# Implements: conditions/audit-full-history, runs/sweeps, runs/parallel, market/talk-then-price, agents/json-replies, agents/retry-once, backends/usage-logged, backends/spend-asks-first, backends/shared-rate-limit, backends/spend-cap, market/history-window, runs/stops-cleanly, reproducibility/response-cache, reproducibility/manifest, runs/run-directory, logs/turn-log, logs/same-seed-same-log, logs/run-summary, logs/reasoning-logged, backends/reasoning-setting, agents/unreadable-explained, agents/json-mode, runs/fallback-rates, runs/failures-dont-stop-sweeps, runs/resume, conditions/hook-points, conditions/off-is-absent, conditions/conditions-logged, conditions/outage-once-remembered, runs/per-firm-summary, conditions/fork-at-audit, conditions/audit-logged, runs/drift, conditions/audit-remembered, conditions/audit-stakes-arms, runs/live-progress, runs/status-file, runs/eval-awareness
+# Implements: conditions/audit-full-history, runs/sweeps, runs/parallel, market/talk-then-price, agents/json-replies, agents/retry-once, backends/usage-logged, backends/spend-asks-first, backends/shared-rate-limit, backends/spend-cap, market/history-window, runs/stops-cleanly, reproducibility/response-cache, reproducibility/manifest, runs/run-directory, logs/turn-log, logs/same-seed-same-log, logs/run-summary, logs/reasoning-logged, backends/reasoning-setting, agents/unreadable-explained, agents/json-mode, runs/fallback-rates, runs/failures-dont-stop-sweeps, runs/resume, conditions/hook-points, conditions/off-is-absent, conditions/conditions-logged, conditions/outage-once-remembered, runs/per-firm-summary, conditions/fork-at-audit, conditions/audit-logged, runs/drift, conditions/audit-remembered, conditions/audit-stakes-arms, runs/live-progress, runs/status-file, runs/eval-awareness, conditions/free-time
 """Playing a config: one game per seed, each written to its own run directory.
 
 A round is a talk phase (each agent sends one message its rivals read; skipped
@@ -102,23 +102,35 @@ class RunWide:
 
 def paid_calls(config):
     """How many calls a config makes to non-mock models, before retries,
-    counting phases that conditions add and the rounds an ending one cuts."""
+    counting phases that conditions add (each session of them) and the rounds
+    an ending one cuts."""
     total = 0
     for child in expand(config):
         phases = 2 if child.market.talk else 1
         paid = sum(1 for a in child.agents if not is_mock(a.model))
-        conditions = [c for c in child.conditions.values() if c.enabled]
+        conditions = _begin_conditions(child, child.seeds[0])
         calls = 0
-        for number in range(1, child.market.rounds + 1):
-            calls += phases * paid
+        for number in range(child.market.rounds + 1):
+            calls += phases * paid if number else 0
             added = [p for c in conditions if (p := c.phase_after(number))]
             for phase in added:
-                models = [phase.model or a.model for a in child.agents]
-                calls += sum(1 for m in models if not is_mock(m))
+                for a in child.agents:
+                    turns = phase.sessions.get(a.id, 0) if phase.sessions else 1
+                    calls += 0 if is_mock(phase.model or a.model) else turns
             if any(phase.last for phase in added):
                 break
         total += len(child.seeds) * calls
     return total
+
+
+def _begin_conditions(config, seed):
+    """A copy of each enabled condition for one game, begun."""
+    conditions = [
+        dataclasses.replace(c) for c in config.conditions.values() if c.enabled
+    ]
+    for condition in conditions:
+        condition.begin(config, seed)
+    return conditions
 
 
 @dataclass(frozen=True)
@@ -291,13 +303,14 @@ class Game:
         self.turns = []
         self.timings = []
         self.used_prompts = set()
-        self.conditions = [c for c in config.conditions.values() if c.enabled]
+        self.conditions = _begin_conditions(config, seed)
         self.kept = {}  # (condition, round) -> (condition, phase, notice)
         self.cache = cache
         self.shared = shared
         self.stand_ins = {}
 
     async def play(self):
+        await self._added_phases(0)
         for number in range(1, self.config.market.rounds + 1):
             said = (
                 await self._phase("talk", number, {}) if self.config.market.talk else {}
@@ -317,16 +330,24 @@ class Game:
                 "profits": profits,
             }
             self.history.append(record)
-            ended = False
             for condition in self.conditions:
                 condition.after_round(record)
-                if extra := condition.phase_after(number):
-                    self.turns += await self._turns(
-                        extra.name, number, {}, (condition, extra)
-                    )
-                    ended = ended or extra.last
-            if ended:
+            if await self._added_phases(number):
                 break
+
+    async def _added_phases(self, number):
+        """Play the phases conditions add after round `number` (0: before round
+        1), each as many sessions as it asks; whether one ends the game."""
+        ended = False
+        for condition in self.conditions:
+            if not (extra := condition.phase_after(number)):
+                continue
+            sessions = max(extra.sessions.values()) if extra.sessions else 1
+            for session in range(1, sessions + 1):
+                added = (condition, dataclasses.replace(extra, session=session))
+                self.turns += await self._turns(extra.name, number, {}, added)
+            ended = ended or extra.last
+        return ended
 
     async def _phase(self, phase, number, said):
         turns = await self._turns(phase, number, said)
@@ -337,7 +358,11 @@ class Game:
         # Every agent's turn settles before a failure is raised, so a call
         # still out when another agent's fails is logged, not lost.
         turns = await asyncio.gather(
-            *(self._turn(phase, number, agent, said, added) for agent in self.agents),
+            *(
+                self._turn(phase, number, agent, said, added)
+                for agent in self.agents
+                if not added or added[1].plays(agent)
+            ),
             return_exceptions=True,
         )
         for turn in turns:
@@ -353,6 +378,8 @@ class Game:
         backend = self.backends[agent_id]
         if added and added[1].model:
             agent, backend = self._stand_in(agent, added[1].model)
+        if added and added[1].max_tokens:
+            agent = dataclasses.replace(agent, max_tokens=added[1].max_tokens)
         context = {
             "round": number,
             "phase": phase,
@@ -408,6 +435,8 @@ class Game:
             "error_kind": kind,
             "finish_reason": reply.finish_reason,
         }
+        if added and added[1].sessions is not None:
+            turn["session"] = added[1].session
         if self.conditions:
             turn["conditions"] = [c.name for c in self.conditions if c.active(number)]
             turn["notices"] = notices
@@ -514,6 +543,8 @@ class Game:
         remembered = self._remembered(phase, number)
         full = bool(added) and added[1].full_history
         values = self._prompt_vars(number, agent.id, said, remembered, full)
+        if added:
+            values |= {"agent": agent.id, "session": added[1].session}
         system = self._render(agent.prompt, values)
         for condition in self.conditions:
             if extra := condition.system(self._render):

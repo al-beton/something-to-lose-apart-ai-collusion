@@ -1,4 +1,4 @@
-# Implements: backends/spend-asks-first, backends/spend-cap, backends/reasoning-in-estimate, conditions/hook-points
+# Implements: backends/spend-asks-first, backends/spend-cap, backends/reasoning-in-estimate, conditions/hook-points, conditions/free-time
 """What a config will cost before it runs.
 
 Prompts grow as the game goes on (the history is resent every turn, up to
@@ -74,13 +74,15 @@ def _paid_turns(config):
     counts = {}
 
     def count(agent, model, phase, shown, added=None):  # in round `number`
-        notices = game._notices(phase, number)
+        notices = game._notices(phase, number) if number else []
         messages = game._messages(phase, number, agent, shown, notices, added)
         answering = dataclasses.replace(agent, model=model)
         _, chars, turns = counts.get((agent.id, model), (answering, 0, 0))
         chars += sum(len(x["content"]) for x in messages)
         counts[(agent.id, model)] = (answering, chars, turns + 1)
 
+    number = 0
+    _count_added(game, number, count)
     for number in range(1, config.market.rounds + 1):
         said = {a: TYPICAL_MESSAGE for a in game.agents} if config.market.talk else {}
         for phase in phases:
@@ -96,12 +98,21 @@ def _paid_turns(config):
                 "profits": m.profits(prices),
             }
         )
-        added = [(c, p) for c in game.conditions if (p := c.phase_after(number))]
-        for condition, phase in added:
-            for agent in config.agents:
-                model = phase.model or agent.model
-                if not is_mock(model):
-                    count(agent, model, phase.name, {}, (condition, phase))
-        if any(phase.last for _, phase in added):
+        if _count_added(game, number, count):
             break
     return list(counts.values())
+
+
+def _count_added(game, number, count):
+    """Count the turns of the phases conditions add after round `number`, each
+    session of them; whether one ends the game."""
+    added = [(c, p) for c in game.conditions if (p := c.phase_after(number))]
+    for condition, phase in added:
+        sessions = max(phase.sessions.values()) if phase.sessions else 1
+        for session in range(1, sessions + 1):
+            this = dataclasses.replace(phase, session=session)
+            for agent in game.config.agents:
+                model = phase.model or agent.model
+                if this.plays(agent.id) and not is_mock(model):
+                    count(agent, model, phase.name, {}, (condition, this))
+    return any(phase.last for _, phase in added)
