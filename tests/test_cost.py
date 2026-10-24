@@ -1,4 +1,5 @@
 # Implements: backends/reported-cost, backends/spend-asks-first, backends/spend-cap, reproducibility/manifest, runs/cheap-preset
+import asyncio
 import json
 from types import SimpleNamespace
 
@@ -174,3 +175,42 @@ def test_cheap_preset_is_cheap_by_construction():
     assert config.market.history_window
     assert config.budget and config.budget <= 0.30
     assert all(not a.model.startswith("mock/") for a in config.agents)
+
+
+def test_spend_cap_rechecked_after_a_rate_limit_wait(
+    make_config, tmp_path, fake_model, monkeypatch
+):
+    """A waits out a rate limit while B's reply passes the cap: A must not call."""
+    import httpx
+
+    clock = [1_800_000_000.0]
+
+    async def wait(seconds):
+        await asyncio.sleep(0)  # let B answer meanwhile
+        clock[0] += seconds
+
+    monkeypatch.setattr(backends, "_sleep", wait)
+    monkeypatch.setattr(backends, "_now", lambda: clock[0])
+    response = httpx.Response(
+        429,
+        headers={"Retry-After": "30"},
+        request=httpx.Request("POST", "https://example.test"),
+    )
+    limited = litellm.RateLimitError(
+        message="Rate limit exceeded",
+        llm_provider="openrouter",
+        model=ROUTER_MODEL,
+        response=response,
+    )
+    fake_model.replies = [limited, {"content": '{"price": 7}', "cost": 0.05}]
+    both = [f"agents.{i}.model={ROUTER_MODEL}" for i in (0, 1)]
+    config = make_config(overrides=[*both, "market.talk=false", "budget=0.01"])
+    with pytest.raises(RunFailed, match="spend cap"):
+        run_config(config, tmp_path)
+    assert len(fake_model.calls) == 2
+
+
+def test_spend_cap_warns_when_a_model_has_no_price(tmp_path, fake_model, capsys):
+    lab_run(tmp_path, "-y", "--max-cost", "1", "--set", "market.rounds=1")
+    err = capsys.readouterr().err
+    assert f"no price for {ROUTER_MODEL}" in err and "can't be enforced" in err
