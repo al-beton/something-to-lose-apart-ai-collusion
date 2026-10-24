@@ -113,11 +113,14 @@ def test_resume_plays_a_finished_run_again_when_its_config_changed(
 
 
 def test_missing_runs_shown_in_the_summary_table(
-    make_config, tmp_path, seed_one_fails, capsys
+    make_config, tmp_path, seed_one_fails, capsys, monkeypatch
 ):
+    monkeypatch.setattr(litellm, "completion_cost", lambda **kwargs: 0.5)
     run_sweep(make_config(CONFIG), tmp_path, Cache(tmp_path / "c.sqlite"))
     [row] = summarize(tmp_path)
     assert (row["runs"], row["missing"]) == (2, 1)
+    # Two finished runs of three calls each, and the failed run's one call.
+    assert row["cost"] == 0.5 * (3 + 3 + 1)
     [missing] = missing_runs(tmp_path)
     assert missing["run"] == "test/seed-1" and missing["state"] == "failed"
     assert cli.main(["summary", str(tmp_path)]) == 0
