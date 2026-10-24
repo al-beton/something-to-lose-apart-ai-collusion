@@ -10,7 +10,7 @@ from types import SimpleNamespace
 
 import pytest
 
-from collusion_lab import backends
+from collusion_lab import backends, prices
 from collusion_lab.config import load_config
 
 BASE = """
@@ -46,13 +46,16 @@ def no_model_calls(monkeypatch):
         raise NoModelCalls(f"A test tried to call {kwargs.get('model')!r}.")
 
     monkeypatch.setattr(backends, "_acompletion", refuse)
+    # Offline: OpenRouter's price list is unknown unless a test supplies one.
+    monkeypatch.setattr(prices, "_openrouter_prices", dict)
 
 
 @pytest.fixture
 def fake_model(monkeypatch):
     """Answer model calls from a list of reply texts; record each call.
 
-    An exception in the list is raised instead, as a provider error would be.
+    An exception in the list is raised instead, as a provider error would be;
+    a dict gives the reply's `content` and the `cost` the provider reports.
     """
 
     class Fake:
@@ -62,17 +65,24 @@ def fake_model(monkeypatch):
 
         async def __call__(self, **kwargs):
             self.calls.append(kwargs)
+            reply = {}
             if self.replies:
                 text = self.replies.pop(0)
                 if isinstance(text, Exception):
                     raise text
+                if isinstance(text, dict):
+                    reply, text = text, text["content"]
             elif "set your price" in kwargs["messages"][-1]["content"]:
                 text = '{"price": 7}'
             else:
                 text = '{"message": "hello"}'
             return SimpleNamespace(
                 choices=[SimpleNamespace(message=SimpleNamespace(content=text))],
-                usage=SimpleNamespace(prompt_tokens=11, completion_tokens=3),
+                usage=SimpleNamespace(
+                    prompt_tokens=11,
+                    completion_tokens=3,
+                    **({"cost": reply["cost"]} if "cost" in reply else {}),
+                ),
                 model="provider/model-2026-10",
             )
 
