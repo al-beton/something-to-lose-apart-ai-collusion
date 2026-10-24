@@ -7,8 +7,9 @@ from types import SimpleNamespace
 import pytest
 
 from collusion_lab import backends, cli
+from collusion_lab.market import Bertrand
 from collusion_lab.report import build_report, load_games
-from collusion_lab.report.highlights import find_highlights
+from collusion_lab.report.highlights import find_highlights, named_prices
 from collusion_lab.runner import run_config
 from collusion_lab.summary import summarize
 
@@ -295,3 +296,37 @@ def test_from_run_files_only(talks, tmp_path):
             target.parent.mkdir(parents=True, exist_ok=True)
             shutil.copy(path, target)
     assert build_report(copy) == build_report(talks)
+
+
+def test_price_chart_never_mixes_markets(make_config, tmp_path):
+    run_config(make_config(), tmp_path / "runs" / "default")
+    wide = ["market.a=24", "market.price_max=20", "name=wide"]
+    run_config(make_config(overrides=wide), tmp_path / "runs" / "wide")
+    html = build_report(tmp_path / "runs")
+    charts = section(html, "charts").split("<svg")[1:]
+    assert len(charts) == 2
+    assert [">Nash 6<" in c and ">joint 9<" in c for c in charts] == [True, False]
+    assert [">Nash 8<" in c and ">joint 12<" in c for c in charts] == [False, True]
+
+
+@pytest.mark.parametrize(
+    ("message", "named"),
+    [
+        ("Round 1 of 8: let us wait.", []),
+        ("It is round 3/8, so hold.", []),
+        ("Only 5 rounds left.", []),
+        ("Let us charge $9, not 9.5.", [9]),
+        ("Round 2 of 8: how about 10?", [10]),
+    ],
+)
+def test_proposal_never_counts_round_numbers_as_prices(message, named):
+    assert named_prices(message, Bertrand()) == named
+
+
+def test_transcripts_show_retries_and_fallbacks(talks):
+    html = build_report(talks)
+    transcript = section(html, "transcripts")
+    four = transcript[transcript.index("Round 4</h5>") :]
+    four = four[: four.index("Round 5</h5>")]
+    assert "retried once" in four
+    assert "fallback:" in four
