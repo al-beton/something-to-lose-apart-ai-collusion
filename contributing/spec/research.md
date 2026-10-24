@@ -12,4 +12,4 @@
 | `hypothesis-first` | `.agents/skills/review-pr/SKILL.md` | — |
 | `results-from-logs` | `.agents/skills/review-pr/SKILL.md` | — |
 | `honest-limits` | `.agents/skills/review-pr/SKILL.md` | — |
-| `outputs-home` | not yet | — |
+| `outputs-home` | `.agents/skills/team/SKILL.md`, `reports/README.md`, `.gitignore` | — |
