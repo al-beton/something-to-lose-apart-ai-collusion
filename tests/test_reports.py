@@ -8,11 +8,11 @@ from types import SimpleNamespace
 import pytest
 
 from collusion_lab import backends, cli
-from collusion_lab.market import Bertrand
 from collusion_lab.config import load_config
+from collusion_lab.market import Bertrand
 from collusion_lab.report import build_report, load_games
-from collusion_lab.report.markdown import first_screen_markdown
 from collusion_lab.report.highlights import find_highlights, named_prices
+from collusion_lab.report.markdown import first_screen_markdown
 from collusion_lab.runner import run_config
 from collusion_lab.summary import format_table, summarize
 
