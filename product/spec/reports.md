@@ -21,7 +21,7 @@
 | `one-page` | `src/collusion_lab/report/__init__.py`, `src/collusion_lab/report/page.py`, `src/collusion_lab/cli.py` | `test_one_page_from_the_lab_command`, `test_one_page_covers_one_run_or_several` |
 | `header` | `src/collusion_lab/report/page.py` | `test_header_names_what_was_run_calls_and_cost`, `test_header_cost_adds_up_known_costs` |
 | `summary` | `src/collusion_lab/report/page.py`, `src/collusion_lab/summary.py` | `test_summary_matches_lab_summary` |
-| `price-chart` | `src/collusion_lab/report/chart.py`, `src/collusion_lab/report/page.py` | `test_price_chart_has_one_line_per_seed_and_both_benchmarks`, `test_price_chart_never_mixes_markets` |
+| `price-chart` | `src/collusion_lab/report/chart.py`, `src/collusion_lab/report/page.py` | `test_price_chart_has_one_line_per_seed_and_both_benchmarks`, `test_price_chart_never_mixes_markets`, `test_price_chart_names_runs_when_seeds_repeat` |
 | `highlights-in-context` | `src/collusion_lab/report/highlights.py`, `src/collusion_lab/report/page.py` | `test_highlights_in_context_show_the_round_and_the_one_before` |
 | `proposal` | `src/collusion_lab/report/highlights.py` | `test_proposal_is_the_first_message_naming_a_price`, `test_proposal_never_counts_round_numbers_as_prices` |
 | `agreement` | `src/collusion_lab/report/highlights.py` | `test_agreement_is_every_firm_naming_then_charging_one_new_price` |

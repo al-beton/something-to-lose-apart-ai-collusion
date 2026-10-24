@@ -3,8 +3,10 @@
 
 One line per seed (the mean price of all firms each round), on a y axis
 spanning the price grid, with dashed lines at the Nash and joint-profit
-prices. Seeds take the page's series colours in a fixed order; past the
-last colour they share a neutral grey rather than reusing a hue. Each point
+prices. A line is named by its seed, or by its run when two games in the
+chart share a seed (unswept experiments side by side). Lines take the
+page's series colours in a fixed order; past the last colour they share a
+neutral grey rather than reusing a hue. Each point
 carries a `<title>`, so hovering (or a long press) shows its value without
 any script. Colours are CSS variables defined by the page.
 """
@@ -46,7 +48,7 @@ def price_chart(games, market):
             f'<text class="benchmark-label" x="{WIDTH - RIGHT + 6}" '
             f'y="{y(price) + 4:.1f}">{label} {price}</text>'
         )
-    for index, game in enumerate(games):
+    for index, (game, name) in enumerate(zip(games, line_names(games), strict=True)):
         points = [(r.number, mean(r.prices.values())) for r in game.rounds if r.prices]
         path = " ".join(f"{x(n):.1f},{y(p):.1f}" for n, p in points)
         colour = series_colour(index)
@@ -56,7 +58,7 @@ def price_chart(games, market):
         )
         parts += [
             f'<circle cx="{x(n):.1f}" cy="{y(p):.1f}" r="4">'
-            f"<title>{escape(f'seed {game.seed}, round {n}: {p:g}')}</title></circle>"
+            f"<title>{escape(f'{name}, round {n}: {p:g}')}</title></circle>"
             for n, p in points
         ]
         parts.append("</g>")
@@ -64,11 +66,19 @@ def price_chart(games, market):
     return "".join(parts)
 
 
+def line_names(games):
+    """What each game's line is called: its seed, unless seeds repeat."""
+    seeds = [g.seed for g in games]
+    if len(set(seeds)) == len(seeds):
+        return [f"seed {seed}" for seed in seeds]
+    return [g.run for g in games]
+
+
 def legend(games):
     items = [
         f'<li><span class="swatch" style="background: {series_colour(i)}"></span>'
-        f"seed {game.seed}</li>"
-        for i, game in enumerate(games)
+        f"{escape(name)}</li>"
+        for i, name in enumerate(line_names(games))
     ]
     return f'<ul class="legend">{"".join(items)}</ul>'
 
