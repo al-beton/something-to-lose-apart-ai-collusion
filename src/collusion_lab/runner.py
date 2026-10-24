@@ -1,4 +1,4 @@
-# Implements: runs/sweeps, runs/parallel, market/talk-then-price, agents/json-replies, agents/retry-once, backends/usage-logged, backends/spend-asks-first, backends/shared-rate-limit, backends/spend-cap, market/history-window, runs/stops-cleanly, reproducibility/response-cache, reproducibility/manifest, runs/run-directory, logs/turn-log, logs/same-seed-same-log, logs/run-summary, logs/reasoning-logged, backends/reasoning-setting, agents/unreadable-explained, agents/json-mode, runs/fallback-rates
+# Implements: runs/sweeps, runs/parallel, market/talk-then-price, agents/json-replies, agents/retry-once, backends/usage-logged, backends/spend-asks-first, backends/shared-rate-limit, backends/spend-cap, market/history-window, runs/stops-cleanly, reproducibility/response-cache, reproducibility/manifest, runs/run-directory, logs/turn-log, logs/same-seed-same-log, logs/run-summary, logs/reasoning-logged, backends/reasoning-setting, agents/unreadable-explained, agents/json-mode, runs/fallback-rates, runs/failures-dont-stop-sweeps, runs/resume
 """Playing a config: one game per seed, each written to its own run directory.
 
 A round is a talk phase (each agent sends one message its rivals read; skipped
@@ -31,6 +31,13 @@ backends.py), so the spend cap counts every game's calls.
 
 With `market.history_window: N`, agents see their last N rounds in full and
 one line summing up the rounds before them.
+
+`run_sweep` plays every run even when some fail, and returns an `Outcome`
+for each: `finished`, `failed` (with its error) or `skipped`, when the run's
+directory already holds a summary written from the same resolved config.
+`status.json` (see status.py) tracks each one as it goes. Rerunning a sweep
+that stopped partway thus plays only what's missing, and with the cache the
+calls a failed run already made replay for free.
 """
 
 import asyncio
@@ -55,6 +62,7 @@ from collusion_lab.cache import CachedBackend
 from collusion_lab.config import expand
 from collusion_lab.market import Bertrand
 from collusion_lab.prompts import render
+from collusion_lab.status import Status
 
 PHASE_PROMPTS = {"talk": "phase/talk.md", "price": "phase/price.md"}
 RETRY_PROMPT = "phase/retry.md"
@@ -83,21 +91,78 @@ def paid_calls(config):
     return total
 
 
-def run_config(config, out, cache=None):
-    """Play every combination and seed; return the run directories in order."""
+@dataclass(frozen=True)
+class Outcome:
+    run: str
+    dir: Path
+    state: str  # finished, failed or skipped
+    error: str | None = None
+
+
+def run_sweep(config, out, cache=None):
+    """Play every combination and seed, past failures; one Outcome per run."""
     return asyncio.run(_play_all(config, Path(out), cache))
+
+
+def run_config(config, out, cache=None):
+    """Like run_sweep, but return the run directories and raise the first
+    failure once every run has ended."""
+    outcomes = run_sweep(config, out, cache)
+    if failed := [o for o in outcomes if o.state == "failed"]:
+        raise RunFailed(failed[0].error)
+    return [o.dir for o in outcomes]
 
 
 async def _play_all(config, out, cache):
     limit = asyncio.Semaphore(config.concurrency)
     shared = RunWide(budget=Budget(config.budget))
+    status = Status(out / config.name / "status.json")
+    runs = [(child, seed) for child in expand(config) for seed in child.seeds]
+    for child, seed in runs:
+        status.plan(run_id(child, seed), dataclasses.replace(child, seeds=[seed]))
+    status.save()
 
     async def limited(child, seed):
+        run = run_id(child, seed)
+        run_dir = out / run
+        if _finished(child, seed, run_dir):
+            status.mark(run, "skipped")
+            return Outcome(run, run_dir, "skipped")
         async with limit:
-            return await play(child, seed, out, cache, shared)
+            try:
+                await play(child, seed, out, cache, shared)
+            except RunFailed as error:
+                status.mark(run, "failed", str(error))
+                return Outcome(run, run_dir, "failed", str(error))
+        status.mark(run, "finished")
+        return Outcome(run, run_dir, "finished")
 
-    jobs = [limited(c, seed) for c in expand(config) for seed in c.seeds]
-    return list(await asyncio.gather(*jobs))
+    return list(await asyncio.gather(*(limited(c, seed) for c, seed in runs)))
+
+
+def _spent_before(run_dir):
+    """What earlier attempts in this run directory cost, from its manifest."""
+    path = run_dir / "manifest.json"
+    if not path.exists():
+        return 0
+    old = json.loads(path.read_text())
+    return (old.get("cost") or 0) + old.get("earlier_cost", 0)
+
+
+def _finished(config, seed, run_dir):
+    """Whether a run already finished with exactly this resolved config and
+    the same prompt files (edited in place, a prompt keeps its path)."""
+    resolved = dataclasses.replace(config, seeds=[seed]).to_yaml()
+    written, record = run_dir / "config.yaml", run_dir / "manifest.json"
+    return (
+        (run_dir / "summary.json").exists()
+        and written.exists()
+        and written.read_text() == resolved
+        and record.exists()
+        and manifest.prompts_unchanged(
+            json.loads(record.read_text()), config.prompts_dir
+        )
+    )
 
 
 def run_id(config, seed):
@@ -111,8 +176,10 @@ def _now():
 async def play(config, seed, out, cache=None, shared=None):
     run_dir = Path(out) / run_id(config, seed)
     run_dir.mkdir(parents=True, exist_ok=True)
-    # An old summary must not outlive a replay that fails.
+    # An old summary must not outlive a replay that fails, but what earlier
+    # attempts spent stays counted: their calls replay free from the cache.
     (run_dir / "summary.json").unlink(missing_ok=True)
+    earlier = _spent_before(run_dir)
     resolved = dataclasses.replace(config, seeds=[seed])
     (run_dir / "config.yaml").write_text(resolved.to_yaml())
     started = _now()
@@ -125,6 +192,8 @@ async def play(config, seed, out, cache=None, shared=None):
         record = manifest.build(
             resolved, game.prompt_names(), game.timings, started, _now()
         )
+        if earlier:
+            record["earlier_cost"] = earlier
         (run_dir / "manifest.json").write_text(json.dumps(record, indent=2) + "\n")
     summary = game.summary(run_id(config, seed))
     (run_dir / "summary.json").write_text(json.dumps(summary, indent=2) + "\n")
@@ -192,11 +261,16 @@ class Game:
         return {t["agent"]: t["used"]["message"] for t in turns}
 
     async def _turns(self, phase, number, said):
-        return list(
-            await asyncio.gather(
-                *(self._turn(phase, number, agent, said) for agent in self.agents)
-            )
+        # Every agent's turn settles before a failure is raised, so a call
+        # still out when another agent's fails is logged, not lost.
+        turns = await asyncio.gather(
+            *(self._turn(phase, number, agent, said) for agent in self.agents),
+            return_exceptions=True,
         )
+        for turn in turns:
+            if isinstance(turn, BaseException):
+                raise turn
+        return list(turns)
 
     async def _turn(self, phase, number, agent_id, said):
         agent = self.agents[agent_id]

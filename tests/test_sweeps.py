@@ -75,7 +75,9 @@ def test_summary_table_groups_by_the_swept_values(make_config, tmp_path):
     joint = next(r for r in rows if r["model"] == "mock/joint" and r["rounds"] == 3)
     assert (joint["mean price"], joint["gain"], joint["fallbacks"]) == (9, 1, 0)
     table = format_table(rows)
-    assert table.splitlines()[0].startswith("| model | rounds | runs | mean price |")
+    assert table.splitlines()[0].startswith(
+        "| model | rounds | runs | missing | mean price |"
+    )
 
 
 def test_summary_table_groups_by_any_config_value(make_config, tmp_path):

@@ -1,4 +1,4 @@
-# Implements: runs/summary-table, runs/per-firm-summary, runs/fallback-rates, reports/summary
+# Implements: runs/summary-table, runs/per-firm-summary, runs/fallback-rates, reports/summary, runs/missing-runs-shown
 """One table for a folder of runs, grouped by swept values or any config value.
 
 `summarize` reads every `summary.json` under a folder (and the `manifest.json`
@@ -6,7 +6,9 @@ beside it for cost and config). Rows group runs by the swept values (their
 labels) unless `by` names other keys: a label, or any config path such as
 `market.rounds` or `agents.*.model` (`*` joins every agent's value). Each row
 gives the number of runs, the mean market price and gain over their last
-rounds, total fallbacks and total cost, then which firms a script (a `mock/`
+rounds, total fallbacks and total cost, how many of its planned runs are
+`missing` (failed or never finished, from `status.json`; see status.py),
+which the means leave out, then which firms a script (a `mock/`
 model) played, and each firm's own mean price, gain, fallbacks and cost
 (from its turn and timing logs). When a run has both scripted and model
 firms, its headline mean price and gain are the model firms' alone. List and mapping values (`seeds`)
@@ -31,22 +33,34 @@ from collusion_lab.backends import is_mock
 
 FIRM_COLUMNS = ("price", "gain", "fallbacks", "cost")
 FLAG_RATE = 0.1  # flag a run when more than one turn in ten fell back
+from collusion_lab.status import unfinished
 
 
 class Run(NamedTuple):
     dir: Path
-    summary: dict
+    summary: dict | None  # None for a run that's missing
     manifest: dict
+
+    @property
+    def labels(self):
+        if self.summary:
+            return self.summary.get("labels", {})
+        return self.manifest.get("config", {}).get("labels", {})
 
 
 def group_runs(folder, by=None):
-    """The keys grouped by, and (key, runs) pairs in table order."""
+    """The keys grouped by, and (key, runs) pairs in table order; a group's
+    missing runs come with `summary` None."""
     runs = _finished(folder)
+    runs += [
+        _missing(Path(folder) / path, entry)
+        for path, entry in unfinished(folder).items()
+    ]
     if by is None:
-        by = list(dict.fromkeys(k for r in runs for k in r.summary.get("labels", {})))
+        by = list(dict.fromkeys(k for r in runs for k in r.labels))
     groups = {}
     for run in runs:
-        key = tuple(_value(run.summary, run.manifest, name) for name in by)
+        key = tuple(_value(run, name) for name in by)
         groups.setdefault(key, []).append(run)
     return by, [(key, groups[key]) for key in sorted(groups, key=_sort_key)]
 
@@ -133,6 +147,22 @@ def format_replies(folder):
     return "\n".join(lines)
 
 
+def missing_runs(folder):
+    """Each run planned under a folder that failed or never finished."""
+    return [
+        {"run": run, "state": entry["state"], "error": entry.get("error")}
+        for run, entry in unfinished(folder).items()
+    ]
+
+
+def format_missing(folder):
+    """One line per missing run, or "" when none is."""
+    return "\n".join(
+        f"Missing: {m['run']} ({m['state']}){': ' + m['error'] if m['error'] else ''}"
+        for m in missing_runs(folder)
+    )
+
+
 def format_table(rows):
     if not rows:
         return "No runs found."
@@ -145,6 +175,14 @@ def format_table(rows):
     return "\n".join(lines)
 
 
+def _missing(run_dir, entry):
+    """A run with no summary; its manifest, when it got that far, keeps what
+    it spent counted in the group's cost."""
+    path = run_dir / "manifest.json"
+    manifest = json.loads(path.read_text()) if path.exists() else {}
+    return Run(run_dir, None, {**manifest, "config": entry["config"]})
+
+
 def _load(path):
     summary = json.loads(path.read_text())
     manifest_path = path.with_name("manifest.json")
@@ -153,22 +191,28 @@ def _load(path):
 
 
 def _row(by, key, runs):
-    summaries = [r.summary for r in runs]
-    headlines = [_headline(r) for r in runs]
+    played = [r for r in runs if r.summary]
+    summaries = [r.summary for r in played]
+    headlines = [_headline(r) for r in played]
     scripted = sorted({f for r in runs for f in _scripted(r)})
+
+    def average(values, digits):
+        return round(mean(values), digits) if values else None
+
     return {
         **dict(zip(by, key, strict=True)),
-        "runs": len(runs),
-        "mean price": round(mean(price for price, _ in headlines), 2),
-        "gain": round(mean(gain for _, gain in headlines), 3),
+        "runs": len(played),
+        "missing": len(runs) - len(played),
+        "mean price": average([price for price, _ in headlines], 2),
+        "gain": average([gain for _, gain in headlines], 3),
         "fallbacks": sum(s["fallbacks"] for s in summaries),
-        "cost": round(sum(r.manifest.get("cost") or 0 for r in runs), 4),
+        "cost": round(sum(run_cost(r.manifest) for r in runs), 4),
         "scripted": ", ".join(scripted) or None,
     }
 
 
 def _firms(run):
-    return list(run.summary.get("mean_price", {}))
+    return list((run.summary or {}).get("mean_price", {}))
 
 
 def _scripted(run):
@@ -217,11 +261,23 @@ def _lines(path):
         return [json.loads(line) for line in log if line.strip()]
 
 
-def _value(summary, manifest, name):
-    if name in summary.get("labels", {}):
-        value = summary["labels"][name]
+def run_cost(manifest):
+    """A run's cost, with what its earlier failed attempts spent."""
+    return (manifest.get("cost") or 0) + manifest.get("earlier_cost", 0)
+
+
+def spent(folder):
+    """The manifest of every run under a folder that made calls, finished or
+    not, so a total of spend leaves nothing out."""
+    _, groups = group_runs(folder)
+    return [r.manifest for _, runs in groups for r in runs if "calls" in r.manifest]
+
+
+def _value(run, name):
+    if name in run.labels:
+        value = run.labels[name]
     else:
-        value = _lookup(manifest.get("config", {}), name.split("."))
+        value = _lookup(run.manifest.get("config", {}), name.split("."))
     # Lists and mappings group by their JSON text, which also reads well.
     return json.dumps(value) if isinstance(value, list | dict) else value
 
