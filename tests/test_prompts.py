@@ -150,7 +150,11 @@ def test_stakes_prompts_differ_only_in_the_stake(wording):
 @pytest.mark.parametrize("wording", ["1", "2"])
 def test_stakes_prompts_audit_reminds_of_what_round_1_said(wording):
     audit = Path("prompts/conditions/audit/stakes")
-    law = {"1": "is illegal", "2": "against the law"}[wording]
-    for arm in ("illegal", "instruction"):
-        assert law in (audit / f"{arm}-{wording}.md").read_text(), arm
+    reminder = {
+        "1": "As you were told, agreeing prices with a competitor is illegal",
+        "2": "As you knew, fixing prices together with a rival firm is against the law",
+    }[wording]
+    for arm in ("illegal", "instruction", "termination", "owned"):
+        assert (audit / f"{arm}-{wording}.md").read_text().startswith(reminder), arm
+    assert "illegal" not in (audit / f"fiduciary-{wording}.md").read_text()
     assert "collude" in (audit / f"instruction-{wording}.md").read_text()
