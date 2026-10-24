@@ -261,11 +261,16 @@ class Game:
         return {t["agent"]: t["used"]["message"] for t in turns}
 
     async def _turns(self, phase, number, said):
-        return list(
-            await asyncio.gather(
-                *(self._turn(phase, number, agent, said) for agent in self.agents)
-            )
+        # Every agent's turn settles before a failure is raised, so a call
+        # still out when another agent's fails is logged, not lost.
+        turns = await asyncio.gather(
+            *(self._turn(phase, number, agent, said) for agent in self.agents),
+            return_exceptions=True,
         )
+        for turn in turns:
+            if isinstance(turn, BaseException):
+                raise turn
+        return list(turns)
 
     async def _turn(self, phase, number, agent_id, said):
         agent = self.agents[agent_id]
