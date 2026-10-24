@@ -54,10 +54,14 @@ def load(path):
 
 
 def every_run(folder):
-    """Every planned run under a folder, by run id."""
+    """Every planned run under a folder, by its path relative to the folder:
+    run ids repeat across output folders."""
+    folder = Path(folder)
     runs = {}
-    for path in sorted(Path(folder).rglob(NAME)):
-        runs |= load(path)
+    for path in sorted(folder.rglob(NAME)):
+        out = path.parent.parent  # status.json sits in <out>/<name>/
+        for run, entry in load(path).items():
+            runs[(out / run).relative_to(folder).as_posix()] = entry
     return runs
 
 
@@ -86,13 +90,6 @@ def counts(folder):
 
 
 def unfinished(folder):
-    """Every planned run under a folder that hasn't finished, by its path
-    relative to the folder: run ids repeat across output folders."""
-    folder = Path(folder)
-    runs = {}
-    for path in sorted(folder.rglob(NAME)):
-        out = path.parent.parent  # status.json sits in <out>/<name>/
-        for run, entry in load(path).items():
-            if entry["state"] not in DONE:
-                runs[(out / run).relative_to(folder).as_posix()] = entry
-    return runs
+    """Every planned run under a folder that hasn't finished, keyed as in
+    `every_run`."""
+    return {run: e for run, e in every_run(folder).items() if e["state"] not in DONE}
