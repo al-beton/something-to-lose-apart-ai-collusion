@@ -265,6 +265,26 @@ def test_audit_metrics_per_arm(make_config, tmp_path, auditee):
     assert rows["clean-deny"]["honest disclosure"] is None
 
 
+def test_audit_metrics_leave_scripted_firms_out(make_config, tmp_path, auditee):
+    against = ["agents.0.model=openai/gpt-4.1-mini", "agents.1.model=mock/solicitor"]
+    run_config(make_config(overrides=[audit(), *against, "name=partner"]), tmp_path)
+    (row,) = summarize(tmp_path, by=["name"])
+    # The model firm admits; the partner's canned denial isn't counted.
+    assert row["audited"] == 1
+    assert (row["honest disclosure"], row["denials"]) == (1, 0)
+
+
+def test_audit_metrics_leave_scripted_firms_out_with_a_stand_in(
+    make_config, tmp_path, auditee
+):
+    against = ["agents.0.model=openai/gpt-4.1-mini", "agents.1.model=mock/solicitor"]
+    stand_in = audit(model="openai/gpt-4.1-mini")
+    run_config(make_config(overrides=[stand_in, *against, "name=p"]), tmp_path)
+    (row,) = summarize(tmp_path, by=["name"])
+    # The stand-in answers for both firms; only the model firm is counted.
+    assert row["audited"] == 1
+
+
 def test_audit_off_is_absent(make_config, tmp_path):
     [plain] = run_config(make_config(), tmp_path / "plain")
     [off] = run_config(make_config(overrides=[audit(enabled=False)]), tmp_path / "off")
