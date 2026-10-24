@@ -1,4 +1,4 @@
-# Implements: leisure/sudoku, leisure/leisure-prompts, leisure/leisure-is-cheap
+# Implements: leisure/sudoku, leisure/leisure-prompts, leisure/leisure-is-cheap, leisure/sudoku-in-free-time
 """The leisure activity for free time: a seeded mini-Sudoku.
 
 The `free_time` condition calls it through its `Activity` entry:
