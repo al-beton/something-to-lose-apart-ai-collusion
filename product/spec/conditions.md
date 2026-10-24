@@ -12,10 +12,10 @@
 
 | Statement | Enforced by | Tested by |
 |---|---|---|
-| `switchable` | not yet | — |
-| `hook-points` | not yet | — |
-| `adding-a-condition` | not yet | — |
-| `off-is-absent` | not yet | — |
-| `conditions-logged` | not yet | — |
-| `instruction` | not yet | — |
-| `outage` | not yet | — |
+| `switchable` | `src/collusion_lab/config.py`, `src/collusion_lab/conditions/__init__.py` | `test_switchable_conditions_sweep_and_label_runs`, `test_switchable_conditions_reject_unknown_names_and_settings` |
+| `hook-points` | `src/collusion_lab/conditions/__init__.py`, `src/collusion_lab/runner.py` | `test_instruction_adds_a_prompt_file_to_every_system_prompt`, `test_outage_notices_appear_on_exactly_the_right_rounds` |
+| `adding-a-condition` | `src/collusion_lab/conditions/__init__.py`, reviewer | — |
+| `off-is-absent` | `src/collusion_lab/runner.py` | `test_off_is_absent_leaves_the_turn_log_byte_identical` |
+| `conditions-logged` | `src/collusion_lab/runner.py` | `test_outage_notices_appear_on_exactly_the_right_rounds`, `test_outage_keeps_logging_what_agents_said` |
+| `instruction` | `src/collusion_lab/conditions/instruction.py`, `prompts/conditions/no-collusion.md` | `test_instruction_adds_a_prompt_file_to_every_system_prompt` |
+| `outage` | `src/collusion_lab/conditions/outage.py`, `prompts/conditions/outage.md`, `prompts/conditions/outage-restored.md` | `test_outage_notices_appear_on_exactly_the_right_rounds`, `test_outage_without_a_restored_notice`, `test_outage_keeps_logging_what_agents_said` |

@@ -1,4 +1,4 @@
-# Implements: runs/sweeps, runs/parallel, market/talk-then-price, agents/json-replies, agents/retry-once, backends/usage-logged, backends/spend-asks-first, backends/shared-rate-limit, backends/spend-cap, market/history-window, runs/stops-cleanly, reproducibility/response-cache, reproducibility/manifest, runs/run-directory, logs/turn-log, logs/same-seed-same-log, logs/run-summary, logs/reasoning-logged, backends/reasoning-setting, agents/unreadable-explained, agents/json-mode, runs/fallback-rates, runs/failures-dont-stop-sweeps, runs/resume
+# Implements: runs/sweeps, runs/parallel, market/talk-then-price, agents/json-replies, agents/retry-once, backends/usage-logged, backends/spend-asks-first, backends/shared-rate-limit, backends/spend-cap, market/history-window, runs/stops-cleanly, reproducibility/response-cache, reproducibility/manifest, runs/run-directory, logs/turn-log, logs/same-seed-same-log, logs/run-summary, logs/reasoning-logged, backends/reasoning-setting, agents/unreadable-explained, agents/json-mode, runs/fallback-rates, runs/failures-dont-stop-sweeps, runs/resume, conditions/hook-points, conditions/off-is-absent, conditions/conditions-logged
 """Playing a config: one game per seed, each written to its own run directory.
 
 A round is a talk phase (each agent sends one message its rivals read; skipped
@@ -22,6 +22,11 @@ couldn't be read (`error_kind`) and the provider's `finish_reason`. A reply
 cut off at the token limit is `truncated` whatever else is wrong with it, and
 the retry asks for a shorter one. Each run's summary counts, per model, its
 turns, unreadable replies, fallbacks and their reasons (`replies`).
+
+Enabled conditions (see conditions/) add to the system prompt and put
+notices, separated by blank lines, before a phase's prompt; when any is
+enabled, each turn line also lists the conditions active that round and the
+notices that agent was shown. With none enabled, nothing changes.
 
 A model call that fails for good (see backends.py) stops its game: the turns
 played so far, the timings and the manifest are still written, and
@@ -237,6 +242,7 @@ class Game:
         self.turns = []
         self.timings = []
         self.used_prompts = set()
+        self.conditions = [c for c in config.conditions.values() if c.enabled]
 
     async def play(self):
         for number in range(1, self.config.market.rounds + 1):
@@ -251,9 +257,15 @@ class Game:
                 agent = turn["agent"]
                 turn["outcome"] = {"quantity": sold[agent], "profit": profits[agent]}
             self.turns += price_turns
-            self.history.append(
-                {"round": number, "said": said, "prices": prices, "profits": profits}
-            )
+            record = {
+                "round": number,
+                "said": said,
+                "prices": prices,
+                "profits": profits,
+            }
+            self.history.append(record)
+            for condition in self.conditions:
+                condition.after_round(record)
 
     async def _phase(self, phase, number, said):
         turns = await self._turns(phase, number, said)
@@ -274,7 +286,8 @@ class Game:
 
     async def _turn(self, phase, number, agent_id, said):
         agent = self.agents[agent_id]
-        messages = self._messages(phase, number, agent, said)
+        notices = self._notices(phase, number)
+        messages = self._messages(phase, number, agent, said, notices)
         context = {
             "round": number,
             "phase": phase,
@@ -309,7 +322,7 @@ class Game:
             used = fallback(phase, self._last_price(agent_id), self.market.nash_price)
         else:
             used = decision(parsed)
-        return {
+        turn = {
             "run": run_id(self.config, self.seed),
             "round": number,
             "phase": phase,
@@ -328,6 +341,20 @@ class Game:
             "error_kind": kind,
             "finish_reason": reply.finish_reason,
         }
+        if self.conditions:
+            turn["conditions"] = [c.name for c in self.conditions if c.active(number)]
+            turn["notices"] = notices
+        return turn
+
+    def _notices(self, phase, number):
+        """What the enabled conditions tell agents before this phase."""
+        first = "talk" if self.config.market.talk else "price"
+        notices = []
+        for c in self.conditions:
+            if phase == first:
+                notices.append(c.round_start(number, self._render))
+            notices.append(c.before_phase(number, phase, self._render))
+        return [n.strip() for n in notices if n]
 
     async def _ask(self, agent, messages, context, attempt=1):
         """One call to the agent's backend: the reply, what it parsed to, and
@@ -381,11 +408,16 @@ class Game:
     def _last_price(self, agent_id):
         return self.history[-1]["prices"][agent_id] if self.history else None
 
-    def _messages(self, phase, number, agent, said):
+    def _messages(self, phase, number, agent, said, notices=()):
         values = self._prompt_vars(number, agent.id, said)
+        system = self._render(agent.prompt, values)
+        for condition in self.conditions:
+            if extra := condition.system(self._render):
+                system = f"{system.rstrip()}\n\n{extra.strip()}"
+        user = self._render(PHASE_PROMPTS[phase], values)
         return [
-            {"role": "system", "content": self._render(agent.prompt, values)},
-            {"role": "user", "content": self._render(PHASE_PROMPTS[phase], values)},
+            {"role": "system", "content": system},
+            {"role": "user", "content": "".join(f"{n}\n\n" for n in notices) + user},
         ]
 
     def _prompt_vars(self, number, me, said):
