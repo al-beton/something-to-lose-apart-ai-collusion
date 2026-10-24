@@ -1,4 +1,4 @@
-# Implements: ci/checks-on-every-pr, ci/one-gate
+# Implements: ci/checks-on-every-pr, ci/one-gate, ci/smoke-evidence
 name: blocking-checks
 
 # The one status to require before merging. Add jobs below and list each in the
@@ -31,9 +31,26 @@ jobs:
           persist-credentials: false
       - run: python3 .github/scripts/pr_gate.py
 
+  # A free mock run, its summary posted on the pull request (contributing/spec/ci.md).
+  smoke:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@v6
+      - run: make install
+      - run: make smoke
+      - run: python3 .github/scripts/smoke_comment.py runs/smoke/summary.md
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
   blocking-checks:
     runs-on: ubuntu-latest
-    needs: [ci, pr-gate]
+    needs: [ci, pr-gate, smoke]
     if: always()
     permissions: {}
     steps:
