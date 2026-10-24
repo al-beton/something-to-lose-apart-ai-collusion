@@ -48,6 +48,7 @@ class MarketConfig:
     c: float = 1
     talk: bool = True
     history_window: int | None = None  # rounds shown in full; None shows all
+    own_message: bool = True  # show agents their own message when pricing
 
 
 @dataclass(frozen=True)
