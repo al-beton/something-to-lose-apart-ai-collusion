@@ -1,4 +1,4 @@
-# Implements: runs/sweeps, runs/parallel, market/talk-then-price, agents/json-replies, agents/retry-once, backends/usage-logged, backends/spend-asks-first, backends/shared-rate-limit, runs/stops-cleanly, reproducibility/response-cache, reproducibility/manifest, runs/run-directory, logs/turn-log, logs/same-seed-same-log, logs/run-summary
+# Implements: runs/sweeps, runs/parallel, market/talk-then-price, agents/json-replies, agents/retry-once, backends/usage-logged, backends/spend-asks-first, backends/shared-rate-limit, runs/stops-cleanly, reproducibility/response-cache, reproducibility/manifest, runs/run-directory, logs/turn-log, logs/same-seed-same-log, logs/run-summary, partners/scripted-turns-marked
 """Playing a config: one game per seed, each written to its own run directory.
 
 A round is a talk phase (each agent sends one message its rivals read; skipped
@@ -11,7 +11,8 @@ A config expands into one config per swept combination (see config.py), and
 every (combination, seed) pair plays as its own game, up to `concurrency` at
 once. Each writes `<out>/<name>/[<slug>/]seed-<n>/`: `config.yaml` (resolved, with only
 that seed), `turns.jsonl` (one line per agent turn), `timings.jsonl` and
-`summary.json` and `manifest.json`. Turn lines hold nothing that varies
+`summary.json` and `manifest.json`. Turn lines say whether a scripted (mock)
+agent played them. Turn lines hold nothing that varies
 between identical runs; each call's time, cost and cache hit go in
 `timings.jsonl` instead. With a cache, model agents answer through it.
 
@@ -107,8 +108,8 @@ async def play(config, seed, out, cache=None, gates=None):
     return run_dir
 
 
-def _backend(agent, rng, cache, gates):
-    backend = backend_for(agent.model, rng, agent.api_base, gates)
+def _backend(agent, rng, cache, gates, config):
+    backend = backend_for(agent, rng, gates, config.prompts_dir)
     if cache is None or is_mock(agent.model):
         return backend
     return CachedBackend(backend, cache)
@@ -128,7 +129,7 @@ class Game:
         self.market = Bertrand(m.a, m.b, m.c, m.price_min, m.price_max)
         self.agents = {a.id: a for a in config.agents}
         self.backends = {
-            a.id: _backend(a, random.Random(f"{seed}:{a.id}"), cache, gates)
+            a.id: _backend(a, random.Random(f"{seed}:{a.id}"), cache, gates, config)
             for a in config.agents
         }
         self.history = []
@@ -203,6 +204,7 @@ class Game:
             "phase": phase,
             "agent": agent_id,
             "model": agent.model,
+            "scripted": is_mock(agent.model),
             "temperature": agent.temperature,
             "messages": messages,
             "reply": reply.text,

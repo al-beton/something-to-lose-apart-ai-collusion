@@ -1,4 +1,4 @@
-# Implements: runs/one-config, runs/overrides, runs/sweeps, runs/parallel, market/known-benchmarks, backends/keys-from-environment, backends/any-model
+# Implements: runs/one-config, runs/overrides, runs/sweeps, runs/parallel, market/known-benchmarks, backends/keys-from-environment, backends/any-model, partners/solicitor
 """Run configs: one YAML file per run, changed from the command line with overrides.
 
 A config names the market, the agents and the seeds. `load_config` reads the
@@ -14,6 +14,10 @@ combination, each carrying its `labels` (the swept values, named by the last
 part of their path) and a directory `slug` built from them, unique within the
 sweep. `concurrency`
 caps how many runs play at once.
+
+An agent playing `mock/solicitor` may carry `partner:` settings (see
+backends.py); they are checked here, and the opening message must be a file
+in `<prompts_dir>/partners/`.
 """
 
 import copy
@@ -45,6 +49,18 @@ class MarketConfig:
     talk: bool = True
 
 
+PUSHES = ("once", "repeat", "escalate")
+ANSWERS = ("keep", "price-war", "match")
+
+
+@dataclass(frozen=True)
+class PartnerConfig:
+    price: int | None = None  # the joint-profit price when unset
+    opening: str = "blunt"
+    push: str = "repeat"
+    on_refusal: str = "keep"
+
+
 @dataclass(frozen=True)
 class AgentConfig:
     id: str
@@ -53,6 +69,7 @@ class AgentConfig:
     temperature: float = 0.7
     max_tokens: int = 400
     api_base: str | None = None
+    partner: PartnerConfig | None = None
 
 
 @dataclass(frozen=True)
@@ -127,8 +144,10 @@ def from_dict(raw):
     for key in ("name", "seeds", "agents"):
         if key not in raw:
             raise ConfigError(f"Missing key {key}.")
+    prompts_dir = raw.get("prompts_dir", "prompts")
     agents = [
-        _make(AgentConfig, a, f"agents.{i}.") for i, a in enumerate(raw["agents"] or [])
+        _agent(a, f"agents.{i}.", prompts_dir)
+        for i, a in enumerate(raw["agents"] or [])
     ]
     ids = [a.id for a in agents]
     for agent_id in ids:
@@ -142,12 +161,36 @@ def from_dict(raw):
         agents=agents,
         market=market,
         summary=_make(SummaryConfig, raw.get("summary") or {}, "summary."),
-        prompts_dir=raw.get("prompts_dir", "prompts"),
+        prompts_dir=prompts_dir,
         sweep=_sweep(raw.get("sweep") or {}),
         concurrency=_concurrency(raw.get("concurrency", 4)),
         labels=raw.get("labels") or {},
         slug=raw.get("slug", ""),
     )
+
+
+def _agent(raw, prefix, prompts_dir):
+    _check_keys(AgentConfig, raw, prefix)
+    settings = raw.get("partner")
+    agent = _make(AgentConfig, {**raw, "partner": None}, prefix)
+    if settings is None:
+        return agent
+    if agent.model != "mock/solicitor":
+        raise ConfigError(
+            f"{prefix}partner: only mock/solicitor takes partner settings."
+        )
+    partner = _make(PartnerConfig, settings, f"{prefix}partner.")
+    for key, allowed in (("push", PUSHES), ("on_refusal", ANSWERS)):
+        if getattr(partner, key) not in allowed:
+            raise ConfigError(
+                f"{prefix}partner.{key} must be one of {', '.join(allowed)}."
+            )
+    if not Path(prompts_dir, "partners", f"{partner.opening}.md").is_file():
+        raise ConfigError(
+            f"{prefix}partner.opening: no file partners/{partner.opening}.md in "
+            f"{prompts_dir}."
+        )
+    return dataclasses.replace(agent, partner=partner)
 
 
 def _sweep(sweep):

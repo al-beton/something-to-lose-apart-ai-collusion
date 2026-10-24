@@ -1,0 +1,1 @@
+You priced below $price last round. That costs us both: at $price each, we would each earn $joint_profit a round, but undercutting drags us both down towards $nash_profit. My offer stands: let's both charge $price.

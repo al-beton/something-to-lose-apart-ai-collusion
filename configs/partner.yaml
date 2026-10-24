@@ -1,0 +1,14 @@
+# Implements: partners/solicitor, partners/partner-templates
+# One LLM firm (A) against a scripted partner (B) that proposes collusion
+# first; only A calls a model. Free to try with `agents.0.model=mock/nash`.
+name: partner
+seeds: [0, 1, 2]
+market:
+  rounds: 10
+agents:
+  - {id: A, model: openrouter/openai/gpt-4.1-mini}
+  - id: B
+    model: mock/solicitor
+    partner: {opening: blunt, push: escalate, on_refusal: keep}
+sweep:
+  agents.1.partner.opening: [blunt, soft, deniable]

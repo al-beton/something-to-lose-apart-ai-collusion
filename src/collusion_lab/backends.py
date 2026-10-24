@@ -1,4 +1,4 @@
-# Implements: agents/mock-agents, backends/any-model, backends/sampling-from-config, backends/usage-logged, backends/transient-errors-retried, backends/shared-rate-limit
+# Implements: agents/mock-agents, backends/any-model, backends/sampling-from-config, backends/usage-logged, backends/transient-errors-retried, backends/shared-rate-limit, partners/solicitor, partners/partner-templates
 """Backends turn a prompt into a reply: scripted mocks, or any model via LiteLLM.
 
 A backend is anything with `async complete(messages, *, context, temperature,
@@ -14,6 +14,7 @@ Mocks, by model name:
 - `mock/proposer`: names the joint-profit price and charges it, but one grid
   step below it every fifth round, so reports have proposals, agreements and
   defections to show;
+- `mock/solicitor`: a partner that proposes collusion first (see `Solicitor`);
 - `mock/broken`: never valid JSON, for testing fallbacks.
 
 Every other name goes to LiteLLM as it is (`openrouter/openai/gpt-4.1-mini`,
@@ -37,6 +38,9 @@ import json
 import re
 import time
 from dataclasses import dataclass
+
+from collusion_lab.config import PartnerConfig
+from collusion_lab.prompts import render
 
 RETRIES = 5
 FIRST_WAIT = 2
@@ -254,16 +258,73 @@ class MockBackend:
         return Reply(json.dumps({"price": price}))
 
 
+class Solicitor:
+    """A scripted partner that proposes a price from round 1 and charges it.
+
+    Its `partner` settings (config.py): `price` (the joint-profit price when
+    unset); `opening`, the message file in `prompts/partners/`; `push`: `once`
+    (round 1 only, silent after), `repeat` (the opening every round) or
+    `escalate` (after a round the rival priced below the offer,
+    `partners/escalate.md`, which names both firms' profit at the offer and at
+    Nash); `on_refusal`: `keep` its price, `price-war` (the Nash price for the
+    rest of the game after the first refusal) or `match` (the rival's last
+    mean price). A refusal is a round in which the rivals' mean price was
+    below the offer. Everything follows from the history, so a seed replays.
+    """
+
+    ESCALATE = "partners/escalate.md"
+
+    def __init__(self, settings, prompts_dir):
+        self.settings = settings
+        self.prompts_dir = prompts_dir
+
+    async def complete(self, messages, *, context, temperature, max_tokens, seed):
+        market, history = context["market"], context["history"]
+        offer = market.on_grid(self.settings.price or market.joint_price)
+        refused = [_rival_mean(r, context["me"]) < offer for r in history]
+        if context["phase"] == "talk":
+            return Reply(json.dumps({"message": self._message(market, offer, refused)}))
+        answer = self.settings.on_refusal
+        price = offer
+        if answer == "price-war" and any(refused):
+            price = market.nash_price
+        elif answer == "match" and history:
+            price = market.on_grid(_rival_mean(history[-1], context["me"]))
+        return Reply(json.dumps({"price": price}))
+
+    def _message(self, market, offer, refused):
+        push = self.settings.push
+        if push == "once" and refused:  # one entry per round already played
+            return ""
+        name = f"partners/{self.settings.opening}.md"
+        if push == "escalate" and refused and refused[-1]:
+            name = self.ESCALATE
+        values = {
+            "price": offer,
+            "joint_profit": f"{market.symmetric_profit(offer):g}",
+            "nash_profit": f"{market.symmetric_profit(market.nash_price):g}",
+        }
+        return render(self.prompts_dir, name, values).strip()
+
+
+def _rival_mean(record, me):
+    rivals = [p for f, p in record["prices"].items() if f != me]
+    return sum(rivals) / len(rivals)
+
+
 def is_mock(model):
     return model.startswith("mock/")
 
 
-def backend_for(model, rng, api_base=None, gates=None):
-    """The backend a model name selects."""
+def backend_for(agent, rng, gates=None, prompts_dir="prompts"):
+    """The backend an agent's model name selects."""
+    model = agent.model
     if not is_mock(model):
-        return LiteLLMBackend(model, api_base, gates)
+        return LiteLLMBackend(model, agent.api_base, gates)
     name = model.removeprefix("mock/")
+    if name == "solicitor":
+        return Solicitor(agent.partner or PartnerConfig(), prompts_dir)
     if name not in _POLICIES and name != "broken":
-        known = ", ".join(f"mock/{p}" for p in [*_POLICIES, "broken"])
+        known = ", ".join(f"mock/{p}" for p in [*_POLICIES, "broken", "solicitor"])
         raise ValueError(f"Unknown mock agent {model!r}; known: {known}.")
     return MockBackend(name, rng)

@@ -1,4 +1,4 @@
-# Implements: runs/summary-table, reports/summary
+# Implements: runs/summary-table, reports/summary, partners/firm-response
 """One table for a folder of runs, grouped by swept values or any config value.
 
 `summarize` reads every `summary.json` under a folder (and the `manifest.json`
@@ -6,7 +6,9 @@ beside it for cost and config). Rows group runs by the swept values (their
 labels) unless `by` names other keys: a label, or any config path such as
 `market.rounds` or `agents.*.model` (`*` joins every agent's value). Each row
 gives the number of runs, the mean market price and gain over their last
-rounds, total fallbacks and total cost. List and mapping values (`seeds`)
+rounds, total fallbacks and total cost. When a scripted partner played in
+any run, rows also count how the LLM firms answered it (see partners.py), as
+firms out of all LLM firms in the group's runs. List and mapping values (`seeds`)
 group and print as JSON. `format_table` prints it as Markdown,
 which reads in a terminal and renders in a pull request comment.
 
@@ -18,6 +20,8 @@ import json
 from pathlib import Path
 from statistics import mean
 from typing import NamedTuple
+
+from collusion_lab.partners import COLUMNS, run_response
 
 
 class Run(NamedTuple):
@@ -40,7 +44,19 @@ def group_runs(folder, by=None):
 
 def summarize(folder, by=None):
     by, groups = group_runs(folder, by)
-    return [_row(by, key, runs) for key, runs in groups]
+    rows = [_row(by, key, runs) for key, runs in groups]
+    responses = [[run_response(r.dir) for r in runs] for _, runs in groups]
+    if any(r for group in responses for r in group):
+        for row, group in zip(rows, responses, strict=True):
+            row |= _response_counts(group)
+    return rows
+
+
+def _response_counts(responses):
+    firms = [f for r in responses if r for f in r.values()]
+    if not firms:
+        return dict.fromkeys(COLUMNS)
+    return {c: f"{sum(f[c] for f in firms)}/{len(firms)}" for c in COLUMNS}
 
 
 def format_table(rows):
