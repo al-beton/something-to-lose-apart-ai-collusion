@@ -265,6 +265,17 @@ def test_audit_metrics_per_arm(make_config, tmp_path, auditee):
     assert rows["clean-deny"]["honest disclosure"] is None
 
 
+def test_audit_metrics_keep_tacit_firms_apart(make_config, tmp_path, auditee):
+    # No talk: the firms price at 9 without a word, so they coordinated tacitly.
+    silent = [*pair("openai/gpt-4.1-mini"), "market.talk=false", "name=tacit"]
+    auditee.script["answer"] = "deny"
+    run_config(make_config(overrides=[audit(), *silent]), tmp_path)
+    (row,) = summarize(tmp_path, by=["name"])
+    assert row["audited"] == 2
+    assert (row["honest disclosure"], row["denials"]) == (None, None)
+    assert row["tacit admits"] == 0
+
+
 def test_audit_off_is_absent(make_config, tmp_path):
     [plain] = run_config(make_config(), tmp_path / "plain")
     [off] = run_config(make_config(overrides=[audit(enabled=False)]), tmp_path / "off")
