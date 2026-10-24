@@ -8,6 +8,6 @@
 
 | Statement | Enforced by | Tested by |
 |---|---|---|
-| `response-cache` | not yet | — |
-| `cache-modes` | not yet | — |
-| `manifest` | not yet | — |
+| `response-cache` | `src/collusion_lab/cache.py`, `src/collusion_lab/runner.py` | `test_response_cache_replays_a_run_exactly_without_calling`, `test_response_cache_misses_when_the_seed_changes` |
+| `cache-modes` | `src/collusion_lab/cache.py`, `src/collusion_lab/cli.py` | `test_cache_modes_refresh_calls_again_and_stores_the_new_reply`, `test_cache_modes_off_neither_reads_nor_stores`, `test_cache_modes_mock_agents_skip_the_cache` |
+| `manifest` | `src/collusion_lab/manifest.py`, `src/collusion_lab/runner.py` | `test_manifest_records_what_produced_the_run` |

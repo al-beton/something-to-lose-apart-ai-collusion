@@ -1,5 +1,8 @@
-# Implements: runs/one-config, runs/overrides, backends/keys-from-environment, backends/spend-asks-first
+# Implements: runs/one-config, runs/overrides, backends/keys-from-environment, backends/spend-asks-first, reproducibility/cache-modes
 """The `lab` command: `lab run CONFIG [--set path=value ...] [--out DIR] [-y]`.
+
+Model replies are cached in `.cache/responses.sqlite` (`--cache use`), so a
+rerun replays for free; `--cache refresh` calls again, `--cache off` skips it.
 
 API keys are read from the environment, topped up from a `.env` file in the
 working directory (gitignored). A config that calls paid models says how many
@@ -11,6 +14,7 @@ import sys
 
 from dotenv import load_dotenv
 
+from collusion_lab.cache import DEFAULT_PATH, MODES, Cache
 from collusion_lab.config import ConfigError, load_config
 from collusion_lab.runner import paid_calls, run_config
 
@@ -32,6 +36,8 @@ def main(argv=None):
     run.add_argument(
         "-y", "--yes", action="store_true", help="don't ask before spending"
     )
+    run.add_argument("--cache", choices=MODES, default="use", help="response cache")
+    run.add_argument("--cache-path", default=DEFAULT_PATH)
     args = parser.parse_args(argv)
     load_dotenv()
     try:
@@ -40,7 +46,8 @@ def main(argv=None):
         parser.error(str(error))
     if not args.yes and not _spending_agreed(paid_calls(config)):
         return 1
-    for run_dir in run_config(config, args.out):
+    cache = Cache(args.cache_path, args.cache)
+    for run_dir in run_config(config, args.out, cache):
         print(run_dir)
     return 0
 
