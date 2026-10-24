@@ -28,31 +28,25 @@ class FakeGh:
 
     def __call__(self, *args):
         self.calls.append(args)
-        if args[:2] == ("pr", "view"):
-            return json.dumps(
-                {
-                    "number": 20,
-                    "title": "improve(workflow): one routine (#18)",
-                    "body": "## Issues\nCloses #18\n\n## Notes\nNone",
-                    "headRefName": "18-deliver-issue",
-                    "baseRefName": "main",
-                    "headRefOid": "abc",
-                }
-            )
+        threads = [{"isResolved": False}] * self.unresolved + [{"isResolved": True}]
+        pr = {"reviewThreads": {"nodes": threads}}
+        answers = {
+            ("pr", "view"): {
+                "number": 20,
+                "title": "improve(workflow): one routine (#18)",
+                "body": "## Issues\nCloses #18\n\n## Notes\nNone",
+                "headRefName": "18-deliver-issue",
+                "baseRefName": "main",
+                "headRefOid": "abc",
+            },
+            ("pr", "list"): [{"number": n} for n in self.stacked],
+            ("repo", "view"): {"owner": {"login": "o"}, "name": "r"},
+            ("api", "graphql"): {"data": {"repository": {"pullRequest": pr}}},
+            ("run", "list"): [{"databaseId": 7}],
+        }
         if args[:2] == ("pr", "checks"):
             return f"blocking-checks\t{self.checks}\t3s\turl\n"
-        if args[:2] == ("pr", "list"):
-            return json.dumps([{"number": n} for n in self.stacked])
-        if args[:2] == ("repo", "view"):
-            return json.dumps({"owner": {"login": "o"}, "name": "r"})
-        if args[:2] == ("api", "graphql"):
-            threads = [{"isResolved": False}] * self.unresolved
-            threads += [{"isResolved": True}]
-            pr = {"reviewThreads": {"nodes": threads}}
-            return json.dumps({"data": {"repository": {"pullRequest": pr}}})
-        if args[:2] == ("run", "list"):
-            return json.dumps([{"databaseId": 7}])
-        return ""
+        return json.dumps(answers[args[:2]]) if args[:2] in answers else ""
 
     def index(self, *prefix):
         return next(i for i, c in enumerate(self.calls) if c[: len(prefix)] == prefix)
@@ -84,7 +78,7 @@ class DeliverTests(unittest.TestCase):
 
     def test_stacked_retarget_happens_before_the_branch_is_deleted(self):
         gh = FakeGh()
-        merge(20, gh)
+        merge(20, gh, pause=lambda seconds: None)
         retarget = gh.index("pr", "edit", "21", "--base", "main")
         squash = gh.index("pr", "merge", "20", "--squash")
         delete = gh.index("git", "push", "origin", "--delete", "18-deliver-issue")
@@ -97,7 +91,7 @@ class DeliverTests(unittest.TestCase):
 
     def test_main_stays_green_reruns_checks_after_merging(self):
         gh = FakeGh(stacked=())
-        merge(20, gh)
+        merge(20, gh, pause=lambda seconds: None)
         dispatch = gh.index("workflow", "run", "blocking-checks.yml", "--ref", "main")
         watch = gh.index("run", "watch", "7")
         self.assertLess(gh.index("pr", "merge"), dispatch)
@@ -107,7 +101,7 @@ class DeliverTests(unittest.TestCase):
     def test_merge_when_clean_refuses_red_checks_or_open_threads(self):
         for gh in (FakeGh(checks="fail"), FakeGh(unresolved=1)):
             with self.assertRaises(MergeRefused):
-                merge(20, gh)
+                merge(20, gh, pause=lambda seconds: None)
             self.assertFalse([c for c in gh.calls if c[:2] == ("pr", "merge")])
 
 
