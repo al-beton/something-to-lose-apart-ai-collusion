@@ -1,13 +1,14 @@
-# Implements: backends/spend-asks-first, backends/spend-cap, backends/reasoning-in-estimate
+# Implements: backends/spend-asks-first, backends/spend-cap, backends/reasoning-in-estimate, conditions/hook-points
 """What a config will cost before it runs.
 
 Prompts grow as the game goes on (the history is resent every turn, up to
 the history window), so the estimate builds every paid turn's actual prompt
 against a stand-in history: prices at the joint-profit level and a talk
-message of typical length each round. Tokens are counted as four characters
-each, and each reply is taken to be `REPLY_TOKENS` long, plus
-`REASONING_TOKENS` for the agent's reasoning level (billed as reply tokens;
-nothing for off or unset). Retries are left out;
+message of typical length each round, plus any condition's notices and
+system-prompt text. Tokens are counted as four characters each, and each
+reply is taken to be `REPLY_TOKENS` long, plus `REASONING_TOKENS` for the
+agent's reasoning level (billed as reply tokens; nothing for off or unset).
+Retries are left out;
 `lab run` says how many calls they could add.
 """
 
@@ -72,7 +73,8 @@ def _paid_turns(config):
         for phase in phases:
             shown = said if phase == "price" else {}
             for agent in paid:
-                messages = game._messages(phase, number, agent, shown)
+                notices = game._notices(phase, number)
+                messages = game._messages(phase, number, agent, shown, notices)
                 chars[agent.id] += sum(len(x["content"]) for x in messages)
         prices = {a: m.joint_price for a in game.agents}
         game.history.append(

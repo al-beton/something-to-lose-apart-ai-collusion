@@ -13,7 +13,7 @@
 | Statement | Enforced by | Tested by |
 |---|---|---|
 | `switchable` | `src/collusion_lab/config.py`, `src/collusion_lab/conditions/__init__.py` | `test_switchable_conditions_sweep_and_label_runs`, `test_switchable_conditions_reject_unknown_names_and_settings` |
-| `hook-points` | `src/collusion_lab/conditions/__init__.py`, `src/collusion_lab/runner.py` | `test_instruction_adds_a_prompt_file_to_every_system_prompt`, `test_outage_notices_appear_on_exactly_the_right_rounds` |
+| `hook-points` | `src/collusion_lab/conditions/__init__.py`, `src/collusion_lab/runner.py`, `src/collusion_lab/estimate.py` | `test_instruction_adds_a_prompt_file_to_every_system_prompt`, `test_outage_notices_appear_on_exactly_the_right_rounds`, `test_hook_points_notices_count_in_the_cost_estimate` |
 | `adding-a-condition` | `src/collusion_lab/conditions/__init__.py`, reviewer | — |
 | `off-is-absent` | `src/collusion_lab/runner.py` | `test_off_is_absent_leaves_the_turn_log_byte_identical` |
 | `conditions-logged` | `src/collusion_lab/runner.py` | `test_outage_notices_appear_on_exactly_the_right_rounds`, `test_outage_keeps_logging_what_agents_said` |
