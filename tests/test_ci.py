@@ -39,5 +39,5 @@ def test_ci_minutes_newer_runs_cancel_older_ones_and_drafts_wait():
     # or a second merge would make the first look as if main failed.
     cancel = flow["concurrency"]["cancel-in-progress"]
     assert cancel == "${{ github.event_name == 'pull_request' }}"
-    assert "pull_request.number" in flow["concurrency"]["group"]
+    assert "pull_request.number || github.run_id" in flow["concurrency"]["group"]
     assert "draft" in flow["jobs"]["blocking-checks"]["if"]

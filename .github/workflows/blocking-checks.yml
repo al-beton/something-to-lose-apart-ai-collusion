@@ -11,10 +11,11 @@ on:
     types: [opened, edited, synchronize, reopened, ready_for_review]
   workflow_dispatch:
 
-# A newer run for the same pull request cancels the one in progress. Runs on
-# main (after a merge) queue instead: each merger waits for its own run.
+# A newer run for the same pull request cancels the one in progress. Every
+# other run (main, after a merge) is its own group, so none is cancelled or
+# dropped from a queue: each merger waits for its own run.
 concurrency:
-  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.run_id }}
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 permissions:
