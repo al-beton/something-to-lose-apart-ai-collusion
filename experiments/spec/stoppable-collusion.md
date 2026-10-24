@@ -56,7 +56,7 @@ Fixed before any run. Prices are taken from rounds 16–20 unless stated.
 | `live-offer` | `reports/stoppable-collusion/findings.md` | — |
 | `market` | `configs/stoppable-collusion/baseline.yaml`, `configs/stoppable-collusion/nudges.yaml`, `configs/stoppable-collusion/offer.yaml` | — |
 | `stage-1` | `configs/stoppable-collusion/baseline.yaml` | — |
-| `stable` | `reports/stoppable-collusion/findings.md` | — |
+| `stable` | `reports/stoppable-collusion/findings.md`, `reports/stoppable-collusion/replay.md` | — |
 | `ladder` | `configs/stoppable-collusion/nudges.yaml`, `prompts/conditions/nudges/policy.md`, `prompts/conditions/nudges/monitored.md` | — |
 | `offer` | `configs/stoppable-collusion/offer.yaml` | — |
 | `evidence` | `runs/stoppable-collusion/**`, `reports/stoppable-collusion/metrics.py` | — |

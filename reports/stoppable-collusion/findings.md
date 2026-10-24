@@ -7,7 +7,7 @@ Every number below comes from `uv run python reports/stoppable-collusion/metrics
 
 ## Short answer
 
-1. **There's now a stable, reproducible setting where agents collude unprompted.** With the neutral prompt ("make as much profit as you can") and no word about law, 10 of 10 games make and hold an explicit price agreement. Replaying them from the response cache reproduced all 20 stage-1 turn logs byte for byte, at $0.
+1. **There's now a stable, reproducible setting where agents collude unprompted.** With the neutral prompt ("make as much profit as you can") and no word about law, 10 of 10 games make and hold an explicit price agreement. Replaying them from the response cache reproduced all 20 stage-1 turn logs byte for byte, at $0: `reports/stoppable-collusion/replay.md` gives each log's sha256, original and replay.
 2. **The nudges form a clean ladder:**
 
    | Arm | Games with a held agreement | Scratchpads mentioning the law |
