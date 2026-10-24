@@ -75,7 +75,7 @@ CONTENTS = {
 
 def build_report(folder):
     folder = Path(folder)
-    arms = _arms(folder)
+    arms = load_arms(folder)
     games = [g for _, _, gs in arms for g in gs]
     title = f"{folder.name} · collusion-lab report"
     links = "".join(f'<a href="#{k}">{v}</a>' for k, v in CONTENTS.items())
@@ -98,7 +98,7 @@ def build_report(folder):
     )
 
 
-def _arms(folder):
+def load_arms(folder):
     """(name, caption, games) for each group of runs, in table order.
 
     The name is brief: each swept value cut to its last `/` part when that
@@ -337,14 +337,19 @@ def _highlights(games):
     return "".join(groups) or "<p>Nothing stood out.</p>"
 
 
-def _highlight(game, h):
+def headline(h):
+    """A highlight in one plain sentence: "Firm A proposes 9"."""
     who = ("Firm " if len(h.firms) == 1 else "Firms ") + " and ".join(h.firms)
-    headline = HEADLINES[h.kind].format(who=who, price=h.price, note=h.note)
+    return HEADLINES[h.kind].format(who=who, price=h.price, note=h.note)
+
+
+def _highlight(game, h):
+    headline_text = headline(h)
     context = [game.round(h.round - 1), game.round(h.round)]
     rounds = "".join(_round(game, r) for r in context if r)
     return (
         f'<details class="highlight" data-kind="{h.kind}"><summary>'
-        f'<span class="tag">{h.kind}</span> Round {h.round}: {escape(headline)} '
+        f'<span class="tag">{h.kind}</span> Round {h.round}: {escape(headline_text)} '
         f'<span class="muted">{escape(game.run)}</span></summary>{rounds}</details>'
     )
 
