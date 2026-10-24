@@ -11,9 +11,9 @@
 
 | Statement | Enforced by | Tested by |
 |---|---|---|
-| `any-model` | not yet | — |
-| `sampling-from-config` | not yet | — |
-| `keys-from-environment` | not yet | — |
-| `usage-logged` | not yet | — |
-| `spend-asks-first` | not yet | — |
-| `tests-never-pay` | not yet | — |
+| `any-model` | `src/collusion_lab/backends.py`, `src/collusion_lab/config.py` | `test_any_model_goes_through_one_call_with_config_sampling` |
+| `sampling-from-config` | `src/collusion_lab/backends.py` | `test_any_model_goes_through_one_call_with_config_sampling`, `test_sampling_from_config_leaves_api_base_out_when_unset` |
+| `keys-from-environment` | `src/collusion_lab/config.py`, `src/collusion_lab/cli.py`, `.gitignore` | `test_keys_from_environment_never_from_a_config` |
+| `usage-logged` | `src/collusion_lab/backends.py`, `src/collusion_lab/runner.py` | `test_usage_logged_per_turn_and_timings_kept_apart` |
+| `spend-asks-first` | `src/collusion_lab/runner.py`, `src/collusion_lab/cli.py` | `test_spend_asks_first_counts_paid_calls`, `test_spend_asks_first_and_stops_without_a_yes` |
+| `tests-never-pay` | `tests/conftest.py` | `test_tests_never_pay_unfaked_calls_fail` |
