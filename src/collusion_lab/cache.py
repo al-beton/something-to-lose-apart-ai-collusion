@@ -4,7 +4,8 @@
 Provider seeds are best-effort (some providers ignore them, and even
 temperature 0 isn't guaranteed deterministic), so exact replay comes from
 storing replies. A reply is keyed by everything that shaped it: model,
-address, messages, temperature, token limit, seed and attempt. Re-running the
+address, messages, temperature, token limit, seed and attempt, plus the agent
+asking, so two agents asked identical questions at once never share a slot. Re-running the
 same config and seed asks the same questions, so every call is a hit.
 
 Modes: `use` reads and stores (the default), `refresh` calls again and stores
@@ -82,6 +83,7 @@ class CachedBackend:
             max_tokens=max_tokens,
             seed=seed,
             attempt=context["attempt"],
+            agent=context["me"],
         )
         if hit := self.cache.get(key):
             return Reply(**hit, cached=True)
