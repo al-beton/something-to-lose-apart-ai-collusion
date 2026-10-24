@@ -5,7 +5,7 @@ Implements: workflow/one-routine, commits/named-paths, review/review-finished, m
 Usage: `python3 .github/scripts/deliver.py <command> ...`
 
 - `commit -m SUBJECT [-m BODY ...] [--runs] PATH ...` stages exactly the
-  paths named and commits them. It refuses `.`, `-A` and anything under
+  paths named and commits only them. It refuses `.`, `-A` and anything under
   `runs/` (generated output) unless `--runs` says so on purpose.
 - `request-review PR [--note TEXT]` asks Codex to review, pointing it at the
   review-pr skill.
@@ -96,7 +96,15 @@ def commit(paths, messages, allow_runs=False, run=run_command):
     if bad := unsafe_paths(paths, allow_runs):
         sys.exit(f"Refusing to stage {bad}: name files, and pass --runs for runs/.")
     run("git", "add", "--", *paths)
-    run("git", "commit", *[a for m in messages for a in ("-m", m)])
+    # --only: anything else already staged stays staged, out of this commit.
+    run(
+        "git",
+        "commit",
+        *[a for m in messages for a in ("-m", m)],
+        "--only",
+        "--",
+        *paths,
+    )
 
 
 def review_state(comments):
