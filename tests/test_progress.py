@@ -95,3 +95,30 @@ def test_quiet_provider_logs_unless_asked_for(litellm_settings, monkeypatch):
     backends.quiet_litellm(litellm)
     assert litellm.suppress_debug_info is False
     assert litellm_settings.level == logging.INFO
+
+
+def test_status_command_keeps_runs_apart_when_ids_repeat(tmp_path, fake_model, capsys):
+    fake_model.replies = [
+        litellm.NotFoundError("No endpoints found", MODEL_NAME, "openrouter")
+    ]
+    config = tmp_path / "c.yaml"
+    config.write_text(CONFIG)
+    for out in ("first", "second"):
+        cli.main(
+            [
+                "run",
+                str(config),
+                "--out",
+                str(tmp_path / "runs" / out),
+                "-y",
+                "--cache",
+                "off",
+                "--set",
+                "concurrency=1",
+            ]
+        )
+    capsys.readouterr()
+    cli.main(["status", str(tmp_path / "runs")])
+    out = capsys.readouterr().out
+    assert "3 finished, 1 failed" in out
+    assert "first/test/seed-0" in out and "second/test/seed-0" in out
