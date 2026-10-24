@@ -66,7 +66,7 @@ def test_transient_errors_retried_with_growing_waits_and_logged(
     [clean] = run_config(config, tmp_path / "clean")
     fake_model.replies = [rate_limited(), timed_out(), server_error()]
     [run_dir] = run_config(config, tmp_path / "bumpy")
-    assert waits == sorted(waits) and len(waits) == 3 and waits[0] > 0
+    assert len(waits) == 3 and 0 < waits[0] < waits[1] < waits[2]
     first = next(t for t in lines(run_dir, "timings.jsonl") if t["agent"] == "A")
     assert [r["error"].split(":")[0] for r in first["retries"]] == [
         "RateLimitError",
@@ -92,6 +92,17 @@ def test_transient_errors_retried_a_few_times_then_the_run_stops_cleanly(
     assert 2 <= len(waits) <= 10
     played = lines(tmp_path / "test" / "seed-0", "turns.jsonl")
     assert [(t["round"], t["agent"]) for t in played] == [(1, "A"), (1, "B")]
+
+
+def test_stops_cleanly_without_keeping_an_old_summary(
+    make_config, tmp_path, fake_model, waits
+):
+    config = make_config(overrides=MODEL)
+    [run_dir] = run_config(config, tmp_path)
+    fake_model.replies = [not_found()]
+    with pytest.raises(RunFailed):
+        run_config(config, tmp_path)
+    assert not (run_dir / "summary.json").exists()
 
 
 def test_transient_errors_that_wont_fix_themselves_stop_at_once(
