@@ -13,7 +13,7 @@
 |---|---|---|
 | `one-command-each` | `Makefile`, `README.md`, `pyproject.toml` | — |
 | `locked-dependencies` | `uv.lock`, `.python-version`, `Makefile` | — |
-| `quick-start` | not yet | — |
-| `key-setup` | not yet | — |
-| `how-tos` | not yet | — |
-| `how-we-work` | not yet | — |
+| `quick-start` | `README.md` | `test_quick_start_goes_from_clone_to_a_report_then_a_real_run` |
+| `key-setup` | `README.md`, `.env.example` | `test_key_setup_names_the_variable_spend_limit_and_no_sprint_credits` |
+| `how-tos` | `README.md` | `test_how_tos_name_files_and_spec_areas_that_exist` |
+| `how-we-work` | `README.md` | `test_how_we_work_is_five_lines_and_points_agents_to_agents_md` |
