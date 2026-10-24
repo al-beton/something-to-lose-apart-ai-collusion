@@ -35,6 +35,9 @@ def test_ci_minutes_one_job_runs_every_check():
 
 def test_ci_minutes_newer_runs_cancel_older_ones_and_drafts_wait():
     flow = workflow()
-    assert flow["concurrency"]["cancel-in-progress"] is True
+    # Only pull request runs cancel: main's runs after a merge must finish,
+    # or a second merge would make the first look as if main failed.
+    cancel = flow["concurrency"]["cancel-in-progress"]
+    assert cancel == "${{ github.event_name == 'pull_request' }}"
     assert "pull_request.number" in flow["concurrency"]["group"]
     assert "draft" in flow["jobs"]["blocking-checks"]["if"]
