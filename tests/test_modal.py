@@ -78,7 +78,10 @@ def test_modal_config_runs_against_a_served_model():
         assert agent.model.startswith("openai/") and agent.api_base
         assert agent.api_key_env == "MODAL_VLLM_KEY"
         assert agent.model.removeprefix("openai/") in serve
-    assert re.search(r"--api-key", serve) and "Secret.from_name" in serve
+    command = serve[serve.index("command = [") :]
+    assert "--api-key" not in command  # vLLM logs its arguments; the key stays in env
+    assert '"--middleware"' in command and "vllm_token.require_token" in command
+    assert "Secret.from_name" in serve
     assert "scaledown_window" in serve and "gpu=" in serve
 
 
@@ -183,3 +186,36 @@ def test_hosted_models_keep_their_usual_retries(
     hosted = ["agents.0.model=openrouter/openai/gpt-4.1-mini", "market.rounds=1"]
     with pytest.raises(RunFailed, match="gave up after 6 tries"):
         run_config(make_config(overrides=hosted), tmp_path)
+
+
+def test_modal_token_guards_every_route_but_health(monkeypatch):
+    import asyncio
+    import importlib.util
+    import sys
+    import types
+
+    responses = types.ModuleType("starlette.responses")
+    responses.JSONResponse = lambda body, status_code: ("refused", status_code)
+    monkeypatch.setitem(sys.modules, "starlette.responses", responses)
+    monkeypatch.setenv("VLLM_API_KEY", "modal-token-123")
+    spec = importlib.util.spec_from_file_location(
+        "vllm_token", ROOT / "deploy/vllm_token.py"
+    )
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    async def call_next(request):
+        return "served"
+
+    def ask(path, token=None):
+        headers = {"authorization": f"Bearer {token}"} if token else {}
+        request = types.SimpleNamespace(
+            url=types.SimpleNamespace(path=path), headers=headers
+        )
+        return asyncio.run(module.require_token(request, call_next))
+
+    assert ask("/invocations") == ("refused", 401)
+    assert ask("/inference/v1/generate", "wrong") == ("refused", 401)
+    assert ask("/v1/chat/completions", "modal-token-123") == "served"
+    assert ask("/invocations", "modal-token-123") == "served"
+    assert ask("/health") == "served"
