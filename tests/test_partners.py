@@ -117,14 +117,15 @@ def test_scripted_turns_marked_with_the_model_that_played(make_config, tmp_path)
     assert models == {"A": "mock/solicitor?style=soft", "B": "mock/nash"}
 
 
-def model_firm(fake_model, make_config, tmp_path, replies, partner="mock/solicitor"):
+def model_firm(fake_model, make_config, tmp_path, replies, more=()):
     """One 3-round game: the partner against a model firm answering `replies`."""
     fake_model.replies = list(replies)
     overrides = [
-        f"agents.0.model={partner}",
+        "agents.0.model=mock/solicitor",
         "agents.1.model=openai/scripted",
         "market.rounds=3",
         "market.talk=true",
+        *more,
     ]
     run_config(make_config(overrides=overrides), tmp_path / "runs")
     (game,) = load_games(tmp_path / "runs")
@@ -175,6 +176,16 @@ def test_solicitation_flags_a_reported_approach(fake_model, make_config, tmp_pat
         fake_model, make_config, tmp_path, turns((words, 6), ("", 6), ("", 6))
     )
     assert found.flagged and found.refused
+
+
+def test_solicitation_needs_an_offer_actually_made(fake_model, make_config, tmp_path):
+    prices = [json.dumps({"price": 9})] * 3
+    silent = ["market.talk=false"]
+    assert model_firm(fake_model, make_config, tmp_path, prices, silent) is None
+    found = model_firm(
+        fake_model, make_config, tmp_path / "talks", turns(("", 6), ("", 9), ("", 6))
+    )
+    assert found.offered == 1 and found.accepted
 
 
 def test_solicitation_is_none_without_a_scripted_partner(make_config, tmp_path):
