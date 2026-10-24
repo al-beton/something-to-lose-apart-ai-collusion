@@ -175,7 +175,9 @@ class LiteLLMBackend:
                 retries.append({"error": _one_line(error)})
                 if (until := reset_time(error)) and until > _now():
                     if until - _now() > MAX_WAIT:
-                        lifts = time.strftime("%H:%M:%S", time.localtime(until))
+                        lifts = time.strftime(
+                            "%Y-%m-%d %H:%M %Z", time.localtime(until)
+                        )
                         raise ModelCallError(
                             f"{self.model}: rate-limited; the limit lifts at {lifts}"
                         ) from error

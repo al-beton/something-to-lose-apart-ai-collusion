@@ -87,6 +87,8 @@ def _now():
 async def play(config, seed, out, cache=None, gates=None):
     run_dir = Path(out) / run_id(config, seed)
     run_dir.mkdir(parents=True, exist_ok=True)
+    # An old summary must not outlive a replay that fails.
+    (run_dir / "summary.json").unlink(missing_ok=True)
     resolved = dataclasses.replace(config, seeds=[seed])
     (run_dir / "config.yaml").write_text(resolved.to_yaml())
     started = _now()
