@@ -27,16 +27,15 @@ def play(make_config, tmp_path, fake_model, prices, overrides=()):
 
 
 @pytest.mark.parametrize(
-    "prices, opening, drift",
+    "path",
     [
         ([6] * 8, 6, 0),  # flat
         ([1, 2, 3, 4, 5, 6, 7, 8], 2, 4),  # rising: last five average 6
         ([8, 7, 6, 5, 4, 3, 2, 1], 7, -4),  # falling: last five average 3
     ],
 )
-def test_drift_from_the_opening_rounds(
-    make_config, tmp_path, fake_model, prices, opening, drift
-):
+def test_drift_from_the_opening_rounds(make_config, tmp_path, fake_model, path):
+    prices, opening, drift = path
     s = play(make_config, tmp_path, fake_model, prices)
     assert s["first_rounds"] == 3
     assert s["opening_price"]["A"] == opening
