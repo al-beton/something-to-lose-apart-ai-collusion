@@ -1,4 +1,4 @@
-# Implements: runs/sweeps, runs/parallel, market/talk-then-price, agents/json-replies, agents/retry-once, backends/usage-logged, backends/spend-asks-first, backends/shared-rate-limit, backends/spend-cap, market/history-window, runs/stops-cleanly, reproducibility/response-cache, reproducibility/manifest, runs/run-directory, logs/turn-log, logs/same-seed-same-log, logs/run-summary, logs/reasoning-logged, backends/reasoning-setting, agents/unreadable-explained, agents/json-mode, runs/fallback-rates, runs/failures-dont-stop-sweeps, runs/resume, conditions/hook-points, conditions/off-is-absent, conditions/conditions-logged, conditions/outage-once-remembered, runs/per-firm-summary, conditions/fork-at-audit, conditions/audit-logged
+# Implements: runs/sweeps, runs/parallel, market/talk-then-price, agents/json-replies, agents/retry-once, backends/usage-logged, backends/spend-asks-first, backends/shared-rate-limit, backends/spend-cap, market/history-window, runs/stops-cleanly, reproducibility/response-cache, reproducibility/manifest, runs/run-directory, logs/turn-log, logs/same-seed-same-log, logs/run-summary, logs/reasoning-logged, backends/reasoning-setting, agents/unreadable-explained, agents/json-mode, runs/fallback-rates, runs/failures-dont-stop-sweeps, runs/resume, conditions/hook-points, conditions/off-is-absent, conditions/conditions-logged, conditions/outage-once-remembered, runs/per-firm-summary, conditions/fork-at-audit, conditions/audit-logged, runs/drift
 """Playing a config: one game per seed, each written to its own run directory.
 
 A round is a talk phase (each agent sends one message its rivals read; skipped
@@ -508,13 +508,20 @@ class Game:
             "messages": _messages_text(said, rivals),
         }
 
-    def summary(self, run):
-        last = self.history[-self.config.summary.last_rounds :]
-        mean_price = {a: mean(r["prices"][a] for r in last) for a in self.agents}
+    def _window(self, rounds):
+        """Each firm's mean price and gain over some rounds."""
+        price = {a: mean(r["prices"][a] for r in rounds) for a in self.agents}
         gain = {
-            a: self.market.gain(mean(r["profits"][a] for r in last))
+            a: self.market.gain(mean(r["profits"][a] for r in rounds))
             for a in self.agents
         }
+        return price, gain
+
+    def summary(self, run):
+        last = self.history[-self.config.summary.last_rounds :]
+        first = self.history[: self.config.summary.first_rounds]
+        mean_price, gain = self._window(last)
+        opening_price, opening_gain = self._window(first)
         return {
             "run": run,
             "seed": self.seed,
@@ -525,6 +532,11 @@ class Game:
             "gain": gain,
             "market_mean_price": mean(mean_price.values()),
             "market_gain": mean(gain.values()),
+            "first_rounds": len(first),
+            "opening_price": opening_price,
+            "opening_gain": opening_gain,
+            "price_drift": {a: mean_price[a] - opening_price[a] for a in self.agents},
+            "gain_drift": {a: gain[a] - opening_gain[a] for a in self.agents},
             "fallbacks": sum(1 for t in self.turns if t["error"]),
             "replies": _reply_counts(self.turns),
             **{
