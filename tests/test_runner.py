@@ -107,3 +107,10 @@ def test_run_summary_covers_the_last_rounds(make_config, tmp_path):
     assert summary["last_rounds"] == 2
     assert summary["mean_price"] == {"A": 6, "B": 6}
     assert summary["gain"] == {"A": 0, "B": 0}
+
+
+def test_json_replies_fall_back_inside_the_price_grid(make_config, tmp_path):
+    [run_dir] = play(
+        make_config, tmp_path, "agents.1.model=mock/broken", "market.price_max=5"
+    )
+    assert set(prices(run_dir, "A")) | set(prices(run_dir, "B")) <= set(range(1, 6))

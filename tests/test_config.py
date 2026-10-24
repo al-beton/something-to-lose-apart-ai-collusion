@@ -31,3 +31,13 @@ def test_overrides_change_any_value(make_config):
 def test_overrides_reject_paths_that_dont_exist(make_config):
     with pytest.raises(ConfigError, match="market.nope"):
         make_config(overrides=["market.nope=1"])
+
+
+def test_one_config_rejects_duplicate_agent_ids(make_config):
+    with pytest.raises(ConfigError, match="agent id 'A' is used twice"):
+        make_config(overrides=["agents.1.id=A"])
+
+
+def test_one_config_rejects_a_market_with_no_room_to_collude(make_config):
+    with pytest.raises(ConfigError, match="no room"):
+        make_config(overrides=["market.b=1", "market.c=1"])
