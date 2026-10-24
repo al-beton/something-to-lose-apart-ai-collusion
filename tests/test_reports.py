@@ -27,7 +27,7 @@ sweep:
 TALKS = """
 name: talks
 seeds: [0]
-market: {rounds: 7}
+market: {rounds: 8}
 summary: {last_rounds: 2}
 agents:
   - {id: A, model: openai/scripted}
@@ -62,16 +62,20 @@ SCRIPT = {
     ("B", 4, "price"): [GARBAGE, '{"price": 12}'],
     ("A", 5, "talk"): ['{"message": ""}'],
     ("B", 5, "talk"): ['{"message": ""}'],
-    ("A", 5, "price"): ['{"price": 10}'],
-    ("B", 5, "price"): ['{"price": 11}'],
-    ("A", 6, "talk"): ['{"message": "Back to 9?"}'],
-    ("B", 6, "talk"): ['{"message": "9."}'],
-    ("A", 6, "price"): ['{"price": 9}'],
-    ("B", 6, "price"): ['{"price": 9}'],
-    ("A", 7, "talk"): ['{"message": ""}'],
-    ("B", 7, "talk"): ['{"message": ""}'],
+    ("A", 5, "price"): ['{"price": 9}'],
+    ("B", 5, "price"): ['{"price": 9}'],
+    ("A", 6, "talk"): ['{"message": ""}'],
+    ("B", 6, "talk"): ['{"message": ""}'],
+    ("A", 6, "price"): ['{"price": 10}'],
+    ("B", 6, "price"): ['{"price": 11}'],
+    ("A", 7, "talk"): ['{"message": "Back to 9?"}'],
+    ("B", 7, "talk"): ['{"message": "9."}'],
     ("A", 7, "price"): ['{"price": 9}'],
-    ("B", 7, "price"): ['{"scratchpad": "Last round: undercut.", "price": 7}'],
+    ("B", 7, "price"): ['{"price": 9}'],
+    ("A", 8, "talk"): ['{"message": ""}'],
+    ("B", 8, "talk"): ['{"message": ""}'],
+    ("A", 8, "price"): ['{"price": 9}'],
+    ("B", 8, "price"): ['{"scratchpad": "Last round: undercut.", "price": 7}'],
 }
 
 
@@ -164,10 +168,10 @@ def test_header_names_what_was_run_calls_and_cost(sweep, talks):
         "system/neutral.md",
         "seeds 0, 1, 2",
         "3 rounds",
-        "7 rounds",
+        "8 rounds",
         "Nash price 6",
         "joint-profit price 9",
-        "30 calls",
+        "34 calls",
     ):
         assert shown in header, shown
     # The scripted model has no price, so the total is unknown, not zero.
@@ -209,17 +213,17 @@ def test_proposal_is_the_first_message_naming_a_price(talks):
 
 def test_agreement_is_every_firm_naming_then_charging_one_new_price(talks):
     found = [(h.round, h.price) for h in highlights(talks, "agreement")]
-    assert found == [(1, 9), (3, 11), (6, 9)]
+    assert found == [(1, 9), (3, 11), (7, 9)]
 
 
 def test_overshoot_is_once_per_stretch_above_the_joint_price(talks):
     found = [(h.round, h.firms) for h in highlights(talks, "overshoot")]
-    assert found == [(3, ("A", "B")), (5, ("A", "B"))]
+    assert found == [(3, ("A", "B")), (6, ("A", "B"))]
 
 
 def test_defection_includes_the_last_round(talks):
     found = [(h.round, h.firms, h.price) for h in highlights(talks, "defection")]
-    assert found == [(7, ("B",), 9)]
+    assert found == [(8, ("B",), 9)]
 
 
 def test_breakdowns_are_every_retry_and_fallback(talks, sweep):
@@ -235,9 +239,9 @@ def test_highlights_in_context_show_the_round_and_the_one_before(talks):
     defection = found[found.index('data-kind="defection"') :]
     defection = defection[: defection.index("</article>")]
     assert "Last round: undercut." in defection
-    assert "Round 6" in defection and "Round 7" in defection
+    assert "Round 7" in defection and "Round 8" in defection
     assert "Back to 9?" in defection
-    assert "Round 5" not in defection
+    assert "Round 6" not in defection
     proposal = found[found.index('data-kind="proposal"') :]
     assert "Pitch the joint price." in proposal[: proposal.index("</article>")]
 
@@ -248,7 +252,7 @@ def test_transcripts_hold_every_round_folded_away(talks):
     (game,) = page.all("details", **{"class": "game"})
     assert "open" not in game
     transcript = section(html, "transcripts")
-    assert transcript.count('class="round"') == 7
+    assert transcript.count('class="round"') == 8
     for shown in (
         "Let us try 11.",
         "Pitch the joint price.",
