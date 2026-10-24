@@ -73,7 +73,7 @@ def test_self_hosted_costs_nothing_against_the_cap(
 
 def test_modal_config_runs_against_a_served_model():
     config = load_config(ROOT / "configs/modal.yaml")
-    serve = (ROOT / "modal/serve.py").read_text()
+    serve = (ROOT / "deploy/modal_vllm.py").read_text()
     for agent in config.agents:
         assert agent.model.startswith("openai/") and agent.api_base
         assert agent.api_key_env == "MODAL_VLLM_KEY"
@@ -92,7 +92,7 @@ def test_modal_readme_says_how_to_set_up_deploy_run_and_tear_down():
     order = [
         "modal setup",
         "modal secret create",
-        "modal deploy modal/serve.py",
+        "modal deploy deploy/modal_vllm.py",
         "lab run configs/modal.yaml",
         "modal app stop",
     ]
