@@ -105,3 +105,19 @@ def test_stakes_analysis_reads_committed_compact_runs(runs, tmp_path):
             shutil.copy(path, committed / path.parent.relative_to(runs) / name)
     analysis = load_script()
     assert analysis.analyse(committed) == analysis.analyse(runs)
+
+
+def test_stakes_analysis_leaves_unreadable_answers_out_of_the_rates(
+    make_config, tmp_path
+):
+    out = tmp_path / "runs"
+    for run_dir in run_config(make_config(FIXTURE), out):
+        if "mock-joint" in str(run_dir):
+            audit(run_dir, {"A": (True, True), "B": (True, None)})
+        else:
+            audit(run_dir, {"A": (False, False), "B": (False, None)})
+    rows = {(r["arm"], r["model"]): r for r in load_script().analyse(out)}
+    joint = rows[("model=mock/joint", "mock/joint")]
+    assert (joint["firms"], joint["unknown answers"]) == (4, 2)
+    assert (joint["honest disclosure"], joint["denial"]) == (1.0, 0.0)
+    assert rows[("model=mock/nash", "mock/nash")]["false confession"] == 0.0
