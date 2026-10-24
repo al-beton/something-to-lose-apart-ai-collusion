@@ -2,7 +2,7 @@
 
 - **one-page:** One command turns any folder of runs (one run, a sweep, or several) into a single HTML page that can be shared as it is.
 - **header:** The report opens with its name and one line giving how many games and arms it holds and their total calls and cost, saying so when a cost is unknown.
-- **first-screen:** The first screen holds only a few plain sentences per arm (the price its firms settle on and in how many games, when they first agree, when they defect, and any breakdowns), the summary table and one small chart comparing every arm's mean price with the Nash and joint-profit prices.
+- **first-screen:** The first screen holds only a few plain sentences per arm (the price its firms settle on and in how many games, when they first agree, when they defect, and any breakdowns), the summary table and one small chart comparing every arm's mean price with the Nash and joint-profit prices (one per market, when games played in different markets).
 - **contents-bar:** A contents bar stays at the top of the page to jump between its sections.
 - **setup:** A Setup section, folded away, says what was run (models, prompts, seeds, rounds and the market's Nash and joint-profit prices) and shows exactly what agents were told: each system prompt, the phase prompts as first sent, and any other text that appeared in their prompts, such as a notice, with the rounds it appeared in.
 - **summary:** The report shows the same table as `lab summary`, grouped by the swept values.
@@ -24,9 +24,9 @@
 |---|---|---|
 | `one-page` | `src/collusion_lab/report/__init__.py`, `src/collusion_lab/report/page.py`, `src/collusion_lab/cli.py` | `test_one_page_from_the_lab_command`, `test_one_page_covers_one_run_or_several` |
 | `header` | `src/collusion_lab/report/page.py` | `test_header_counts_games_arms_calls_and_cost`, `test_header_cost_adds_up_known_costs` |
-| `first-screen` | `src/collusion_lab/report/page.py`, `src/collusion_lab/report/overview.py`, `src/collusion_lab/report/chart.py` | `test_first_screen_says_what_each_arm_did`, `test_first_screen_holds_only_sentences_table_and_one_chart` |
+| `first-screen` | `src/collusion_lab/report/page.py`, `src/collusion_lab/report/overview.py`, `src/collusion_lab/report/chart.py` | `test_first_screen_says_what_each_arm_did`, `test_first_screen_holds_only_sentences_table_and_one_chart`, `test_first_screen_charts_each_market_apart` |
 | `contents-bar` | `src/collusion_lab/report/page.py`, `src/collusion_lab/report/style.py` | `test_contents_bar_links_every_section` |
-| `setup` | `src/collusion_lab/report/page.py`, `src/collusion_lab/report/told.py`, `src/collusion_lab/report/games.py` | `test_setup_names_what_was_run`, `test_setup_shows_exactly_what_agents_were_told_and_when` |
+| `setup` | `src/collusion_lab/report/page.py`, `src/collusion_lab/report/told.py`, `src/collusion_lab/report/games.py` | `test_setup_names_what_was_run`, `test_setup_shows_exactly_what_agents_were_told_and_when`, `test_setup_shows_each_phase_prompt_when_the_first_arm_skips_talk` |
 | `arm-tabs` | `src/collusion_lab/report/page.py`, `src/collusion_lab/report/style.py` | `test_arm_tabs_hold_each_arms_games`, `test_arm_tabs_name_arms_briefly`, `test_arm_tabs_are_left_out_for_one_arm` |
 | `summary` | `src/collusion_lab/report/page.py`, `src/collusion_lab/summary.py` | `test_summary_matches_lab_summary` |
 | `price-chart` | `src/collusion_lab/report/chart.py`, `src/collusion_lab/report/page.py` | `test_price_chart_has_one_line_per_seed_and_both_benchmarks`, `test_price_chart_never_mixes_markets`, `test_price_chart_names_runs_when_seeds_repeat`, `test_price_chart_puts_arms_side_by_side_on_the_same_axes` |
