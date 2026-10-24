@@ -21,5 +21,5 @@
 | `sweeps` | `src/collusion_lab/config.py`, `src/collusion_lab/runner.py`, `configs/smoke.yaml` | `test_sweeps_play_every_combination_for_every_seed`, `test_sweeps_set_one_value_for_every_agent`, `test_spend_asks_first_counts_every_sweep_run`, `test_sweeps_give_every_combination_its_own_directory` |
 | `parallel` | `src/collusion_lab/config.py`, `src/collusion_lab/runner.py` | `test_parallel_runs_stay_within_the_limit`, `test_parallel_needs_a_limit_of_at_least_one` |
 | `summary-table` | `src/collusion_lab/summary.py`, `src/collusion_lab/cli.py` | `test_summary_table_groups_by_the_swept_values`, `test_summary_table_groups_by_any_config_value`, `test_summary_table_from_the_lab_command`, `test_summary_table_groups_by_list_values` |
-| `per-firm-summary` | not yet | |
+| `per-firm-summary` | `src/collusion_lab/summary.py` | `test_per_firm_summary_shows_a_scripted_partner_and_the_model_apart`, `test_per_firm_summary_counts_fallbacks_per_firm`, `test_per_firm_summary_pools_when_every_firm_is_scripted`, `test_per_firm_summary_pools_when_no_firm_is_scripted`, `test_per_firm_summary_in_the_report` |
 | `run-directory` | `src/collusion_lab/runner.py` | `test_run_directory_holds_config_turns_and_summary` |
