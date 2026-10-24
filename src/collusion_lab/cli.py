@@ -1,7 +1,9 @@
-# Implements: runs/stops-cleanly, runs/one-config, runs/overrides, backends/keys-from-environment, backends/spend-asks-first, reproducibility/cache-modes, runs/summary-table, reports/one-page
+# Implements: runs/stops-cleanly, runs/failures-dont-stop-sweeps, runs/resume, runs/missing-runs-shown, runs/one-config, runs/overrides, backends/keys-from-environment, backends/spend-asks-first, reproducibility/cache-modes, runs/summary-table, reports/one-page
 """The `lab` command.
 
-- `lab run CONFIG [--set path=value ...] [--out DIR] [-y]` plays a config;
+- `lab run CONFIG [--set path=value ...] [--out DIR] [-y]` plays a config,
+  skipping runs that already finished, and ends with how many finished,
+  failed and were skipped (exit 1 if any failed, each failure on stderr);
 - `lab summary FOLDER [--by PATH ...]` prints one table for a folder of runs;
 - `lab report FOLDER [--out FILE]` writes one shareable HTML page for it
   (`FOLDER/report.html` by default) and prints where.
@@ -24,8 +26,8 @@ from dotenv import load_dotenv
 from collusion_lab.cache import DEFAULT_PATH, MODES, Cache
 from collusion_lab.config import ConfigError, load_config
 from collusion_lab.report import write_report
-from collusion_lab.runner import RunFailed, paid_calls, run_config
-from collusion_lab.summary import format_table, summarize
+from collusion_lab.runner import paid_calls, run_sweep
+from collusion_lab.summary import format_missing, format_table, summarize
 
 
 def main(argv=None):
@@ -58,6 +60,8 @@ def main(argv=None):
     args = parser.parse_args(argv)
     if args.command == "summary":
         print(format_table(summarize(args.folder, args.by)))
+        if missing := format_missing(args.folder):
+            print("\n" + missing)
         return 0
     if args.command == "report":
         print(write_report(args.folder, args.out))
@@ -70,14 +74,16 @@ def main(argv=None):
     if not args.yes and not _spending_agreed(paid_calls(config)):
         return 1
     cache = Cache(args.cache_path, args.cache)
-    try:
-        run_dirs = run_config(config, args.out, cache)
-    except RunFailed as error:
-        print(f"lab: {error}", file=sys.stderr)
-        return 1
-    for run_dir in run_dirs:
-        print(run_dir)
-    return 0
+    outcomes = run_sweep(config, args.out, cache)
+    count = {state: 0 for state in ("finished", "failed", "skipped")}
+    for outcome in outcomes:
+        count[outcome.state] += 1
+        if outcome.state == "failed":
+            print(f"lab: {outcome.error}", file=sys.stderr)
+        else:
+            print(outcome.dir)
+    print(", ".join(f"{n} {state}" for state, n in count.items()) + ".")
+    return 1 if count["failed"] else 0
 
 
 def _spending_agreed(calls):

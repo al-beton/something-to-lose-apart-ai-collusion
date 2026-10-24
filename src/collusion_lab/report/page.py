@@ -1,8 +1,9 @@
-# Implements: reports/one-page, reports/header, reports/summary, reports/price-chart, reports/highlights-in-context, reports/transcripts, reports/self-contained
+# Implements: runs/missing-runs-shown, reports/one-page, reports/header, reports/summary, reports/price-chart, reports/highlights-in-context, reports/transcripts, reports/self-contained
 """The report page: one self-contained HTML file.
 
 Sections, in order: a header saying what was run and what it cost, the
-summary table (`summarize`, so the same numbers as `lab summary`), a price
+summary table (`summarize`, so the same numbers as `lab summary`), the runs
+that failed or never finished (only when there are any), a price
 chart per group, the highlights (each with the round before it and its own
 round) and every game's transcript inside a closed `<details>`.
 
@@ -19,7 +20,7 @@ from pathlib import Path
 from collusion_lab.report.chart import legend, price_chart, series_colour
 from collusion_lab.report.games import load_game, load_games
 from collusion_lab.report.highlights import find_highlights
-from collusion_lab.summary import cell, group_runs, summarize
+from collusion_lab.summary import cell, group_runs, missing_runs, summarize
 
 HEADLINES = {
     "proposal": "{who} proposes {price}",
@@ -37,6 +38,7 @@ def build_report(folder):
     body = [
         _header(folder.name, games),
         _summary(folder),
+        _missing(folder),
         _charts(folder),
         _highlights(games),
         _transcripts(games),
@@ -103,11 +105,33 @@ def _summary(folder):
     )
 
 
+def _missing(folder):
+    missing = missing_runs(folder)
+    if not missing:
+        return ""
+    items = "".join(
+        f"<li><code>{escape(m['run'])}</code> {escape(m['state'])}"
+        + (f": {escape(m['error'])}" if m["error"] else "")
+        + "</li>"
+        for m in missing
+    )
+    return (
+        '<section id="missing"><h2>Missing runs</h2>'
+        '<p class="muted">Planned runs that failed or never finished; the '
+        f"summary leaves them out.</p><ul>{items}</ul></section>"
+    )
+
+
 def _charts(folder):
     by, groups = group_runs(folder)
     figures = []
     for key, runs in groups:
-        games = sorted((load_game(r.dir) for r in runs), key=lambda g: (g.seed, g.run))
+        played = [r for r in runs if r.summary]
+        if not played:
+            continue
+        games = sorted(
+            (load_game(r.dir) for r in played), key=lambda g: (g.seed, g.run)
+        )
         label = ", ".join(f"{k} = {cell(v)}" for k, v in zip(by, key, strict=True))
         # A group can hold games from several markets when the market isn't
         # swept; each gets its own chart, since grids and benchmarks differ.
