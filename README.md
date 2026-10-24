@@ -52,7 +52,7 @@ Models go through [OpenRouter](https://openrouter.ai), one key for every provide
 
 ## Running on Modal
 
-An open model served on [Modal](https://modal.com) costs GPU time instead of per-token fees, and anyone with a Modal account can rerun our games on it. `deploy/modal_vllm.py` serves Mistral Small 3.2 with vLLM's OpenAI-compatible server on one H100; its docstring says how to serve another model.
+An open model served on [Modal](https://modal.com) costs GPU time instead of per-token fees, and anyone with a Modal account can rerun our games on it. `deploy/modal_vllm.py` serves Mistral Small 3.2 with vLLM's OpenAI-compatible server on one H100; its docstring says how to serve another model. The endpoint is private: every route except its health checks refuses requests without your token, which lives only in the Modal secret and your `.env`, never in a config, a command line or a log.
 
 1. `uvx modal setup` signs you in to Modal (once per machine).
 2. Make a token and keep it in a Modal secret: `uvx modal secret create collusion-lab-vllm VLLM_API_KEY=<a long random string>`. Put the same string after `MODAL_VLLM_KEY=` in `.env`.
