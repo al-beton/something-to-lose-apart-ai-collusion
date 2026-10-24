@@ -15,5 +15,5 @@
 | `checks-on-every-pr` | `.github/workflows/blocking-checks.yml` | — |
 | `checks-over-prose` | `.agents/skills/review-pr/SKILL.md` | — |
 | `simple-code` | `pyproject.toml` | — |
-| `end-to-end` | not yet | — |
+| `end-to-end` | `tests/test_e2e.py`, `.github/workflows/ci.yml`, `Makefile` | `test_end_to_end_plays_every_arm_and_seed_into_its_own_folder`, `test_end_to_end_summary_numbers_make_sense`, `test_end_to_end_report_has_every_section_and_highlights` |
 | `ci-runs-everything` | `.github/workflows/ci.yml` | — |
