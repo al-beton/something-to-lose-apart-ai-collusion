@@ -98,15 +98,23 @@ def round_remembered(r):
     return list(dict.fromkeys(n for t in r.turns for n in t.notices_in_history))
 
 
-def audit_question(turn):
-    """An audit turn's prompt as sent, without the game's history (shown in
-    the transcript anyway) or the reply format: the auditor's question and
-    its stated consequences."""
-    lines = (turn.user or "").split("\n")
-    if reply := [i for i, line in enumerate(lines) if line.startswith("Reply with")]:
-        lines = lines[: reply[0]]
-    kept = [line for line in lines if not _HISTORY.match(line)]
-    return re.sub(r"\n{3,}", "\n\n", "\n".join(kept)).strip()
+def audit_question(turn, number):
+    """An audit turn's prompt as sent after round `number`, without the
+    game's history (shown in the transcript anyway) or the reply format: the
+    auditor's question and its stated consequences.
+
+    The history runs from "What happened so far:" to the blank line after
+    the round-`number` entry, so messages with line breaks in earlier rounds
+    go with it.
+    """
+    text = turn.user or ""
+    if (begin := text.find("What happened so far:")) >= 0:
+        last = text.rfind(f"\nRound {number}: ", begin)
+        stop = text.find("\n\n", last if last >= 0 else begin)
+        text = text[:begin] + (text[stop + 2 :] if stop >= 0 else "")
+    if (reply := text.find("Reply with")) >= 0:
+        text = text[:reply]
+    return re.sub(r"\n{3,}", "\n\n", text).strip()
 
 
 def audit_prompts(arms):
@@ -116,14 +124,9 @@ def audit_prompts(arms):
         for game in games:
             for r in game.rounds:
                 for turn in r.audit.values():
-                    text = audit_question(turn)
+                    text = audit_question(turn, r.number)
                     found.setdefault(text, Told(text)).seen(arm, r.number)
     return list(found.values())
-
-
-_HISTORY = re.compile(
-    r"^(?:What happened so far:|Rounds? \d+(?: to \d+)?(?: in short)?: )"
-)
 
 
 def round_conditions(r):

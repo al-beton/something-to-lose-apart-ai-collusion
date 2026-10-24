@@ -481,7 +481,7 @@ def _audit(game, r):
     return (
         '<div class="audit"><h5>Audit</h5><details class="question"><summary>'
         "the auditor's question as sent</summary>"
-        f'<pre class="prompt">{escape(audit_question(first))}</pre></details>'
+        f'<pre class="prompt">{escape(audit_question(first, r.number))}</pre></details>'
         f"{answers}</div>"
     )
 
