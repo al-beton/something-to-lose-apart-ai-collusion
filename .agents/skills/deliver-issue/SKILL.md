@@ -42,7 +42,7 @@ For each thread `D wait-review` printed:
 
 ## 4. Hand over for merging
 
-A builder never merges its own pull request. When checks are green and Codex has finished with no open threads: update the description (tests count, review rounds), label the pull request and the issue `in-review`, and tell the delivery lead in one line. A reviewer reviews it (`review-pr`) and merges it (`merge-pr`): `D merge <pr>` refuses unless `blocking-checks` is green, Codex has finished on the latest commit, every thread is resolved and the description has a closing block. Then it:
+A builder never merges its own pull request. When checks are green and Codex has finished with no open threads: update the description (tests count, review rounds), label the pull request `in-review`, swap the issue's `in-progress` for `in-review` (`gh issue edit <n> --add-label in-review --remove-label in-progress`), and tell the delivery lead in one line. A reviewer reviews it (`review-pr`) and merges it (`merge-pr`): `D merge <pr>` refuses unless `blocking-checks` is green, Codex has finished on the latest commit, every thread is resolved and the description has a closing block. Then it:
 
 1. moves any pull request based on this branch to `main` (deleting a base branch closes the pull requests on it);
 2. squash-merges with the pull request title as subject and the closing block as body;
