@@ -5,6 +5,7 @@ import unittest
 from deliver import (
     MergeRefused,
     closing_lines,
+    commit,
     merge,
     review_finished,
     review_state,
@@ -20,7 +21,7 @@ def summary(sha, status):
 class FakeGh:
     """Answers the commands `merge` runs; records every one."""
 
-    def __init__(self, checks="pass", unresolved=0, stacked=(21,)):
+    def __init__(self, checks="pass", unresolved=0, stacked=(102,)):
         self.calls = []
         self.checks = checks
         self.unresolved = unresolved
@@ -32,10 +33,10 @@ class FakeGh:
         pr = {"reviewThreads": {"nodes": threads}}
         answers = {
             ("pr", "view"): {
-                "number": 20,
-                "title": "improve(workflow): one routine (#18)",
-                "body": "## Issues\nCloses #18\n\n## Notes\nNone",
-                "headRefName": "18-deliver-issue",
+                "number": 101,
+                "title": "improve(workflow): one routine (#7)",
+                "body": "## Issues\nCloses #7\n\n## Notes\nNone",
+                "headRefName": "7-one-routine",
                 "baseRefName": "main",
                 "headRefOid": "abc",
             },
@@ -72,26 +73,35 @@ class DeliverTests(unittest.TestCase):
         self.assertEqual(unsafe_paths(["runs/x"], allow_runs=True), [])
         self.assertEqual(unsafe_paths(["src", "tests/test_x.py"]), [])
 
+    def test_named_paths_commit_only_what_they_name(self):
+        calls = []
+        commit(["a.py", "b.md"], ["Subject", "Body"], run=lambda *a: calls.append(a))
+        self.assertEqual(calls[0], ("git", "add", "--", "a.py", "b.md"))
+        made = calls[1]
+        self.assertEqual(made[:2], ("git", "commit"))
+        self.assertIn("--only", made)
+        self.assertEqual(made[made.index("--") :], ("--", "a.py", "b.md"))
+
     def test_merge_when_clean_keeps_the_closing_block(self):
-        body = "## Issues\nCloses #18\nRefs #3\n\nCloses nothing here"
-        self.assertEqual(closing_lines(body), ["Closes #18", "Refs #3"])
+        body = "## Issues\nCloses #7\nRefs #3\n\nCloses nothing here"
+        self.assertEqual(closing_lines(body), ["Closes #7", "Refs #3"])
 
     def test_stacked_retarget_happens_before_the_branch_is_deleted(self):
         gh = FakeGh()
-        merge(20, gh, pause=lambda seconds: None)
-        retarget = gh.index("pr", "edit", "21", "--base", "main")
-        squash = gh.index("pr", "merge", "20", "--squash")
-        delete = gh.index("git", "push", "origin", "--delete", "18-deliver-issue")
+        merge(101, gh, pause=lambda seconds: None)
+        retarget = gh.index("pr", "edit", "102", "--base", "main")
+        squash = gh.index("pr", "merge", "101", "--squash")
+        delete = gh.index("git", "push", "origin", "--delete", "7-one-routine")
         self.assertLess(retarget, squash)
         self.assertLess(squash, delete)
         merged = gh.calls[squash]
         self.assertNotIn("--delete-branch", merged)
-        self.assertIn("improve(workflow): one routine (#18)", merged)
-        self.assertIn("Closes #18", merged[merged.index("--body") + 1])
+        self.assertIn("improve(workflow): one routine (#7)", merged)
+        self.assertIn("Closes #7", merged[merged.index("--body") + 1])
 
     def test_main_stays_green_reruns_checks_after_merging(self):
         gh = FakeGh(stacked=())
-        merge(20, gh, pause=lambda seconds: None)
+        merge(101, gh, pause=lambda seconds: None)
         dispatch = gh.index("workflow", "run", "blocking-checks.yml", "--ref", "main")
         watch = gh.index("run", "watch", "7")
         self.assertLess(gh.index("pr", "merge"), dispatch)
@@ -101,7 +111,7 @@ class DeliverTests(unittest.TestCase):
     def test_merge_when_clean_refuses_red_checks_or_open_threads(self):
         for gh in (FakeGh(checks="fail"), FakeGh(unresolved=1)):
             with self.assertRaises(MergeRefused):
-                merge(20, gh, pause=lambda seconds: None)
+                merge(101, gh, pause=lambda seconds: None)
             self.assertFalse([c for c in gh.calls if c[:2] == ("pr", "merge")])
 
 
