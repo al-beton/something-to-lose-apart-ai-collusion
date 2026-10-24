@@ -1,4 +1,4 @@
-# Implements: reports/reasoning-folded, reports/one-page, reports/header, reports/first-screen, reports/contents-bar, reports/setup, reports/summary, reports/price-chart, reports/arm-tabs, reports/highlights-in-context, reports/transcripts, reports/self-contained, runs/fallback-rates
+# Implements: reports/reasoning-folded, reports/one-page, reports/header, reports/first-screen, reports/contents-bar, reports/setup, reports/summary, reports/price-chart, reports/arm-tabs, reports/highlights-in-context, reports/transcripts, reports/self-contained, runs/fallback-rates, runs/missing-runs-shown
 """The report page: one self-contained HTML file, read from the top down.
 
 A sticky contents bar, then:
@@ -6,8 +6,8 @@ A sticky contents bar, then:
 1. the header: the folder's name and one line of games, arms, calls and cost;
 2. the summary (the first screen): a few sentences per arm (`overview.py`),
    the `lab summary` table and one small bar chart of every arm's mean price,
-   then the unreadable replies by model and any flagged runs, when there are
-   any;
+   then the unreadable replies by model and any flagged runs, and the runs
+   that failed or never finished, each when there are any;
 3. Setup, folded away: what was run and exactly what agents were told
    (`told.py`);
 4. the charts: one per arm, side by side on the same axes;
@@ -46,6 +46,7 @@ from collusion_lab.summary import (
     cell,
     flagged_runs,
     group_runs,
+    missing_runs,
     reply_rates,
     summarize,
 )
@@ -83,6 +84,7 @@ def build_report(folder):
         _header(folder.name, games, arms),
         _summary(folder, arms),
         _replies(folder),
+        _missing(folder),
         _setup(games, arms),
         _charts(arms),
         _arm_tabs(arms),
@@ -109,7 +111,12 @@ def _arms(folder):
     briefs = [_brief([key[d] for key, _ in groups]) for d in range(len(by))]
     arms = []
     for i, (key, runs) in enumerate(groups):
-        games = sorted((load_game(r.dir) for r in runs), key=lambda g: (g.seed, g.run))
+        played = [r for r in runs if r.summary]  # missing runs have no game
+        if not played:
+            continue
+        games = sorted(
+            (load_game(r.dir) for r in played), key=lambda g: (g.seed, g.run)
+        )
         name = ", ".join(brief[i] for brief in briefs) or "All runs"
         caption = ", ".join(f"{k} = {cell(v)}" for k, v in zip(by, key, strict=True))
         arms.append((name, caption or "All runs", games))
@@ -211,6 +218,23 @@ def _summary(folder, arms):
         '<p class="muted">Mean price and gain over each run\'s last rounds; '
         "gain is 0 at the Nash profit and 1 at the joint-profit maximum.</p>"
         f"{charts}</section>"
+    )
+
+
+def _missing(folder):
+    missing = missing_runs(folder)
+    if not missing:
+        return ""
+    items = "".join(
+        f"<li><code>{escape(m['run'])}</code> {escape(m['state'])}"
+        + (f": {escape(m['error'])}" if m["error"] else "")
+        + "</li>"
+        for m in missing
+    )
+    return (
+        '<section id="missing"><h2>Missing runs</h2>'
+        '<p class="muted">Planned runs that failed or never finished; the '
+        f"summary leaves them out.</p><ul>{items}</ul></section>"
     )
 
 

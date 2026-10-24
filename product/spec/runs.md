@@ -23,9 +23,9 @@
 | `stops-cleanly` | `src/collusion_lab/runner.py`, `src/collusion_lab/cli.py` | `test_transient_errors_retried_a_few_times_then_the_run_stops_cleanly`, `test_stops_cleanly_with_one_line_from_the_lab_command`, `test_stops_cleanly_without_keeping_an_old_summary` |
 | `cheap-preset` | `configs/cheap.yaml` | `test_cheap_preset_is_cheap_by_construction` |
 | `fallback-rates` | `src/collusion_lab/runner.py`, `src/collusion_lab/summary.py`, `src/collusion_lab/cli.py`, `src/collusion_lab/report/page.py` | `test_fallback_rates_per_model_with_reasons`, `test_fallback_rates_not_flagged_at_or_below_one_in_ten`, `test_fallback_rates_in_lab_summary_and_the_report` |
-| `failures-dont-stop-sweeps` | not yet | — |
-| `resume` | not yet | — |
-| `missing-runs-shown` | not yet | — |
+| `failures-dont-stop-sweeps` | `src/collusion_lab/runner.py`, `src/collusion_lab/status.py`, `src/collusion_lab/cli.py` | `test_failures_dont_stop_sweeps`, `test_failures_dont_stop_sweeps_but_run_config_still_raises`, `test_failures_dont_stop_sweeps_from_the_lab_command` |
+| `resume` | `src/collusion_lab/runner.py`, `src/collusion_lab/cli.py` | `test_resume_skips_finished_runs_and_replays_the_rest_from_the_cache`, `test_resume_plays_a_finished_run_again_when_its_config_changed` |
+| `missing-runs-shown` | `src/collusion_lab/summary.py`, `src/collusion_lab/status.py`, `src/collusion_lab/report/page.py`, `src/collusion_lab/cli.py` | `test_missing_runs_shown_in_the_summary_table`, `test_missing_runs_shown_in_the_report` |
 | `sweeps` | `src/collusion_lab/config.py`, `src/collusion_lab/runner.py`, `configs/smoke.yaml` | `test_sweeps_play_every_combination_for_every_seed`, `test_sweeps_set_one_value_for_every_agent`, `test_spend_asks_first_counts_every_sweep_run`, `test_sweeps_give_every_combination_its_own_directory` |
 | `parallel` | `src/collusion_lab/config.py`, `src/collusion_lab/runner.py` | `test_parallel_runs_stay_within_the_limit`, `test_parallel_needs_a_limit_of_at_least_one` |
 | `summary-table` | `src/collusion_lab/summary.py`, `src/collusion_lab/cli.py` | `test_summary_table_groups_by_the_swept_values`, `test_summary_table_groups_by_any_config_value`, `test_summary_table_from_the_lab_command`, `test_summary_table_groups_by_list_values` |
