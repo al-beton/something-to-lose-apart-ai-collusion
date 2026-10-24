@@ -9,6 +9,7 @@
 - **parallel:** The runs of a config play at the same time, up to a limit of at least one that the config sets.
 - **summary-table:** One command prints a table of any folder of runs, grouped by the swept values or any other config value (lists included), with mean price, gain, fallbacks and cost.
 - **per-firm-summary:** The summary table also shows each firm on its own (its mean price, gain, fallbacks and cost) and names the firms a script played; when an arm has both scripted and model firms, its headline mean price and gain are the model firms' alone, so a script's prices never hide what the model did.
+- **fallback-rates:** The summary table and the report show, for each model, how many of its replies couldn't be read and how many fell back, with the reasons, and flag every run in which more than one turn in ten fell back.
 
 ## Where this is enforced
 
@@ -18,6 +19,7 @@
 | `overrides` | `src/collusion_lab/config.py`, `src/collusion_lab/cli.py` | `test_overrides_change_any_value`, `test_overrides_reject_paths_that_dont_exist` |
 | `stops-cleanly` | `src/collusion_lab/runner.py`, `src/collusion_lab/cli.py` | `test_transient_errors_retried_a_few_times_then_the_run_stops_cleanly`, `test_stops_cleanly_with_one_line_from_the_lab_command`, `test_stops_cleanly_without_keeping_an_old_summary` |
 | `cheap-preset` | `configs/cheap.yaml` | `test_cheap_preset_is_cheap_by_construction` |
+| `fallback-rates` | not yet | — |
 | `sweeps` | `src/collusion_lab/config.py`, `src/collusion_lab/runner.py`, `configs/smoke.yaml` | `test_sweeps_play_every_combination_for_every_seed`, `test_sweeps_set_one_value_for_every_agent`, `test_spend_asks_first_counts_every_sweep_run`, `test_sweeps_give_every_combination_its_own_directory` |
 | `parallel` | `src/collusion_lab/config.py`, `src/collusion_lab/runner.py` | `test_parallel_runs_stay_within_the_limit`, `test_parallel_needs_a_limit_of_at_least_one` |
 | `summary-table` | `src/collusion_lab/summary.py`, `src/collusion_lab/cli.py` | `test_summary_table_groups_by_the_swept_values`, `test_summary_table_groups_by_any_config_value`, `test_summary_table_from_the_lab_command`, `test_summary_table_groups_by_list_values` |
