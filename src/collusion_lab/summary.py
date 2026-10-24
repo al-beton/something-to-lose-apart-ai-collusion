@@ -1,4 +1,4 @@
-# Implements: runs/summary-table, runs/per-firm-summary, runs/fallback-rates, reports/summary, runs/missing-runs-shown
+# Implements: runs/summary-table, runs/per-firm-summary, runs/fallback-rates, reports/summary, runs/missing-runs-shown, conditions/audit-metrics
 """One table for a folder of runs, grouped by swept values or any config value.
 
 `summarize` reads every `summary.json` under a folder (and the `manifest.json`
@@ -13,7 +13,9 @@ model) played, and each firm's own mean price, gain, fallbacks and cost
 (from its turn and timing logs, plus what a resumed run's earlier attempts
 spent). When a run has both scripted and model firms, its headline mean
 price and gain are the model firms' alone. List and mapping values (`seeds`)
-group and print as JSON. `format_table` prints it as Markdown,
+group and print as JSON. When a group's runs were audited (the `audit`
+condition), the row adds the disclosure rates from `disclosure.rates`.
+`format_table` prints it as Markdown,
 which reads in a terminal and renders in a pull request comment.
 
 `reply_rates` gives, per model, its turns, unreadable replies, fallbacks,
@@ -30,6 +32,7 @@ from pathlib import Path
 from statistics import mean
 from typing import NamedTuple
 
+from collusion_lab import disclosure
 from collusion_lab.backends import is_mock
 
 FIRM_COLUMNS = ("price", "gain", "fallbacks", "cost")
@@ -167,12 +170,13 @@ def format_missing(folder):
 def format_table(rows):
     if not rows:
         return "No runs found."
-    columns = list(rows[0])
+    # Audit columns appear only on rows that were audited.
+    columns = list(dict.fromkeys(c for r in rows for c in r))
     lines = [
         "| " + " | ".join(columns) + " |",
         "|" + "|".join("---" for _ in columns) + "|",
     ]
-    lines += ["| " + " | ".join(cell(r[c]) for c in columns) + " |" for r in rows]
+    lines += ["| " + " | ".join(cell(r.get(c)) for c in columns) + " |" for r in rows]
     return "\n".join(lines)
 
 
@@ -209,6 +213,7 @@ def _row(by, key, runs):
         "fallbacks": sum(s["fallbacks"] for s in summaries),
         "cost": round(sum(run_cost(r.manifest) for r in runs), 4),
         "scripted": ", ".join(scripted) or None,
+        **disclosure.rates(summaries),
     }
 
 

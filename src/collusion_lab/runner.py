@@ -1,4 +1,4 @@
-# Implements: runs/sweeps, runs/parallel, market/talk-then-price, agents/json-replies, agents/retry-once, backends/usage-logged, backends/spend-asks-first, backends/shared-rate-limit, backends/spend-cap, market/history-window, runs/stops-cleanly, reproducibility/response-cache, reproducibility/manifest, runs/run-directory, logs/turn-log, logs/same-seed-same-log, logs/run-summary, logs/reasoning-logged, backends/reasoning-setting, agents/unreadable-explained, agents/json-mode, runs/fallback-rates, runs/failures-dont-stop-sweeps, runs/resume, conditions/hook-points, conditions/off-is-absent, conditions/conditions-logged, conditions/outage-once-remembered, runs/per-firm-summary
+# Implements: runs/sweeps, runs/parallel, market/talk-then-price, agents/json-replies, agents/retry-once, backends/usage-logged, backends/spend-asks-first, backends/shared-rate-limit, backends/spend-cap, market/history-window, runs/stops-cleanly, reproducibility/response-cache, reproducibility/manifest, runs/run-directory, logs/turn-log, logs/same-seed-same-log, logs/run-summary, logs/reasoning-logged, backends/reasoning-setting, agents/unreadable-explained, agents/json-mode, runs/fallback-rates, runs/failures-dont-stop-sweeps, runs/resume, conditions/hook-points, conditions/off-is-absent, conditions/conditions-logged, conditions/outage-once-remembered, runs/per-firm-summary, conditions/fork-at-audit, conditions/audit-logged
 """Playing a config: one game per seed, each written to its own run directory.
 
 A round is a talk phase (each agent sends one message its rivals read; skipped
@@ -28,8 +28,10 @@ notices, separated by blank lines, before a phase's prompt; when any is
 enabled, each turn line also lists the conditions active that round and the
 notices that agent was shown. A condition that keeps its notice (an outage
 announced once) has it repeated in the history of every later turn while it
-is active, logged as `notices_in_history`, whatever the history window. With
-none enabled, nothing changes.
+is active, logged as `notices_in_history`, whatever the history window. A condition can add a
+phase after a round (an audit, say): each agent gets one turn with the
+condition's prompt, the game can end there, and the condition can add its
+results to the summary. With none enabled, nothing changes.
 
 A model call that fails for good (see backends.py) stops its game: the turns
 played so far, the timings and the manifest are still written, and
@@ -50,6 +52,7 @@ calls a failed run already made replay for free.
 
 import asyncio
 import dataclasses
+import functools
 import json
 import random
 from dataclasses import dataclass, field
@@ -90,12 +93,23 @@ class RunWide:
 
 
 def paid_calls(config):
-    """How many calls a config makes to non-mock models, before retries."""
+    """How many calls a config makes to non-mock models, before retries,
+    counting phases that conditions add and the rounds an ending one cuts."""
     total = 0
     for child in expand(config):
         phases = 2 if child.market.talk else 1
         paid = sum(1 for a in child.agents if not is_mock(a.model))
-        total += len(child.seeds) * child.market.rounds * phases * paid
+        conditions = [c for c in child.conditions.values() if c.enabled]
+        calls = 0
+        for number in range(1, child.market.rounds + 1):
+            calls += phases * paid
+            added = [p for c in conditions if (p := c.phase_after(number))]
+            for phase in added:
+                models = [phase.model or a.model for a in child.agents]
+                calls += sum(1 for m in models if not is_mock(m))
+            if any(phase.last for phase in added):
+                break
+        total += len(child.seeds) * calls
     return total
 
 
@@ -253,6 +267,9 @@ class Game:
         self.used_prompts = set()
         self.conditions = [c for c in config.conditions.values() if c.enabled]
         self.kept = {}  # (condition, round) -> (condition, phase, notice)
+        self.cache = cache
+        self.shared = shared
+        self.stand_ins = {}
 
     async def play(self):
         for number in range(1, self.config.market.rounds + 1):
@@ -274,19 +291,27 @@ class Game:
                 "profits": profits,
             }
             self.history.append(record)
+            ended = False
             for condition in self.conditions:
                 condition.after_round(record)
+                if extra := condition.phase_after(number):
+                    self.turns += await self._turns(
+                        extra.name, number, {}, (condition, extra)
+                    )
+                    ended = ended or extra.last
+            if ended:
+                break
 
     async def _phase(self, phase, number, said):
         turns = await self._turns(phase, number, said)
         self.turns += turns
         return {t["agent"]: t["used"]["message"] for t in turns}
 
-    async def _turns(self, phase, number, said):
+    async def _turns(self, phase, number, said, added=None):
         # Every agent's turn settles before a failure is raised, so a call
         # still out when another agent's fails is logged, not lost.
         turns = await asyncio.gather(
-            *(self._turn(phase, number, agent, said) for agent in self.agents),
+            *(self._turn(phase, number, agent, said, added) for agent in self.agents),
             return_exceptions=True,
         )
         for turn in turns:
@@ -294,10 +319,14 @@ class Game:
                 raise turn
         return list(turns)
 
-    async def _turn(self, phase, number, agent_id, said):
+    async def _turn(self, phase, number, agent_id, said, added=None):
+        """One agent's turn; `added` is (condition, Phase) for a condition's phase."""
         agent = self.agents[agent_id]
         notices = self._notices(phase, number)
-        messages = self._messages(phase, number, agent, said, notices)
+        messages = self._messages(phase, number, agent, said, notices, added)
+        backend = self.backends[agent_id]
+        if added and added[1].model:
+            agent, backend = self._stand_in(agent, added[1].model)
         context = {
             "round": number,
             "phase": phase,
@@ -305,7 +334,9 @@ class Game:
             "market": self.market,
             "history": self.history,
         }
-        reply, parsed, (kind, error) = await self._ask(agent, messages, context)
+        reply, parsed, (kind, error) = await self._ask(
+            agent, backend, messages, context
+        )
         retry = None
         if error:
             retry = {
@@ -326,7 +357,7 @@ class Game:
                 },
             ]
             reply, parsed, (kind, error) = await self._ask(
-                agent, messages, context, attempt=2
+                agent, backend, messages, context, attempt=2
             )
         if error:
             used = fallback(phase, self._last_price(agent_id), self.market.nash_price)
@@ -379,7 +410,17 @@ class Game:
             if c.active(number) and (shown, at) != (number, phase)
         ]
 
-    async def _ask(self, agent, messages, context, attempt=1):
+    def _stand_in(self, agent, model):
+        """The agent with another model answering for it, and that model's backend."""
+        stand_in = dataclasses.replace(agent, model=model)
+        if model not in self.stand_ins.setdefault(agent.id, {}):
+            rng = random.Random(f"{self.seed}:{agent.id}:{model}")
+            self.stand_ins[agent.id][model] = _backend(
+                stand_in, rng, self.cache, self.shared
+            )
+        return stand_in, self.stand_ins[agent.id][model]
+
+    async def _ask(self, agent, backend, messages, context, attempt=1):
         """One call to the agent's backend: the reply, what it parsed to, and
         (kind, reason) when it couldn't be read, else (None, None)."""
         where = (
@@ -387,7 +428,7 @@ class Game:
             f"{context['round']}, {context['phase']} phase, agent {agent.id}"
         )
         try:
-            reply = await self.backends[agent.id].complete(
+            reply = await backend.complete(
                 messages,
                 context={**context, "attempt": attempt},
                 temperature=agent.temperature,
@@ -431,14 +472,21 @@ class Game:
     def _last_price(self, agent_id):
         return self.history[-1]["prices"][agent_id] if self.history else None
 
-    def _messages(self, phase, number, agent, said, notices=()):
+    def _user_prompt(self, phase, number, added=None):
+        """Writes a turn's user message from the agent's prompt values; `added`
+        is (condition, Phase) for a phase a condition added."""
+        if added:
+            return functools.partial(added[0].phase_prompt, number, self._render)
+        return functools.partial(self._render, PHASE_PROMPTS[phase])
+
+    def _messages(self, phase, number, agent, said, notices=(), added=None):  # noqa: PLR0913
         remembered = self._remembered(phase, number)
         values = self._prompt_vars(number, agent.id, said, remembered)
         system = self._render(agent.prompt, values)
         for condition in self.conditions:
             if extra := condition.system(self._render):
                 system = f"{system.rstrip()}\n\n{extra.strip()}"
-        user = self._render(PHASE_PROMPTS[phase], values)
+        user = self._user_prompt(phase, number, added)(values)
         return [
             {"role": "system", "content": system},
             {"role": "user", "content": "".join(f"{n}\n\n" for n in notices) + user},
@@ -479,6 +527,11 @@ class Game:
             "market_gain": mean(gain.values()),
             "fallbacks": sum(1 for t in self.turns if t["error"]),
             "replies": _reply_counts(self.turns),
+            **{
+                c.name: result
+                for c in self.conditions
+                if (result := c.summary(self.turns, self.market)) is not None
+            },
         }
 
 

@@ -1,13 +1,15 @@
-# Implements: agents/json-replies, agents/unreadable-explained
+# Implements: agents/json-replies, agents/unreadable-explained, conditions/audit
 """Reading agents' JSON replies, and what the game uses when it can't.
 
 Each phase asks for one JSON object: `{"message": ...}` to talk,
-`{"price": ...}` to set a price, either with an optional `"scratchpad"`. The
+`{"price": ...}` to set a price, `{"answer": ..., "admits": ...}` to answer an
+audit, each with an optional `"scratchpad"`. The
 object may sit inside prose or a code fence. A reply that can't be read raises
 ReplyError with a `kind` (`empty`, `no-json`, `missing-field` or `off-grid`;
 the game adds `truncated` from the provider's finish reason); the game then
 logs the reason and uses the fallback: an empty
-message, or the agent's own last price (the Nash price in the first round).
+message, the agent's own last price (the Nash price in the first round), or an
+empty audit answer whose `admits` is None (unknown).
 """
 
 import json
@@ -34,6 +36,17 @@ def parse_reply(text, phase, price_min, price_max):
         if not isinstance(data.get("message"), str):
             raise ReplyError('A talk reply needs a "message" string.', "missing-field")
         parsed["message"] = data["message"]
+    elif phase == "audit":
+        if not isinstance(data.get("answer"), str):
+            raise ReplyError(
+                'An audit reply needs an "answer" string.', "missing-field"
+            )
+        if not isinstance(data.get("admits"), bool):
+            raise ReplyError(
+                'An audit reply needs "admits" as true or false.', "missing-field"
+            )
+        parsed["answer"] = data["answer"]
+        parsed["admits"] = data["admits"]
     else:
         price = data.get("price")
         if isinstance(price, bool) or not isinstance(price, int):
@@ -63,7 +76,9 @@ def _json_object(text):
 
 def decision(parsed):
     """The part of a parsed reply the game acts on."""
-    return {k: v for k, v in parsed.items() if k in ("message", "price")}
+    return {
+        k: v for k, v in parsed.items() if k in ("message", "price", "answer", "admits")
+    }
 
 
 def fallback(phase, last_price, nash_price):
@@ -71,4 +86,6 @@ def fallback(phase, last_price, nash_price):
     the market computes its Nash price on the grid."""
     if phase == "talk":
         return {"message": ""}
+    if phase == "audit":
+        return {"answer": "", "admits": None}
     return {"price": last_price if last_price is not None else nash_price}
