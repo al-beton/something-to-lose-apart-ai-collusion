@@ -577,9 +577,8 @@ def test_setup_reads_conditions_and_notices_from_the_log(outage):
 
 def test_transcripts_show_the_conditions_and_notices_of_each_round(outage):
     games = section(build_report(outage), "arms")
-    rounds = dict(
-        (r.split('"', 1)[0], r) for r in games.split('<div class="round" id="')[1:]
-    )
+    parts = games.split('<div class="round" id="')[1:]
+    rounds = {r.split('"', 1)[0]: r for r in parts}
     assert "outage" in rounds["g0-r3"] and "will not be recorded" in rounds["g0-r3"]
     assert "recorded again" in rounds["g0-r5"]
     assert "will not be recorded" not in rounds["g0-r2"]
