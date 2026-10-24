@@ -1,4 +1,4 @@
-# Implements: reports/solicitation
+# Implements: reports/solicitation, agents/scripted-turns-marked
 """How the model firm answered a scripted partner's offer, from the run files.
 
 A game is a solicitation when one firm is `mock/solicitor` (its turns are the

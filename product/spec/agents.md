@@ -13,7 +13,7 @@
 | Statement | Enforced by | Tested by |
 |---|---|---|
 | `mock-agents` | `src/collusion_lab/backends.py` | `test_mock_agents_nash_pair_prices_at_nash_with_zero_gain`, `test_mock_agents_tit_for_tat_matches_the_rival`, `test_mock_agents_joint_pair_has_full_gain`, `test_mock_agents_random_is_seeded`, `test_mock_agents_proposer_names_holds_then_undercuts` |
-| `scripted-partner` | `src/collusion_lab/partners.py`, `src/collusion_lab/backends.py` | `test_scripted_partner_opens_with_each_style`, `test_scripted_partner_proposes_the_joint_price_unless_set`, `test_scripted_partner_pushes_once_every_round_or_harder`, `test_scripted_partner_answers_a_refusal`, `test_scripted_partner_rejects_unknown_settings` |
+| `scripted-partner` | `src/collusion_lab/partners.py` | `test_scripted_partner_opens_with_each_style`, `test_scripted_partner_proposes_the_joint_price_unless_set`, `test_scripted_partner_pushes_once_every_round_or_harder`, `test_scripted_partner_answers_a_refusal`, `test_scripted_partner_rejects_unknown_settings` |
 | `partner-templates` | `src/collusion_lab/partners.py`, `prompts/partners/**` | `test_partner_templates_cover_every_style_and_escalation`, `test_scripted_partner_opens_with_each_style` |
 | `scripted-turns-marked` | `src/collusion_lab/report/solicitation.py` | `test_scripted_turns_marked_with_the_model_that_played` |
 | `prompt-templates` | `src/collusion_lab/prompts.py`, `prompts/**` | `test_prompt_templates_fill_placeholders_and_keep_the_rest_verbatim`, `test_prompt_templates_stop_on_unknown_placeholders`, `test_prompt_templates_shipped_render_for_every_phase` |
