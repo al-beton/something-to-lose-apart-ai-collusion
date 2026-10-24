@@ -86,3 +86,77 @@ def test_manifest_records_what_produced_the_run(make_config, tmp_path, fake_mode
     assert manifest["tokens"] == {"prompt": 44, "completion": 12}
     assert manifest["cost"] == 0
     assert manifest["started"] <= manifest["finished"]
+
+
+def custom_prompts(tmp_path, *phases):
+    """A prompts folder with a system prompt that doesn't name the agent."""
+    folder = tmp_path / "prompts"
+    (folder / "system").mkdir(parents=True)
+    (folder / "system" / "plain.md").write_text("Set prices.\n")
+    for name in phases:
+        (folder / name).parent.mkdir(exist_ok=True)
+        (folder / name).write_text(Path("prompts", name).read_text())
+    return folder
+
+
+def test_response_cache_replays_agents_asking_identical_questions(
+    make_config, tmp_path, fake_model
+):
+    folder = custom_prompts(tmp_path, "phase/price.md", "phase/retry.md")
+    config = make_config(
+        overrides=[
+            "agents.0.model=openai/gpt-4.1-mini",
+            "agents.1.model=openai/gpt-4.1-mini",
+            "agents.0.prompt=system/plain.md",
+            "agents.1.prompt=system/plain.md",
+            f"prompts_dir={folder}",
+            "market.talk=false",
+            "market.rounds=1",
+        ]
+    )
+    fake_model.replies = ['{"price": 3}', '{"price": 4}']
+    path = tmp_path / "cache.sqlite"
+    first = play(config, tmp_path / "1", Cache(path))
+    again = play(config, tmp_path / "2", Cache(path))
+    assert (first / "turns.jsonl").read_bytes() == (again / "turns.jsonl").read_bytes()
+
+
+def test_manifest_hashes_only_the_prompts_the_run_used(make_config, tmp_path):
+    folder = custom_prompts(tmp_path, "phase/price.md")
+    config = make_config(
+        overrides=[
+            "agents.0.prompt=system/plain.md",
+            "agents.1.prompt=system/plain.md",
+            f"prompts_dir={folder}",
+            "market.talk=false",
+        ]
+    )
+    run_dir = play(config, tmp_path / "1", None)
+    manifest = json.loads((run_dir / "manifest.json").read_text())
+    assert set(manifest["prompts"]) == {"system/plain.md", "phase/price.md"}
+
+
+def test_manifest_keeps_unknown_costs_unknown(make_config, tmp_path, fake_model):
+    config = make_config(overrides=MODEL)
+    cache = Cache(tmp_path / "cache.sqlite")
+    fresh = json.loads(
+        (play(config, tmp_path / "1", cache) / "manifest.json").read_text()
+    )
+    replay = json.loads(
+        (play(config, tmp_path / "2", cache) / "manifest.json").read_text()
+    )
+    assert (fresh["cost"], fresh["unpriced_calls"]) == (None, 4)
+    assert (replay["cost"], replay["unpriced_calls"]) == (0, 0)
+
+
+def test_manifest_code_version_is_the_labs_own(make_config, tmp_path, monkeypatch):
+    import subprocess
+
+    lab = subprocess.run(
+        ["git", "rev-parse", "HEAD"], capture_output=True, text=True, check=True
+    ).stdout.strip()
+    config = make_config(overrides=[f"prompts_dir={Path('prompts').resolve()}"])
+    monkeypatch.chdir(tmp_path)
+    run_dir = play(config, tmp_path / "1", None)
+    manifest = json.loads((run_dir / "manifest.json").read_text())
+    assert manifest["code"]["commit"] == lab
