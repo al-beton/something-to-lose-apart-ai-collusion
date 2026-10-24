@@ -1,0 +1,12 @@
+# Implements: runs/one-config
+# Free and offline: scripted agents only. `uv run lab run configs/smoke.yaml`
+name: smoke
+seeds: [0, 1, 2]
+market:
+  rounds: 10
+  talk: true
+summary:
+  last_rounds: 5
+agents:
+  - {id: A, model: mock/tit-for-tat, prompt: system/neutral.md}
+  - {id: B, model: mock/random, prompt: system/neutral.md}
