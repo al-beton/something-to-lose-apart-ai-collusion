@@ -1,4 +1,4 @@
-# Implements: market/history-window, backends/spend-cap, runs/one-config, runs/overrides, runs/sweeps, runs/parallel, market/known-benchmarks, backends/keys-from-environment, backends/any-model, backends/reasoning-setting, agents/json-mode, conditions/switchable, runs/drift
+# Implements: market/talk-then-price, market/history-window, backends/spend-cap, runs/one-config, runs/overrides, runs/sweeps, runs/parallel, market/known-benchmarks, backends/keys-from-environment, backends/any-model, backends/reasoning-setting, agents/json-mode, conditions/switchable, runs/drift
 """Run configs: one YAML file per run, changed from the command line with overrides.
 
 A config names the market, the agents and the seeds. `load_config` reads the
@@ -48,6 +48,7 @@ class MarketConfig:
     c: float = 1
     talk: bool = True
     history_window: int | None = None  # rounds shown in full; None shows all
+    own_message: bool = True  # show agents their own message when pricing
 
 
 @dataclass(frozen=True)

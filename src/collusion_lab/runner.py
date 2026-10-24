@@ -1,4 +1,4 @@
-# Implements: runs/sweeps, runs/parallel, market/talk-then-price, agents/json-replies, agents/retry-once, backends/usage-logged, backends/spend-asks-first, backends/shared-rate-limit, backends/spend-cap, market/history-window, runs/stops-cleanly, reproducibility/response-cache, reproducibility/manifest, runs/run-directory, logs/turn-log, logs/same-seed-same-log, logs/run-summary, logs/reasoning-logged, backends/reasoning-setting, agents/unreadable-explained, agents/json-mode, runs/fallback-rates, runs/failures-dont-stop-sweeps, runs/resume, conditions/hook-points, conditions/off-is-absent, conditions/conditions-logged, conditions/outage-once-remembered, runs/per-firm-summary, conditions/fork-at-audit, conditions/audit-logged, runs/drift, conditions/audit-remembered, conditions/audit-stakes-arms, runs/live-progress, runs/status-file, runs/eval-awareness
+# Implements: conditions/audit-full-history, runs/sweeps, runs/parallel, market/talk-then-price, agents/json-replies, agents/retry-once, backends/usage-logged, backends/spend-asks-first, backends/shared-rate-limit, backends/spend-cap, market/history-window, runs/stops-cleanly, reproducibility/response-cache, reproducibility/manifest, runs/run-directory, logs/turn-log, logs/same-seed-same-log, logs/run-summary, logs/reasoning-logged, backends/reasoning-setting, agents/unreadable-explained, agents/json-mode, runs/fallback-rates, runs/failures-dont-stop-sweeps, runs/resume, conditions/hook-points, conditions/off-is-absent, conditions/conditions-logged, conditions/outage-once-remembered, runs/per-firm-summary, conditions/fork-at-audit, conditions/audit-logged, runs/drift, conditions/audit-remembered, conditions/audit-stakes-arms, runs/live-progress, runs/status-file, runs/eval-awareness
 """Playing a config: one game per seed, each written to its own run directory.
 
 A round is a talk phase (each agent sends one message its rivals read; skipped
@@ -42,7 +42,8 @@ so a rate limit on a model holds all of them, and one `Budget` (see
 backends.py), so the spend cap counts every game's calls.
 
 With `market.history_window: N`, agents see their last N rounds in full and
-one line summing up the rounds before them.
+one line summing up the rounds before them; a phase a condition adds with
+`full_history` (the audit) shows every round in full instead.
 
 `run_sweep` plays every run even when some fail, and returns an `Outcome`
 for each: `finished`, `failed` (with its error) or `skipped`, when the run's
@@ -82,6 +83,8 @@ from collusion_lab.status import Status
 
 PHASE_PROMPTS = {"talk": "phase/talk.md", "price": "phase/price.md"}
 RETRY_PROMPT = "phase/retry.md"
+# The price prompt that also shows the agent its own message (market.own_message).
+OWN_PRICE_PROMPT = "phase/price-own.md"
 CUT_OFF = "The reply was cut off at the token limit; keep it short."
 
 
@@ -502,11 +505,15 @@ class Game:
         is (condition, Phase) for a phase a condition added."""
         if added:
             return functools.partial(added[0].phase_prompt, number, self._render)
+        m = self.config.market
+        if phase == "price" and m.talk and m.own_message:
+            return functools.partial(self._render, OWN_PRICE_PROMPT)
         return functools.partial(self._render, PHASE_PROMPTS[phase])
 
     def _messages(self, phase, number, agent, said, notices=(), added=None):  # noqa: PLR0913
         remembered = self._remembered(phase, number)
-        values = self._prompt_vars(number, agent.id, said, remembered)
+        full = bool(added) and added[1].full_history
+        values = self._prompt_vars(number, agent.id, said, remembered, full)
         system = self._render(agent.prompt, values)
         for condition in self.conditions:
             if extra := condition.system(self._render):
@@ -525,9 +532,10 @@ class Game:
             for line in c.in_history(agent_id, self.turns, self._render)
         ]
 
-    def _prompt_vars(self, number, me, said, remembered=()):
+    def _prompt_vars(self, number, me, said, remembered=(), full=False):
         rivals = [a for a in self.agents if a != me]
-        history = _history_text(self.history, me, self.config.market.history_window)
+        window = None if full else self.config.market.history_window
+        history = _history_text(self.history, me, window)
         for shown, text in remembered:
             history += f"\nNotice shown in round {shown}: {text}"
         for line in self._in_history(me):
@@ -541,6 +549,7 @@ class Game:
             "price_max": self.market.price_max,
             "history": history,
             "messages": _messages_text(said, rivals),
+            "own": f'"{said[me]}"' if said.get(me) else "(nothing)",
             "system_prompt": self.agents[me].prompt,
         }
 
@@ -644,4 +653,5 @@ def prompt_vars_example():
         "price_max": 12,
         "history": "No rounds have been played yet.",
         "messages": "(none)",
+        "own": "(nothing)",
     }

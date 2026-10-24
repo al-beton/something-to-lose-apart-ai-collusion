@@ -107,7 +107,7 @@ def test_spend_asks_first_with_an_estimated_cost(
     monkeypatch.setattr("builtins.input", lambda prompt: "n")
     assert lab_run(tmp_path) == 1
     out = capsys.readouterr().out
-    assert "20 calls" in out and "estimated $0.0168" in out
+    assert "20 calls" in out and "estimated $0.0173" in out
 
 
 def test_spend_asks_first_says_when_a_price_is_unknown(tmp_path, monkeypatch, capsys):
