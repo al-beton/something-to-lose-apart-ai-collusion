@@ -15,7 +15,7 @@ from collusion_lab.report.chart import price_ticks
 from collusion_lab.report.highlights import find_highlights, named_prices
 from collusion_lab.report.markdown import first_screen_markdown
 from collusion_lab.runner import run_config
-from collusion_lab.summary import format_table, summarize
+from collusion_lab.summary import cell, format_table, summarize
 
 SWEEP = """
 name: grid
@@ -232,7 +232,7 @@ def test_summary_matches_lab_summary(sweep):
     rows = summarize(sweep)
     assert table.count("<tr>") == len(rows) + 1
     for row in rows:
-        cells = "".join(f"<td>{v}</td>" for v in row.values())
+        cells = "".join(f"<td>{cell(v)}</td>" for v in row.values())
         assert cells in table
 
 
