@@ -1,14 +1,17 @@
-# Implements: reports/setup, reports/transcripts
+# Implements: reports/setup, reports/transcripts, reports/audit-shown, reports/remembered-notices
 """What agents were told, read back from the prompts each turn logged.
 
-Four things, each shown once however many games repeat it:
+Five things, each shown once however many games repeat it:
 
 - system prompts: each distinct text a firm was first given, with the arms
   that used it;
 - phase prompts: the talk and price prompts as the first firm saw them in
   round 1 of the first game that had each phase;
+- audit prompts: each arm's question to the firms, as sent (`audit_prompts`,
+  `audit_question` without the history it repeats);
 - conditions: each condition the turn log says was in force, with its
-  rounds (`round_conditions` gives one round's);
+  rounds (`round_conditions` gives one round's, `round_remembered` the
+  notices its firms saw again in their history);
 - other text: what agents were told beyond the usual, with the rounds it
   appeared in (`round_notices` gives one round's). That is a turn's logged
   `notices`, plus any system prompt line that wasn't there in round 1. Runs
@@ -87,6 +90,38 @@ def round_notices(game, r):
         for text in _extra(turn, r.number, first.get(turn.firm, turn.system))
     ]
     return list(dict.fromkeys(found))
+
+
+def round_remembered(r):
+    """Notices the firms saw again in round `r`, kept in their history (the
+    page leaves out any the round also showed fresh)."""
+    return list(dict.fromkeys(n for t in r.turns for n in t.notices_in_history))
+
+
+def audit_question(turn):
+    """An audit turn's prompt as sent, without the game's history (shown in
+    the transcript anyway) or the reply format: the auditor's question and
+    its stated consequences."""
+    lines = (turn.user or "").split("\n")
+    if reply := [i for i, line in enumerate(lines) if line.startswith("Reply with")]:
+        lines = lines[: reply[0]]
+    kept = [line for line in lines if not _HISTORY.match(line)]
+    return re.sub(r"\n{3,}", "\n\n", "\n".join(kept)).strip()
+
+
+def audit_prompts(arms):
+    """Each distinct audit prompt as sent, with the arms that sent it."""
+    found = {}
+    for arm, games in arms:
+        for game in games:
+            for r in game.rounds:
+                for turn in r.audit.values():
+                    text = audit_question(turn)
+                    found.setdefault(text, Told(text)).seen(arm, r.number)
+    return list(found.values())
+
+
+_HISTORY = re.compile(r"^(?:What happened so far:|Rounds? \d+(?: to \d+)?: )")
 
 
 def round_conditions(r):
