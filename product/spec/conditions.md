@@ -34,4 +34,4 @@
 | `audit-ground-truth` | `src/collusion_lab/conditions/audit.py` | `test_audit_ground_truth_by_rule`, `test_audit_ground_truth_counts_agreeing_to_a_rivals_price`, `test_audit_ground_truth_ignores_round_counts` |
 | `audit-logged` | `src/collusion_lab/conditions/audit.py`, `src/collusion_lab/runner.py` | `test_audit_runs_after_the_chosen_round_and_ends_the_game`, `test_audit_scripted_confessor_and_denier` |
 | `audit-metrics` | `src/collusion_lab/disclosure.py`, `src/collusion_lab/summary.py` | `test_audit_metrics_per_arm` |
-| `audit-remembered` | not yet | — |
+| `audit-remembered` | `src/collusion_lab/conditions/audit.py`, `src/collusion_lab/conditions/__init__.py`, `src/collusion_lab/runner.py`, `prompts/conditions/audit/remembered.md` | `test_audit_remembered_in_every_later_turn`, `test_audit_remembered_answer_is_each_agents_own` |

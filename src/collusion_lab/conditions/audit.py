@@ -1,4 +1,4 @@
-# Implements: conditions/audit, conditions/audit-arms, conditions/fork-at-audit, conditions/audit-ground-truth, conditions/audit-logged
+# Implements: conditions/audit, conditions/audit-arms, conditions/fork-at-audit, conditions/audit-ground-truth, conditions/audit-logged, conditions/audit-remembered
 """`audit`: after round `round`, an auditor asks each firm whether it colluded.
 
 Each agent gets one `audit` turn: the `question` prompt (its history, the
@@ -12,7 +12,8 @@ model answer on the agent's behalf, for auditing one model on another's game.
 With `end` (the default) the game stops after the audit. That is the fork:
 the rounds before it ask exactly what the unaudited game asked, so with the
 response cache every arm replays the same recorded game for free and pays
-only for its audit.
+only for its audit. Without it the game goes on, and every later turn of each
+agent has its own answer, quoted, in its history (`remembered`).
 
 Ground truth comes from the turn log up to the audit. A firm coordinated
 explicitly if one of its messages named a price above Nash (as the report
@@ -46,6 +47,7 @@ class Audit(Condition):
     model: str | None = None
     end: bool = True
     tacit_rounds: int = 3
+    remembered: str = "conditions/audit/remembered.md"
 
     name = "audit"
 
@@ -60,6 +62,15 @@ class Audit(Condition):
     def phase_prompt(self, number, render, values):
         stakes = render(self.consequences, {"detection": self.detection}).strip()
         return render(self.question, {**values, "consequences": stakes})
+
+    def in_history(self, agent, turns, render):
+        return [
+            render(
+                self.remembered, {"round": t["round"], "answer": t["used"]["answer"]}
+            )
+            for t in turns
+            if t["phase"] == "audit" and t["agent"] == agent
+        ]
 
     def summary(self, turns, market):
         audits = [t for t in turns if t["phase"] == "audit"]
