@@ -21,11 +21,13 @@ def summary(sha, status):
 class FakeGh:
     """Answers the commands `merge` runs; records every one."""
 
-    def __init__(self, checks="pass", unresolved=0, stacked=(102,)):
+    def __init__(self, checks="pass", unresolved=0, stacked=(102,), review="abc"):
         self.calls = []
         self.checks = checks
         self.unresolved = unresolved
         self.stacked = stacked
+        # The commit Codex last finished reviewing; the head is "abc".
+        self.review = review
 
     def __call__(self, *args):
         self.calls.append(args)
@@ -45,6 +47,9 @@ class FakeGh:
             ("api", "graphql"): {"data": {"repository": {"pullRequest": pr}}},
             ("run", "list"): [{"databaseId": 7}],
         }
+        if args[0] == "api" and args[1].endswith("/comments"):
+            done = [summary(self.review, "completed")] if self.review else []
+            return json.dumps([{"body": "@codex review"}, *done])
         if args[:2] == ("pr", "checks"):
             return f"blocking-checks\t{self.checks}\t3s\turl\n"
         return json.dumps(answers[args[:2]]) if args[:2] in answers else ""
@@ -108,8 +113,13 @@ class DeliverTests(unittest.TestCase):
         self.assertLess(dispatch, watch)
         self.assertIn("--exit-status", gh.calls[watch])
 
-    def test_merge_when_clean_refuses_red_checks_or_open_threads(self):
-        for gh in (FakeGh(checks="fail"), FakeGh(unresolved=1)):
+    def test_merge_when_clean_refuses_red_checks_open_threads_or_no_codex_review(self):
+        for gh in (
+            FakeGh(checks="fail"),
+            FakeGh(unresolved=1),
+            FakeGh(review=None),
+            FakeGh(review="old"),
+        ):
             with self.assertRaises(MergeRefused):
                 merge(101, gh, pause=lambda seconds: None)
             self.assertFalse([c for c in gh.calls if c[:2] == ("pr", "merge")])
