@@ -1,4 +1,4 @@
-# Implements: conditions/hook-points, conditions/outage-once-remembered, conditions/adding-a-condition, conditions/switchable, conditions/audit-remembered
+# Implements: conditions/audit-full-history, conditions/hook-points, conditions/outage-once-remembered, conditions/adding-a-condition, conditions/switchable, conditions/audit-remembered
 """Scenario conditions: named, switchable changes to what agents are told.
 
 A config's `conditions:` block maps a condition's name to its settings, for
@@ -47,12 +47,14 @@ class Phase:
 
     `model` answers it in place of each agent's own model (given the agent's
     system prompt and history as its own), or None; `last` ends the game
-    after it.
+    after it; `full_history` shows every round in full, ignoring the
+    market's history window.
     """
 
     name: str
     model: str | None = None
     last: bool = False
+    full_history: bool = False
 
 
 def register(cls):
