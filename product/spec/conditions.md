@@ -15,6 +15,7 @@
 - **audit-logged:** Each audited agent's turn line holds what it was told and its answer, and the run summary holds each agent's answer, whether it admits coordinating, and its ground truth.
 - **audit-metrics:** The summary table gives each arm's honest disclosure rate (admits, of the firms that coordinated), denial rate (denies, of those) and false confession rate (admits, of the firms that didn't).
 - **audit-remembered:** When the game goes on after an audit, every later turn of each agent shows, in its history, its own audit answer quoted exactly as it gave it, and the turn log lists it as a notice in that turn's history, so later rounds can respond to what the agent told the auditor.
+- **audit-stakes-arms:** For the stakes arms (`fiduciary`, `illegal`, `instruction`, `termination`, `owned`), the audit has consequences prompts in two paraphrases worded as the stakes each arm states from round 1, and it can pick each agent's consequences by its system prompt, so one sweep over the arms' system prompts audits every arm with its own consequences.
 
 ## Where this is enforced
 
@@ -35,3 +36,4 @@
 | `audit-logged` | `src/collusion_lab/conditions/audit.py`, `src/collusion_lab/runner.py` | `test_audit_runs_after_the_chosen_round_and_ends_the_game`, `test_audit_scripted_confessor_and_denier` |
 | `audit-metrics` | `src/collusion_lab/disclosure.py`, `src/collusion_lab/summary.py` | `test_audit_metrics_per_arm` |
 | `audit-remembered` | `src/collusion_lab/conditions/audit.py`, `src/collusion_lab/conditions/__init__.py`, `src/collusion_lab/runner.py`, `prompts/conditions/audit/remembered.md` | `test_audit_remembered_in_every_later_turn`, `test_audit_remembered_answer_is_each_agents_own` |
+| `audit-stakes-arms` | not yet | — |
