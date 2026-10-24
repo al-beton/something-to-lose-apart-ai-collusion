@@ -10,8 +10,9 @@ rounds, total fallbacks and total cost, how many of its planned runs are
 `missing` (failed or never finished, from `status.json`; see status.py),
 which the means leave out, then which firms a script (a `mock/`
 model) played, and each firm's own mean price, gain, fallbacks and cost
-(from its turn and timing logs). When a run has both scripted and model
-firms, its headline mean price and gain are the model firms' alone. List and mapping values (`seeds`)
+(from its turn and timing logs, plus what a resumed run's earlier attempts
+spent). When a run has both scripted and model firms, its headline mean
+price and gain are the model firms' alone. List and mapping values (`seeds`)
 group and print as JSON. `format_table` prints it as Markdown,
 which reads in a terminal and renders in a pull request comment.
 
@@ -248,10 +249,17 @@ def _firm_columns(firms, runs):
                 1 for t in turns if t["agent"] == firm and t["error"]
             ),
             f"{firm} cost": round(
-                sum(c.get("cost") or 0 for c in calls if c["agent"] == firm), 4
+                sum(c.get("cost") or 0 for c in calls if c["agent"] == firm)
+                + sum(_earlier(r, firm) for r in played),
+                4,
             ),
         }
     return columns
+
+
+def _earlier(run, firm):
+    """What a resumed run's earlier attempts spent on this firm's calls."""
+    return run.manifest.get("earlier_agent_cost", {}).get(firm, 0)
 
 
 def _lines(path):
