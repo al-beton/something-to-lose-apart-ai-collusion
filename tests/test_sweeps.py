@@ -1,9 +1,9 @@
 # Implements: runs/sweeps, runs/parallel, runs/summary-table, backends/spend-asks-first
 import asyncio
 import json
+from types import SimpleNamespace
 
 import pytest
-from types import SimpleNamespace
 
 from collusion_lab import backends, cli
 from collusion_lab.config import ConfigError
