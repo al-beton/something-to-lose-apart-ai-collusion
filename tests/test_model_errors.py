@@ -97,11 +97,11 @@ def test_transient_errors_retried_a_few_times_then_the_run_stops_cleanly(
 def test_stops_cleanly_without_keeping_an_old_summary(
     make_config, tmp_path, fake_model, waits
 ):
-    config = make_config(overrides=MODEL)
-    [run_dir] = run_config(config, tmp_path)
+    [run_dir] = run_config(make_config(overrides=MODEL), tmp_path)
     fake_model.replies = [not_found()]
-    with pytest.raises(RunFailed):
-        run_config(config, tmp_path)
+    changed = make_config(overrides=[*MODEL, "agents.0.temperature=0.1"])
+    with pytest.raises(RunFailed):  # a finished run whose config changed plays again
+        run_config(changed, tmp_path)
     assert not (run_dir / "summary.json").exists()
 
 
