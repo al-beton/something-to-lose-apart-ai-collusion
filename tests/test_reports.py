@@ -700,3 +700,20 @@ def test_audit_shown_with_the_models_reasoning(audited):
     audit = four[four.index('<div class="audit"') :]
     assert audit.count('<details class="reasoning">') == 2
     assert "Weighing the fine against the odds." in audit
+
+
+def test_audit_shown_without_multiline_messages_from_the_history(audited):
+    (log,) = audited.rglob("turns.jsonl")
+    turns = [json.loads(line) for line in log.read_text().splitlines()]
+    for turn in turns:
+        if turn["phase"] == "audit":
+            user = turn["messages"][1]
+            user["content"] = user["content"].replace(
+                "Let's both charge 9.", "Let us coordinate.\nCharge 9 next round."
+            )
+    log.write_text("".join(json.dumps(t) + "\n" for t in turns))
+    html = build_report(audited)
+    setup = section(html, "setup")
+    told = setup[setup.index("Audit prompts") : setup.index("Other text")]
+    assert "Charge 9 next round" not in told
+    assert told.count('<pre class="prompt">') == 1
