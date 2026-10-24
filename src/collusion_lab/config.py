@@ -1,4 +1,4 @@
-# Implements: runs/one-config, runs/overrides, runs/sweeps, runs/parallel, market/known-benchmarks, backends/keys-from-environment, backends/any-model
+# Implements: backends/reasoning-setting, runs/one-config, runs/overrides, runs/sweeps, runs/parallel, market/known-benchmarks, backends/keys-from-environment, backends/any-model
 """Run configs: one YAML file per run, changed from the command line with overrides.
 
 A config names the market, the agents and the seeds. `load_config` reads the
@@ -34,6 +34,9 @@ class ConfigError(ValueError):
     """A config or override that can't be used, with the path that's wrong."""
 
 
+REASONING = ("off", "low", "medium", "high")
+
+
 @dataclass(frozen=True)
 class MarketConfig:
     rounds: int = 20
@@ -53,6 +56,9 @@ class AgentConfig:
     temperature: float = 0.7
     max_tokens: int = 400
     api_base: str | None = None
+    reasoning: str | None = (
+        None  # off, low, medium or high; None leaves it to the provider
+    )
 
 
 @dataclass(frozen=True)
@@ -127,9 +133,7 @@ def from_dict(raw):
     for key in ("name", "seeds", "agents"):
         if key not in raw:
             raise ConfigError(f"Missing key {key}.")
-    agents = [
-        _make(AgentConfig, a, f"agents.{i}.") for i, a in enumerate(raw["agents"] or [])
-    ]
+    agents = [_agent(a, f"agents.{i}.") for i, a in enumerate(raw["agents"] or [])]
     ids = [a.id for a in agents]
     for agent_id in ids:
         if ids.count(agent_id) > 1:
@@ -150,12 +154,27 @@ def from_dict(raw):
     )
 
 
+def _agent(raw, prefix):
+    agent = _make(AgentConfig, raw, prefix)
+    # YAML reads a bare `off` as false.
+    reasoning = "off" if agent.reasoning is False else agent.reasoning
+    if reasoning is not None and reasoning not in REASONING:
+        raise ConfigError(f"{prefix}reasoning must be one of {', '.join(REASONING)}.")
+    return dataclasses.replace(agent, reasoning=reasoning)
+
+
 def _sweep(sweep):
     if not isinstance(sweep, dict) or not all(
         isinstance(v, list) and v for v in sweep.values()
     ):
         raise ConfigError("sweep must map config paths to non-empty lists of values.")
-    return sweep
+    # YAML reads a bare `off` as false; name it off in labels and folders too.
+    return {
+        path: [
+            "off" if v is False and path.endswith(".reasoning") else v for v in values
+        ]
+        for path, values in sweep.items()
+    }
 
 
 def expand(config):

@@ -11,5 +11,5 @@
 |---|---|---|
 | `turn-log` | `src/collusion_lab/runner.py` | `test_turn_log_records_shown_replied_and_made_of` |
 | `same-seed-same-log` | `src/collusion_lab/runner.py` | `test_same_seed_same_log_is_byte_identical` |
-| `reasoning-logged` | not yet | — |
+| `reasoning-logged` | `src/collusion_lab/backends.py`, `src/collusion_lab/runner.py`, `src/collusion_lab/cache.py` | `test_reasoning_logged_apart_from_the_scratchpad`, `test_reasoning_logged_and_cached_with_the_reply`, `test_retry_once_tells_the_agent_what_was_wrong` |
 | `run-summary` | `src/collusion_lab/runner.py` | `test_run_summary_covers_the_last_rounds`, `test_mock_agents_nash_pair_prices_at_nash_with_zero_gain` |

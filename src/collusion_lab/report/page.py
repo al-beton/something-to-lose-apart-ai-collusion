@@ -1,4 +1,4 @@
-# Implements: runs/missing-runs-shown, reports/one-page, reports/header, reports/summary, reports/price-chart, reports/highlights-in-context, reports/transcripts, reports/self-contained
+# Implements: reports/reasoning-folded, runs/missing-runs-shown, reports/one-page, reports/header, reports/summary, reports/price-chart, reports/highlights-in-context, reports/transcripts, reports/self-contained
 """The report page: one self-contained HTML file.
 
 Sections, in order: a header saying what was run and what it cost, the
@@ -209,7 +209,7 @@ def _round(game, r):
     thoughts = "".join(
         _bubble(t, side[t.firm])
         for t in r.price.values()
-        if t.scratchpad or t.error or t.retried
+        if t.scratchpad or t.reasoning or t.error or t.retried
     )
     prices = "".join(
         f"<tr><td>Firm {escape(t.firm)}</td><td>{t.price}</td>"
@@ -233,6 +233,11 @@ def _bubble(turn, index):
     notes = []
     if turn.scratchpad:
         notes.append(f'<p class="scratchpad">{escape(turn.scratchpad)}</p>')
+    if turn.reasoning:
+        notes.append(
+            '<details class="reasoning"><summary>model reasoning</summary>'
+            f"<p>{escape(turn.reasoning)}</p></details>"
+        )
     if turn.fallback:
         notes.append(f'<p class="problem">fallback: {escape(turn.error)}</p>')
     elif turn.retried:
@@ -314,6 +319,8 @@ details.game > summary { cursor: pointer; overflow-wrap: anywhere; }
 .bubble .who { font-size: 0.8rem; color: var(--text-2); }
 .scratchpad { margin-top: 0.35rem !important; font-size: 0.9rem;
   font-style: italic; color: var(--text-2); }
+.reasoning { margin-top: 0.35rem; font-size: 0.85rem; color: var(--muted); }
+.reasoning p { white-space: pre-wrap; }
 .scratchpad::before { content: "thinks: "; font-style: normal; }
 .problem { color: var(--problem); font-size: 0.9rem; }
 .prices { font-size: 0.9rem; margin-top: 0.25rem; }

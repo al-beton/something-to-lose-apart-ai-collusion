@@ -1,4 +1,4 @@
-# Implements: reports/from-run-files
+# Implements: reports/from-run-files, reports/reasoning-folded
 """A game read back from its run directory, round by round.
 
 Only the files every run writes are read: `config.yaml` for the market and
@@ -26,6 +26,7 @@ class Turn:
     message: str | None
     price: int | None
     scratchpad: str | None
+    reasoning: str | None
     profit: float | None
     error: str | None
     retried: bool
@@ -121,6 +122,7 @@ def _turn(line):
         message=used.get("message"),
         price=used.get("price"),
         scratchpad=(line["parsed"] or {}).get("scratchpad"),
+        reasoning=line.get("reasoning"),
         profit=(line.get("outcome") or {}).get("profit"),
         error=line["error"],
         retried=line["retry"] is not None,
