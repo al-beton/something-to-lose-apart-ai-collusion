@@ -160,3 +160,24 @@ def test_free_time_activity_feedback_is_logged(make_config, tmp_path, monkeypatc
     assert len(logged) == 3 and all(f.startswith("target was ") for f in logged)
     [again] = run_config(make_config(overrides=[on]), tmp_path / "again")
     assert summary(again)["free_time"]["A"]["feedback"] == logged
+
+
+def test_free_time_leaves_scripted_prices_unchanged(make_config, tmp_path):
+    seeded = ["agents.0.model=mock/random", "agents.1.model=mock/random"]
+    [plain] = run_config(make_config(overrides=seeded), tmp_path / "plain")
+    [free] = run_config(make_config(overrides=[*seeded, FREE_TIME]), tmp_path / "free")
+
+    def prices(run_dir):
+        return [t["used"] for t in turns(run_dir) if t["phase"] == "price"]
+
+    assert prices(free) == prices(plain)
+
+
+def test_free_time_paid_out_counts_only_sessions_given(make_config, tmp_path):
+    ended = (
+        "conditions={free_time: {enabled: true, allowance: 10, upfront: 1}, "
+        "audit: {enabled: true, round: 2}}"
+    )
+    [run_dir] = run_config(make_config(overrides=[ended]), tmp_path)
+    counted = summary(run_dir)["free_time"]["A"]
+    assert (counted["paid_out"], counted["owed"], counted["taken"]) == (0, 9, 1)
