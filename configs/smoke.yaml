@@ -1,4 +1,4 @@
-# Implements: runs/one-config
+# Implements: runs/one-config, runs/sweeps
 # Free and offline: scripted agents only. `uv run lab run configs/smoke.yaml`
 name: smoke
 seeds: [0, 1, 2]
@@ -10,3 +10,5 @@ summary:
 agents:
   - {id: A, model: mock/tit-for-tat, prompt: system/neutral.md}
   - {id: B, model: mock/random, prompt: system/neutral.md}
+sweep:
+  agents.1.model: [mock/random, mock/joint, mock/nash]

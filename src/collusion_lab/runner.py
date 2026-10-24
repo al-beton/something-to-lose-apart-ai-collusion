@@ -1,4 +1,4 @@
-# Implements: market/talk-then-price, agents/json-replies, agents/retry-once, backends/usage-logged, backends/spend-asks-first, reproducibility/response-cache, reproducibility/manifest, runs/run-directory, logs/turn-log, logs/same-seed-same-log, logs/run-summary
+# Implements: runs/sweeps, runs/parallel, market/talk-then-price, agents/json-replies, agents/retry-once, backends/usage-logged, backends/spend-asks-first, reproducibility/response-cache, reproducibility/manifest, runs/run-directory, logs/turn-log, logs/same-seed-same-log, logs/run-summary
 """Playing a config: one game per seed, each written to its own run directory.
 
 A round is a talk phase (each agent sends one message its rivals read; skipped
@@ -7,7 +7,9 @@ having read this round's messages). Every turn is a fresh conversation: the
 agent's system prompt plus one user message holding the whole history, so
 what an agent saw is exactly what its turn log line says.
 
-Each seed writes `<out>/<name>/seed-<n>/`: `config.yaml` (resolved, with only
+A config expands into one config per swept combination (see config.py), and
+every (combination, seed) pair plays as its own game, up to `concurrency` at
+once. Each writes `<out>/<name>/[<slug>/]seed-<n>/`: `config.yaml` (resolved, with only
 that seed), `turns.jsonl` (one line per agent turn), `timings.jsonl` and
 `summary.json` and `manifest.json`. Turn lines hold nothing that varies
 between identical runs; each call's time, cost and cache hit go in
@@ -30,6 +32,7 @@ from collusion_lab import manifest
 from collusion_lab.agents import ReplyError, decision, fallback, parse_reply
 from collusion_lab.backends import backend_for, is_mock
 from collusion_lab.cache import CachedBackend
+from collusion_lab.config import expand
 from collusion_lab.market import Bertrand
 from collusion_lab.prompts import render
 
@@ -39,18 +42,32 @@ RETRY_PROMPT = "phase/retry.md"
 
 def paid_calls(config):
     """How many calls a config makes to non-mock models, before retries."""
-    phases = 2 if config.market.talk else 1
-    paid = sum(1 for a in config.agents if not is_mock(a.model))
-    return len(config.seeds) * config.market.rounds * phases * paid
+    total = 0
+    for child in expand(config):
+        phases = 2 if child.market.talk else 1
+        paid = sum(1 for a in child.agents if not is_mock(a.model))
+        total += len(child.seeds) * child.market.rounds * phases * paid
+    return total
 
 
 def run_config(config, out, cache=None):
-    """Play every seed in `config`; return the run directories, in seed order."""
-    return asyncio.run(_play_seeds(config, Path(out), cache))
+    """Play every combination and seed; return the run directories in order."""
+    return asyncio.run(_play_all(config, Path(out), cache))
 
 
-async def _play_seeds(config, out, cache):
-    return [await play(config, seed, out, cache) for seed in config.seeds]
+async def _play_all(config, out, cache):
+    limit = asyncio.Semaphore(config.concurrency)
+
+    async def limited(child, seed):
+        async with limit:
+            return await play(child, seed, out, cache)
+
+    jobs = [limited(c, seed) for c in expand(config) for seed in c.seeds]
+    return list(await asyncio.gather(*jobs))
+
+
+def run_id(config, seed):
+    return "/".join(p for p in (config.name, config.slug, f"seed-{seed}") if p)
 
 
 def _now():
@@ -58,7 +75,7 @@ def _now():
 
 
 async def play(config, seed, out, cache=None):
-    run_dir = Path(out) / config.name / f"seed-{seed}"
+    run_dir = Path(out) / run_id(config, seed)
     run_dir.mkdir(parents=True, exist_ok=True)
     resolved = dataclasses.replace(config, seeds=[seed])
     (run_dir / "config.yaml").write_text(resolved.to_yaml())
@@ -71,7 +88,7 @@ async def play(config, seed, out, cache=None):
         resolved, game.prompt_names(), game.timings, started, _now()
     )
     (run_dir / "manifest.json").write_text(json.dumps(record, indent=2) + "\n")
-    summary = game.summary(f"{config.name}/seed-{seed}")
+    summary = game.summary(run_id(config, seed))
     (run_dir / "summary.json").write_text(json.dumps(summary, indent=2) + "\n")
     return run_dir
 
@@ -161,7 +178,7 @@ class Game:
         else:
             used = decision(parsed)
         return {
-            "run": f"{self.config.name}/seed-{self.seed}",
+            "run": run_id(self.config, self.seed),
             "round": number,
             "phase": phase,
             "agent": agent_id,
@@ -248,6 +265,7 @@ class Game:
         return {
             "run": run,
             "seed": self.seed,
+            "labels": self.config.labels,
             "rounds": len(self.history),
             "last_rounds": len(last),
             "mean_price": mean_price,
