@@ -241,6 +241,7 @@ def test_first_screen_holds_only_sentences_table_and_one_chart(sweep):
     assert len(page.all("table")) == 1
     (chart,) = page.all("svg")
     assert chart["class"] == "chart overview"
+
     assert first.count('class="arm"') == 2
     assert 'class="benchmark nash"' in first and 'class="benchmark joint"' in first
     order = [html.index(f'<section id="{name}"') for name in SECTIONS]
@@ -285,6 +286,27 @@ def test_setup_shows_exactly_what_agents_were_told_and_when(noticed):
     told = setup[setup.index(NOTICE) - 300 : setup.index(NOTICE)]
     assert "rounds 3 to 4" in told
     assert "Round 1 of 8." in setup and "Round 3 of 8." not in setup
+
+
+def test_setup_shows_each_phase_prompt_when_the_first_arm_skips_talk(
+    make_config, tmp_path
+):
+    talk = ["sweep={market.talk: [false, true]}"]
+    run_config(make_config(overrides=talk), tmp_path / "runs")
+    setup = section(build_report(tmp_path / "runs"), "setup")
+    assert "Before prices are set, you may send one message" in setup
+    assert "Now set your price." in setup
+
+
+def test_first_screen_charts_each_market_apart(make_config, tmp_path):
+    run_config(make_config(), tmp_path / "runs" / "default")
+    wide = ["market.a=24", "market.price_max=20", "name=wide"]
+    run_config(make_config(overrides=wide), tmp_path / "runs" / "wide")
+    first = section(build_report(tmp_path / "runs"), "summary")
+    charts = first.split("<svg")[1:]
+    assert len(charts) == 2
+    assert [c.count('class="arm"') for c in charts] == [1, 1]
+    assert ">Nash 6<" in charts[0] and ">Nash 8<" in charts[1]
 
 
 def test_price_chart_has_one_line_per_seed_and_both_benchmarks(sweep):
