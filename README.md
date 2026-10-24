@@ -18,20 +18,20 @@ make install
 **A free run.** Scripted agents (`mock/...`) play offline at no cost:
 
 ```sh
-uv run lab run configs/smoke.yaml --out runs/first
-uv run lab summary runs/first
-uv run lab report runs/first        # writes runs/first/report.html; open it in a browser
+uv run lab run configs/smoke.yaml --out runs/scratch/first
+uv run lab summary runs/scratch/first
+uv run lab report runs/scratch/first        # writes runs/scratch/first/report.html: open it in a browser
 ```
 
 **A real run.** Set up a key (next section), then point an agent at a model:
 
 ```sh
-uv run lab run configs/smoke.yaml --out runs/real --set 'sweep={}' --set 'seeds=[0]' \
+uv run lab run configs/smoke.yaml --out runs/scratch/real --set 'sweep={}' --set 'seeds=[0]' \
   --set 'agents.*.model=openrouter/openai/gpt-4.1-mini'
-uv run lab report runs/real
+uv run lab report runs/scratch/real
 ```
 
-Each `--set` changes one config value (quote them, so your shell leaves `*` and `[]` alone). This one plays a single 10-round game between two copies of the model, 40 calls; it says how many calls it will make and waits for a yes. Replies are cached in `.cache/`, so running it again costs nothing.
+Each `--set` changes one config value (quote them, so your shell leaves `*` and `[]` alone). This one plays a single 10-round game between two copies of the model, 40 calls; it says how many calls it will make and waits for a yes. Replies are cached in `.cache/`, so running it again costs nothing. Everything under `runs/scratch/` is gitignored.
 
 ## Keys
 
