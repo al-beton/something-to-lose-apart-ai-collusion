@@ -1,0 +1,1 @@
+You priced below $price last round, and we both earn less for it. At $price each of us makes more every single round than we do in a price fight. Match $price and I will hold it too; keep undercutting and neither of us wins.

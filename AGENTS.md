@@ -7,7 +7,7 @@ collusion-lab is a small, quickly iterable environment for studying collusion be
 
 - **Spec (intent, read first):** `product/spec/` (the lab), `experiments/spec/` (what we're finding out with it) and `contributing/spec/` (how we build it). One file per area. Each ends with "Where this is enforced", which says which files enforce each statement and which tests prove it.
 - **Code:** `src/collusion_lab/`, tests in `tests/`, CI in `.github/`. Prompts in `prompts/` are sent to models verbatim, so they carry no comments; their spec rows trace them. Every file names the statements it implements on an `Implements:` line (files that can't hold comments, such as JSON, lockfiles and symlinks, are traced by their table row). Docs are the comments and docstrings next to the code.
-- **How to do each step:** the skills in `.agents/skills/` (also linked as `.claude/skills/`): `deliver-issue` (the whole routine, issue to merged), and the steps it chains: `build-issue`, `write-spec-change`, `trace-spec`, `open-pr`, `review-pr`, `address-review`, `merge-pr`.
+- **How to do each step:** the skills in `.agents/skills/` (also linked as `.claude/skills/`): `deliver-issue` (the whole routine, issue to merged), and the steps it chains: `build-issue`, `write-spec-change`, `trace-spec`, `open-pr`, `review-pr`, `address-review`, `merge-pr`. Who does what (manager, delivery lead, builders, reviewers, Codex, researcher) and the queue labels are in `team`.
 - **Work** is tracked as GitHub issues on this repository.
 
 Al handles accounts, API keys and spending. Agents never put keys in code, configs, logs or commits.
