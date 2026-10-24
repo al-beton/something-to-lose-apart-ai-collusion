@@ -1,11 +1,19 @@
-# Implements: runs/one-config, runs/overrides
-"""The `lab` command: `lab run CONFIG [--set path=value ...] [--out DIR]`."""
+# Implements: runs/one-config, runs/overrides, backends/keys-from-environment, backends/spend-asks-first
+"""The `lab` command: `lab run CONFIG [--set path=value ...] [--out DIR] [-y]`.
+
+API keys are read from the environment, topped up from the `.env` file in the
+directory `lab` runs from (gitignored), never one found elsewhere. A config that calls paid models says how many
+calls it will make and waits for a yes; `-y` answers yes in advance.
+"""
 
 import argparse
 import sys
+from pathlib import Path
+
+from dotenv import load_dotenv
 
 from collusion_lab.config import ConfigError, load_config
-from collusion_lab.runner import run_config
+from collusion_lab.runner import paid_calls, run_config
 
 
 def main(argv=None):
@@ -22,14 +30,36 @@ def main(argv=None):
         help="change a config value, e.g. --set market.rounds=5",
     )
     run.add_argument("--out", default="runs/scratch", help="where run folders go")
+    run.add_argument(
+        "-y", "--yes", action="store_true", help="don't ask before spending"
+    )
     args = parser.parse_args(argv)
+    load_dotenv(Path.cwd() / ".env")
     try:
         config = load_config(args.config, args.overrides)
     except ConfigError as error:
         parser.error(str(error))
+    if not args.yes and not _spending_agreed(paid_calls(config)):
+        return 1
     for run_dir in run_config(config, args.out):
         print(run_dir)
     return 0
+
+
+def _spending_agreed(calls):
+    if not calls:
+        return True
+    print(
+        f"This run makes {calls} calls to paid models (up to {2 * calls} with retries)."
+    )
+    try:
+        answer = input("Go ahead? [y/N] ")
+    except EOFError:
+        answer = ""
+    if answer.strip().lower() in ("y", "yes"):
+        return True
+    print("Stopped before spending anything.")
+    return False
 
 
 if __name__ == "__main__":

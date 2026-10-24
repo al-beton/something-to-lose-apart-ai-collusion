@@ -1,11 +1,12 @@
-# Implements: runs/one-config, runs/overrides, market/known-benchmarks
+# Implements: runs/one-config, runs/overrides, market/known-benchmarks, backends/keys-from-environment, backends/any-model
 """Run configs: one YAML file per run, changed from the command line with overrides.
 
 A config names the market, the agents and the seeds. `load_config` reads the
 YAML, applies `path=value` overrides (the value is read as YAML, so
 `seeds=[1, 2]` and `market.talk=false` work; list items are addressed by index,
 as in `agents.1.model=mock/random`), then checks every key against the
-dataclasses below, so a typo fails loudly instead of being ignored.
+dataclasses below, so a typo fails loudly instead of being ignored. There is
+no field for API keys: those come from the environment (see cli.py).
 """
 
 import copy
@@ -40,6 +41,7 @@ class AgentConfig:
     prompt: str = "system/neutral.md"
     temperature: float = 0.7
     max_tokens: int = 400
+    api_base: str | None = None
 
 
 @dataclass(frozen=True)

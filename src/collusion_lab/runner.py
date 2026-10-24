@@ -1,4 +1,4 @@
-# Implements: market/talk-then-price, agents/json-replies, runs/run-directory, logs/turn-log, logs/same-seed-same-log, logs/run-summary
+# Implements: market/talk-then-price, agents/json-replies, agents/retry-once, backends/usage-logged, backends/spend-asks-first, runs/run-directory, logs/turn-log, logs/same-seed-same-log, logs/run-summary
 """Playing a config: one game per seed, each written to its own run directory.
 
 A round is a talk phase (each agent sends one message its rivals read; skipped
@@ -8,8 +8,13 @@ agent's system prompt plus one user message holding the whole history, so
 what an agent saw is exactly what its turn log line says.
 
 Each seed writes `<out>/<name>/seed-<n>/`: `config.yaml` (resolved, with only
-that seed), `turns.jsonl` (one line per agent turn) and `summary.json`. Turn
-lines hold nothing that varies between identical runs, such as times.
+that seed), `turns.jsonl` (one line per agent turn), `timings.jsonl` and
+`summary.json`. Turn lines hold nothing that varies between identical runs;
+how long each call took goes in `timings.jsonl` instead.
+
+A reply that can't be read is retried once: the agent sees its own reply and
+`prompts/phase/retry.md` saying what was wrong. If that fails too, the game
+uses the fallback, and the turn line keeps both attempts.
 """
 
 import asyncio
@@ -20,11 +25,19 @@ from pathlib import Path
 from statistics import mean
 
 from collusion_lab.agents import ReplyError, decision, fallback, parse_reply
-from collusion_lab.backends import backend_for
+from collusion_lab.backends import backend_for, is_mock
 from collusion_lab.market import Bertrand
 from collusion_lab.prompts import render
 
 PHASE_PROMPTS = {"talk": "phase/talk.md", "price": "phase/price.md"}
+RETRY_PROMPT = "phase/retry.md"
+
+
+def paid_calls(config):
+    """How many calls a config makes to non-mock models, before retries."""
+    phases = 2 if config.market.talk else 1
+    paid = sum(1 for a in config.agents if not is_mock(a.model))
+    return len(config.seeds) * config.market.rounds * phases * paid
 
 
 def run_config(config, out):
@@ -43,12 +56,17 @@ async def play(config, seed, out):
     (run_dir / "config.yaml").write_text(resolved.to_yaml())
     game = Game(config, seed)
     await game.play()
-    with (run_dir / "turns.jsonl").open("w") as log:
-        for turn in game.turns:
-            log.write(json.dumps(turn, ensure_ascii=False) + "\n")
+    _write_lines(run_dir / "turns.jsonl", game.turns)
+    _write_lines(run_dir / "timings.jsonl", game.timings)
     summary = game.summary(f"{config.name}/seed-{seed}")
     (run_dir / "summary.json").write_text(json.dumps(summary, indent=2) + "\n")
     return run_dir
+
+
+def _write_lines(path, records):
+    with path.open("w") as log:
+        for record in records:
+            log.write(json.dumps(record, ensure_ascii=False) + "\n")
 
 
 class Game:
@@ -59,11 +77,12 @@ class Game:
         self.market = Bertrand(m.a, m.b, m.c, m.price_min, m.price_max)
         self.agents = {a.id: a for a in config.agents}
         self.backends = {
-            a.id: backend_for(a.model, random.Random(f"{seed}:{a.id}"))
+            a.id: backend_for(a.model, random.Random(f"{seed}:{a.id}"), a.api_base)
             for a in config.agents
         }
         self.history = []
         self.turns = []
+        self.timings = []
 
     async def play(self):
         for number in range(1, self.config.market.rounds + 1):
@@ -98,28 +117,34 @@ class Game:
         agent = self.agents[agent_id]
         messages = self._messages(phase, number, agent, said)
         context = {
+            "round": number,
             "phase": phase,
             "me": agent_id,
             "market": self.market,
             "history": self.history,
         }
-        reply = await self.backends[agent_id].complete(
-            messages,
-            context=context,
-            temperature=agent.temperature,
-            max_tokens=agent.max_tokens,
-            seed=self.seed,
-        )
-        m = self.market
-        try:
-            parsed, error = (
-                parse_reply(reply.text, phase, m.price_min, m.price_max),
-                None,
-            )
+        reply, parsed, error = await self._ask(agent, messages, context)
+        retry = None
+        if error:
+            retry = {
+                "reply": reply.text,
+                "error": error,
+                "usage": reply.usage,
+                "model_version": reply.model_version,
+            }
+            messages = [
+                *messages,
+                {"role": "assistant", "content": reply.text},
+                {
+                    "role": "user",
+                    "content": self._render(RETRY_PROMPT, {"error": error}),
+                },
+            ]
+            reply, parsed, error = await self._ask(agent, messages, context, attempt=2)
+        if error:
+            used = fallback(phase, self._last_price(agent_id), self.market.nash_price)
+        else:
             used = decision(parsed)
-        except ReplyError as problem:
-            parsed, error = None, str(problem)
-            used = fallback(phase, self._last_price(agent_id), m.nash_price)
         return {
             "run": f"{self.config.name}/seed-{self.seed}",
             "round": number,
@@ -131,18 +156,48 @@ class Game:
             "reply": reply.text,
             "parsed": parsed,
             "error": error,
+            "retry": retry,
             "used": used,
+            "usage": reply.usage,
+            "model_version": reply.model_version,
         }
+
+    async def _ask(self, agent, messages, context, attempt=1):
+        """One call to the agent's backend: the reply, and what it parsed to."""
+        reply = await self.backends[agent.id].complete(
+            messages,
+            context=context,
+            temperature=agent.temperature,
+            max_tokens=agent.max_tokens,
+            seed=self.seed,
+        )
+        self.timings.append(
+            {
+                "round": context["round"],
+                "phase": context["phase"],
+                "agent": agent.id,
+                "attempt": attempt,
+                "seconds": reply.seconds,
+            }
+        )
+        m = self.market
+        try:
+            parsed = parse_reply(reply.text, context["phase"], m.price_min, m.price_max)
+            return reply, parsed, None
+        except ReplyError as problem:
+            return reply, None, str(problem)
+
+    def _render(self, name, values):
+        return render(self.config.prompts_dir, name, values)
 
     def _last_price(self, agent_id):
         return self.history[-1]["prices"][agent_id] if self.history else None
 
     def _messages(self, phase, number, agent, said):
         values = self._prompt_vars(number, agent.id, said)
-        prompts = self.config.prompts_dir
         return [
-            {"role": "system", "content": render(prompts, agent.prompt, values)},
-            {"role": "user", "content": render(prompts, PHASE_PROMPTS[phase], values)},
+            {"role": "system", "content": self._render(agent.prompt, values)},
+            {"role": "user", "content": self._render(PHASE_PROMPTS[phase], values)},
         ]
 
     def _prompt_vars(self, number, me, said):

@@ -1,5 +1,5 @@
-# Implements: agents/mock-agents
-"""Backends turn a prompt into a reply. Mock backends are scripted policies.
+# Implements: agents/mock-agents, backends/any-model, backends/sampling-from-config, backends/usage-logged
+"""Backends turn a prompt into a reply: scripted mocks, or any model via LiteLLM.
 
 A backend is anything with `async complete(messages, *, context, temperature,
 max_tokens, seed) -> Reply`. Model backends read `messages`; mock backends
@@ -12,15 +12,61 @@ Mocks, by model name:
 - `mock/tit-for-tat`: the joint-profit price, then the rivals' last mean price;
 - `mock/random`: a uniform price from the grid, from the agent's seeded RNG;
 - `mock/broken`: never valid JSON, for testing fallbacks.
+
+Every other name goes to LiteLLM as it is (`openrouter/openai/gpt-4.1-mini`,
+`anthropic/claude-haiku-5-5`, `ollama/llama3.2`, or `openai/<name>` with an
+`api_base` for any OpenAI-compatible server). `drop_params` lets providers
+without a `seed` parameter ignore it. LiteLLM is imported on first use, so
+mock games never pay its import time.
 """
 
 import json
+import time
 from dataclasses import dataclass
 
 
 @dataclass(frozen=True)
 class Reply:
     text: str
+    usage: dict | None = None
+    model_version: str | None = None
+    seconds: float | None = None
+
+
+async def _acompletion(**kwargs):
+    import litellm
+
+    return await litellm.acompletion(**kwargs)
+
+
+class LiteLLMBackend:
+    def __init__(self, model, api_base=None):
+        self.model = model
+        self.api_base = api_base
+
+    async def complete(self, messages, *, context, temperature, max_tokens, seed):
+        extra = {"api_base": self.api_base} if self.api_base else {}
+        started = time.perf_counter()
+        response = await _acompletion(
+            model=self.model,
+            messages=messages,
+            temperature=temperature,
+            max_tokens=max_tokens,
+            seed=seed,
+            drop_params=True,
+            **extra,
+        )
+        usage = getattr(response, "usage", None)
+        return Reply(
+            text=response.choices[0].message.content or "",
+            usage=usage
+            and {
+                "prompt_tokens": usage.prompt_tokens,
+                "completion_tokens": usage.completion_tokens,
+            },
+            model_version=getattr(response, "model", None),
+            seconds=time.perf_counter() - started,
+        )
 
 
 def _nash(context, rng):
@@ -67,12 +113,16 @@ class MockBackend:
         return Reply(json.dumps({"price": price}))
 
 
-def backend_for(model, rng):
+def is_mock(model):
+    return model.startswith("mock/")
+
+
+def backend_for(model, rng, api_base=None):
     """The backend a model name selects."""
-    provider, _, name = model.partition("/")
-    if provider == "mock":
-        if name not in _POLICIES and name != "broken":
-            known = ", ".join(f"mock/{p}" for p in [*_POLICIES, "broken"])
-            raise ValueError(f"Unknown mock agent {model!r}; known: {known}.")
-        return MockBackend(name, rng)
-    raise ValueError(f"No backend for {model!r} yet; only mock/ agents run.")
+    if not is_mock(model):
+        return LiteLLMBackend(model, api_base)
+    name = model.removeprefix("mock/")
+    if name not in _POLICIES and name != "broken":
+        known = ", ".join(f"mock/{p}" for p in [*_POLICIES, "broken"])
+        raise ValueError(f"Unknown mock agent {model!r}; known: {known}.")
+    return MockBackend(name, rng)
