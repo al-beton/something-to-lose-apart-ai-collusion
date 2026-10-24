@@ -12,8 +12,10 @@ The game calls each enabled condition at four points, in config order:
 - `round_start(number, render)`: a notice shown before the round's first phase;
 - `before_phase(number, phase, render)`: a notice shown before that phase;
 - `after_round(record)`: sees the round just played (prices, profits, what
-  was said), for conditions that react to it.
-Each returns the text to show, or None. `render(name, values)` fills a prompt
+  was said). It is a placeholder for now: its return is ignored, and one
+  condition object serves every game of a config (it is frozen), so a
+  condition that keeps state per game will need a per-game instance.
+The first three return the text to show, or None. `render(name, values)` fills a prompt
 file from `prompts/` with the condition's own values. `active(number)` says
 whether the condition is in force that round, for the turn log.
 
