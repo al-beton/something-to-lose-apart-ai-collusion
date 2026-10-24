@@ -33,6 +33,14 @@ uv run lab report runs/scratch/real
 
 Each `--set` changes one config value (quote them, so your shell leaves `*` and `[]` alone). This one plays a single 10-round game between two copies of the model, 40 calls; it says how many calls it will make and waits for a yes. Replies are cached in `.cache/`, so running it again costs nothing. Everything under `runs/scratch/` is gitignored.
 
+**For exploration**, start from `configs/cheap.yaml`: Mistral Small 3.2, a 3-round history window, 20 rounds and five seeds, capped at $0.30.
+
+```sh
+uv run lab run configs/cheap.yaml --out runs/scratch/cheap
+```
+
+`lab run` prints the estimated cost before it spends anything, and `--max-cost DOLLARS` caps any run.
+
 ## Keys
 
 Models go through [OpenRouter](https://openrouter.ai), one key for every provider. The sprint gives Modal GPU credits only, no model credits, so calls are paid from your own OpenRouter balance.

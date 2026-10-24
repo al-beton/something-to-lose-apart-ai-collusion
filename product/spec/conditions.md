@@ -7,6 +7,7 @@
 - **conditions-logged:** Each turn logs which conditions were active and the notices the agent was shown, while the turn log still records everything that really happened.
 - **instruction:** The `instruction` condition adds a prompt file to every agent's system prompt.
 - **outage:** The `outage` condition tells agents, before the talk phase of rounds `start` to `end`, that their messages aren't being recorded, and can tell them in the round after that recording is back; it ships the Researcher's tested wordings.
+- **outage-once-remembered:** An outage can instead be announced only in the window's first round, and then it stays in what agents can see: every later turn of the window shows that announcement as a past notice in the agent's history, whatever the history window, and the turn log says which notices a turn was shown fresh and which only in its history, so the arm measures the outage rather than forgetting.
 
 ## Where this is enforced
 
@@ -18,4 +19,5 @@
 | `off-is-absent` | `src/collusion_lab/runner.py` | `test_off_is_absent_leaves_the_turn_log_byte_identical` |
 | `conditions-logged` | `src/collusion_lab/runner.py` | `test_outage_notices_appear_on_exactly_the_right_rounds`, `test_outage_keeps_logging_what_agents_said` |
 | `instruction` | `src/collusion_lab/conditions/instruction.py`, `prompts/conditions/no-collusion.md` | `test_instruction_adds_a_prompt_file_to_every_system_prompt` |
+| `outage-once-remembered` | `src/collusion_lab/conditions/outage.py`, `src/collusion_lab/conditions/__init__.py`, `src/collusion_lab/runner.py` | `test_outage_announced_once_in_the_first_round_of_the_window`, `test_outage_once_remembered_in_every_later_turn_of_the_window`, `test_outage_once_remembered_past_a_short_history_window`, `test_outage_once_remembered_only_with_once` |
 | `outage` | `src/collusion_lab/conditions/outage.py`, `prompts/conditions/outage/**` | `test_outage_notices_appear_on_exactly_the_right_rounds`, `test_outage_without_a_restored_notice`, `test_outage_keeps_logging_what_agents_said`, `test_outage_ships_the_tested_wordings` |

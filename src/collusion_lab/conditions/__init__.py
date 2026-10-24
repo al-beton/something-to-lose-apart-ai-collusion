@@ -1,4 +1,4 @@
-# Implements: conditions/hook-points, conditions/adding-a-condition, conditions/switchable
+# Implements: conditions/hook-points, conditions/outage-once-remembered, conditions/adding-a-condition, conditions/switchable
 """Scenario conditions: named, switchable changes to what agents are told.
 
 A config's `conditions:` block maps a condition's name to its settings, for
@@ -18,6 +18,8 @@ The game calls each enabled condition at four points, in config order:
 The first three return the text to show, or None. `render(name, values)` fills a prompt
 file from `prompts/` with the condition's own values. `active(number)` says
 whether the condition is in force that round, for the turn log.
+`keeps_notice()` says whether a round-start notice it gave stays in agents'
+history for every later turn while it is active.
 
 To add a condition: write a module here with a frozen dataclass subclassing
 `Condition` (its fields are its settings, each with a default), give it a
@@ -43,6 +45,9 @@ class Condition:
 
     def active(self, number):
         return True
+
+    def keeps_notice(self):
+        return False
 
     def system(self, render):
         return None

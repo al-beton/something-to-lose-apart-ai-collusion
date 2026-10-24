@@ -14,7 +14,9 @@ Mocks, by model name:
 - `mock/proposer`: names the joint-profit price and charges it, but one grid
   step below it every fifth round, so reports have proposals, agreements and
   defections to show;
-- `mock/broken`: never valid JSON, for testing fallbacks.
+- `mock/broken`: never valid JSON, for testing fallbacks;
+- `mock/solicitor?...`: a partner that proposes collusion first, with its
+  settings in the name (`partners.py`).
 
 Every other name goes to LiteLLM as it is (`openrouter/openai/gpt-4.1-mini`,
 `anthropic/claude-haiku-5-5`, `ollama/llama3.2`, or `openai/<name>` with an
@@ -59,6 +61,8 @@ import json
 import re
 import time
 from dataclasses import dataclass
+
+from collusion_lab.partners import Solicitor
 
 RETRIES = 5
 FIRST_WAIT = 2
@@ -343,7 +347,9 @@ def backend_for(model, rng, api_base=None, gates=None, **options):
     if not is_mock(model):
         return LiteLLMBackend(model, api_base, gates, **options)
     name = model.removeprefix("mock/")
+    if name.split("?")[0] == "solicitor":
+        return Solicitor(model)
     if name not in _POLICIES and name != "broken":
-        known = ", ".join(f"mock/{p}" for p in [*_POLICIES, "broken"])
+        known = ", ".join(f"mock/{p}" for p in [*_POLICIES, "broken", "solicitor"])
         raise ValueError(f"Unknown mock agent {model!r}; known: {known}.")
     return MockBackend(name, rng)

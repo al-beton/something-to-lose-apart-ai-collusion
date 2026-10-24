@@ -1,4 +1,4 @@
-# Implements: reports/reasoning-folded, reports/one-page, reports/header, reports/first-screen, reports/contents-bar, reports/setup, reports/summary, reports/price-chart, reports/arm-tabs, reports/highlights-in-context, reports/transcripts, reports/self-contained, runs/fallback-rates, runs/missing-runs-shown, reports/condition-window
+# Implements: reports/reasoning-folded, reports/one-page, reports/header, reports/first-screen, reports/contents-bar, reports/setup, reports/summary, reports/price-chart, reports/arm-tabs, reports/highlights-in-context, reports/transcripts, reports/self-contained, runs/fallback-rates, runs/missing-runs-shown, reports/condition-window, reports/solicitation
 """The report page: one self-contained HTML file, read from the top down.
 
 A sticky contents bar, then:
@@ -34,7 +34,8 @@ from collusion_lab.report.chart import (
 )
 from collusion_lab.report.games import load_game
 from collusion_lab.report.highlights import find_highlights, rounds_text
-from collusion_lab.report.overview import arm_sentences
+from collusion_lab.report.overview import answer_words, arm_sentences
+from collusion_lab.report.solicitation import answer
 from collusion_lab.report.style import STYLE, tab_rules
 from collusion_lab.report.told import (
     round_conditions,
@@ -409,11 +410,19 @@ def _game(game, index):
         f'<input type="checkbox" class="game-all" id="{gid}-all">'
         f'<div class="game-head"><b>{escape(game.run)}</b><span class="muted">'
         f"mean price {s['market_mean_price']:g}, gain {s['market_gain']:.3f}"
+        f"{_answer(game)}"
         f'</span><label for="{gid}-all"><span class="show">whole game</span>'
         '<span class="hide">fold</span></label></div>'
         f'<nav class="strip">{chips}</nav><div class="rounds">{rounds}</div>'
         "</article>"
     )
+
+
+def _answer(game):
+    found = answer(game)
+    if not found:
+        return ""
+    return f"; Firm {found.firm} {escape(', '.join(answer_words(found)))}"
 
 
 def _round(game, r, anchor=None):
