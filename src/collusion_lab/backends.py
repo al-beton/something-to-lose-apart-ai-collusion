@@ -113,11 +113,13 @@ async def _acompletion(**kwargs):
 
 
 class Budget:
-    """What a run's calls have cost, against an optional cap in dollars."""
+    """What a run's calls have cost, against an optional cap in dollars, and
+    how many fresh calls have been answered so far (for live progress)."""
 
     def __init__(self, cap=None):
         self.cap = cap
         self.spent = 0.0
+        self.calls = 0
 
     def check(self, model):
         if self.cap is not None and self.spent > self.cap:
@@ -224,6 +226,7 @@ class LiteLLMBackend:
         usage = getattr(response, "usage", None)
         cost = _cost(response)
         self.budget.spent += cost or 0
+        self.budget.calls += 1
         message = response.choices[0].message
         return Reply(
             text=message.content or "",

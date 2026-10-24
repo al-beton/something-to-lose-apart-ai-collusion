@@ -51,7 +51,7 @@ directory already holds a summary written from the same resolved config.
 that stopped partway thus plays only what's missing, and with the cache the
 calls a failed run already made replay for free. With `progress`, each run
 that ends is reported as one line: run, rounds, seconds, and the fresh model
-calls made so far.
+calls made so far, counted sweep-wide as each is answered.
 """
 
 import asyncio
@@ -149,7 +149,7 @@ async def _play_all(config, out, cache, progress=None):
     for child, seed in runs:
         status.plan(run_id(child, seed), dataclasses.replace(child, seeds=[seed]))
     status.save()
-    tally = {"ended": 0, "calls": 0}
+    tally = {"ended": 0, "budget": shared.budget}
 
     async def limited(child, seed):
         run = run_id(child, seed)
@@ -167,7 +167,6 @@ async def _play_all(config, out, cache, progress=None):
                 outcome = Outcome(run, run_dir, "failed", str(error))
             status.mark(run, outcome.state, outcome.error)
         tally["ended"] += 1
-        tally["calls"] += _fresh_calls(run_dir)
         if progress:
             seconds = time.perf_counter() - started
             progress(_progress_line(outcome, seconds, tally, len(runs)))
@@ -189,11 +188,6 @@ def _spent_before(run_dir):
     return (old.get("cost") or 0) + old.get("earlier_cost", 0), by_agent
 
 
-def _fresh_calls(run_dir):
-    path = run_dir / "manifest.json"
-    return json.loads(path.read_text())["cache"]["misses"] if path.exists() else 0
-
-
 def _progress_line(outcome, seconds, tally, total):
     head = f"[{tally['ended']}/{total}] {outcome.state} {outcome.run}"
     if outcome.state == "failed":
@@ -201,7 +195,7 @@ def _progress_line(outcome, seconds, tally, total):
     else:
         summary = json.loads((outcome.dir / "summary.json").read_text())
         what = f"{summary['rounds']} rounds in {seconds:.0f}s"
-    return f"{head}: {what}, {tally['calls']} model calls so far"
+    return f"{head}: {what}, {tally['budget'].calls} model calls so far"
 
 
 def _finished(config, seed, run_dir):
