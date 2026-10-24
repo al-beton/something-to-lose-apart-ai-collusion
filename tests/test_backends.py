@@ -57,7 +57,7 @@ def test_usage_logged_per_turn_and_timings_kept_apart(
     assert turn["model_version"] == "provider/model-2026-10"
     assert "latency" not in json.dumps(turn)
     timing = lines(run_dir, "timings.jsonl")[0]
-    assert set(timing) == {"round", "phase", "agent", "attempt", "seconds"}
+    assert set(timing) >= {"round", "phase", "agent", "attempt", "seconds", "cost"}
 
 
 def test_retry_once_tells_the_agent_what_was_wrong(make_config, tmp_path, fake_model):

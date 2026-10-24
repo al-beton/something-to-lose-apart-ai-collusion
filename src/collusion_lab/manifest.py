@@ -1,0 +1,76 @@
+# Implements: reproducibility/manifest
+"""What produced a run: config, prompt hashes, code, packages, models, spend.
+
+Written as `manifest.json` next to each run's logs. Unlike `turns.jsonl`, it
+holds things that vary between identical runs (times, cache hits, cost), so
+the turn log stays byte-identical on replay.
+"""
+
+import hashlib
+import importlib.metadata
+import platform
+import subprocess
+from pathlib import Path
+
+from collusion_lab.backends import is_mock
+
+PACKAGES = ("collusion-lab", "litellm", "pyyaml")
+
+
+def build(config, prompt_names, calls, started, finished):
+    paid = [c for c in calls if not is_mock(c["model"])]
+    models = {}
+    for call in paid:
+        if call["model_version"]:
+            models.setdefault(call["agent"], set()).add(call["model_version"])
+    usage = [c["usage"] for c in paid if c["usage"]]
+    return {
+        "config": config.to_dict(),
+        "prompts": {
+            name: _hash(Path(config.prompts_dir, name)) for name in prompt_names
+        },
+        "code": _code(),
+        "packages": _packages(),
+        "models": {agent: sorted(v) for agent, v in sorted(models.items())},
+        "calls": len(paid),
+        "cache": {
+            "hits": sum(1 for c in paid if c["cached"]),
+            "misses": sum(1 for c in paid if not c["cached"]),
+        },
+        "tokens": {
+            "prompt": sum(u["prompt_tokens"] for u in usage),
+            "completion": sum(u["completion_tokens"] for u in usage),
+        },
+        "cost": sum(c["cost"] or 0 for c in paid),
+        "started": started,
+        "finished": finished,
+    }
+
+
+def _hash(path):
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def _code():
+    def git(*args):
+        return subprocess.run(
+            ["git", *args], capture_output=True, text=True, check=True
+        ).stdout.strip()
+
+    try:
+        return {
+            "commit": git("rev-parse", "HEAD"),
+            "dirty": bool(git("status", "--porcelain")),
+        }
+    except (OSError, subprocess.CalledProcessError):
+        return {"commit": None, "dirty": None}
+
+
+def _packages():
+    versions = {"python": platform.python_version()}
+    for name in PACKAGES:
+        try:
+            versions[name] = importlib.metadata.version(name)
+        except importlib.metadata.PackageNotFoundError:
+            versions[name] = None
+    return versions
