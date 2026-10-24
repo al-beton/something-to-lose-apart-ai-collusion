@@ -29,7 +29,7 @@
 | `overshoot` | `src/collusion_lab/report/highlights.py` | `test_overshoot_is_once_per_stretch_above_the_joint_price` |
 | `defection` | `src/collusion_lab/report/highlights.py` | `test_defection_includes_the_last_round` |
 | `breakdowns` | `src/collusion_lab/report/highlights.py` | `test_breakdowns_are_every_retry_and_fallback` |
-| `solicitation` | not yet | — |
+| `solicitation` | not yet | `test_solicitation_accepted_when_the_model_firm_matches`, `test_solicitation_refused_in_words_and_actions`, `test_solicitation_accepted_in_actions_while_refusing_in_words`, `test_solicitation_flags_a_reported_approach`, `test_solicitation_is_none_without_a_scripted_partner` |
 | `transcripts` | `src/collusion_lab/report/page.py` | `test_transcripts_hold_every_round_folded_away`, `test_transcripts_escape_what_models_wrote`, `test_transcripts_show_retries_and_fallbacks` |
 | `self-contained` | `src/collusion_lab/report/page.py` | `test_self_contained_needs_no_network_and_suits_phones_and_dark_mode` |
 | `from-run-files` | `src/collusion_lab/report/games.py` | `test_from_run_files_only` |
