@@ -11,8 +11,14 @@ same config and seed asks the same questions, so every call is a hit.
 Modes: `use` reads and stores (the default), `refresh` calls again and stores
 the new reply, `off` neither reads nor stores. For a fresh sample, change the
 seed: the seed is part of the key. Mock agents are never cached.
+
+Identical requests in flight at once (parallel sweep arms often ask the same
+first question) share one call, so every run that asked it records the same
+reply that a replay will return.
 """
 
+import asyncio
+import dataclasses
 import hashlib
 import json
 import sqlite3
@@ -31,6 +37,9 @@ class Cache:
         self.path = Path(path)
         self.mode = mode
         self._db = None
+        # Calls under way, by key: a second identical request waits for the
+        # first instead of making its own call (see CachedBackend).
+        self.in_flight = {}
 
     @staticmethod
     def key(**parts):
@@ -87,13 +96,32 @@ class CachedBackend:
         )
         if hit := self.cache.get(key):
             return Reply(**hit, cached=True)
-        reply = await self.inner.complete(
+        if self.cache.mode != "off" and key in self.cache.in_flight:
+            reply = await self.cache.in_flight[key]
+            return dataclasses.replace(reply, cached=True, cost=None, seconds=None)
+        ask = self.inner.complete(
             messages,
             context=context,
             temperature=temperature,
             max_tokens=max_tokens,
             seed=seed,
         )
+        if self.cache.mode == "off":
+            return await ask
+        return await self._call_once(key, ask)
+
+    async def _call_once(self, key, ask):
+        """Make the call, sharing it with identical requests that arrive meanwhile."""
+        shared = asyncio.get_running_loop().create_future()
+        self.cache.in_flight[key] = shared
+        try:
+            reply = await ask
+        except BaseException as error:
+            shared.set_exception(error)
+            shared.exception()  # mark it seen when nobody else was waiting
+            raise
+        finally:
+            del self.cache.in_flight[key]
         self.cache.put(
             key,
             {
@@ -102,4 +130,5 @@ class CachedBackend:
                 "model_version": reply.model_version,
             },
         )
+        shared.set_result(reply)
         return reply
