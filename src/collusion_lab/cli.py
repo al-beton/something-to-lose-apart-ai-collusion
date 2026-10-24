@@ -1,8 +1,10 @@
-# Implements: runs/one-config, runs/overrides, backends/keys-from-environment, backends/spend-asks-first, reproducibility/cache-modes, runs/summary-table
+# Implements: runs/one-config, runs/overrides, backends/keys-from-environment, backends/spend-asks-first, reproducibility/cache-modes, runs/summary-table, reports/one-page
 """The `lab` command.
 
 - `lab run CONFIG [--set path=value ...] [--out DIR] [-y]` plays a config;
-- `lab summary FOLDER [--by PATH ...]` prints one table for a folder of runs.
+- `lab summary FOLDER [--by PATH ...]` prints one table for a folder of runs;
+- `lab report FOLDER [--out FILE]` writes one shareable HTML page for it
+  (`FOLDER/report.html` by default) and prints where.
 
 Model replies are cached in `.cache/responses.sqlite` (`--cache use`), so a
 rerun replays for free; `--cache refresh` calls again, `--cache off` skips it.
@@ -21,6 +23,7 @@ from dotenv import load_dotenv
 
 from collusion_lab.cache import DEFAULT_PATH, MODES, Cache
 from collusion_lab.config import ConfigError, load_config
+from collusion_lab.report import write_report
 from collusion_lab.runner import paid_calls, run_config
 from collusion_lab.summary import format_table, summarize
 
@@ -49,9 +52,15 @@ def main(argv=None):
     summary.add_argument(
         "--by", action="append", metavar="PATH", help="group by a config value"
     )
+    report = commands.add_parser("report", help="one HTML page for a folder of runs")
+    report.add_argument("folder")
+    report.add_argument("--out", help="where to write it (default FOLDER/report.html)")
     args = parser.parse_args(argv)
     if args.command == "summary":
         print(format_table(summarize(args.folder, args.by)))
+        return 0
+    if args.command == "report":
+        print(write_report(args.folder, args.out))
         return 0
     load_dotenv(Path.cwd() / ".env")
     try:

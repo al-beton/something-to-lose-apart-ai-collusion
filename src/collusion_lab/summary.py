@@ -1,4 +1,4 @@
-# Implements: runs/summary-table
+# Implements: runs/summary-table, reports/summary
 """One table for a folder of runs, grouped by swept values or any config value.
 
 `summarize` reads every `summary.json` under a folder (and the `manifest.json`
@@ -9,22 +9,38 @@ gives the number of runs, the mean market price and gain over their last
 rounds, total fallbacks and total cost. List and mapping values (`seeds`)
 group and print as JSON. `format_table` prints it as Markdown,
 which reads in a terminal and renders in a pull request comment.
+
+`group_runs` is the grouping on its own, for anything else that shows a
+folder group by group (reports).
 """
 
 import json
 from pathlib import Path
 from statistics import mean
+from typing import NamedTuple
+
+
+class Run(NamedTuple):
+    dir: Path
+    summary: dict
+    manifest: dict
+
+
+def group_runs(folder, by=None):
+    """The keys grouped by, and (key, runs) pairs in table order."""
+    runs = [_load(path) for path in sorted(Path(folder).rglob("summary.json"))]
+    if by is None:
+        by = list(dict.fromkeys(k for r in runs for k in r.summary.get("labels", {})))
+    groups = {}
+    for run in runs:
+        key = tuple(_value(run.summary, run.manifest, name) for name in by)
+        groups.setdefault(key, []).append(run)
+    return by, [(key, groups[key]) for key in sorted(groups, key=_sort_key)]
 
 
 def summarize(folder, by=None):
-    runs = [_load(path) for path in sorted(Path(folder).rglob("summary.json"))]
-    if by is None:
-        by = list(dict.fromkeys(k for s, _ in runs for k in s.get("labels", {})))
-    groups = {}
-    for summary, manifest in runs:
-        key = tuple(_value(summary, manifest, name) for name in by)
-        groups.setdefault(key, []).append((summary, manifest))
-    return [_row(by, key, groups[key]) for key in sorted(groups, key=_sort_key)]
+    by, groups = group_runs(folder, by)
+    return [_row(by, key, runs) for key, runs in groups]
 
 
 def format_table(rows):
@@ -35,7 +51,7 @@ def format_table(rows):
         "| " + " | ".join(columns) + " |",
         "|" + "|".join("---" for _ in columns) + "|",
     ]
-    lines += ["| " + " | ".join(_cell(r[c]) for c in columns) + " |" for r in rows]
+    lines += ["| " + " | ".join(cell(r[c]) for c in columns) + " |" for r in rows]
     return "\n".join(lines)
 
 
@@ -43,18 +59,18 @@ def _load(path):
     summary = json.loads(path.read_text())
     manifest_path = path.with_name("manifest.json")
     manifest = json.loads(manifest_path.read_text()) if manifest_path.exists() else {}
-    return summary, manifest
+    return Run(path.parent, summary, manifest)
 
 
 def _row(by, key, runs):
-    summaries = [s for s, _ in runs]
+    summaries = [r.summary for r in runs]
     return {
         **dict(zip(by, key, strict=True)),
         "runs": len(runs),
         "mean price": round(mean(s["market_mean_price"] for s in summaries), 2),
         "gain": round(mean(s["market_gain"] for s in summaries), 3),
         "fallbacks": sum(s["fallbacks"] for s in summaries),
-        "cost": round(sum(m.get("cost") or 0 for _, m in runs), 4),
+        "cost": round(sum(r.manifest.get("cost") or 0 for r in runs), 4),
     }
 
 
@@ -87,5 +103,6 @@ def _sort_key(key):
     )
 
 
-def _cell(value):
+def cell(value):
+    """How a table shows one value."""
     return "—" if value is None else str(value)
