@@ -1,4 +1,4 @@
-# Implements: agents/mock-agents, backends/any-model, backends/sampling-from-config, backends/usage-logged, backends/transient-errors-retried, backends/shared-rate-limit, backends/reported-cost, backends/spend-cap, backends/reasoning-setting, logs/reasoning-logged
+# Implements: agents/mock-agents, backends/any-model, backends/sampling-from-config, backends/usage-logged, backends/transient-errors-retried, backends/shared-rate-limit, backends/reported-cost, backends/spend-cap, backends/reasoning-setting, logs/reasoning-logged, agents/json-mode, agents/unreadable-explained
 """Backends turn a prompt into a reply: scripted mocks, or any model via LiteLLM.
 
 A backend is anything with `async complete(messages, *, context, temperature,
@@ -21,6 +21,10 @@ Every other name goes to LiteLLM as it is (`openrouter/openai/gpt-4.1-mini`,
 `api_base` for any OpenAI-compatible server). `drop_params` lets providers
 without a `seed` parameter ignore it. LiteLLM is imported on first use, so
 mock games never pay its import time.
+
+`json_mode` asks for `response_format: {"type": "json_object"}`, which
+`drop_params` drops for providers that can't do it. Each reply keeps the
+provider's finish reason (`length` means it hit the token limit).
 
 Cost: OpenRouter calls ask for usage accounting (`usage: {include: true}`)
 and record the `usage.cost` OpenRouter reports, which LiteLLM's price table
@@ -82,6 +86,7 @@ class Reply:
     cached: bool = False
     retries: list | None = None
     reasoning: str | None = None
+    finish_reason: str | None = None
 
 
 async def _acompletion(**kwargs):
@@ -158,16 +163,22 @@ def reset_time(error):
 
 
 class LiteLLMBackend:
-    def __init__(self, model, api_base=None, gates=None, budget=None, reasoning=None):
+    def __init__(self, model, api_base=None, gates=None, budget=None, **options):
+        """`options` are the agent's request settings: `reasoning` and
+        `json_mode`."""
         self.model = model
         self.api_base = api_base
         self.gates = gates or RateGates()
         self.budget = budget or Budget()
-        self.reasoning = reasoning
+        self.reasoning = options.get("reasoning")
+        self.json_mode = options.get("json_mode", False)
 
     def _extra(self):
-        """Request fields beyond the sampling ones: address, usage, reasoning."""
+        """Request fields beyond the sampling ones: address, usage, reasoning
+        and JSON mode."""
         extra = {"api_base": self.api_base} if self.api_base else {}
+        if self.json_mode:
+            extra["response_format"] = {"type": "json_object"}
         off = self.reasoning == "off"
         if self.model.startswith("openrouter/"):
             body = {"usage": {"include": True}}
@@ -202,6 +213,7 @@ class LiteLLMBackend:
             usage=usage and _usage(usage),
             reasoning=getattr(message, "reasoning_content", None)
             or getattr(message, "reasoning", None),
+            finish_reason=getattr(response.choices[0], "finish_reason", None),
             model_version=getattr(response, "model", None),
             seconds=time.perf_counter() - started,
             cost=cost,
@@ -326,7 +338,7 @@ def is_mock(model):
 
 
 def backend_for(model, rng, api_base=None, gates=None, **options):
-    """The backend a model name selects; `options` (budget, reasoning) go to
+    """The backend a model name selects; `options` (budget, reasoning, json_mode) go to
     model backends."""
     if not is_mock(model):
         return LiteLLMBackend(model, api_base, gates, **options)

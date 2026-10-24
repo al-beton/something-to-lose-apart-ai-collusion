@@ -1,4 +1,4 @@
-# Implements: backends/spend-cap, runs/stops-cleanly, runs/one-config, runs/overrides, backends/keys-from-environment, backends/spend-asks-first, reproducibility/cache-modes, runs/summary-table, reports/one-page
+# Implements: backends/spend-cap, runs/stops-cleanly, runs/one-config, runs/overrides, backends/keys-from-environment, backends/spend-asks-first, reproducibility/cache-modes, runs/summary-table, runs/fallback-rates, reports/one-page
 """The `lab` command.
 
 - `lab run CONFIG [--set path=value ...] [--out DIR] [-y]` plays a config;
@@ -30,7 +30,7 @@ from collusion_lab.estimate import estimate
 from collusion_lab.prices import price_for
 from collusion_lab.report import write_report
 from collusion_lab.runner import RunFailed, paid_calls, run_config
-from collusion_lab.summary import format_table, summarize
+from collusion_lab.summary import format_replies, format_table, summarize
 
 
 def main(argv=None):
@@ -69,6 +69,8 @@ def main(argv=None):
     args = parser.parse_args(argv)
     if args.command == "summary":
         print(format_table(summarize(args.folder, args.by)))
+        if replies := format_replies(args.folder):
+            print("\n" + replies)
         return 0
     if args.command == "report":
         print(write_report(args.folder, args.out))
