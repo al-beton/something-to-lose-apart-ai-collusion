@@ -135,8 +135,8 @@ def test_live_progress_counts_calls_of_runs_still_playing(
 
     async def model(**kwargs):
         started.append(kwargs["seed"])
-        if kwargs["seed"] == 1:
-            await asyncio.sleep(0.02)  # seed 1 lags behind seed 0
+        # Both games call at once; seed 1's calls take twice as long.
+        await asyncio.sleep(0.005 * (1 + kwargs["seed"]))
         return await fake_model(**kwargs)
 
     monkeypatch.setattr(backends, "_acompletion", model)
