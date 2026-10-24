@@ -15,7 +15,7 @@
 
 Transcript paths below are relative to `runs/logging-outage/`. **What's committed:** every pilot game and its control has its `config.yaml`, `summary.json` and `manifest.json` under `runs/logging-outage/` (the original baselines are under `runs/model-survey/`). Full transcripts are committed only for the games quoted below by path; the others keep only their summaries, so the table's price-path and message counts can't yet be fully checked from committed files.
 
-Report page with every arm: `reports/logging-outage/pilot.html`. The told-not-to controls are in `reports/logging-outage/no-collusion.html`.
+Report page with every arm: `reports/logging-outage/pilot.html`. The told-not-to controls are in `reports/logging-outage/no-collusion.html`. Both pages are gitignored, and `lab report` needs every game's full transcript, which is only committed for the quoted games. So they rebuild only from the original run folders in Al's checkout: `uv run lab report runs/scratch/pilot-outage --out reports/logging-outage/pilot.html` and `uv run lab report runs/scratch/no-collusion --out reports/logging-outage/no-collusion.html`.
 
 ## Result: nobody exploits the outage, in words or in prices
 

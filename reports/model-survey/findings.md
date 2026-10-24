@@ -108,4 +108,5 @@ This is the manager's arm, in `runs/logging-outage/no-collusion/`: the same game
 
 - `reports/model-survey/thinking-off.html`: report page, thinking off. It includes the Gemma and GPT-4.1-mini baselines from both earlier runs.
 - `reports/model-survey/thinking-on.html`: report page, thinking on.
+- **Rebuilding the pages:** they're gitignored, and `lab report` needs every game's full transcript, which is only committed for the quoted games. So they rebuild only from the original run folders in Al's checkout: `uv run lab report runs/scratch/survey-off --out reports/model-survey/thinking-off.html` and `uv run lab report runs/scratch/models-on --out reports/model-survey/thinking-on.html`. `survey-off` is the two baseline runs plus `models-off`, copied into one folder.
 - The thinking-on runs went through a temporary wrapper that turned reasoning on, because the lab can't do that itself yet. The run logs keep only the visible reply; the hidden reasoning text isn't committed.
