@@ -1,4 +1,4 @@
-# Implements: agents/mock-agents, backends/any-model, backends/sampling-from-config, backends/usage-logged, backends/transient-errors-retried, backends/shared-rate-limit
+# Implements: agents/mock-agents, backends/any-model, backends/sampling-from-config, backends/usage-logged, backends/transient-errors-retried, backends/shared-rate-limit, backends/reported-cost, backends/spend-cap
 """Backends turn a prompt into a reply: scripted mocks, or any model via LiteLLM.
 
 A backend is anything with `async complete(messages, *, context, temperature,
@@ -23,6 +23,17 @@ Every other name goes to LiteLLM as it is (`openrouter/openai/gpt-4.1-mini`,
 `api_base` for any OpenAI-compatible server). `drop_params` lets providers
 without a `seed` parameter ignore it. LiteLLM is imported on first use, so
 mock games never pay its import time.
+
+Cost: OpenRouter calls ask for usage accounting (`usage: {include: true}`)
+and record the `usage.cost` OpenRouter reports, which LiteLLM's price table
+can't give for OpenRouter model names. Every other call keeps LiteLLM's price,
+or None when it has none.
+
+Spend: every model backend in a run shares one `Budget`. Right before each
+request (after any rate-limit wait or retry delay) it checks that the run's
+fresh calls haven't cost more than its cap, and raises `ModelCallError` if
+they have; each answered call adds its cost. A call with no known cost adds
+nothing.
 
 Provider errors: rate limits, timeouts and server errors are retried with
 doubling waits (`RETRIES` times); anything else (a bad key, an unknown model)
@@ -73,6 +84,20 @@ async def _acompletion(**kwargs):
     import litellm
 
     return await litellm.acompletion(**kwargs)
+
+
+class Budget:
+    """What a run's calls have cost, against an optional cap in dollars."""
+
+    def __init__(self, cap=None):
+        self.cap = cap
+        self.spent = 0.0
+
+    def check(self, model):
+        if self.cap is not None and self.spent > self.cap:
+            raise ModelCallError(
+                f"{model}: spend cap of ${self.cap:g} passed (${self.spent:.4f} spent)"
+            )
 
 
 class RateGates:
@@ -129,13 +154,16 @@ def reset_time(error):
 
 
 class LiteLLMBackend:
-    def __init__(self, model, api_base=None, gates=None):
+    def __init__(self, model, api_base=None, gates=None, budget=None):
         self.model = model
         self.api_base = api_base
         self.gates = gates or RateGates()
+        self.budget = budget or Budget()
 
     async def complete(self, messages, *, context, temperature, max_tokens, seed):
         extra = {"api_base": self.api_base} if self.api_base else {}
+        if self.model.startswith("openrouter/"):
+            extra["extra_body"] = {"usage": {"include": True}}
         started = time.perf_counter()
         response, retries = await self._call(
             model=self.model,
@@ -148,6 +176,8 @@ class LiteLLMBackend:
             **extra,
         )
         usage = getattr(response, "usage", None)
+        cost = _cost(response)
+        self.budget.spent += cost or 0
         return Reply(
             text=response.choices[0].message.content or "",
             usage=usage
@@ -157,7 +187,7 @@ class LiteLLMBackend:
             },
             model_version=getattr(response, "model", None),
             seconds=time.perf_counter() - started,
-            cost=_cost(response),
+            cost=cost,
             retries=retries or None,
         )
 
@@ -167,6 +197,7 @@ class LiteLLMBackend:
         wait = FIRST_WAIT
         while True:
             await self.gates.wait(self.model)
+            self.budget.check(self.model)
             try:
                 return await _acompletion(**request), retries
             except Exception as error:
@@ -195,7 +226,11 @@ class LiteLLMBackend:
 
 
 def _cost(response):
-    """LiteLLM's price for a response, or None when it can't price it."""
+    """What the provider says the call cost, else LiteLLM's price for it, or
+    None when neither is known."""
+    reported = getattr(getattr(response, "usage", None), "cost", None)
+    if isinstance(reported, int | float):
+        return reported
     try:
         import litellm
 
@@ -262,10 +297,10 @@ def is_mock(model):
     return model.startswith("mock/")
 
 
-def backend_for(model, rng, api_base=None, gates=None):
+def backend_for(model, rng, api_base=None, gates=None, budget=None):
     """The backend a model name selects."""
     if not is_mock(model):
-        return LiteLLMBackend(model, api_base, gates)
+        return LiteLLMBackend(model, api_base, gates, budget)
     name = model.removeprefix("mock/")
     if name.split("?")[0] == "solicitor":
         return Solicitor(model)
