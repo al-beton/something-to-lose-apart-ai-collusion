@@ -23,7 +23,7 @@ with one fixed line, which never draws from their seeded rng.
 Every other name goes to LiteLLM as it is (`openrouter/openai/gpt-4.1-mini`,
 `anthropic/claude-haiku-5-5`, `ollama/llama3.2`, or `openai/<name>` with an
 `api_base` for any OpenAI-compatible server, such as an open model on Modal:
-see `modal/serve.py`). A model at its own address is self-hosted: it gets
+see `deploy/modal_vllm.py`). A model at its own address is self-hosted: it gets
 only the key in the variable `api_key_env` names (a placeholder when none is
 named, so no provider's own key goes there), and LiteLLM's per-token price
 is never applied to it. `drop_params` lets providers
@@ -148,8 +148,12 @@ class RateGates:
         self.until[model] = max(until, self.until.get(model, 0))
 
 
-def _one_line(error):
-    text = " ".join(str(error).split())
+def _one_line(error, secrets=()):
+    """The error on one line, with any key it echoes masked."""
+    text = str(error)
+    for secret in secrets:
+        text = text.replace(secret, "***")
+    text = " ".join(text.split())
     return f"{type(error).__name__}: {text[:200]}"
 
 
@@ -218,6 +222,14 @@ class LiteLLMBackend:
             extra["reasoning_effort"] = "none" if off else self.reasoning
         return extra
 
+    def _secrets(self, request):
+        """Keys an error might echo: the one sent, and any in the environment."""
+        keys = [request.get("api_key")]
+        keys += [v for k, v in os.environ.items() if k.endswith("_API_KEY")]
+        if self.api_key_env:
+            keys.append(os.environ.get(self.api_key_env))
+        return [k for k in keys if k and len(k) >= 8]
+
     def _address_key(self):
         """The key for a model at its own address, from `api_key_env` only."""
         if not self.api_key_env:
@@ -270,14 +282,14 @@ class LiteLLMBackend:
             except Exception as error:
                 if not _provider_error(error):
                     raise
+                said = _one_line(error, self._secrets(request))
                 if not _transient(error):
-                    raise ModelCallError(f"{self.model}: {_one_line(error)}") from error
+                    raise ModelCallError(f"{self.model}: {said}") from None
                 if len(retries) == RETRIES:
                     raise ModelCallError(
-                        f"{self.model}: gave up after {RETRIES + 1} tries: "
-                        f"{_one_line(error)}"
-                    ) from error
-                retries.append({"error": _one_line(error)})
+                        f"{self.model}: gave up after {RETRIES + 1} tries: {said}"
+                    ) from None
+                retries.append({"error": said})
                 if (until := reset_time(error)) and until > _now():
                     if until - _now() > MAX_WAIT:
                         lifts = time.strftime(
