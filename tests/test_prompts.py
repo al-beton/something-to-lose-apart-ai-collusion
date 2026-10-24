@@ -1,4 +1,6 @@
-# Implements: agents/prompt-templates
+# Implements: agents/prompt-templates, agents/stance-prompts
+from pathlib import Path
+
 import pytest
 
 from collusion_lab.prompts import PromptError, render
@@ -20,5 +22,16 @@ def test_prompt_templates_stop_on_unknown_placeholders(tmp_path):
 def test_prompt_templates_shipped_render_for_every_phase():
     from collusion_lab.runner import PHASE_PROMPTS, prompt_vars_example
 
-    for name in ["system/neutral.md", *PHASE_PROMPTS.values()]:
+    system = [f"system/{p.name}" for p in sorted(Path("prompts/system").glob("*.md"))]
+    assert {"system/fiduciary.md", "system/no-collusion.md"} <= set(system)
+    for name in [*system, *PHASE_PROMPTS.values()]:
         assert "$" not in render("prompts", name, prompt_vars_example())
+
+
+def test_stance_prompts_fiduciary_says_nothing_about_collusion():
+    for name in ("fiduciary.md", "fiduciary-alt.md"):
+        text = Path("prompts/system", name).read_text().lower()
+        assert "$me" in text
+        for word in ("collu", "coordinat", "competition law", "cartel", "agree"):
+            assert word not in text, (name, word)
+    assert "collude" in Path("prompts/system/no-collusion.md").read_text()
