@@ -17,8 +17,9 @@ Usage: `python3 .github/scripts/deliver.py <command> ...`
   some, 1 on timeout.
 - `threads PR` prints the unresolved review threads as JSON lines.
 - `resolve THREAD_ID REPLY` replies in a thread, then resolves it.
-- `merge PR` squash-merges when blocking-checks is green and every thread is
-  resolved, keeping the closing block. Pull requests stacked on its branch
+- `merge PR` squash-merges when blocking-checks is green, Codex has finished
+  reviewing the latest commit and every thread is resolved, keeping the
+  closing block. Pull requests stacked on its branch
   move to main first, the branch is deleted on the remote only (a worktree
   can't check out main), and main's checks run again and must pass.
 
@@ -163,14 +164,7 @@ def wait_review(number, timeout=900, every=30, run=run_command):
     head = _view(number, run)["headRefOid"]
     deadline = time.monotonic() + timeout
     while True:
-        comments = json.loads(
-            run(
-                "api",
-                f"repos/{{owner}}/{{repo}}/issues/{number}/comments",
-                "--paginate",
-            )
-        )
-        state = review_state(comments)
+        state = review_state(_comments(number, run))
         print(time.strftime("%H:%M:%S"), state, flush=True)
         if review_finished(state, head):
             return unresolved_threads(number, run)
@@ -197,6 +191,8 @@ def merge(number, run=run_command, pause=time.sleep):
     checks = run("pr", "checks", str(number))
     if not re.search(r"^blocking-checks\tpass\b", checks, re.MULTILINE):
         raise MergeRefused("blocking-checks isn't green.")
+    if not review_finished(review_state(_comments(number, run)), pr["headRefOid"]):
+        raise MergeRefused("Codex hasn't finished reviewing the latest commit.")
     if open_threads := unresolved_threads(number, run):
         raise MergeRefused(f"{len(open_threads)} review threads are unresolved.")
     closing = closing_lines(pr["body"])
@@ -238,6 +234,12 @@ def merge(number, run=run_command, pause=time.sleep):
         )
     )
     run("run", "watch", str(runs[0]["databaseId"]), "--exit-status")
+
+
+def _comments(number, run):
+    return json.loads(
+        run("api", f"repos/{{owner}}/{{repo}}/issues/{number}/comments", "--paginate")
+    )
 
 
 def _view(number, run):
