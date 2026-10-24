@@ -1,4 +1,4 @@
-# Implements: conditions/switchable, conditions/hook-points, conditions/adding-a-condition, conditions/off-is-absent, conditions/conditions-logged, conditions/instruction, conditions/outage
+# Implements: conditions/switchable, conditions/hook-points, conditions/adding-a-condition, conditions/off-is-absent, conditions/conditions-logged, conditions/instruction, conditions/outage, conditions/outage-once-remembered
 import json
 from pathlib import Path
 
@@ -141,7 +141,59 @@ def test_hook_points_notices_count_in_the_cost_estimate(make_config):
     assert outage.prompt_tokens > plain.prompt_tokens
 
 
+def test_outage_announced_once_in_the_first_round_of_the_window(make_config, tmp_path):
+    config = make_config(
+        overrides=[
+            "conditions={outage: {enabled: true, start: 2, end: 3, once: true}}",
+            "market.rounds=5",
+        ]
+    )
+    [run_dir] = run_config(config, tmp_path)
+    talk = by_round(run_dir, "talk")
+    told = {n for n, t in talk.items() if any(UNMONITORED in x for x in t["notices"])}
+    assert told == {2}
+    assert talk[3]["conditions"] == ["outage"]  # still in force, just not repeated
+
+
 def test_outage_ships_the_tested_wordings():
     folder = Path("prompts/conditions/outage")
     names = {p.name for p in folder.glob("*.md")}
     assert {"outage.md", "restored.md", "outage-alt.md", "restored-alt.md"} <= names
+
+
+ONCE = "conditions={outage: {enabled: true, start: 2, end: 4, once: true}}"
+
+
+def history_part(turn):
+    """The prompt after any fresh notices: where the history is shown."""
+    return talk_prompt(turn).split("\n\n", len(turn["notices"]))[-1]
+
+
+def test_outage_once_remembered_in_every_later_turn_of_the_window(
+    make_config, tmp_path
+):
+    [run_dir] = run_config(make_config(overrides=[ONCE, "market.rounds=6"]), tmp_path)
+    talk, price = by_round(run_dir, "talk"), by_round(run_dir, "price")
+    [notice] = talk[2]["notices"]
+    assert UNMONITORED in notice and talk[2]["notices_in_history"] == []
+    later = [price[2], talk[3], price[3], talk[4], price[4]]
+    for turn in later:
+        assert turn["notices"] == []
+        assert turn["notices_in_history"] == [notice]
+        assert notice in history_part(turn)
+    # Gone once the window ends; the restored notice is shown instead.
+    assert talk[5]["notices_in_history"] == []
+    assert notice not in talk_prompt(talk[5])
+
+
+def test_outage_once_remembered_past_a_short_history_window(make_config, tmp_path):
+    overrides = [ONCE, "market.rounds=5", "market.history_window=1"]
+    [run_dir] = run_config(make_config(overrides=overrides), tmp_path)
+    talk = by_round(run_dir, "talk")
+    [notice] = talk[2]["notices"]
+    assert notice in history_part(talk[4])
+
+
+def test_outage_once_remembered_only_with_once(make_config, tmp_path):
+    [run_dir] = run_config(make_config(overrides=[OUTAGE]), tmp_path)
+    assert all(t["notices_in_history"] == [] for t in turns(run_dir))
