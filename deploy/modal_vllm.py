@@ -16,10 +16,13 @@ example (docs/examples/vllm_inference).
   (80 GB) with room for many games at once. A gated model (Gemma, Llama) also
   needs a Hugging Face token: add `modal.Secret.from_name("huggingface")`
   (holding `HF_TOKEN`) to `secrets`.
-- Auth: Modal lets requests through (`unauthenticated=True`), and vLLM
-  refuses any without the token in the Modal secret `collusion-lab-vllm`
-  (`VLLM_API_KEY`); the lab sends it from the variable its agent's
-  `api_key_env` names. The token never goes in a config.
+- Auth: Modal lets requests through (`unauthenticated=True`), and the
+  `vllm_token.py` middleware refuses any but health checks without the token
+  in the Modal secret `collusion-lab-vllm` (`VLLM_API_KEY`), on every route,
+  since vLLM's own `--api-key` guards only `/v1`. The token stays in the
+  environment, never on vLLM's command line, which vLLM logs. The lab sends
+  it from the variable its agent's `api_key_env` names; it never goes in a
+  config.
 - Cost: billed by GPU time while a container is up. One starts on the first
   request (a few minutes to load the weights; the first deploy also
   downloads them to a Volume) and stops after `scaledown_window` without
@@ -30,6 +33,7 @@ example (docs/examples/vllm_inference).
 
 import os
 import subprocess
+from pathlib import Path
 
 import modal
 
@@ -43,7 +47,15 @@ image = (
     modal.Image.from_registry("nvidia/cuda:12.9.0-devel-ubuntu22.04", add_python="3.12")
     .entrypoint([])
     .uv_pip_install("vllm==0.21.0")
-    .env({"HF_XET_HIGH_PERFORMANCE": "1", "MODEL": MODEL, "SERVED_NAME": SERVED_NAME})
+    .env(
+        {
+            "HF_XET_HIGH_PERFORMANCE": "1",
+            "MODEL": MODEL,
+            "SERVED_NAME": SERVED_NAME,
+            "PYTHONPATH": "/root",  # so vLLM can import vllm_token
+        }
+    )
+    .add_local_file(Path(__file__).with_name("vllm_token.py"), "/root/vllm_token.py")
 )
 weights = modal.Volume.from_name("collusion-lab-hf-cache", create_if_missing=True)
 compiled = modal.Volume.from_name("collusion-lab-vllm-cache", create_if_missing=True)
@@ -61,7 +73,7 @@ app = modal.App("collusion-lab-vllm")
     port=PORT,
     routing_region="us-east",
     target_concurrency=32,
-    unauthenticated=True,  # vLLM's --api-key guards it instead
+    unauthenticated=True,  # vllm_token.py guards it instead
 )
 class Server:
     @modal.enter()
@@ -76,8 +88,8 @@ class Server:
             "0.0.0.0",
             "--port",
             str(PORT),
-            "--api-key",
-            os.environ["VLLM_API_KEY"],
+            "--middleware",
+            "vllm_token.require_token",
             "--max-model-len",
             "16384",
         ]

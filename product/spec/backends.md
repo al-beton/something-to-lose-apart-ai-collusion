@@ -34,4 +34,4 @@
 | `quiet-provider-logs` | `src/collusion_lab/backends.py` | `test_quiet_provider_logs_by_default`, `test_quiet_provider_logs_unless_asked_for` |
 | `tests-never-pay` | `tests/conftest.py` | `test_tests_never_pay_unfaked_calls_fail` |
 | `self-hosted` | `src/collusion_lab/backends.py`, `src/collusion_lab/estimate.py`, `src/collusion_lab/cli.py` | `test_self_hosted_says_billed_by_gpu_time`, `test_self_hosted_costs_nothing_against_the_cap`, `test_self_hosted_waits_out_a_cold_start`, `test_self_hosted_cold_start_has_a_deadline`, `test_hosted_models_keep_their_usual_retries` |
-| `modal` | `deploy/modal_vllm.py`, `configs/modal.yaml`, `README.md`, `.env.example` | `test_modal_config_runs_against_a_served_model`, `test_modal_token_guards_every_route_but_health`, `test_modal_readme_says_how_to_set_up_deploy_run_and_tear_down` |
+| `modal` | `deploy/modal_vllm.py`, `deploy/vllm_token.py`, `configs/modal.yaml`, `README.md`, `.env.example` | `test_modal_config_runs_against_a_served_model`, `test_modal_token_guards_every_route_but_health`, `test_modal_readme_says_how_to_set_up_deploy_run_and_tear_down` |
