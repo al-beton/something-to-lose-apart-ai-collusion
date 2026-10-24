@@ -31,13 +31,32 @@ def existing_comment(comments):
     return next((c["id"] for c in comments if c["body"].startswith(MARKER)), None)
 
 
-def _call(method, url, token, payload=None):
-    data = json.dumps(payload).encode() if payload is not None else None
-    request = urllib.request.Request(url, data=data, method=method)
-    request.add_header("Authorization", f"Bearer {token}")
-    request.add_header("Accept", "application/vnd.github+json")
-    with urllib.request.urlopen(request) as response:
-        return json.loads(response.read() or "null")
+def publish(api, repo, number, body):
+    """Edit the pull request's smoke-run comment, or post it if there is none.
+
+    `api(method, path, payload=None)` makes one GitHub API call and returns its
+    JSON; main passes a real one, tests pass a fake.
+    """
+    comments = api("GET", f"/repos/{repo}/issues/{number}/comments?per_page=100")
+    found = existing_comment(comments)
+    if found:
+        api("PATCH", f"/repos/{repo}/issues/comments/{found}", {"body": body})
+    else:
+        api("POST", f"/repos/{repo}/issues/{number}/comments", {"body": body})
+
+
+def github(token):
+    """A GitHub API caller using the given token, standard library only."""
+
+    def call(method, path, payload=None):
+        data = json.dumps(payload).encode() if payload is not None else None
+        request = urllib.request.Request(API + path, data=data, method=method)
+        request.add_header("Authorization", f"Bearer {token}")
+        request.add_header("Accept", "application/vnd.github+json")
+        with urllib.request.urlopen(request) as response:
+            return json.loads(response.read() or "null")
+
+    return call
 
 
 def main():
@@ -46,19 +65,9 @@ def main():
     if pull is None:
         print("No pull request in this event; nothing to post.")
         return 0
-    token, repo = os.environ["GITHUB_TOKEN"], os.environ["GITHUB_REPOSITORY"]
     body = comment_body(Path(sys.argv[1]).read_text().strip(), pull["head"]["sha"])
-    issue = f"{API}/repos/{repo}/issues/{pull['number']}/comments"
-    found = existing_comment(_call("GET", f"{issue}?per_page=100", token))
-    if found:
-        _call(
-            "PATCH",
-            f"{API}/repos/{repo}/issues/comments/{found}",
-            token,
-            {"body": body},
-        )
-    else:
-        _call("POST", issue, token, {"body": body})
+    api = github(os.environ["GITHUB_TOKEN"])
+    publish(api, os.environ["GITHUB_REPOSITORY"], pull["number"], body)
     print("Posted the smoke-run summary.")
     return 0
 

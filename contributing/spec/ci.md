@@ -15,5 +15,5 @@
 | `checks-on-every-pr` | `.github/workflows/blocking-checks.yml` | — |
 | `checks-over-prose` | `.agents/skills/review-pr/SKILL.md` | — |
 | `simple-code` | `pyproject.toml` | — |
-| `smoke-evidence` | `.github/workflows/blocking-checks.yml`, `.github/scripts/smoke_comment.py`, `Makefile` | `test_smoke_evidence_comment_shows_the_table_and_commit`, `test_smoke_evidence_is_one_comment_edited_in_place` |
+| `smoke-evidence` | `.github/workflows/blocking-checks.yml`, `.github/scripts/smoke_comment.py`, `Makefile` | `test_smoke_evidence_comment_shows_the_table_and_commit`, `test_smoke_evidence_is_one_comment_edited_in_place`, `test_smoke_evidence_posts_once_then_edits_in_place` |
 | `ci-runs-everything` | `.github/workflows/ci.yml` | — |
