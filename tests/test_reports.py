@@ -330,3 +330,12 @@ def test_transcripts_show_retries_and_fallbacks(talks):
     four = four[: four.index("Round 5</h5>")]
     assert "retried once" in four
     assert "fallback:" in four
+
+
+def test_price_chart_names_runs_when_seeds_repeat(make_config, tmp_path):
+    run_config(make_config(), tmp_path / "runs")
+    run_config(make_config(overrides=["name=other"]), tmp_path / "runs")
+    html = build_report(tmp_path / "runs")
+    (chart,) = section(html, "charts").split("<figure>")[1:]
+    assert "test/seed-0</li>" in chart and "other/seed-0</li>" in chart
+    assert "<title>other/seed-0, round 1: 6</title>" in chart
