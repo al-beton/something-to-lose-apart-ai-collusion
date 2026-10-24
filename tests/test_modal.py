@@ -131,3 +131,55 @@ async def asyncio_sleep0():
     import asyncio
 
     await asyncio.sleep(0)
+
+
+@pytest.fixture
+def clock(monkeypatch):
+    """Waits move a fake clock on instead of sleeping."""
+    now = [1_800_000_000.0]
+
+    async def wait(seconds):
+        now[0] += seconds
+
+    monkeypatch.setattr(backends, "_sleep", wait)
+    monkeypatch.setattr(backends, "_now", lambda: now[0])
+    return now
+
+
+def starting(n):
+    import litellm
+
+    return [
+        litellm.ServiceUnavailableError("no containers yet", "openai", "m")
+        for _ in range(n)
+    ]
+
+
+def test_self_hosted_waits_out_a_cold_start(make_config, tmp_path, fake_model, clock):
+    fake_model.replies = starting(30)  # about 7 minutes of 503s at 15 s apart
+    config = make_config(overrides=[*SELF_HOSTED, "market.rounds=1"])
+    [run_dir] = run_config(config, tmp_path)
+    timings = [json.loads(line) for line in (run_dir / "timings.jsonl").open()]
+    assert len(timings[0]["retries"]) == 30
+
+
+def test_self_hosted_cold_start_has_a_deadline(
+    make_config, tmp_path, fake_model, clock
+):
+    from collusion_lab.runner import RunFailed
+
+    fake_model.replies = starting(200)  # longer than the 20-minute start-up limit
+    config = make_config(overrides=[*SELF_HOSTED, "market.rounds=1"])
+    with pytest.raises(RunFailed, match="ServiceUnavailable"):
+        run_config(config, tmp_path)
+
+
+def test_hosted_models_keep_their_usual_retries(
+    make_config, tmp_path, fake_model, clock
+):
+    from collusion_lab.runner import RunFailed
+
+    fake_model.replies = starting(30)
+    hosted = ["agents.0.model=openrouter/openai/gpt-4.1-mini", "market.rounds=1"]
+    with pytest.raises(RunFailed, match="gave up after 6 tries"):
+        run_config(make_config(overrides=hosted), tmp_path)
