@@ -1,4 +1,4 @@
-# Implements: runs/sweeps, runs/parallel, market/talk-then-price, agents/json-replies, agents/retry-once, backends/usage-logged, backends/spend-asks-first, backends/shared-rate-limit, backends/spend-cap, market/history-window, runs/stops-cleanly, reproducibility/response-cache, reproducibility/manifest, runs/run-directory, logs/turn-log, logs/same-seed-same-log, logs/run-summary, logs/reasoning-logged, backends/reasoning-setting, agents/unreadable-explained, agents/json-mode, runs/fallback-rates, runs/failures-dont-stop-sweeps, runs/resume, conditions/hook-points, conditions/off-is-absent, conditions/conditions-logged, conditions/outage-once-remembered, runs/per-firm-summary, conditions/fork-at-audit, conditions/audit-logged, runs/drift, conditions/audit-remembered, conditions/audit-stakes-arms, runs/live-progress, runs/status-file
+# Implements: runs/sweeps, runs/parallel, market/talk-then-price, agents/json-replies, agents/retry-once, backends/usage-logged, backends/spend-asks-first, backends/shared-rate-limit, backends/spend-cap, market/history-window, runs/stops-cleanly, reproducibility/response-cache, reproducibility/manifest, runs/run-directory, logs/turn-log, logs/same-seed-same-log, logs/run-summary, logs/reasoning-logged, backends/reasoning-setting, agents/unreadable-explained, agents/json-mode, runs/fallback-rates, runs/failures-dont-stop-sweeps, runs/resume, conditions/hook-points, conditions/off-is-absent, conditions/conditions-logged, conditions/outage-once-remembered, runs/per-firm-summary, conditions/fork-at-audit, conditions/audit-logged, runs/drift, conditions/audit-remembered, conditions/audit-stakes-arms, runs/live-progress, runs/status-file, runs/eval-awareness
 """Playing a config: one game per seed, each written to its own run directory.
 
 A round is a talk phase (each agent sends one message its rivals read; skipped
@@ -65,7 +65,7 @@ from datetime import UTC, datetime
 from pathlib import Path
 from statistics import mean
 
-from collusion_lab import manifest
+from collusion_lab import awareness, manifest
 from collusion_lab.agents import ReplyError, decision, fallback, parse_reply
 from collusion_lab.backends import (
     Budget,
@@ -575,6 +575,7 @@ class Game:
             "gain_drift": {a: gain[a] - opening_gain[a] for a in self.agents},
             "fallbacks": sum(1 for t in self.turns if t["error"]),
             "replies": _reply_counts(self.turns),
+            "eval_aware": awareness.count(self.turns, lambda m: not is_mock(m)),
             **{
                 c.name: result
                 for c in self.conditions
