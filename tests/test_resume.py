@@ -144,3 +144,15 @@ def test_missing_runs_shown_for_each_folder_even_when_run_ids_repeat(
     assert (row["runs"], row["missing"]) == (4, 2)
     shown = sorted(m["run"] for m in missing_runs(tmp_path))
     assert shown == ["first/test/seed-1", "second/test/seed-1"]
+
+
+def test_missing_runs_keep_what_earlier_attempts_spent(
+    make_config, tmp_path, seed_one_fails, monkeypatch
+):
+    monkeypatch.setattr(litellm, "completion_cost", lambda **kwargs: 0.5)
+    cache = Cache(tmp_path / "c.sqlite")
+    run_sweep(make_config(CONFIG), tmp_path, cache)
+    # Resumed, seed 1 replays its first call from the cache and fails again.
+    run_sweep(make_config(CONFIG), tmp_path, cache)
+    [row] = summarize(tmp_path)
+    assert row["cost"] == 0.5 * (3 + 3 + 1)
