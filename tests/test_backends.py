@@ -1,5 +1,6 @@
 # Implements: backends/any-model, backends/sampling-from-config, backends/keys-from-environment, backends/usage-logged, backends/spend-asks-first, backends/tests-never-pay, agents/retry-once
 import json
+import os
 
 import pytest
 from conftest import NoModelCalls
@@ -68,6 +69,8 @@ def test_retry_once_tells_the_agent_what_was_wrong(make_config, tmp_path, fake_m
     assert first["retry"] == {
         "reply": "no idea",
         "error": "There is no JSON object in the reply.",
+        "usage": {"prompt_tokens": 11, "completion_tokens": 3},
+        "model_version": "provider/model-2026-10",
     }
     assert "There is no JSON object" in first["messages"][-1]["content"]
     assert first["messages"][-2] == {"role": "assistant", "content": "no idea"}
@@ -102,3 +105,22 @@ def test_spend_asks_first_and_stops_without_a_yes(tmp_path, monkeypatch, capsys)
 def test_tests_never_pay_unfaked_calls_fail(make_config, tmp_path):
     with pytest.raises(NoModelCalls):
         run_config(make_config(overrides=MODEL), tmp_path)
+
+
+def test_keys_from_environment_read_the_working_directorys_env_file(
+    tmp_path, monkeypatch
+):
+    monkeypatch.delenv("COLLUSION_LAB_TEST_KEY", raising=False)
+    (tmp_path / ".env").write_text("COLLUSION_LAB_TEST_KEY=from-dotenv\n")
+    config = tmp_path / "c.yaml"
+    config.write_text(
+        "name: t\nseeds: [0]\nmarket: {rounds: 1}\nagents:\n"
+        "  - {id: A, model: mock/nash}\n  - {id: B, model: mock/nash}\n"
+        f"prompts_dir: {os.path.abspath('prompts')}\n"
+    )
+    monkeypatch.chdir(tmp_path)
+    try:
+        assert cli.main(["run", "c.yaml", "--out", "runs"]) == 0
+        assert os.environ.get("COLLUSION_LAB_TEST_KEY") == "from-dotenv"
+    finally:
+        os.environ.pop("COLLUSION_LAB_TEST_KEY", None)
