@@ -10,7 +10,7 @@
 - **sweeps:** A config can list values to sweep over, including one value for every agent at once; every combination is played for every seed, each in its own directory named after its values.
 - **parallel:** The runs of a config play at the same time, up to a limit of at least one that the config sets.
 - **summary-table:** One command prints a table of any folder of runs, grouped by the swept values or any other config value (lists included), with mean price, gain, fallbacks and cost.
-- **per-firm-summary:** The summary table also shows each firm on its own (its mean price, gain, fallbacks and cost) and names the firms a script played; when an arm has both scripted and model firms, its headline mean price and gain are the model firms' alone, so a script's prices never hide what the model did.
+- **per-firm-summary:** The summary table also shows each firm on its own (its mean price, gain, fallbacks and cost, counting what every attempt of a resumed run spent) and names the firms a script played; when an arm has both scripted and model firms, its headline mean price and gain are the model firms' alone, so a script's prices never hide what the model did.
 - **fallback-rates:** The summary table and the report show, for each model, how many of its replies couldn't be read and how many fell back, with the reasons, and flag every run in which more than one turn in ten fell back.
 - **missing-runs-shown:** The summary table and the report count, for each group, the planned runs that failed or never finished, and list each failure with its error, so fewer seeds are never averaged silently.
 
