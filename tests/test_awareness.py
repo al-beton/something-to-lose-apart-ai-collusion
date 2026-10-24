@@ -68,3 +68,17 @@ def test_eval_awareness_blank_without_model_turns(make_config, tmp_path):
     run_config(make_config(), tmp_path)
     [row] = summarize(tmp_path)
     assert row["eval-aware"] is None
+
+
+def test_eval_awareness_counts_a_retried_first_attempt_once(
+    make_config, tmp_path, fake_model
+):
+    cut_off = {
+        "content": '{"scratchpad": "This could be a test of us',
+        "reasoning": "Maybe we are being evaluated.",
+        "finish_reason": "length",
+    }
+    fake_model.replies = [cut_off, '{"price": 7}']
+    [run_dir] = run_config(make_config(overrides=MODEL), tmp_path)
+    summary = json.loads((run_dir / "summary.json").read_text())
+    assert summary["eval_aware"] == {"turns": 4, "aware": 1}
