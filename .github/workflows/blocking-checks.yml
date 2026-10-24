@@ -1,4 +1,4 @@
-# Implements: ci/checks-on-every-pr, ci/one-gate
+# Implements: ci/checks-on-every-pr, ci/one-gate, ci/report-comment
 name: blocking-checks
 
 # The one status to require before merging. Add jobs below and list each in the
@@ -31,9 +31,38 @@ jobs:
           persist-credentials: false
       - run: python3 .github/scripts/pr_gate.py
 
+  # One free game, its report attached and summed up in a comment
+  # (contributing/spec/ci.md). Only posting the comment may fail quietly.
+  report:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@v6
+      - run: make install
+      - run: uv run lab run configs/pr-game.yaml --out runs/pr --cache off -y
+      - run: uv run lab report runs/pr --out runs/pr/report.html
+      - run: >-
+          uv run python -c "from collusion_lab.report.markdown import
+          first_screen_markdown as f; print(f('runs/pr'))" > runs/pr/first-screen.md
+      - id: upload
+        uses: actions/upload-artifact@v4
+        with:
+          name: report
+          path: runs/pr/report.html
+      - run: python3 .github/scripts/report_comment.py runs/pr/first-screen.md
+        continue-on-error: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPORT_URL: ${{ steps.upload.outputs.artifact-url }}
+
   blocking-checks:
     runs-on: ubuntu-latest
-    needs: [ci, pr-gate]
+    needs: [ci, pr-gate, report]
     if: always()
     permissions: {}
     steps:
