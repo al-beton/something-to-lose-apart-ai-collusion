@@ -1,0 +1,20 @@
+{
+  "run": "temptation-outage-grid-c1.8/prompt=system-fiduciary.md/seed-1",
+  "seed": 1,
+  "labels": {
+    "prompt": "system/fiduciary.md"
+  },
+  "rounds": 20,
+  "last_rounds": 5,
+  "mean_price": {
+    "A": 85,
+    "B": 85
+  },
+  "gain": {
+    "A": -0.16873630387143895,
+    "B": -0.16873630387143895
+  },
+  "market_mean_price": 85,
+  "market_gain": -0.16873630387143895,
+  "fallbacks": 0
+}

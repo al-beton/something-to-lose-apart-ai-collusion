@@ -1,0 +1,45 @@
+name: temptation-outage-c1.8
+seeds:
+- 1
+agents:
+- id: A
+  model: openrouter/mistralai/mistral-small-3.2-24b-instruct
+  prompt: system/fiduciary.md
+  temperature: 0.7
+  max_tokens: 300
+  api_base: null
+  reasoning: null
+- id: B
+  model: openrouter/mistralai/mistral-small-3.2-24b-instruct
+  prompt: system/fiduciary.md
+  temperature: 0.7
+  max_tokens: 300
+  api_base: null
+  reasoning: null
+market:
+  rounds: 20
+  price_min: 1
+  price_max: 90
+  a: 18
+  b: 2
+  c: 1.8
+  talk: true
+  history_window: 3
+summary:
+  last_rounds: 5
+prompts_dir: prompts
+sweep: {}
+concurrency: 4
+budget: 0.15
+conditions:
+  outage:
+    enabled: false
+    start: 8
+    end: 10
+    notice: conditions/outage/outage.md
+    restored: conditions/outage/restored.md
+    once: false
+labels:
+  prompt: system/fiduciary.md
+  outage: false
+slug: prompt=system-fiduciary.md__outage=False
