@@ -18,16 +18,16 @@
 
 | Statement | Enforced by | Tested by |
 |---|---|---|
-| `one-page` | not yet | — |
-| `header` | not yet | — |
-| `summary` | not yet | — |
-| `price-chart` | not yet | — |
-| `highlights-in-context` | not yet | — |
-| `proposal` | not yet | — |
-| `agreement` | not yet | — |
-| `overshoot` | not yet | — |
-| `defection` | not yet | — |
-| `breakdowns` | not yet | — |
-| `transcripts` | not yet | — |
-| `self-contained` | not yet | — |
-| `from-run-files` | not yet | — |
+| `one-page` | `src/collusion_lab/report/__init__.py`, `src/collusion_lab/report/page.py`, `src/collusion_lab/cli.py` | `test_one_page_from_the_lab_command`, `test_one_page_covers_one_run_or_several` |
+| `header` | `src/collusion_lab/report/page.py` | `test_header_names_what_was_run_calls_and_cost`, `test_header_cost_adds_up_known_costs` |
+| `summary` | `src/collusion_lab/report/page.py`, `src/collusion_lab/summary.py` | `test_summary_matches_lab_summary` |
+| `price-chart` | `src/collusion_lab/report/chart.py`, `src/collusion_lab/report/page.py` | `test_price_chart_has_one_line_per_seed_and_both_benchmarks` |
+| `highlights-in-context` | `src/collusion_lab/report/highlights.py`, `src/collusion_lab/report/page.py` | `test_highlights_in_context_show_the_round_and_the_one_before` |
+| `proposal` | `src/collusion_lab/report/highlights.py` | `test_proposal_is_the_first_message_naming_a_price` |
+| `agreement` | `src/collusion_lab/report/highlights.py` | `test_agreement_is_every_firm_naming_then_charging_one_new_price` |
+| `overshoot` | `src/collusion_lab/report/highlights.py` | `test_overshoot_is_once_per_stretch_above_the_joint_price` |
+| `defection` | `src/collusion_lab/report/highlights.py` | `test_defection_includes_the_last_round` |
+| `breakdowns` | `src/collusion_lab/report/highlights.py` | `test_breakdowns_are_every_retry_and_fallback` |
+| `transcripts` | `src/collusion_lab/report/page.py` | `test_transcripts_hold_every_round_folded_away`, `test_transcripts_escape_what_models_wrote` |
+| `self-contained` | `src/collusion_lab/report/page.py` | `test_self_contained_needs_no_network_and_suits_phones_and_dark_mode` |
+| `from-run-files` | `src/collusion_lab/report/games.py` | `test_from_run_files_only` |

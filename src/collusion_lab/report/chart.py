@@ -13,8 +13,8 @@ from html import escape
 from statistics import mean
 
 SERIES = 8
-WIDTH, HEIGHT = 480, 240
-LEFT, RIGHT, TOP, BOTTOM = 34, 64, 12, 30
+WIDTH, HEIGHT = 400, 220
+LEFT, RIGHT, TOP, BOTTOM = 30, 62, 12, 32
 
 
 def series_colour(index):
