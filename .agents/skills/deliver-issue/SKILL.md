@@ -7,7 +7,7 @@ description: Deliver a collusion-lab GitHub issue from start to merged in one ro
 
 # Deliver an issue
 
-One routine from issue to merged `main`. Each step below says what to do when it fails. The mechanical steps are in `.github/scripts/deliver.py` (`D` below stands for `python3 .github/scripts/deliver.py`).
+One routine from issue to merged `main`. Each step below says what to do when it fails. The mechanical steps are in `.github/scripts/deliver.py`; `D` below is a shell function, `D() { python3 .github/scripts/deliver.py "$@"; }` (a variable holding the command doesn't split into words in zsh).
 
 **Pace:** this is a hackathon prototype. Build the smallest thing that meets the issue's checkboxes and can be shared. Fix real bugs; decline speculative hardening and edge cases nobody has hit, and say why.
 
@@ -15,7 +15,7 @@ One routine from issue to merged `main`. Each step below says what to do when it
 
 1. `gh issue view <n>`. Branch `<n>-<slug>` from a fresh `origin/main` (`git fetch`, then `git checkout -b <n>-<slug> origin/main`), even inside a worktree that came with its own branch.
 2. Spec commit (`write-spec-change`), push, open the draft pull request straight away (`open-pr`). Write the description to a file and pass `--body-file`.
-3. Tests, run and seen failing (an import error for a module that doesn't exist yet counts), committed on their own. If a test turns out to be wrong, fix it in its own "Test …" commit, not inside the code commit.
+3. Tests, run and seen failing (an import error for a module that doesn't exist yet counts), committed on their own. If a test turns out to be wrong, fix it in its own "Test …" commit, not inside the code commit. Test fixtures use made-up numbers and branch names, never this repository's real issues or pull requests.
 4. Code, then `trace-spec`. `make lint`, `make test`, `make spec-check` pass.
 5. **Commit with `D commit -m SUBJECT -m BODY PATH ...`**: it stages only the paths named and refuses `.`, `-A` and `runs/`. Run output is committed only with `--runs`, when a write-up needs it.
 6. Try it for real where it shows something (for example a command on a folder of runs). Files you make for that go in your scratchpad, never in the repository.
@@ -28,7 +28,7 @@ Fails: a check you can't fix, or the issue doesn't say what Al wants? Comment on
 2. `gh pr ready <pr>`. Marking it ready already starts a Codex review; `D request-review <pr>` asks for one explicitly (pass `--note` for what changed).
 3. `D wait-review <pr>` waits until Codex has finished reviewing the latest commit, then prints the open threads (exit 0: none, 2: some, 1: timed out, so run it again). It reads the `codex-review-state` marker in Codex's summary comment; the first bot comment or a 👀 only means "running". A review takes 1 to 3 minutes.
 
-Fails: checks red? Fix test-first, push, wait again. Codex silent after 15 minutes? Request once more; if still nothing, say so on the pull request and treat the round as finding nothing.
+Fails: checks red? Fix test-first, push, wait again. Codex still "running" after 15 minutes? It does stall: `D request-review <pr> --note "…"` once more usually finishes it within a minute. If still nothing, say so on the pull request and treat the round as finding nothing.
 
 ## 3. Address findings (`address-review`)
 
@@ -58,5 +58,5 @@ Say what merged (pull request link, merge commit), which issues closed, how many
 ## Shell traps seen so far
 
 - Give `gh` `< /dev/null` (the scripts do) and never leave a bare `cat > file` waiting on input: the command just hangs.
-- In zsh, write `${sha}:`, not `$sha:` (`:` starts a modifier).
+- In zsh, write `${sha}:`, not `$sha:` (`:` starts a modifier), and use a function, not a variable, for a command with arguments.
 - Pick an unusual port for a local preview server; common ones are often taken.
