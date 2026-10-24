@@ -575,6 +575,16 @@ def test_setup_reads_conditions_and_notices_from_the_log(outage):
     assert "will not be recorded" not in setup
 
 
+def test_setup_keeps_each_arms_condition_rounds_apart(make_config, tmp_path):
+    early_late = ["sweep={conditions.outage.start: [2, 4]}", "market.rounds=6"]
+    run_config(make_config(overrides=[*OUTAGE, *early_late]), tmp_path / "runs")
+    setup = section(build_report(tmp_path / "runs"), "setup")
+    told = setup[setup.index("Conditions") : setup.index("Other text")]
+    assert "rounds 2 to 4, in 2." in told
+    assert "rounds 4, in 4." in told or "round 4, in 4." in told
+    assert "rounds 2 to 4, in every arm" not in told
+
+
 def test_transcripts_show_the_conditions_and_notices_of_each_round(outage):
     games = section(build_report(outage), "arms")
     parts = games.split('<div class="round" id="')[1:]
