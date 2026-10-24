@@ -12,10 +12,10 @@
 
 | Statement | Enforced by | Tested by |
 |---|---|---|
-| `manager` | not yet | — |
-| `delivery-lead` | not yet | — |
-| `builders` | not yet | — |
-| `reviewers` | not yet | — |
-| `codex` | not yet | — |
-| `researcher` | not yet | — |
-| `queue-labels` | not yet | — |
+| `manager` | `.agents/skills/team/SKILL.md` | — |
+| `delivery-lead` | `.agents/skills/team/SKILL.md` | — |
+| `builders` | `.agents/skills/team/SKILL.md`, `.agents/skills/deliver-issue/SKILL.md` | — |
+| `reviewers` | `.agents/skills/team/SKILL.md`, `.agents/skills/merge-pr/SKILL.md` | — |
+| `codex` | `.agents/skills/team/SKILL.md` | — |
+| `researcher` | `.agents/skills/team/SKILL.md` | — |
+| `queue-labels` | `.agents/skills/team/SKILL.md`, GitHub (labels) | — |

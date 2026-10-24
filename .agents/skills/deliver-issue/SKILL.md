@@ -1,19 +1,19 @@
 ---
 name: deliver-issue
-description: Deliver a collusion-lab GitHub issue from start to merged in one routine - build, draft pull request, Codex review rounds, merge, clean up. Use when asked to deliver, ship or "build and merge" an issue.
+description: Deliver a collusion-lab GitHub issue from start to merged in one routine - build, draft pull request, Codex review rounds, hand to a reviewer who merges. Use when asked to deliver, ship or "build and merge" an issue.
 ---
 
-<!-- Implements: agent-setup/shared-skills, agent-setup/skills-hold-the-process, workflow/one-routine, workflow/prototype-pace, review/review-finished, review/bounded-rounds, commits/named-paths, merging/stacked-retarget, merging/main-stays-green -->
+<!-- Implements: agent-setup/shared-skills, agent-setup/skills-hold-the-process, workflow/one-routine, workflow/prototype-pace, review/review-finished, review/bounded-rounds, commits/named-paths, merging/stacked-retarget, merging/main-stays-green, team/builders -->
 
 # Deliver an issue
 
-One routine from issue to merged `main`. Each step below says what to do when it fails. The mechanical steps are in `.github/scripts/deliver.py`; `D` below is a shell function, `D() { python3 .github/scripts/deliver.py "$@"; }` (a variable holding the command doesn't split into words in zsh).
+One routine from issue to merged `main`, shared by the builder (steps 1 to 4) and the reviewer who merges (step 4). Each step below says what to do when it fails. The mechanical steps are in `.github/scripts/deliver.py`; `D` below is a shell function, `D() { python3 .github/scripts/deliver.py "$@"; }` (a variable holding the command doesn't split into words in zsh).
 
 **Pace:** this is a hackathon prototype. Build the smallest thing that meets the issue's checkboxes and can be shared. Fix real bugs; decline speculative hardening and edge cases nobody has hit, and say why.
 
 ## 1. Build (`build-issue`)
 
-1. `gh issue view <n>`. Branch `<n>-<slug>` from a fresh `origin/main` (`git fetch`, then `git checkout -b <n>-<slug> origin/main`), even inside a worktree that came with its own branch.
+1. `gh issue view <n>`, and swap its `ready` label for `in-progress` (`gh issue edit <n> --add-label in-progress --remove-label ready`). Branch `<n>-<slug>` from a fresh `origin/main` (`git fetch`, then `git checkout -b <n>-<slug> origin/main`), even inside a worktree that came with its own branch.
 2. Spec commit (`write-spec-change`), push, open the draft pull request straight away (`open-pr`). Write the description to a file and pass `--body-file`.
 3. Tests, run and seen failing (an import error for a module that doesn't exist yet counts), committed on their own. If a test turns out to be wrong, fix it in its own "Test …" commit, not inside the code commit. Test fixtures use made-up numbers and branch names, never this repository's real issues or pull requests.
 4. Code, then `trace-spec`. `make lint`, `make test`, `make spec-check` pass.
@@ -40,9 +40,9 @@ For each thread `D wait-review` printed:
 
 **Stop after three rounds,** or sooner when a round finds nothing real. Decline what's left with a reason, or open an issue for it.
 
-## 4. Merge (`merge-pr`)
+## 4. Hand over for merging
 
-Only when Al has told you to merge this pull request. Update the description (tests count, review rounds), then `D merge <pr>`. It refuses unless `blocking-checks` is green, every thread is resolved and the description has a closing block. Then it:
+A builder never merges its own pull request. When checks are green and Codex has finished with no open threads: update the description (tests count, review rounds), label the pull request and the issue `in-review`, and tell the delivery lead in one line. A reviewer reviews it (`review-pr`) and merges it (`merge-pr`): `D merge <pr>` refuses unless `blocking-checks` is green, Codex has finished on the latest commit, every thread is resolved and the description has a closing block. Then it:
 
 1. moves any pull request based on this branch to `main` (deleting a base branch closes the pull requests on it);
 2. squash-merges with the pull request title as subject and the closing block as body;
@@ -53,7 +53,7 @@ Fails: if main's checks fail, fix it at once in a new pull request; nothing else
 
 ## 5. Report
 
-Say what merged (pull request link, merge commit), which issues closed, how many review rounds there were and what was declined, and anything Al should know.
+Builder: say which pull request is waiting for review. Reviewer: say what merged (pull request link, merge commit), which issues closed, how many review rounds there were and what was declined, and anything Al should know.
 
 ## Shell traps seen so far
 
