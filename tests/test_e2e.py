@@ -28,7 +28,7 @@ sweep:
 """
 
 ARMS = ["mock-nash", "mock-joint", "mock-proposer"]
-SECTIONS = ["header", "summary", "charts", "highlights", "transcripts"]
+SECTIONS = ["header", "summary", "setup", "charts", "arms"]
 PROMPTS = Path(__file__).resolve().parents[1] / "prompts"
 
 
