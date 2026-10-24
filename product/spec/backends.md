@@ -24,6 +24,6 @@
 | `shared-rate-limit` | `src/collusion_lab/backends.py`, `src/collusion_lab/runner.py` | `test_shared_rate_limit_makes_every_game_wait_for_the_reset`, `test_shared_rate_limit_that_wont_lift_soon_stops_the_run`, `test_shared_rate_limit_reads_the_reset_from_the_error_body` |
 | `quiet-provider-logs` | `src/collusion_lab/backends.py` | `test_quiet_provider_logs_by_default`, `test_quiet_provider_logs_unless_asked_for` |
 | `reasoning-setting` | `src/collusion_lab/config.py`, `src/collusion_lab/backends.py`, `src/collusion_lab/runner.py` | `test_reasoning_setting_reaches_openrouter_in_its_own_form`, `test_reasoning_setting_reaches_other_providers_as_reasoning_effort`, `test_reasoning_setting_left_out_when_unset`, `test_reasoning_setting_rejects_unknown_levels`, `test_reasoning_setting_sweeps_for_every_agent` |
-| `reported-cost` | not yet | — |
+| `reported-cost` | `src/collusion_lab/backends.py` | `test_reported_cost_asked_for_and_logged`, `test_reported_cost_asked_for_alongside_reasoning`, `test_reported_cost_wins_over_litellms_price`, `test_reported_cost_other_providers_keep_litellms_price`, `test_reported_cost_unknown_stays_unknown` |
 | `spend-asks-first` | `src/collusion_lab/runner.py`, `src/collusion_lab/cli.py` | `test_spend_asks_first_counts_paid_calls`, `test_spend_asks_first_and_stops_without_a_yes` |
 | `tests-never-pay` | `tests/conftest.py` | `test_tests_never_pay_unfaked_calls_fail` |

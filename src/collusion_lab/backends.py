@@ -1,4 +1,4 @@
-# Implements: agents/mock-agents, backends/any-model, backends/sampling-from-config, backends/usage-logged, backends/transient-errors-retried, backends/shared-rate-limit, backends/quiet-provider-logs, backends/reasoning-setting, logs/reasoning-logged
+# Implements: agents/mock-agents, backends/any-model, backends/sampling-from-config, backends/usage-logged, backends/transient-errors-retried, backends/shared-rate-limit, backends/quiet-provider-logs, backends/reasoning-setting, backends/reported-cost, logs/reasoning-logged
 """Backends turn a prompt into a reply: scripted mocks, or any model via LiteLLM.
 
 A backend is anything with `async complete(messages, *, context, temperature,
@@ -25,6 +25,11 @@ off) and to every other provider as LiteLLM's `reasoning_effort` (`none` for
 off), which `drop_params` drops for models that don't take it. The reasoning
 text a provider returns (`reasoning_content` or `reasoning`) and its
 reasoning-token count come back on the Reply.
+
+Cost: OpenRouter calls ask for usage accounting (`usage: {include: true}`)
+and record the `usage.cost` OpenRouter reports, which LiteLLM's price table
+can't give for OpenRouter model names. Every other call keeps LiteLLM's price,
+or None when it has none.
 
 Provider errors: rate limits, timeouts and server errors are retried with
 doubling waits (`RETRIES` times); anything else (a bad key, an unknown model)
@@ -151,14 +156,14 @@ class LiteLLMBackend:
     def _extra(self):
         """Request fields beyond the sampling ones: address and reasoning."""
         extra = {"api_base": self.api_base} if self.api_base else {}
-        if self.reasoning is None:
-            return extra
+        off = self.reasoning == "off"
         if self.model.startswith("openrouter/"):
-            off = self.reasoning == "off"
-            setting = {"enabled": False} if off else {"effort": self.reasoning}
-            extra["extra_body"] = {"reasoning": setting}
-        else:
-            off = self.reasoning == "off"
+            body = {"usage": {"include": True}}
+            if self.reasoning is not None:
+                setting = {"enabled": False} if off else {"effort": self.reasoning}
+                body["reasoning"] = setting
+            extra["extra_body"] = body
+        elif self.reasoning is not None:
             extra["reasoning_effort"] = "none" if off else self.reasoning
         return extra
 
@@ -233,7 +238,11 @@ def _usage(usage):
 
 
 def _cost(response):
-    """LiteLLM's price for a response, or None when it can't price it."""
+    """What the provider says the call cost, else LiteLLM's price for it, or
+    None when neither is known."""
+    reported = getattr(getattr(response, "usage", None), "cost", None)
+    if isinstance(reported, int | float):
+        return reported
     try:
         import litellm
 
