@@ -2,7 +2,9 @@
 
 - **any-model:** Any model is one string in the config, whatever serves it: a hosted provider, OpenRouter, a local server or any OpenAI-compatible address.
 - **sampling-from-config:** Temperature, token limit and seed come from the config, and providers that can't take a seed still run.
-- **keys-from-environment:** API keys come from the environment or the `.env` file in the folder the lab runs from, never from a config.
+- **keys-from-environment:** API keys come from the environment or the `.env` file in the folder the lab runs from, never from a config; a model at its own address (`api_base`) gets only the key in the variable its agent's `api_key_env` names, so no provider's key is ever sent to another address.
+- **self-hosted:** A model at its own address is self-hosted: `lab run` says it is billed by its host's GPU time rather than estimating a per-token price for it, and its calls cost nothing against the spend cap.
+- **modal:** One command deploys an open model on Modal behind an OpenAI-compatible address that only a token kept in a Modal secret opens, `configs/modal.yaml` runs the lab against it, and the README says how to set up, deploy, run and tear down.
 - **usage-logged:** Each turn logs the tokens every call used (a retried turn keeps both) and the model version the provider reports; how long it took, and any provider errors it got past, go in a separate timings log, so the turn log stays the same on replay.
 - **transient-errors-retried:** Rate limits, timeouts (a call that hangs is cut off after a few minutes) and provider server errors are retried a few times with growing waits before a run gives up; errors that won't fix themselves, such as a bad key or an unknown model, stop it at once with one line naming the model.
 - **shared-rate-limit:** When a provider says a model is rate-limited until a given time, every game calling that model waits until then, so parallel games don't use up their retries on it; a limit that won't lift within a couple of minutes stops the run and says when it lifts.
@@ -20,7 +22,7 @@
 |---|---|---|
 | `any-model` | `src/collusion_lab/backends.py`, `src/collusion_lab/config.py` | `test_any_model_goes_through_one_call_with_config_sampling` |
 | `sampling-from-config` | `src/collusion_lab/backends.py` | `test_any_model_goes_through_one_call_with_config_sampling`, `test_sampling_from_config_leaves_api_base_out_when_unset` |
-| `keys-from-environment` | `src/collusion_lab/config.py`, `src/collusion_lab/cli.py`, `.gitignore` | `test_keys_from_environment_never_from_a_config`, `test_keys_from_environment_read_the_working_directorys_env_file` |
+| `keys-from-environment` | `src/collusion_lab/config.py`, `src/collusion_lab/cli.py`, `.gitignore` | `test_keys_from_environment_never_from_a_config`, `test_keys_from_environment_read_the_working_directorys_env_file`, `test_keys_from_environment_only_the_named_key_goes_to_an_address` |
 | `usage-logged` | `src/collusion_lab/backends.py`, `src/collusion_lab/runner.py` | `test_usage_logged_per_turn_and_timings_kept_apart`, `test_retry_once_tells_the_agent_what_was_wrong`, `test_transient_errors_retried_with_growing_waits_and_logged` |
 | `transient-errors-retried` | `src/collusion_lab/backends.py` | `test_transient_errors_retried_with_growing_waits_and_logged`, `test_transient_errors_retried_a_few_times_then_the_run_stops_cleanly`, `test_transient_errors_that_wont_fix_themselves_stop_at_once` |
 | `shared-rate-limit` | `src/collusion_lab/backends.py`, `src/collusion_lab/runner.py` | `test_shared_rate_limit_makes_every_game_wait_for_the_reset`, `test_shared_rate_limit_waits_for_a_reset_moved_later_meanwhile`, `test_shared_rate_limit_that_wont_lift_soon_stops_the_run`, `test_shared_rate_limit_reads_the_reset_from_the_error_body` |
@@ -31,3 +33,5 @@
 | `reasoning-in-estimate` | `src/collusion_lab/estimate.py` | `test_reasoning_in_estimate_adds_tokens_per_call`, `test_reasoning_in_estimate_rises_with_the_level`, `test_reasoning_in_estimate_off_or_unset_is_unchanged` |
 | `quiet-provider-logs` | `src/collusion_lab/backends.py` | `test_quiet_provider_logs_by_default`, `test_quiet_provider_logs_unless_asked_for` |
 | `tests-never-pay` | `tests/conftest.py` | `test_tests_never_pay_unfaked_calls_fail` |
+| `self-hosted` | not yet | — |
+| `modal` | not yet | — |
