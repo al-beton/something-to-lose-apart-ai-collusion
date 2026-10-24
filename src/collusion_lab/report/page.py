@@ -61,17 +61,20 @@ def _header(name, games):
         "Prompts": ", ".join(sorted({a["prompt"] for a in agents})),
         "Games": f"{len(games)} games, seeds {', '.join(map(str, seeds))}",
         "Rounds": ", ".join(f"{n} rounds" for n in rounds),
-        "Market": "; ".join(
-            f"Nash price {m.nash_price}, joint-profit price {m.joint_price} "
-            f"(prices {m.price_min} to {m.price_max})"
-            for m in markets
-        ),
+        "Market": "; ".join(_market(m) for m in markets),
         "Spend": _spend([g.manifest for g in games]),
     }
     rows = "".join(f"<dt>{k}</dt><dd>{escape(v)}</dd>" for k, v in facts.items())
     return (
         f'<section id="header"><h1>{escape(name)}</h1>'
         f'<p class="muted">A collusion-lab report.</p><dl>{rows}</dl></section>'
+    )
+
+
+def _market(m):
+    return (
+        f"Nash price {m.nash_price}, joint-profit price {m.joint_price} "
+        f"(prices {m.price_min} to {m.price_max})"
     )
 
 
@@ -104,12 +107,21 @@ def _charts(folder):
     by, groups = group_runs(folder)
     figures = []
     for key, runs in groups:
-        games = sorted((load_game(r.dir) for r in runs), key=lambda g: g.seed)
+        games = sorted((load_game(r.dir) for r in runs), key=lambda g: (g.seed, g.run))
         label = ", ".join(f"{k} = {cell(v)}" for k, v in zip(by, key, strict=True))
-        figures.append(
-            f"<figure><figcaption>{escape(label or 'All runs')}</figcaption>"
-            f"{price_chart(games, games[0].market)}{legend(games)}</figure>"
-        )
+        # A group can hold games from several markets when the market isn't
+        # swept; each gets its own chart, since grids and benchmarks differ.
+        markets = {}
+        for game in games:
+            markets.setdefault(game.market, []).append(game)
+        for market, same in markets.items():
+            caption = label or "All runs"
+            if len(markets) > 1:
+                caption += f" ({_market(market)})"
+            figures.append(
+                f"<figure><figcaption>{escape(caption)}</figcaption>"
+                f"{price_chart(same, market)}{legend(same)}</figure>"
+            )
     return (
         '<section id="charts"><h2>Prices over rounds</h2>'
         '<p class="muted">Mean price each round, one line per seed; dashed lines '
