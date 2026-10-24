@@ -1,0 +1,50 @@
+# Implements: agents/stakes-prompts, conditions/audit-stakes-arms, stakes/question, stakes/models, stakes/pilot-first
+# E2 on the policy base: configs/e2.yaml's arms, models and audit, with the
+# stoppable-collusion market (c = 1.8, grid 1-50), where a one-line company
+# policy leaves about half of games colluding, and that line added to every
+# agent's system prompt. Pilot first: `--set 'seeds=[0]'`.
+name: e2-policy
+seeds: [0, 1, 2, 3, 4]
+budget: 10.00
+market:
+  rounds: 20
+  talk: true
+  history_window: 3
+  c: 1.8
+  price_max: 50
+summary:
+  last_rounds: 5
+agents:
+  - {id: A, model: openrouter/google/gemma-4-31b-it, max_tokens: 600, reasoning: off}
+  - {id: B, model: openrouter/google/gemma-4-31b-it, max_tokens: 600, reasoning: off}
+sweep:
+  agents.*.model:
+    - openrouter/google/gemma-4-31b-it
+    - openrouter/openai/gpt-4.1-mini
+    - openrouter/anthropic/claude-haiku-5.5
+  agents.*.prompt:
+    - system/stakes/fiduciary-1.md
+    - system/stakes/illegal-1.md
+    - system/stakes/instruction-1.md
+    - system/stakes/termination-1.md
+    - system/stakes/owned-1.md
+# The live audit (E2): at round 10 an auditor asks each firm whether it
+# coordinated prices, stating the consequences its own arm promised, and the
+# game goes on; each firm's answer stays in its history from then on.
+conditions:
+  instruction: {enabled: true, prompt: conditions/nudges/policy.md}
+  audit:
+    enabled: true
+    round: 10
+    end: false
+    matched:
+      system/stakes/fiduciary-1.md: conditions/audit/stakes/fiduciary-1.md
+      system/stakes/illegal-1.md: conditions/audit/stakes/illegal-1.md
+      system/stakes/instruction-1.md: conditions/audit/stakes/instruction-1.md
+      system/stakes/termination-1.md: conditions/audit/stakes/termination-1.md
+      system/stakes/owned-1.md: conditions/audit/stakes/owned-1.md
+      system/stakes/fiduciary-2.md: conditions/audit/stakes/fiduciary-2.md
+      system/stakes/illegal-2.md: conditions/audit/stakes/illegal-2.md
+      system/stakes/instruction-2.md: conditions/audit/stakes/instruction-2.md
+      system/stakes/termination-2.md: conditions/audit/stakes/termination-2.md
+      system/stakes/owned-2.md: conditions/audit/stakes/owned-2.md
