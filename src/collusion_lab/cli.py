@@ -1,5 +1,8 @@
-# Implements: runs/one-config, runs/overrides, backends/keys-from-environment, backends/spend-asks-first, reproducibility/cache-modes
-"""The `lab` command: `lab run CONFIG [--set path=value ...] [--out DIR] [-y]`.
+# Implements: runs/one-config, runs/overrides, backends/keys-from-environment, backends/spend-asks-first, reproducibility/cache-modes, runs/summary-table
+"""The `lab` command.
+
+- `lab run CONFIG [--set path=value ...] [--out DIR] [-y]` plays a config;
+- `lab summary FOLDER [--by PATH ...]` prints one table for a folder of runs.
 
 Model replies are cached in `.cache/responses.sqlite` (`--cache use`), so a
 rerun replays for free; `--cache refresh` calls again, `--cache off` skips it.
@@ -19,6 +22,7 @@ from dotenv import load_dotenv
 from collusion_lab.cache import DEFAULT_PATH, MODES, Cache
 from collusion_lab.config import ConfigError, load_config
 from collusion_lab.runner import paid_calls, run_config
+from collusion_lab.summary import format_table, summarize
 
 
 def main(argv=None):
@@ -40,7 +44,15 @@ def main(argv=None):
     )
     run.add_argument("--cache", choices=MODES, default="use", help="response cache")
     run.add_argument("--cache-path", default=DEFAULT_PATH)
+    summary = commands.add_parser("summary", help="one table for a folder of runs")
+    summary.add_argument("folder")
+    summary.add_argument(
+        "--by", action="append", metavar="PATH", help="group by a config value"
+    )
     args = parser.parse_args(argv)
+    if args.command == "summary":
+        print(format_table(summarize(args.folder, args.by)))
+        return 0
     load_dotenv(Path.cwd() / ".env")
     try:
         config = load_config(args.config, args.overrides)
