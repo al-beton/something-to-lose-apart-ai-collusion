@@ -1,4 +1,4 @@
-# Implements: agents/mock-agents, backends/any-model, backends/sampling-from-config, backends/usage-logged, backends/transient-errors-retried, backends/shared-rate-limit, backends/reported-cost, backends/spend-cap, backends/reasoning-setting, logs/reasoning-logged, agents/json-mode, agents/unreadable-explained
+# Implements: agents/mock-agents, backends/any-model, backends/sampling-from-config, backends/usage-logged, backends/transient-errors-retried, backends/shared-rate-limit, backends/reported-cost, backends/spend-cap, backends/reasoning-setting, logs/reasoning-logged, agents/json-mode, agents/unreadable-explained, backends/quiet-provider-logs
 """Backends turn a prompt into a reply: scripted mocks, or any model via LiteLLM.
 
 A backend is anything with `async complete(messages, *, context, temperature,
@@ -59,6 +59,8 @@ past is listed in the reply's `retries`, which goes to the timings log.
 
 import asyncio
 import json
+import logging
+import os
 import re
 import time
 from dataclasses import dataclass
@@ -94,9 +96,19 @@ class Reply:
     finish_reason: str | None = None
 
 
+def quiet_litellm(litellm):
+    """Turn off LiteLLM's info and debug output ("LiteLLM.Info: …", its
+    feedback banner on every error) unless LITELLM_LOG asks for it."""
+    if os.environ.get("LITELLM_LOG"):
+        return
+    litellm.suppress_debug_info = True
+    logging.getLogger("LiteLLM").setLevel(logging.WARNING)
+
+
 async def _acompletion(**kwargs):
     import litellm
 
+    quiet_litellm(litellm)
     return await litellm.acompletion(**kwargs)
 
 

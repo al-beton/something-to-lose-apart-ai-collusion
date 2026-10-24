@@ -1,4 +1,4 @@
-# Implements: runs/sweeps, runs/parallel, market/talk-then-price, agents/json-replies, agents/retry-once, backends/usage-logged, backends/spend-asks-first, backends/shared-rate-limit, backends/spend-cap, market/history-window, runs/stops-cleanly, reproducibility/response-cache, reproducibility/manifest, runs/run-directory, logs/turn-log, logs/same-seed-same-log, logs/run-summary, logs/reasoning-logged, backends/reasoning-setting, agents/unreadable-explained, agents/json-mode, runs/fallback-rates, runs/failures-dont-stop-sweeps, runs/resume, conditions/hook-points, conditions/off-is-absent, conditions/conditions-logged, conditions/outage-once-remembered, runs/per-firm-summary, conditions/fork-at-audit, conditions/audit-logged, runs/drift, conditions/audit-remembered, conditions/audit-stakes-arms
+# Implements: runs/sweeps, runs/parallel, market/talk-then-price, agents/json-replies, agents/retry-once, backends/usage-logged, backends/spend-asks-first, backends/shared-rate-limit, backends/spend-cap, market/history-window, runs/stops-cleanly, reproducibility/response-cache, reproducibility/manifest, runs/run-directory, logs/turn-log, logs/same-seed-same-log, logs/run-summary, logs/reasoning-logged, backends/reasoning-setting, agents/unreadable-explained, agents/json-mode, runs/fallback-rates, runs/failures-dont-stop-sweeps, runs/resume, conditions/hook-points, conditions/off-is-absent, conditions/conditions-logged, conditions/outage-once-remembered, runs/per-firm-summary, conditions/fork-at-audit, conditions/audit-logged, runs/drift, conditions/audit-remembered, conditions/audit-stakes-arms, runs/live-progress, runs/status-file
 """Playing a config: one game per seed, each written to its own run directory.
 
 A round is a talk phase (each agent sends one message its rivals read; skipped
@@ -49,7 +49,9 @@ for each: `finished`, `failed` (with its error) or `skipped`, when the run's
 directory already holds a summary written from the same resolved config.
 `status.json` (see status.py) tracks each one as it goes. Rerunning a sweep
 that stopped partway thus plays only what's missing, and with the cache the
-calls a failed run already made replay for free.
+calls a failed run already made replay for free. With `progress`, each run
+that ends is reported as one line: run, rounds, seconds, and the fresh model
+calls made so far.
 """
 
 import asyncio
@@ -57,6 +59,7 @@ import dataclasses
 import functools
 import json
 import random
+import time
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from pathlib import Path
@@ -123,9 +126,10 @@ class Outcome:
     error: str | None = None
 
 
-def run_sweep(config, out, cache=None):
-    """Play every combination and seed, past failures; one Outcome per run."""
-    return asyncio.run(_play_all(config, Path(out), cache))
+def run_sweep(config, out, cache=None, progress=None):
+    """Play every combination and seed, past failures; one Outcome per run.
+    `progress`, if given, is called with one line as each played run ends."""
+    return asyncio.run(_play_all(config, Path(out), cache, progress))
 
 
 def run_config(config, out, cache=None):
@@ -137,7 +141,7 @@ def run_config(config, out, cache=None):
     return [o.dir for o in outcomes]
 
 
-async def _play_all(config, out, cache):
+async def _play_all(config, out, cache, progress=None):
     limit = asyncio.Semaphore(config.concurrency)
     shared = RunWide(budget=Budget(config.budget))
     status = Status(out / config.name / "status.json")
@@ -145,6 +149,7 @@ async def _play_all(config, out, cache):
     for child, seed in runs:
         status.plan(run_id(child, seed), dataclasses.replace(child, seeds=[seed]))
     status.save()
+    tally = {"ended": 0, "calls": 0}
 
     async def limited(child, seed):
         run = run_id(child, seed)
@@ -153,13 +158,20 @@ async def _play_all(config, out, cache):
             status.mark(run, "skipped")
             return Outcome(run, run_dir, "skipped")
         async with limit:
+            status.mark(run, "running")
+            started = time.perf_counter()
             try:
                 await play(child, seed, out, cache, shared)
+                outcome = Outcome(run, run_dir, "finished")
             except RunFailed as error:
-                status.mark(run, "failed", str(error))
-                return Outcome(run, run_dir, "failed", str(error))
-        status.mark(run, "finished")
-        return Outcome(run, run_dir, "finished")
+                outcome = Outcome(run, run_dir, "failed", str(error))
+            status.mark(run, outcome.state, outcome.error)
+        tally["ended"] += 1
+        tally["calls"] += _fresh_calls(run_dir)
+        if progress:
+            seconds = time.perf_counter() - started
+            progress(_progress_line(outcome, seconds, tally, len(runs)))
+        return outcome
 
     return list(await asyncio.gather(*(limited(c, seed) for c, seed in runs)))
 
@@ -175,6 +187,21 @@ def _spent_before(run_dir):
     for agent, cost in old.get("agent_cost", {}).items():
         by_agent[agent] = by_agent.get(agent, 0) + cost
     return (old.get("cost") or 0) + old.get("earlier_cost", 0), by_agent
+
+
+def _fresh_calls(run_dir):
+    path = run_dir / "manifest.json"
+    return json.loads(path.read_text())["cache"]["misses"] if path.exists() else 0
+
+
+def _progress_line(outcome, seconds, tally, total):
+    head = f"[{tally['ended']}/{total}] {outcome.state} {outcome.run}"
+    if outcome.state == "failed":
+        what = f"after {seconds:.0f}s"
+    else:
+        summary = json.loads((outcome.dir / "summary.json").read_text())
+        what = f"{summary['rounds']} rounds in {seconds:.0f}s"
+    return f"{head}: {what}, {tally['calls']} model calls so far"
 
 
 def _finished(config, seed, run_dir):
