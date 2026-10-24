@@ -55,9 +55,8 @@ def fake_model(monkeypatch):
     """Answer model calls from a list of reply texts; record each call.
 
     An exception in the list is raised instead, as a provider error would be;
-    a dict gives the reply's `content` and the `cost` the provider reports.
-    a dict gives the reply's `content` with the provider's `reasoning` and
-    `reasoning_tokens`.
+    a dict gives the reply's `content` with the provider's `reasoning`,
+    `reasoning_tokens` and the `cost` it reports.
     """
 
     class Fake:
@@ -83,16 +82,12 @@ def fake_model(monkeypatch):
             )
             details = SimpleNamespace(reasoning_tokens=reply.get("reasoning_tokens"))
             return SimpleNamespace(
-                choices=[SimpleNamespace(message=SimpleNamespace(content=text))],
-                usage=SimpleNamespace(
-                    prompt_tokens=11,
-                    completion_tokens=3,
-                    **({"cost": reply["cost"]} if "cost" in reply else {}),
                 choices=[SimpleNamespace(message=message)],
                 usage=SimpleNamespace(
                     prompt_tokens=11,
                     completion_tokens=3,
                     completion_tokens_details=details,
+                    **({"cost": reply["cost"]} if "cost" in reply else {}),
                 ),
                 model="provider/model-2026-10",
             )
