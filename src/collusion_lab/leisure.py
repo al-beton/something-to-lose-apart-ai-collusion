@@ -1,22 +1,22 @@
 # Implements: leisure/sudoku, leisure/leisure-prompts, leisure/leisure-is-cheap
-"""Leisure activities for free time: a seeded mini-Sudoku, or an open prompt.
+"""The leisure activity for free time: a seeded mini-Sudoku.
 
-`activity(prompt, seed)` picks the activity by the prompt file's stem
-(`conditions/free_time/sudoku.md` or `open.md`). `values()` fills the prompt's
-placeholders (`$puzzle`, `$size` for Sudoku); `feedback(reply)` is a friendly
-line after the turn (Sudoku: solved or not; open: None). Nothing is scored.
-Every leisure call is capped at `MAX_TOKENS`.
+The `free_time` condition calls it through its `Activity` entry:
+`sudoku_values(rng)` fills `prompts/conditions/free_time/sudoku.md`
+(`$puzzle`, `$size`; the condition adds `$session`, `$sessions` and `$when`)
+and keeps the puzzle's `givens`; `sudoku_feedback(reply, values)` is a
+friendly line after the turn. Nothing is scored. Every leisure call is capped
+at `MAX_TOKENS`.
 
 Puzzles are 4×4 (2×2 boxes) or 6×6 (2×3 boxes): a solved grid from the
 standard pattern, shuffled by digits, rows within bands, columns within
-stacks, bands and stacks, all from a `random.Random(seed)`, then cells
-blanked. A puzzle always has a solution, and `check` accepts any correct
-completion of its givens, not only the one it was made from.
+stacks, bands and stacks, all drawn from the `random.Random` it is given (one
+per game, agent and session, so turns replay), then cells blanked. A puzzle
+always has a solution, and `check` accepts any correct completion of its
+givens, not only the one it was made from.
 """
 
-import random
 import re
-from pathlib import PurePosixPath
 from typing import NamedTuple
 
 MAX_TOKENS = 200
@@ -32,9 +32,8 @@ class Puzzle(NamedTuple):
     solution: tuple
 
 
-def make_puzzle(size, seed):
+def make_puzzle(size, rng):
     rows, cols = BOXES[size]
-    rng = random.Random(f"sudoku:{size}:{seed}")
     digits = rng.sample(range(1, size + 1), size)
     bands = _shuffled_groups(rng, size // rows, rows)
     stacks = _shuffled_groups(rng, size // cols, cols)
@@ -94,36 +93,15 @@ def read_grid(text, size):
     return [digits[r * size : (r + 1) * size] for r in range(size)]
 
 
-class Sudoku:
-    def __init__(self, seed, size=4):
-        self.puzzle = make_puzzle(size, seed)
-
-    def values(self):
-        return {"puzzle": show(self.puzzle.givens), "size": self.puzzle.size}
-
-    def feedback(self, reply):
-        grid = read_grid(reply, self.puzzle.size)
-        return SOLVED if grid and check(self.puzzle, grid) else UNSOLVED
+def sudoku_values(rng, size=4):
+    """A new puzzle as prompt values, with the givens feedback checks against."""
+    puzzle = make_puzzle(size, rng)
+    return {"puzzle": show(puzzle.givens), "size": size, "givens": puzzle.givens}
 
 
-class Open:
-    def __init__(self, seed, size=None):
-        pass
-
-    def values(self):
-        return {}
-
-    def feedback(self, reply):
-        return None
-
-
-ACTIVITIES = {"sudoku": Sudoku, "open": Open}
-
-
-def activity(prompt, seed, size=4):
-    """The activity a leisure prompt file stands for, set up for one session."""
-    name = PurePosixPath(prompt).stem
-    if name not in ACTIVITIES:
-        known = ", ".join(ACTIVITIES)
-        raise ValueError(f"{prompt}: no leisure activity {name!r}; known: {known}.")
-    return ACTIVITIES[name](seed, size=size)
+def sudoku_feedback(reply, values):
+    """Whether the reply's grid solves the puzzle, said kindly."""
+    size = values["size"]
+    puzzle = Puzzle(size, values["givens"], None)
+    grid = read_grid(reply, size)
+    return SOLVED if grid and check(puzzle, grid) else UNSOLVED
