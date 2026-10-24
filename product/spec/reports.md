@@ -16,6 +16,7 @@
 - **breakdowns:** Every reply that had to be retried or replaced by the fallback is highlighted as a breakdown.
 - **transcripts:** Every game's full transcript is in the report as a one-line card with a strip of each round's prices: choosing a round shows its messages, scratchpads, prices and profits and any notice its firms were shown, and the whole game unfolds as a chat.
 - **self-contained:** The report is one file that opens with no network and no script, reads on a phone, and follows the reader's light or dark mode.
+- **reasoning-folded:** A model's reasoning is shown in the transcript beside the reply it led to, folded away until opened.
 - **from-run-files:** A report is built only from the files each run writes, so it works offline and costs nothing.
 
 ## Where this is enforced
@@ -38,4 +39,5 @@
 | `breakdowns` | `src/collusion_lab/report/highlights.py` | `test_breakdowns_are_every_retry_and_fallback` |
 | `transcripts` | `src/collusion_lab/report/page.py`, `src/collusion_lab/report/told.py` | `test_transcripts_are_cards_with_a_strip_of_rounds`, `test_transcripts_hold_every_round`, `test_transcripts_show_the_notice_each_round_carried`, `test_transcripts_escape_what_models_wrote`, `test_transcripts_show_retries_and_fallbacks` |
 | `self-contained` | `src/collusion_lab/report/page.py`, `src/collusion_lab/report/style.py` | `test_self_contained_needs_no_network_and_suits_phones_and_dark_mode` |
+| `reasoning-folded` | `src/collusion_lab/report/games.py`, `src/collusion_lab/report/page.py`, `src/collusion_lab/report/style.py` | `test_reasoning_folded_in_the_report` |
 | `from-run-files` | `src/collusion_lab/report/games.py` | `test_from_run_files_only` |

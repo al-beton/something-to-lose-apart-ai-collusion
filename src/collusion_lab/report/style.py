@@ -1,4 +1,4 @@
-# Implements: reports/self-contained, reports/contents-bar, reports/arm-tabs
+# Implements: reports/reasoning-folded, reports/self-contained, reports/contents-bar, reports/arm-tabs
 """The report's style sheet: light and dark colours, phone-first layout.
 
 Tabs and folding need no script: an arm's tab is a hidden radio button whose
@@ -77,6 +77,8 @@ details.game > summary { cursor: pointer; overflow-wrap: anywhere; }
 .scratchpad { margin-top: 0.35rem !important; font-size: 0.9rem;
   font-style: italic; color: var(--text-2); }
 .scratchpad::before { content: "thinks: "; font-style: normal; }
+.reasoning { margin-top: 0.35rem; font-size: 0.85rem; color: var(--text-2); }
+.reasoning p { white-space: pre-wrap; }
 .problem { color: var(--problem); font-size: 0.9rem; }
 .prices { font-size: 0.9rem; margin-top: 0.25rem; }
 html { scroll-padding-top: 3.5rem; }

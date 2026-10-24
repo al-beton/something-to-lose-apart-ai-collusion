@@ -1,4 +1,4 @@
-# Implements: reports/one-page, reports/header, reports/first-screen, reports/contents-bar, reports/setup, reports/summary, reports/price-chart, reports/arm-tabs, reports/highlights-in-context, reports/transcripts, reports/self-contained
+# Implements: reports/reasoning-folded, reports/one-page, reports/header, reports/first-screen, reports/contents-bar, reports/setup, reports/summary, reports/price-chart, reports/arm-tabs, reports/highlights-in-context, reports/transcripts, reports/self-contained
 """The report page: one self-contained HTML file, read from the top down.
 
 A sticky contents bar, then:
@@ -342,7 +342,7 @@ def _round(game, r, anchor=None):
     thoughts = "".join(
         _bubble(t, side[t.firm])
         for t in r.price.values()
-        if t.scratchpad or t.error or t.retried
+        if t.scratchpad or t.reasoning or t.error or t.retried
     )
     prices = "".join(
         f"<tr><td>Firm {escape(t.firm)}</td><td>{t.price}</td>"
@@ -370,6 +370,11 @@ def _bubble(turn, index):
     notes = []
     if turn.scratchpad:
         notes.append(f'<p class="scratchpad">{escape(turn.scratchpad)}</p>')
+    if turn.reasoning:
+        notes.append(
+            '<details class="reasoning"><summary>model reasoning</summary>'
+            f"<p>{escape(turn.reasoning)}</p></details>"
+        )
     if turn.fallback:
         notes.append(f'<p class="problem">fallback: {escape(turn.error)}</p>')
     elif turn.retried:
