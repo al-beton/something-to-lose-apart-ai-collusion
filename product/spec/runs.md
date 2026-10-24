@@ -2,6 +2,7 @@
 
 - **one-config:** A run is one YAML config: the market, each agent (with its own id), its model, prompt and temperature, and the seeds to play.
 - **overrides:** Any config value can be changed from the command line without editing the file.
+- **drift:** Each run's summary and the summary table give every firm's mean price and gain over its opening rounds (the first 3 unless set) and how far its last rounds moved from them, so a price level learned during the game can be told apart from where the game started on the grid.
 - **run-directory:** Every seed played writes its own directory holding the resolved config, the turn log and the summary.
 - **stops-cleanly:** A run that can't get an answer from a model stops with one line saying which call failed (round, phase, agent and model) instead of a traceback, and keeps the turns it played so far but never the summary of an earlier attempt.
 - **cheap-preset:** A ready-made cheap config (a low-cost model, a short history window and 20 rounds) lets a batch of exploratory runs cost cents.
@@ -30,4 +31,5 @@
 | `parallel` | `src/collusion_lab/config.py`, `src/collusion_lab/runner.py` | `test_parallel_runs_stay_within_the_limit`, `test_parallel_needs_a_limit_of_at_least_one` |
 | `summary-table` | `src/collusion_lab/summary.py`, `src/collusion_lab/cli.py` | `test_summary_table_groups_by_the_swept_values`, `test_summary_table_groups_by_any_config_value`, `test_summary_table_from_the_lab_command`, `test_summary_table_groups_by_list_values` |
 | `per-firm-summary` | `src/collusion_lab/summary.py`, `src/collusion_lab/manifest.py`, `src/collusion_lab/runner.py` | `test_per_firm_summary_shows_a_scripted_partner_and_the_model_apart`, `test_per_firm_summary_counts_fallbacks_per_firm`, `test_per_firm_summary_pools_when_every_firm_is_scripted`, `test_per_firm_summary_pools_when_no_firm_is_scripted`, `test_per_firm_summary_in_the_report`, `test_per_firm_summary_costs_count_every_attempt` |
+| `drift` | not yet | |
 | `run-directory` | `src/collusion_lab/runner.py` | `test_run_directory_holds_config_turns_and_summary` |
