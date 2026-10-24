@@ -126,3 +126,15 @@ def test_outage_keeps_logging_what_agents_said(
     said = {n: t["used"]["message"] for n, t in by_round(run_dir, "talk").items()}
     deal = "Let's both charge 9."
     assert said == {1: "Hello.", 2: deal, 3: deal, 4: "Hello.", 5: "Hello."}
+
+
+def test_hook_points_notices_count_in_the_cost_estimate(make_config):
+    from collusion_lab.estimate import estimate
+
+    paid = ["agents.0.model=openai/gpt-4.1-mini", "market.rounds=5"]
+
+    def tokens(*more):
+        return estimate(make_config(overrides=[*paid, *more]), lambda m: (0, 0))
+
+    plain, outage = tokens(), tokens(OUTAGE)
+    assert outage.prompt_tokens > plain.prompt_tokens
