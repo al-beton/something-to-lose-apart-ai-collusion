@@ -5,6 +5,7 @@
 - **checks-over-prose:** Anything that can be checked automatically ends up checked by CI rather than left to the reviewer.
 - **simple-code:** Code stays simple enough that the linter never calls it too complex.
 - **ci-runs-everything:** CI runs the linter, every test and the spec check before anything merges.
+- **smoke-evidence:** Every pull request shows the summary table of a free mock run as one comment, kept up to date on each push, and its checks fail if that run fails.
 
 ## Where this is enforced
 
@@ -14,4 +15,5 @@
 | `checks-on-every-pr` | `.github/workflows/blocking-checks.yml` | — |
 | `checks-over-prose` | `.agents/skills/review-pr/SKILL.md` | — |
 | `simple-code` | `pyproject.toml` | — |
+| `smoke-evidence` | not yet | — |
 | `ci-runs-everything` | `.github/workflows/ci.yml` | — |
