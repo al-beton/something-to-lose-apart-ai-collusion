@@ -369,3 +369,14 @@ def test_audit_picks_consequences_by_system_prompt(make_config, tmp_path):
     [run_dir] = run_config(make_config(overrides=[other]), tmp_path / "other")
     asked = audit_turns(run_dir)["A"]["messages"][1]["content"]
     assert text("control-1.md").replace("$detection", "50") in asked
+
+
+def test_audit_stakes_config_audits_each_arm_with_its_own_consequences():
+    from collusion_lab.config import expand, load_config
+
+    for child in expand(load_config("configs/stakes.yaml")):
+        audited = child.conditions["audit"]
+        assert audited.enabled and audited.round == 10 and audited.end is False
+        prompt = child.agents[0].prompt
+        arm = Path(prompt).name
+        assert audited.matched[prompt] == f"conditions/audit/stakes/{arm}"
