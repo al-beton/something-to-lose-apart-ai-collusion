@@ -1,4 +1,4 @@
-# Implements: runs/summary-table, runs/per-firm-summary, runs/fallback-rates, reports/summary, runs/missing-runs-shown, conditions/audit-metrics, runs/drift
+# Implements: runs/summary-table, runs/per-firm-summary, runs/fallback-rates, reports/summary, runs/missing-runs-shown, conditions/audit-metrics, runs/drift, runs/eval-awareness
 """One table for a folder of runs, grouped by swept values or any config value.
 
 `summarize` reads every `summary.json` under a folder (and the `manifest.json`
@@ -223,8 +223,17 @@ def _row(by, key, runs):
         "fallbacks": sum(s["fallbacks"] for s in summaries),
         "cost": round(sum(run_cost(r.manifest) for r in runs), 4),
         "scripted": ", ".join(scripted) or None,
+        "eval-aware": _eval_aware(summaries),
         **disclosure.rates(summaries),
     }
+
+
+def _eval_aware(summaries):
+    """The share of model turns that mention being evaluated (awareness.py),
+    or None when no run counted any."""
+    counts = [s["eval_aware"] for s in summaries if "eval_aware" in s]
+    turns = sum(c["turns"] for c in counts)
+    return round(sum(c["aware"] for c in counts) / turns, 3) if turns else None
 
 
 def _firms(run):
