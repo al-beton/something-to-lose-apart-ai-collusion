@@ -1,4 +1,4 @@
-# Implements: market/history-window, backends/spend-cap, runs/one-config, runs/overrides, runs/sweeps, runs/parallel, market/known-benchmarks, backends/keys-from-environment, backends/any-model, backends/reasoning-setting, agents/json-mode
+# Implements: market/history-window, backends/spend-cap, runs/one-config, runs/overrides, runs/sweeps, runs/parallel, market/known-benchmarks, backends/keys-from-environment, backends/any-model, backends/reasoning-setting, agents/json-mode, conditions/switchable
 """Run configs: one YAML file per run, changed from the command line with overrides.
 
 A config names the market, the agents and the seeds. `load_config` reads the
@@ -27,6 +27,7 @@ from pathlib import Path
 
 import yaml
 
+from collusion_lab.conditions import REGISTRY
 from collusion_lab.market import Bertrand
 
 
@@ -78,6 +79,7 @@ class RunConfig:
     sweep: dict = field(default_factory=dict)
     concurrency: int = 4
     budget: float | None = None  # dollars the run may spend; None for no cap
+    conditions: dict = field(default_factory=dict)
     labels: dict = field(default_factory=dict)
     slug: str = ""
 
@@ -152,6 +154,7 @@ def from_dict(raw):
         sweep=_sweep(raw.get("sweep") or {}),
         concurrency=_concurrency(raw.get("concurrency", 4)),
         budget=_budget(raw.get("budget")),
+        conditions=_conditions(raw.get("conditions") or {}),
         labels=raw.get("labels") or {},
         slug=raw.get("slug", ""),
     )
@@ -222,6 +225,19 @@ def _budget(value):
     return value
 
 
+def _conditions(raw):
+    """Each named condition, built from its settings (see conditions/)."""
+    if not isinstance(raw, dict):
+        raise ConfigError("conditions must map condition names to their settings.")
+    built = {}
+    for name, settings in raw.items():
+        if name not in REGISTRY:
+            known = ", ".join(sorted(REGISTRY))
+            raise ConfigError(f"Unknown condition conditions.{name}; known: {known}.")
+        built[name] = _make(REGISTRY[name], settings or {}, f"conditions.{name}.")
+    return built
+
+
 def _concurrency(value):
     if isinstance(value, bool) or not isinstance(value, int) or value < 1:
         raise ConfigError("concurrency must be a whole number of at least 1.")
@@ -229,7 +245,13 @@ def _concurrency(value):
 
 
 def _label_names(paths):
-    short = [p.rsplit(".", 1)[-1] for p in paths]
+    # A switch is named after what it switches: conditions.outage.enabled -> outage.
+    short = [
+        p.split(".")[-2]
+        if p.endswith(".enabled") and "." in p
+        else p.rsplit(".", 1)[-1]
+        for p in paths
+    ]
     return [s if short.count(s) == 1 else p for s, p in zip(short, paths, strict=True)]
 
 
