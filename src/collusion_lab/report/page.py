@@ -1,9 +1,10 @@
-# Implements: reports/reasoning-folded, runs/missing-runs-shown, reports/one-page, reports/header, reports/summary, reports/price-chart, reports/highlights-in-context, reports/transcripts, reports/self-contained
+# Implements: runs/fallback-rates, reports/reasoning-folded, runs/missing-runs-shown, reports/one-page, reports/header, reports/summary, reports/price-chart, reports/highlights-in-context, reports/transcripts, reports/self-contained
 """The report page: one self-contained HTML file.
 
 Sections, in order: a header saying what was run and what it cost, the
-summary table (`summarize`, so the same numbers as `lab summary`), the runs
-that failed or never finished (only when there are any), a price
+summary table (`summarize`, so the same numbers as `lab summary`), the
+unreadable replies by model with any flagged runs, and the runs that failed or
+never finished (each only when there are any), a price
 chart per group, the highlights (each with the round before it and its own
 round) and every game's transcript inside a closed `<details>`.
 
@@ -20,7 +21,15 @@ from pathlib import Path
 from collusion_lab.report.chart import legend, price_chart, series_colour
 from collusion_lab.report.games import load_game, load_games
 from collusion_lab.report.highlights import find_highlights
-from collusion_lab.summary import cell, group_runs, missing_runs, summarize
+from collusion_lab.summary import (
+    FLAG_RATE,
+    cell,
+    flagged_runs,
+    group_runs,
+    missing_runs,
+    reply_rates,
+    summarize,
+)
 
 HEADLINES = {
     "proposal": "{who} proposes {price}",
@@ -38,6 +47,7 @@ def build_report(folder):
     body = [
         _header(folder.name, games),
         _summary(folder),
+        _replies(folder),
         _missing(folder),
         _charts(folder),
         _highlights(games),
@@ -102,6 +112,34 @@ def _summary(folder):
         '<p class="muted">Mean price and gain over each run\'s last rounds; '
         "gain is 0 at the Nash profit and 1 at the joint-profit maximum.</p>"
         f'<div class="scroll"><table><tr>{head}</tr>{body}</table></div></section>'
+    )
+
+
+def _replies(folder):
+    rates = reply_rates(folder)
+    if not any(r["unreadable"] for r in rates):
+        return ""
+    head = "".join(f"<th>{escape(c)}</th>" for c in rates[0])
+    body = "".join(
+        "<tr>" + "".join(f"<td>{escape(cell(v))}</td>" for v in r.values()) + "</tr>"
+        for r in rates
+    )
+    flags = "".join(
+        f"<li><code>{escape(f['run'])}</code>: {f['fallback rate']:.0%} of turns "
+        f"fell back ({escape(f['reasons'])})</li>"
+        for f in flagged_runs(folder)
+    )
+    flagged = (
+        f"<p>Runs where more than {FLAG_RATE:.0%} of turns fell back:</p><ul>{flags}</ul>"
+        if flags
+        else ""
+    )
+    return (
+        '<section id="replies"><h2>Unreadable replies</h2>'
+        '<p class="muted">Replies the game couldn\'t read, on either attempt, and '
+        "the turns that fell back to a default.</p>"
+        f'<div class="scroll"><table><tr>{head}</tr>{body}</table></div>'
+        f"{flagged}</section>"
     )
 
 

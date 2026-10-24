@@ -24,7 +24,7 @@
 | `stops-cleanly` | `src/collusion_lab/runner.py`, `src/collusion_lab/cli.py` | `test_transient_errors_retried_a_few_times_then_the_run_stops_cleanly`, `test_stops_cleanly_with_one_line_from_the_lab_command`, `test_stops_cleanly_without_keeping_an_old_summary` |
 | `failures-dont-stop-sweeps` | `src/collusion_lab/runner.py`, `src/collusion_lab/status.py`, `src/collusion_lab/cli.py` | `test_failures_dont_stop_sweeps`, `test_failures_dont_stop_sweeps_but_run_config_still_raises`, `test_failures_dont_stop_sweeps_from_the_lab_command` |
 | `resume` | `src/collusion_lab/runner.py`, `src/collusion_lab/cli.py` | `test_resume_skips_finished_runs_and_replays_the_rest_from_the_cache`, `test_resume_plays_a_finished_run_again_when_its_config_changed` |
-| `fallback-rates` | not yet | — |
+| `fallback-rates` | `src/collusion_lab/runner.py`, `src/collusion_lab/summary.py`, `src/collusion_lab/cli.py`, `src/collusion_lab/report/page.py` | `test_fallback_rates_per_model_with_reasons`, `test_fallback_rates_not_flagged_at_or_below_one_in_ten`, `test_fallback_rates_in_lab_summary_and_the_report` |
 | `missing-runs-shown` | `src/collusion_lab/summary.py`, `src/collusion_lab/status.py`, `src/collusion_lab/report/page.py`, `src/collusion_lab/cli.py` | `test_missing_runs_shown_in_the_summary_table`, `test_missing_runs_shown_in_the_report`, `test_missing_runs_shown_for_each_folder_even_when_run_ids_repeat` |
 | `live-progress` | `src/collusion_lab/runner.py`, `src/collusion_lab/cli.py` | `test_live_progress_prints_a_line_per_run` |
 | `status-file` | `src/collusion_lab/status.py`, `src/collusion_lab/runner.py` | `test_status_file_updated_as_runs_start_and_finish`, `test_failures_dont_stop_sweeps` |

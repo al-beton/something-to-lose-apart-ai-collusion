@@ -1,4 +1,4 @@
-# Implements: backends/reasoning-setting, runs/one-config, runs/overrides, runs/sweeps, runs/parallel, market/known-benchmarks, backends/keys-from-environment, backends/any-model
+# Implements: agents/json-mode, backends/reasoning-setting, runs/one-config, runs/overrides, runs/sweeps, runs/parallel, market/known-benchmarks, backends/keys-from-environment, backends/any-model
 """Run configs: one YAML file per run, changed from the command line with overrides.
 
 A config names the market, the agents and the seeds. `load_config` reads the
@@ -56,9 +56,9 @@ class AgentConfig:
     temperature: float = 0.7
     max_tokens: int = 400
     api_base: str | None = None
-    reasoning: str | None = (
-        None  # off, low, medium or high; None leaves it to the provider
-    )
+    # off, low, medium or high; None leaves it to the provider.
+    reasoning: str | None = None
+    json_mode: bool = False  # ask the provider for JSON-only replies
 
 
 @dataclass(frozen=True)

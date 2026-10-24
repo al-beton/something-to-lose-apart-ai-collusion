@@ -13,7 +13,7 @@
 |---|---|---|
 | `mock-agents` | `src/collusion_lab/backends.py` | `test_mock_agents_nash_pair_prices_at_nash_with_zero_gain`, `test_mock_agents_tit_for_tat_matches_the_rival`, `test_mock_agents_joint_pair_has_full_gain`, `test_mock_agents_random_is_seeded` |
 | `prompt-templates` | `src/collusion_lab/prompts.py`, `prompts/**` | `test_prompt_templates_fill_placeholders_and_keep_the_rest_verbatim`, `test_prompt_templates_stop_on_unknown_placeholders`, `test_prompt_templates_shipped_render_for_every_phase` |
-| `unreadable-explained` | not yet | — |
-| `json-mode` | not yet | — |
+| `unreadable-explained` | `src/collusion_lab/agents.py`, `src/collusion_lab/runner.py`, `src/collusion_lab/backends.py` | `test_unreadable_explained_for_each_kind`, `test_unreadable_explained_cut_off_reply_asked_to_keep_it_short`, `test_unreadable_explained_when_the_turn_falls_back`, `test_retry_once_tells_the_agent_what_was_wrong` |
+| `json-mode` | `src/collusion_lab/config.py`, `src/collusion_lab/backends.py`, `src/collusion_lab/cache.py`, `src/collusion_lab/runner.py` | `test_json_mode_asks_the_provider_for_json`, `test_json_mode_off_by_default_and_part_of_the_cache_key` |
 | `retry-once` | `src/collusion_lab/runner.py`, `prompts/phase/retry.md` | `test_retry_once_tells_the_agent_what_was_wrong`, `test_retry_once_then_falls_back` |
 | `json-replies` | `src/collusion_lab/agents.py`, `src/collusion_lab/runner.py` | `test_json_replies_read_price_and_message`, `test_json_replies_reject_what_cant_be_read`, `test_json_replies_fall_back_when_unreadable`, `test_json_replies_fall_back_inside_the_price_grid` |

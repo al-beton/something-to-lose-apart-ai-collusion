@@ -1,4 +1,4 @@
-# Implements: runs/stops-cleanly, runs/failures-dont-stop-sweeps, runs/resume, runs/missing-runs-shown, runs/live-progress, runs/status-command, runs/one-config, runs/overrides, backends/keys-from-environment, backends/spend-asks-first, reproducibility/cache-modes, runs/summary-table, reports/one-page
+# Implements: runs/stops-cleanly, runs/failures-dont-stop-sweeps, runs/resume, runs/missing-runs-shown, runs/live-progress, runs/status-command, runs/fallback-rates, runs/one-config, runs/overrides, backends/keys-from-environment, backends/spend-asks-first, reproducibility/cache-modes, runs/summary-table, reports/one-page
 """The `lab` command.
 
 - `lab run CONFIG [--set path=value ...] [--out DIR] [-y]` plays a config,
@@ -33,7 +33,12 @@ from collusion_lab.cache import DEFAULT_PATH, MODES, Cache
 from collusion_lab.config import ConfigError, load_config
 from collusion_lab.report import write_report
 from collusion_lab.runner import paid_calls, run_sweep
-from collusion_lab.summary import format_missing, format_table, summarize
+from collusion_lab.summary import (
+    format_missing,
+    format_replies,
+    format_table,
+    summarize,
+)
 
 
 def main(argv=None):
@@ -67,15 +72,9 @@ def main(argv=None):
     report.add_argument("--out", help="where to write it (default FOLDER/report.html)")
     args = parser.parse_args(argv)
     if args.command == "summary":
-        print(format_table(summarize(args.folder, args.by)))
-        if missing := format_missing(args.folder):
-            print("\n" + missing)
-        return 0
+        return _summary(args.folder, args.by)
     if args.command == "status":
-        if rows := run_status.rows(args.folder):
-            print(run_status.counts(args.folder) + ".\n")
-        print(format_table(rows))
-        return 0
+        return _status(args.folder)
     if args.command == "report":
         print(write_report(args.folder, args.out))
         return 0
@@ -97,6 +96,21 @@ def main(argv=None):
             print(outcome.dir)
     print(", ".join(f"{n} {state}" for state, n in count.items()) + ".")
     return 1 if count["failed"] else 0
+
+
+def _summary(folder, by):
+    print(format_table(summarize(folder, by)))
+    for extra in (format_replies(folder), format_missing(folder)):
+        if extra:
+            print("\n" + extra)
+    return 0
+
+
+def _status(folder):
+    if rows := run_status.rows(folder):
+        print(run_status.counts(folder) + ".\n")
+    print(format_table(rows))
+    return 0
 
 
 def _progress(line):

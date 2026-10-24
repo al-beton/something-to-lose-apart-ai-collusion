@@ -1,4 +1,4 @@
-# Implements: agents/mock-agents, backends/any-model, backends/sampling-from-config, backends/usage-logged, backends/transient-errors-retried, backends/shared-rate-limit, backends/quiet-provider-logs, backends/reasoning-setting, backends/reported-cost, logs/reasoning-logged
+# Implements: agents/mock-agents, backends/any-model, backends/sampling-from-config, backends/usage-logged, backends/transient-errors-retried, backends/shared-rate-limit, backends/quiet-provider-logs, backends/reasoning-setting, backends/reported-cost, logs/reasoning-logged, agents/json-mode, agents/unreadable-explained
 """Backends turn a prompt into a reply: scripted mocks, or any model via LiteLLM.
 
 A backend is anything with `async complete(messages, *, context, temperature,
@@ -25,6 +25,10 @@ off) and to every other provider as LiteLLM's `reasoning_effort` (`none` for
 off), which `drop_params` drops for models that don't take it. The reasoning
 text a provider returns (`reasoning_content` or `reasoning`) and its
 reasoning-token count come back on the Reply.
+
+`json_mode` asks for `response_format: {"type": "json_object"}`, which
+`drop_params` drops for providers that can't do it. Each reply keeps the
+provider's finish reason (`length` means it hit the token limit).
 
 Cost: OpenRouter calls ask for usage accounting (`usage: {include: true}`)
 and record the `usage.cost` OpenRouter reports, which LiteLLM's price table
@@ -75,6 +79,7 @@ class Reply:
     cached: bool = False
     retries: list | None = None
     reasoning: str | None = None
+    finish_reason: str | None = None
 
 
 def quiet_litellm(litellm):
@@ -147,15 +152,20 @@ def reset_time(error):
 
 
 class LiteLLMBackend:
-    def __init__(self, model, api_base=None, gates=None, reasoning=None):
+    def __init__(
+        self, model, api_base=None, gates=None, reasoning=None, json_mode=False
+    ):
         self.model = model
         self.api_base = api_base
         self.gates = gates or RateGates()
         self.reasoning = reasoning
+        self.json_mode = json_mode
 
     def _extra(self):
-        """Request fields beyond the sampling ones: address and reasoning."""
+        """Request fields beyond the sampling ones: address, reasoning, JSON."""
         extra = {"api_base": self.api_base} if self.api_base else {}
+        if self.json_mode:
+            extra["response_format"] = {"type": "json_object"}
         off = self.reasoning == "off"
         if self.model.startswith("openrouter/"):
             body = {"usage": {"include": True}}
@@ -181,8 +191,10 @@ class LiteLLMBackend:
             **extra,
         )
         usage = getattr(response, "usage", None)
-        message = response.choices[0].message
+        choice = response.choices[0]
+        message = choice.message
         return Reply(
+            finish_reason=getattr(choice, "finish_reason", None),
             text=message.content or "",
             usage=usage and _usage(usage),
             reasoning=getattr(message, "reasoning_content", None)
@@ -300,10 +312,11 @@ def is_mock(model):
     return model.startswith("mock/")
 
 
-def backend_for(model, rng, api_base=None, gates=None, reasoning=None):
-    """The backend a model name selects."""
+def backend_for(model, rng, api_base=None, gates=None, **options):
+    """The backend a model name selects; `options` (reasoning, json_mode) go
+    to model backends."""
     if not is_mock(model):
-        return LiteLLMBackend(model, api_base, gates, reasoning)
+        return LiteLLMBackend(model, api_base, gates, **options)
     name = model.removeprefix("mock/")
     if name not in _POLICIES and name != "broken":
         known = ", ".join(f"mock/{p}" for p in [*_POLICIES, "broken"])
