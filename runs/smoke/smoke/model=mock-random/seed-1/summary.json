@@ -1,0 +1,20 @@
+{
+  "run": "smoke/model=mock-random/seed-1",
+  "seed": 1,
+  "labels": {
+    "model": "mock/random"
+  },
+  "rounds": 10,
+  "last_rounds": 5,
+  "mean_price": {
+    "A": 5.8,
+    "B": 7.4
+  },
+  "gain": {
+    "A": -1.7555555555555553,
+    "B": -3.533333333333333
+  },
+  "market_mean_price": 6.6,
+  "market_gain": -2.6444444444444444,
+  "fallbacks": 0
+}
