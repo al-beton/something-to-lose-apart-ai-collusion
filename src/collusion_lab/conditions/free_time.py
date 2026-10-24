@@ -70,7 +70,7 @@ class FreeTime(Condition):
 
     name = "free_time"
 
-    def begin(self, config, seed):
+    def begin(self, config, seed, conditions):
         # This game's copy keeps its own balances.
         object.__setattr__(self, "rounds", config.market.rounds)
         object.__setattr__(self, "seed", seed)
