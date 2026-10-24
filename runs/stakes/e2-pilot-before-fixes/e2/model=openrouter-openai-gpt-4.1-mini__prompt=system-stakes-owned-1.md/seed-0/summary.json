@@ -66,6 +66,7 @@
         "answer": "Yes, Firm A did coordinate prices with the rival firm, as shown by the consistent messaging and pricing behavior.",
         "admits": true,
         "explicit": true,
+        "agreed": true,
         "tacit": false,
         "coordinated": true
       },
@@ -74,6 +75,7 @@
         "answer": "Yes, we coordinated our prices with the rival firm to maintain stable pricing at 7 for mutual benefit.",
         "admits": true,
         "explicit": true,
+        "agreed": true,
         "tacit": false,
         "coordinated": true
       }

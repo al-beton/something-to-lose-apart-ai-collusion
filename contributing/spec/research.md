@@ -16,6 +16,6 @@
 | `results-from-logs` | `.agents/skills/review-pr/SKILL.md` | — |
 | `honest-limits` | `.agents/skills/review-pr/SKILL.md` | — |
 | `outputs-home` | `.agents/skills/team/SKILL.md`, `reports/README.md`, `.gitignore` | — |
-| `every-run-committed` | `runs/**`, `.agents/skills/review-pr/SKILL.md` | — |
+| `every-run-committed` | `runs/**`, `.agents/skills/review-pr/SKILL.md`, `reports/stakes/rescore.py` | — |
 | `moments-indexed` | `reports/moments.yaml` | — |
 | `references` | `experiments/references.md` | — |
