@@ -1,17 +1,21 @@
 # Reports
 
 - **one-page:** One command turns any folder of runs (one run, a sweep, or several) into a single HTML page that can be shared as it is.
-- **header:** The report opens with what was run (models, prompts, seeds, rounds and the market's Nash and joint-profit prices) and its total calls and cost, saying so when a cost is unknown.
+- **header:** The report opens with its name and one line giving how many games and arms it holds and their total calls and cost, saying so when a cost is unknown.
+- **first-screen:** The first screen holds only a few plain sentences per arm (the price its firms settle on and in how many games, when they first agree, when they defect, and any breakdowns), the summary table and one small chart of every arm's mean price over rounds.
+- **contents-bar:** A contents bar stays at the top of the page to jump between its sections.
+- **setup:** A Setup section, folded away, says what was run (models, prompts, seeds, rounds and the market's Nash and joint-profit prices) and shows exactly what agents were told: each system prompt, the phase prompts as first sent, and any other text that appeared in their prompts, such as a notice, with the rounds it appeared in.
 - **summary:** The report shows the same table as `lab summary`, grouped by the swept values.
-- **price-chart:** Each group has a chart of the market price over rounds, one line per seed, with the Nash and joint-profit prices marked; games played in different markets never share a chart.
-- **highlights-in-context:** The report points out the moments worth reading, found by fixed rules, each with the messages, scratchpads and prices of its round and the round before.
+- **price-chart:** Arms are compared side by side: each has a chart of the market price over rounds, one line per seed, on the same axes as the others, with the Nash and joint-profit prices marked; games played in different markets never share a chart.
+- **arm-tabs:** Each arm's highlights and games sit in a tab of their own, so one arm is read at a time.
+- **highlights-in-context:** The report points out the moments worth reading, found by fixed rules and grouped by kind, each folded to its headline and opening to the messages, scratchpads and prices of its round and the round before; the first five of a kind are listed and the rest are behind "show all".
 - **proposal:** A game's first message naming a price on the grid is highlighted as a proposal.
 - **agreement:** A round in which every firm names the same price and then charges it is highlighted as an agreement, once for each new price agreed.
 - **overshoot:** A round in which a firm charges more than the joint-profit price is highlighted as an overshoot, once for each stretch of such rounds.
 - **defection:** A firm charging less than a price every firm charged in the round before is highlighted as a defection, in any round including the last.
 - **breakdowns:** Every reply that had to be retried or replaced by the fallback is highlighted as a breakdown.
-- **transcripts:** Every game's full transcript is in the report, folded away until opened, as a chat: each round's messages, scratchpads, prices and profits.
-- **self-contained:** The report opens with no network, reads on a phone, and follows the reader's light or dark mode.
+- **transcripts:** Every game's full transcript is in the report as a one-line card with a strip of each round's prices: choosing a round shows its messages, scratchpads, prices and profits, and the whole game unfolds as a chat.
+- **self-contained:** The report is one file that opens with no network and no script, reads on a phone, and follows the reader's light or dark mode.
 - **from-run-files:** A report is built only from the files each run writes, so it works offline and costs nothing.
 
 ## Where this is enforced
@@ -20,6 +24,10 @@
 |---|---|---|
 | `one-page` | `src/collusion_lab/report/__init__.py`, `src/collusion_lab/report/page.py`, `src/collusion_lab/cli.py` | `test_one_page_from_the_lab_command`, `test_one_page_covers_one_run_or_several` |
 | `header` | `src/collusion_lab/report/page.py` | `test_header_names_what_was_run_calls_and_cost`, `test_header_cost_adds_up_known_costs` |
+| `first-screen` | not yet | — |
+| `contents-bar` | not yet | — |
+| `setup` | not yet | — |
+| `arm-tabs` | not yet | — |
 | `summary` | `src/collusion_lab/report/page.py`, `src/collusion_lab/summary.py` | `test_summary_matches_lab_summary` |
 | `price-chart` | `src/collusion_lab/report/chart.py`, `src/collusion_lab/report/page.py` | `test_price_chart_has_one_line_per_seed_and_both_benchmarks`, `test_price_chart_never_mixes_markets`, `test_price_chart_names_runs_when_seeds_repeat` |
 | `highlights-in-context` | `src/collusion_lab/report/highlights.py`, `src/collusion_lab/report/page.py` | `test_highlights_in_context_show_the_round_and_the_one_before` |
