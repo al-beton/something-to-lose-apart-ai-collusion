@@ -1,15 +1,16 @@
-# Implements: reports/from-run-files, reports/setup, reports/reasoning-folded, reports/condition-window
+# Implements: reports/from-run-files, reports/setup, reports/reasoning-folded, reports/condition-window, reports/audit-shown, reports/remembered-notices
 """A game read back from its run directory, round by round.
 
 Only the files every run writes are read: `config.yaml` for the market and
-the firms, `turns.jsonl` for what each firm was told, said, thought and charged,
-`summary.json` and `manifest.json` (the latter optional, as in `lab summary`).
+the firms, `turns.jsonl` for what each firm was told, said, thought, charged
+and answered an auditor, `summary.json` and `manifest.json` (the latter
+optional, as in `lab summary`).
 Nothing is recomputed from a model, so a report of a folder of runs costs
 nothing and works offline.
 """
 
 import json
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
 
 import yaml
@@ -33,6 +34,9 @@ class Turn:
     user: str | None = None
     conditions: tuple[str, ...] | None = None  # None: logged before conditions
     notices: tuple[str, ...] | None = None
+    notices_in_history: tuple[str, ...] = ()  # kept from an earlier round
+    answer: str | None = None  # an audit turn's answer to the auditor
+    admits: bool | None = None
     reasoning: str | None = None  # the provider's, apart from the scratchpad
 
     @property
@@ -45,6 +49,7 @@ class Round:
     number: int
     talk: dict[str, Turn]
     price: dict[str, Turn]
+    audit: dict[str, Turn] = field(default_factory=dict)  # after the round
 
     @property
     def prices(self):
@@ -102,6 +107,7 @@ def load_game(run_dir):
             n,
             talk=_by_firm(turns, n, "talk", firms),
             price=_by_firm(turns, n, "price", firms),
+            audit=_by_firm(turns, n, "audit", firms),
         )
         for n in range(1, count + 1)
     ]
@@ -152,5 +158,8 @@ def _turn(line):
         user=told.get("user"),
         conditions=_tuple(line.get("conditions")),
         notices=_tuple(line.get("notices")),
+        notices_in_history=tuple(line.get("notices_in_history") or ()),
+        answer=used.get("answer"),
+        admits=used.get("admits"),
         reasoning=line.get("reasoning"),
     )

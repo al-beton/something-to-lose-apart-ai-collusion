@@ -20,6 +20,8 @@
 - **self-contained:** The report is one file that opens with no network and no script, reads on a phone, and follows the reader's light or dark mode.
 - **reasoning-folded:** A model's reasoning is shown in the transcript beside the reply it led to, folded away until opened.
 - **markdown-first-screen:** The report's first screen (the sentences per arm, the summary table and the first few highlights) is also available as Markdown, so it reads in a pull request comment or a chat.
+- **audit-shown:** In an audited game, the audited round shows the auditor's question with its stated consequences as sent and each firm's answer, whether it admits coordinating, its scratchpad and its ground truth (explicit, tacit or neither), and Setup shows each arm's audit prompt as sent, so readers see the evidence behind the disclosure rates.
+- **remembered-notices:** A notice kept in an agent's history (an outage announced once) is shown with every turn that saw it, marked as remembered rather than freshly shown.
 - **from-run-files:** A report is built only from the files each run writes, so it works offline and costs nothing.
 
 ## Where this is enforced
@@ -46,4 +48,6 @@
 | `self-contained` | `src/collusion_lab/report/page.py`, `src/collusion_lab/report/style.py` | `test_self_contained_needs_no_network_and_suits_phones_and_dark_mode` |
 | `reasoning-folded` | `src/collusion_lab/report/games.py`, `src/collusion_lab/report/page.py`, `src/collusion_lab/report/style.py` | `test_reasoning_folded_in_the_report` |
 | `markdown-first-screen` | `src/collusion_lab/report/markdown.py` | `test_markdown_first_screen_has_sentences_table_and_highlights`, `test_markdown_first_screen_of_the_pull_request_game` |
+| `audit-shown` | `src/collusion_lab/report/page.py`, `src/collusion_lab/report/told.py`, `src/collusion_lab/report/games.py` | `test_audit_shown_in_the_audited_round`, `test_audit_shown_in_setup_as_sent`, `test_audit_shown_without_a_short_history_window`, `test_audit_shown_with_the_models_reasoning`, `test_audit_shown_without_multiline_messages_from_the_history` |
+| `remembered-notices` | `src/collusion_lab/report/page.py`, `src/collusion_lab/report/told.py`, `src/collusion_lab/report/games.py` | `test_remembered_notices_marked_in_later_turns` |
 | `from-run-files` | `src/collusion_lab/report/games.py` | `test_from_run_files_only` |

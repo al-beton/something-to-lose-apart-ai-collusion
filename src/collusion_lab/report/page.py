@@ -1,4 +1,4 @@
-# Implements: reports/reasoning-folded, reports/one-page, reports/header, reports/first-screen, reports/contents-bar, reports/setup, reports/summary, reports/price-chart, reports/arm-tabs, reports/highlights-in-context, reports/transcripts, reports/self-contained, runs/fallback-rates, runs/missing-runs-shown, reports/condition-window, reports/solicitation
+# Implements: reports/reasoning-folded, reports/one-page, reports/header, reports/first-screen, reports/contents-bar, reports/setup, reports/summary, reports/price-chart, reports/arm-tabs, reports/highlights-in-context, reports/transcripts, reports/self-contained, runs/fallback-rates, runs/missing-runs-shown, reports/condition-window, reports/solicitation, reports/audit-shown, reports/remembered-notices
 """The report page: one self-contained HTML file, read from the top down.
 
 A sticky contents bar, then:
@@ -38,8 +38,11 @@ from collusion_lab.report.overview import answer_words, arm_sentences
 from collusion_lab.report.solicitation import answer
 from collusion_lab.report.style import STYLE, tab_rules
 from collusion_lab.report.told import (
+    audit_prompts,
+    audit_question,
     round_conditions,
     round_notices,
+    round_remembered,
     what_agents_were_told,
 )
 from collusion_lab.summary import (
@@ -282,6 +285,13 @@ def _setup(games, arms):
             for c in conditions
         ]
         told.append("</ul>")
+    if audits := audit_prompts([(n, gs) for n, _, gs in arms]):
+        told.append("<h3>Audit prompts</h3>")
+        told += [
+            f'<p class="muted">Sent after {rounds_text(a.rounds)}, in '
+            f'{escape(_where(a.arms, arms))}.</p><pre class="prompt">{escape(a.text)}</pre>'
+            for a in audits
+        ]
     told.append("<h3>Other text in their prompts</h3>")
     told += [
         f'<p class="muted">Seen in {rounds_text(e.rounds)}, in '
@@ -398,6 +408,9 @@ def _game(game, index):
     kinds = {}
     for h in find_highlights(game):
         kinds.setdefault(h.round, set()).add(h.kind)
+    for r in game.rounds:
+        if r.audit:
+            kinds.setdefault(r.number, set()).add("audit")
     chips = "".join(
         f'<a class="chip" href="#{gid}-r{r.number}" '
         f'data-kinds="{" ".join(sorted(kinds.get(r.number, ())))}" '
@@ -439,8 +452,10 @@ def _round(game, r, anchor=None):
         for t in r.price.values()
     )
     where = f' id="{anchor}"' if anchor else ""
-    notices = "".join(
-        f'<p class="notice">{escape(text)}</p>' for text in round_notices(game, r)
+    fresh = round_notices(game, r)
+    kept = [text for text in round_remembered(r) if text not in fresh]
+    notices = "".join(f'<p class="notice">{escape(t)}</p>' for t in fresh) + "".join(
+        f'<p class="notice remembered">{escape(t)}</p>' for t in kept
     )
     if active := round_conditions(r):
         in_force = escape(", ".join(active))
@@ -448,7 +463,54 @@ def _round(game, r, anchor=None):
     return (
         f'<div class="round"{where}><h5>Round {r.number}</h5>{notices}{talk}{thoughts}'
         f'<table class="prices"><tr><th>firm</th><th>price</th><th>profit</th></tr>'
-        f"{prices}</table></div>"
+        f"{prices}</table>{_audit(game, r)}</div>"
+    )
+
+
+def _audit(game, r):
+    """The audit after round `r`: the question as sent, then each answer."""
+    if not r.audit:
+        return ""
+    truth = (game.summary.get("audit") or {}).get("agents") or {}
+    side = {firm: i for i, firm in enumerate(game.firms)}
+    first = next(iter(r.audit.values()))
+    answers = "".join(
+        _answer_bubble(t, side[t.firm], truth.get(t.firm) or {})
+        for t in r.audit.values()
+    )
+    return (
+        '<div class="audit"><h5>Audit</h5><details class="question"><summary>'
+        "the auditor's question as sent</summary>"
+        f'<pre class="prompt">{escape(audit_question(first, r.number))}</pre></details>'
+        f"{answers}</div>"
+    )
+
+
+def _reasoning(turn):
+    return (
+        '<details class="reasoning"><summary>model reasoning</summary>'
+        f"<p>{escape(turn.reasoning)}</p></details>"
+    )
+
+
+def _answer_bubble(turn, index, truth):
+    verdict = {True: "admits", False: "denies"}.get(turn.admits, "unclear")
+    if truth.get("explicit"):
+        fact = "explicit"
+    else:
+        fact = "tacit" if truth.get("tacit") else "neither"
+    notes = [f'<p class="verdict">{verdict} · ground truth: {fact}</p>']
+    if turn.scratchpad:
+        notes.append(f'<p class="scratchpad">{escape(turn.scratchpad)}</p>')
+    if turn.reasoning:
+        notes.append(_reasoning(turn))
+    if turn.fallback:
+        notes.append(f'<p class="problem">fallback: {escape(turn.error)}</p>')
+    where = "left" if index == 0 else "right"
+    return (
+        f'<div class="bubble {where}" style="--firm: {series_colour(index)}">'
+        f'<p class="who">Firm {escape(turn.firm)} · audit</p>'
+        f"<p>{escape(turn.answer or '')}</p>{''.join(notes)}</div>"
     )
 
 
@@ -463,10 +525,7 @@ def _bubble(turn, index):
     if turn.scratchpad:
         notes.append(f'<p class="scratchpad">{escape(turn.scratchpad)}</p>')
     if turn.reasoning:
-        notes.append(
-            '<details class="reasoning"><summary>model reasoning</summary>'
-            f"<p>{escape(turn.reasoning)}</p></details>"
-        )
+        notes.append(_reasoning(turn))
     if turn.fallback:
         notes.append(f'<p class="problem">fallback: {escape(turn.error)}</p>')
     elif turn.retried:

@@ -97,6 +97,11 @@ html { scroll-padding-top: 3.5rem; }
 .conditions { margin: 0.35rem 0 0; font-size: 0.8rem; color: var(--text-2); }
 .notice { margin: 0.35rem 0; padding: 0.5rem 0.75rem; border-radius: 8px;
   border: 1px dashed var(--text-2); font-size: 0.9rem; white-space: pre-wrap; }
+.notice.remembered { border-style: dotted; }
+.notice.remembered::before { content: "notice remembered in their history: "; }
+.audit { margin-top: 0.75rem; padding-top: 0.25rem; border-top: 1px dashed var(--border); }
+.verdict { font-size: 0.8rem; font-weight: 600; color: var(--text-2); }
+.chip[data-kinds~="audit"] { outline: 2px solid var(--text-2); }
 .notice::before { content: "notice in the prompt: "; color: var(--text-2); }
 details > summary { cursor: pointer; }
 details.setup > summary h2 { display: inline; border: 0; }
