@@ -151,19 +151,28 @@ def _summary(folder, arms):
         "<tr>" + "".join(f"<td>{escape(cell(v))}</td>" for v in r.values()) + "</tr>"
         for r in rows
     )
-    market = arms[0][2][0].market
-    same = [
-        (n, mean(g.summary["market_mean_price"] for g in gs))
-        for n, _, gs in arms
-        if gs and all(g.market == market for g in gs)
-    ]
+    # One overview per market: grids and benchmarks differ, so an arm that
+    # played in several markets gets a bar in each.
+    markets = {}
+    for name, _, games in arms:
+        for market in dict.fromkeys(g.market for g in games):
+            prices = [
+                g.summary["market_mean_price"] for g in games if g.market == market
+            ]
+            markets.setdefault(market, []).append((name, mean(prices)))
+    charts = "".join(
+        "<figure>"
+        + (f"<figcaption>{escape(_market(m))}</figcaption>" if len(markets) > 1 else "")
+        + f"{overview_chart(bars, m)}</figure>"
+        for m, bars in markets.items()
+    )
     return (
         '<section id="summary"><h2>Summary</h2>'
         f'<ul class="arm-notes">{notes}</ul>'
         f'<div class="scroll"><table><tr>{head}</tr>{body}</table></div>'
         '<p class="muted">Mean price and gain over each run\'s last rounds; '
         "gain is 0 at the Nash profit and 1 at the joint-profit maximum.</p>"
-        f"<figure>{overview_chart(same, market)}</figure></section>"
+        f"{charts}</section>"
     )
 
 

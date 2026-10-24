@@ -5,8 +5,8 @@ Three things, each shown once however many games repeat it:
 
 - system prompts: each distinct text a firm was first given, with the arms
   that used it;
-- phase prompts: the talk and price prompts as the first firm of the first
-  game saw them in round 1;
+- phase prompts: the talk and price prompts as the first firm saw them in
+  round 1 of the first game that had each phase;
 - other text: anything that appeared in a prompt beyond the usual, with the
   rounds it appeared in (`round_notices` gives one round's). That is a
   turn's logged `notice`, any text above a phase prompt's opening "Round N
@@ -34,8 +34,7 @@ class Told:
 
 def what_agents_were_told(arms):
     """System prompts, round-1 phase prompts and other text, from (arm, games)."""
-    systems, extras = {}, {}
-    phases = []
+    systems, extras, phases = {}, {}, {}
     for arm, games in arms:
         for game in games:
             first = {}
@@ -49,9 +48,11 @@ def what_agents_were_told(arms):
                         systems[turn.system].seen(arm, r.number)
                     for text in _extra(turn, r.number, first[turn.firm]):
                         extras.setdefault(text, Told(text)).seen(arm, r.number)
-            if not phases and game.rounds:
-                phases = _phase_prompts(game.rounds[0], game.firms[0])
-    return list(systems.values()), phases, list(extras.values())
+            if game.rounds:
+                for phase, text in _phase_prompts(game.rounds[0], game.firms[0]):
+                    phases.setdefault(phase, text)
+    ordered = [(p, phases[p]) for p in ("talk", "price") if p in phases]
+    return list(systems.values()), ordered, list(extras.values())
 
 
 def round_notices(game, r):
