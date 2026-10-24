@@ -16,8 +16,10 @@ own copy, so balances never leak between games.
 
 An activity is a prompt (filled with `$session`, `$sessions` and `$when`,
 plus what `values(rng)` gives, from an rng seeded per game, agent and
-session) and a token limit that keeps free time cheap. ACTIVITIES lists them
-by the name the `activity` setting takes.
+session), a token limit that keeps free time cheap, and optionally
+`feedback(reply, values)`: a word on each session ("Solved, nice."), logged in
+the summary and never scored. ACTIVITIES lists them by the name the
+`activity` setting takes.
 """
 
 import random
@@ -36,6 +38,7 @@ class Activity:
     prompt: str
     values: Callable[[random.Random], dict] = _nothing
     max_tokens: int = 200
+    feedback: Callable[[str, dict], str | None] | None = None
 
 
 ACTIVITIES = {"open": Activity("conditions/free_time/open.md")}
@@ -98,9 +101,8 @@ class FreeTime(Condition):
     def phase_prompt(self, number, render, values):
         activity = ACTIVITIES[self.activity]
         agent, session = values["agent"], values["session"]
-        rng = random.Random(f"{self.seed}:{agent}:{number}:{session}")
         filled = {
-            **activity.values(rng),
+            **self._activity_values(agent, number, session),
             "session": session,
             "sessions": self.upfront if number == 0 else self.left(agent),
             "when": "before the game starts"
@@ -108,6 +110,11 @@ class FreeTime(Condition):
             else "now that the game is over",
         }
         return render(activity.prompt, filled)
+
+    def _activity_values(self, agent, number, session):
+        """The activity's values for one session, the same every replay."""
+        rng = random.Random(f"{self.seed}:{agent}:{number}:{session}")
+        return ACTIVITIES[self.activity].values(rng)
 
     def in_history(self, agent, turns, render):
         lines = []
@@ -120,15 +127,22 @@ class FreeTime(Condition):
         return lines
 
     def summary(self, turns, market):
-        return {
-            a: {
+        result = {}
+        for a in self.losses:
+            taken = [t for t in turns if t["phase"] == "leisure" and t["agent"] == a]
+            result[a] = {
                 "allowance": self.allowance,
                 "upfront": self.upfront,
                 "deducted": self.deducted(a),
                 "paid_out": self.left(a),
-                "taken": sum(
-                    1 for t in turns if t["phase"] == "leisure" and t["agent"] == a
-                ),
+                "taken": len(taken),
             }
-            for a in self.losses
-        }
+            if feedback := ACTIVITIES[self.activity].feedback:
+                result[a]["feedback"] = [
+                    feedback(
+                        t["reply"],
+                        self._activity_values(a, t["round"], t["session"]),
+                    )
+                    for t in taken
+                ]
+        return result
