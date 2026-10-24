@@ -10,7 +10,7 @@ from collusion_lab.runner import RunFailed, run_config
 
 MODEL_NAME = "openrouter/openai/gpt-4.1-mini"
 MODEL = [f"agents.0.model={MODEL_NAME}", "market.talk=false"]
-NOW = 1_000_000.0
+NOW = 1_800_000_000.0  # seconds since the epoch, in 2027
 
 
 def lines(run_dir, name):
