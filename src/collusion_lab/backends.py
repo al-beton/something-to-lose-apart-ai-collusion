@@ -11,6 +11,9 @@ Mocks, by model name:
 - `mock/joint`: always the joint-profit price;
 - `mock/tit-for-tat`: the joint-profit price, then the rivals' last mean price;
 - `mock/random`: a uniform price from the grid, from the agent's seeded RNG;
+- `mock/proposer`: names the joint-profit price and charges it, but one grid
+  step below it every fifth round, so reports have proposals, agreements and
+  defections to show;
 - `mock/broken`: never valid JSON, for testing fallbacks.
 
 Every other name goes to LiteLLM as it is (`openrouter/openai/gpt-4.1-mini`,
@@ -100,6 +103,14 @@ def _tit_for_tat(context, rng):
     return context["market"].on_grid(mean_rival), "I will match your last price."
 
 
+def _proposer(context, rng):
+    market = context["market"]
+    price = market.on_grid(market.joint_price - 1)
+    if context["round"] % 5:
+        price = market.joint_price
+    return price, f"Let's both charge {market.joint_price}."
+
+
 def _random(context, rng):
     market = context["market"]
     return rng.randint(market.price_min, market.price_max), ""
@@ -110,6 +121,7 @@ _POLICIES = {
     "joint": _joint,
     "tit-for-tat": _tit_for_tat,
     "random": _random,
+    "proposer": _proposer,
 }
 
 

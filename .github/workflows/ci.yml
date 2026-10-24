@@ -1,4 +1,4 @@
-# Implements: ci/ci-runs-everything
+# Implements: ci/ci-runs-everything, ci/end-to-end
 name: ci
 
 on:
