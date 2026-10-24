@@ -68,11 +68,14 @@ def test_reasoning_setting_sweeps_for_every_agent(make_config, tmp_path, fake_mo
         overrides=[
             *MODEL,
             f"agents.1.model={ROUTER}",
-            "sweep={agents.*.reasoning: ['off', 'high']}",
+            "sweep={agents.*.reasoning: [off, high]}",  # YAML reads bare off as false
         ]
     )
     run_dirs = run_config(config, tmp_path)
-    assert len(run_dirs) == 2
+    assert sorted(d.parent.name for d in run_dirs) == [
+        "reasoning=high",
+        "reasoning=off",
+    ]
     sent = {json.dumps(c["extra_body"]["reasoning"]) for c in fake_model.calls}
     assert sent == {'{"enabled": false}', '{"effort": "high"}'}
 
