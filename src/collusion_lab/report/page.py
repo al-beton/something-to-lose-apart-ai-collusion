@@ -48,6 +48,8 @@ from collusion_lab.summary import (
     group_runs,
     missing_runs,
     reply_rates,
+    run_cost,
+    spent,
     summarize,
 )
 
@@ -81,7 +83,7 @@ def build_report(folder):
     title = f"{folder.name} · collusion-lab report"
     links = "".join(f'<a href="#{k}">{v}</a>' for k, v in CONTENTS.items())
     body = [
-        _header(folder.name, games, arms),
+        _header(folder.name, games, arms, spent(folder)),
         _summary(folder, arms),
         _replies(folder),
         _missing(folder),
@@ -136,9 +138,9 @@ def _where(names, arms):
     return ", ".join(names)
 
 
-def _header(name, games, arms):
+def _header(name, games, arms, manifests):
     count = f"{len(arms)} arm" + ("" if len(arms) == 1 else "s")
-    line = f"{len(games)} games in {count} · {_spend([g.manifest for g in games])}"
+    line = f"{len(games)} games in {count} · {_spend(manifests)}"
     return (
         f'<section id="header"><h1>{escape(name)}</h1>'
         f'<p class="lede">{escape(line)}</p></section>'
@@ -150,7 +152,7 @@ def _spend(manifests):
     unpriced = sum(m.get("unpriced_calls", 0) for m in manifests)
     if any(m.get("cost") is None for m in manifests):
         return f"{calls} calls, cost unknown ({unpriced} calls unpriced)"
-    return f"{calls} calls, cost ${sum(m['cost'] for m in manifests):.4f}"
+    return f"{calls} calls, cost ${sum(run_cost(m) for m in manifests):.4f}"
 
 
 def _replies(folder):

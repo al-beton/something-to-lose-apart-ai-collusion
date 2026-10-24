@@ -1,4 +1,4 @@
-# Implements: reproducibility/manifest
+# Implements: reproducibility/manifest, runs/resume
 """What produced a run: config, prompt hashes, code, packages, models, spend.
 
 Written as `manifest.json` next to each run's logs. Unlike `turns.jsonl`, it
@@ -50,6 +50,15 @@ def build(config, prompt_names, calls, started, finished):
         "started": started,
         "finished": finished,
     }
+
+
+def prompts_unchanged(record, prompts_dir):
+    """Whether every prompt file a run used still reads as it did then."""
+    for name, digest in record.get("prompts", {}).items():
+        path = Path(prompts_dir, name)
+        if not path.exists() or _hash(path) != digest:
+            return False
+    return True
 
 
 def _hash(path):

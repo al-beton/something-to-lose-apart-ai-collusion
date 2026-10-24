@@ -150,13 +150,18 @@ def _spent_before(run_dir):
 
 
 def _finished(config, seed, run_dir):
-    """Whether a run already finished with exactly this resolved config."""
+    """Whether a run already finished with exactly this resolved config and
+    the same prompt files (edited in place, a prompt keeps its path)."""
     resolved = dataclasses.replace(config, seeds=[seed]).to_yaml()
-    written = run_dir / "config.yaml"
+    written, record = run_dir / "config.yaml", run_dir / "manifest.json"
     return (
         (run_dir / "summary.json").exists()
         and written.exists()
         and written.read_text() == resolved
+        and record.exists()
+        and manifest.prompts_unchanged(
+            json.loads(record.read_text()), config.prompts_dir
+        )
     )
 
 

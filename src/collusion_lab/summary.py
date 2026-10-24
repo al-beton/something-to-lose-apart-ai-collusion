@@ -206,7 +206,7 @@ def _row(by, key, runs):
         "mean price": average([price for price, _ in headlines], 2),
         "gain": average([gain for _, gain in headlines], 3),
         "fallbacks": sum(s["fallbacks"] for s in summaries),
-        "cost": round(sum(_spent(r.manifest) for r in runs), 4),
+        "cost": round(sum(run_cost(r.manifest) for r in runs), 4),
         "scripted": ", ".join(scripted) or None,
     }
 
@@ -261,9 +261,16 @@ def _lines(path):
         return [json.loads(line) for line in log if line.strip()]
 
 
-def _spent(manifest):
+def run_cost(manifest):
     """A run's cost, with what its earlier failed attempts spent."""
     return (manifest.get("cost") or 0) + manifest.get("earlier_cost", 0)
+
+
+def spent(folder):
+    """The manifest of every run under a folder that made calls, finished or
+    not, so a total of spend leaves nothing out."""
+    _, groups = group_runs(folder)
+    return [r.manifest for _, runs in groups for r in runs if "calls" in r.manifest]
 
 
 def _value(run, name):
