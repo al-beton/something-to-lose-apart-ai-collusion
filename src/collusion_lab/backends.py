@@ -31,6 +31,8 @@ class Reply:
     usage: dict | None = None
     model_version: str | None = None
     seconds: float | None = None
+    cost: float | None = None
+    cached: bool = False
 
 
 async def _acompletion(**kwargs):
@@ -66,7 +68,19 @@ class LiteLLMBackend:
             },
             model_version=getattr(response, "model", None),
             seconds=time.perf_counter() - started,
+            cost=_cost(response),
         )
+
+
+def _cost(response):
+    """LiteLLM's price for a response, or None when it can't price it."""
+    try:
+        import litellm
+
+        return litellm.completion_cost(completion_response=response)
+    # LiteLLM raises many error types for models it has no price for.
+    except Exception:  # noqa: BLE001
+        return None
 
 
 def _nash(context, rng):
