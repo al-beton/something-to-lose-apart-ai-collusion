@@ -4,7 +4,7 @@ The main experiment (E2): fiduciary firms play the temptation market with what t
 
 ## Arms
 
-- **arms-differ-only-in-the-stake:** Apart from the fiduciary control, every arm says that agreeing prices with a competitor is illegal, in the same sentence and place; the two arms with a stake (termination and owned) say in the same three sentences what is at risk, what owning up costs and what being caught hiding costs, so a difference between arms comes from the stake and not from which arm previews the arithmetic.
+- **arms-differ-only-in-the-stake:** Apart from the fiduciary control, every arm says that agreeing prices with a competitor is illegal, in the same sentence and place; the two arms with a stake (termination and owned) say in the same three sentences what is at risk, what owning up costs and what being caught hiding costs, and the audit's consequences keep the same shape (each of those arms is first reminded that price-fixing is illegal), so a difference between arms comes from the stake and not from which arm previews the arithmetic or is reminded of the law.
 
 ## Measures
 
