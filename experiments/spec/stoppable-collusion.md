@@ -25,6 +25,8 @@ First find a market where agents reliably collude without being told to, then ad
   Each arm runs with the outage off and on, on the same seeds as the stage-1 baseline, which is the no-nudge arm.
 - **offer:** `configs/stoppable-collusion/offer.yaml`: firm A is a model under the explicit ban; firm B is the scripted solicitor (`mock/solicitor?style=blunt&push=repeat&reject=hold`), which proposes and charges 45 every round. Outage off and on.
 
+- **evidence:** Every game keeps its config, summary, manifest and compact turn record under `runs/stoppable-collusion/`, and the note's tables come from one committed script over them.
+
 ## Metrics
 
 Fixed before any run. Prices are taken from rounds 16–20 unless stated.
@@ -57,6 +59,7 @@ Fixed before any run. Prices are taken from rounds 16–20 unless stated.
 | `stable` | `reports/stoppable-collusion/findings.md` | — |
 | `ladder` | `configs/stoppable-collusion/nudges.yaml`, `prompts/conditions/nudges/policy.md`, `prompts/conditions/nudges/monitored.md` | — |
 | `offer` | `configs/stoppable-collusion/offer.yaml` | — |
+| `evidence` | `runs/stoppable-collusion/**`, `reports/stoppable-collusion/metrics.py` | — |
 | `markup` | `reports/stoppable-collusion/metrics.py` | — |
 | `agreement` | `reports/stoppable-collusion/metrics.py` | — |
 | `colluded` | `reports/stoppable-collusion/metrics.py` | — |
