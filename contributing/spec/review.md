@@ -6,6 +6,8 @@
 - **inline-findings:** Review findings go inline, on the lines they are about.
 - **resolve-with-commit:** Every finding is addressed and resolved with a reply: naming the commit that fixed it, or explaining why nothing changed.
 - **every-reviewer-counts:** Findings from automatic reviewers count the same as anyone else's.
+- **review-finished:** An automatic review counts only once it has finished on the pull request's latest commit.
+- **bounded-rounds:** Automatic review rounds stop when a round finds nothing real, or after three rounds; anything left is declined with a reason or becomes an issue.
 
 ## Where this is enforced
 
@@ -17,3 +19,5 @@
 | `inline-findings` | `.agents/skills/review-pr/SKILL.md` | — |
 | `resolve-with-commit` | `.agents/skills/address-review/SKILL.md` | — |
 | `every-reviewer-counts` | `.agents/skills/address-review/SKILL.md`, `.agents/skills/open-pr/SKILL.md` | — |
+| `review-finished` | not yet | — |
+| `bounded-rounds` | not yet | — |

@@ -4,6 +4,7 @@
 - **deliberate-messages:** Commit messages are deliberate and say what changed.
 - **commit-refs-issue:** Each commit references the issue it moves forward.
 - **grooming-optional:** Tidying a pull request's commits is optional and never happens while a review is in progress.
+- **named-paths:** Commits stage only the paths they name, and run output is committed only when it is asked for by name.
 
 ## Where this is enforced
 
@@ -13,3 +14,4 @@
 | `deliberate-messages` | `.agents/skills/build-issue/SKILL.md`, `.agents/skills/review-pr/SKILL.md` | — |
 | `commit-refs-issue` | `.agents/skills/build-issue/SKILL.md` | — |
 | `grooming-optional` | `.agents/skills/address-review/SKILL.md`, `.agents/skills/merge-pr/SKILL.md` | — |
+| `named-paths` | not yet | — |
