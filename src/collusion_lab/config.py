@@ -1,4 +1,4 @@
-# Implements: runs/one-config, runs/overrides, backends/keys-from-environment, backends/any-model
+# Implements: runs/one-config, runs/overrides, market/known-benchmarks, backends/keys-from-environment, backends/any-model
 """Run configs: one YAML file per run, changed from the command line with overrides.
 
 A config names the market, the agents and the seeds. `load_config` reads the
@@ -15,6 +15,8 @@ from dataclasses import dataclass, field
 from pathlib import Path
 
 import yaml
+
+from collusion_lab.market import Bertrand
 
 
 class ConfigError(ValueError):
@@ -112,15 +114,30 @@ def from_dict(raw):
     for key in ("name", "seeds", "agents"):
         if key not in raw:
             raise ConfigError(f"Missing key {key}.")
-    agents = raw["agents"] or []
+    agents = [
+        _make(AgentConfig, a, f"agents.{i}.") for i, a in enumerate(raw["agents"] or [])
+    ]
+    ids = [a.id for a in agents]
+    for agent_id in ids:
+        if ids.count(agent_id) > 1:
+            raise ConfigError(f"The agent id {agent_id!r} is used twice.")
+    market = _make(MarketConfig, raw.get("market") or {}, "market.")
+    _check_market(market)
     return RunConfig(
         name=raw["name"],
         seeds=list(raw["seeds"]),
-        agents=[_make(AgentConfig, a, f"agents.{i}.") for i, a in enumerate(agents)],
-        market=_make(MarketConfig, raw.get("market") or {}, "market."),
+        agents=agents,
+        market=market,
         summary=_make(SummaryConfig, raw.get("summary") or {}, "summary."),
         prompts_dir=raw.get("prompts_dir", "prompts"),
     )
+
+
+def _check_market(m):
+    try:
+        Bertrand(m.a, m.b, m.c, m.price_min, m.price_max)
+    except ValueError as error:
+        raise ConfigError(f"market: {error}") from error
 
 
 def _check_keys(cls, data, prefix):

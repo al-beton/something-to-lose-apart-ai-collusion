@@ -4,13 +4,15 @@
 Model replies are cached in `.cache/responses.sqlite` (`--cache use`), so a
 rerun replays for free; `--cache refresh` calls again, `--cache off` skips it.
 
-API keys are read from the environment, topped up from a `.env` file in the
-working directory (gitignored). A config that calls paid models says how many
+API keys are read from the environment, topped up from the `.env` file in the
+directory `lab` runs from (gitignored), never one found elsewhere. A config
+that calls paid models says how many
 calls it will make and waits for a yes; `-y` answers yes in advance.
 """
 
 import argparse
 import sys
+from pathlib import Path
 
 from dotenv import load_dotenv
 
@@ -39,7 +41,7 @@ def main(argv=None):
     run.add_argument("--cache", choices=MODES, default="use", help="response cache")
     run.add_argument("--cache-path", default=DEFAULT_PATH)
     args = parser.parse_args(argv)
-    load_dotenv()
+    load_dotenv(Path.cwd() / ".env")
     try:
         config = load_config(args.config, args.overrides)
     except ConfigError as error:

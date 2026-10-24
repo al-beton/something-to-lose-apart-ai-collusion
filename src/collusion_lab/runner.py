@@ -147,7 +147,12 @@ class Game:
         reply, parsed, error = await self._ask(agent, messages, context)
         retry = None
         if error:
-            retry = {"reply": reply.text, "error": error}
+            retry = {
+                "reply": reply.text,
+                "error": error,
+                "usage": reply.usage,
+                "model_version": reply.model_version,
+            }
             messages = [
                 *messages,
                 {"role": "assistant", "content": reply.text},
