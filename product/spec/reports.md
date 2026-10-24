@@ -23,19 +23,19 @@
 | Statement | Enforced by | Tested by |
 |---|---|---|
 | `one-page` | `src/collusion_lab/report/__init__.py`, `src/collusion_lab/report/page.py`, `src/collusion_lab/cli.py` | `test_one_page_from_the_lab_command`, `test_one_page_covers_one_run_or_several` |
-| `header` | `src/collusion_lab/report/page.py` | `test_header_names_what_was_run_calls_and_cost`, `test_header_cost_adds_up_known_costs` |
-| `first-screen` | not yet | — |
-| `contents-bar` | not yet | — |
-| `setup` | not yet | — |
-| `arm-tabs` | not yet | — |
+| `header` | `src/collusion_lab/report/page.py` | `test_header_counts_games_arms_calls_and_cost`, `test_header_cost_adds_up_known_costs` |
+| `first-screen` | `src/collusion_lab/report/page.py`, `src/collusion_lab/report/overview.py`, `src/collusion_lab/report/chart.py` | `test_first_screen_says_what_each_arm_did`, `test_first_screen_holds_only_sentences_table_and_one_chart` |
+| `contents-bar` | `src/collusion_lab/report/page.py`, `src/collusion_lab/report/style.py` | `test_contents_bar_links_every_section` |
+| `setup` | `src/collusion_lab/report/page.py`, `src/collusion_lab/report/told.py`, `src/collusion_lab/report/games.py` | `test_setup_names_what_was_run`, `test_setup_shows_exactly_what_agents_were_told_and_when` |
+| `arm-tabs` | `src/collusion_lab/report/page.py`, `src/collusion_lab/report/style.py` | `test_arm_tabs_hold_each_arms_games`, `test_arm_tabs_are_left_out_for_one_arm` |
 | `summary` | `src/collusion_lab/report/page.py`, `src/collusion_lab/summary.py` | `test_summary_matches_lab_summary` |
-| `price-chart` | `src/collusion_lab/report/chart.py`, `src/collusion_lab/report/page.py` | `test_price_chart_has_one_line_per_seed_and_both_benchmarks`, `test_price_chart_never_mixes_markets`, `test_price_chart_names_runs_when_seeds_repeat` |
-| `highlights-in-context` | `src/collusion_lab/report/highlights.py`, `src/collusion_lab/report/page.py` | `test_highlights_in_context_show_the_round_and_the_one_before` |
+| `price-chart` | `src/collusion_lab/report/chart.py`, `src/collusion_lab/report/page.py` | `test_price_chart_has_one_line_per_seed_and_both_benchmarks`, `test_price_chart_never_mixes_markets`, `test_price_chart_names_runs_when_seeds_repeat`, `test_price_chart_puts_arms_side_by_side_on_the_same_axes` |
+| `highlights-in-context` | `src/collusion_lab/report/highlights.py`, `src/collusion_lab/report/page.py` | `test_highlights_in_context_show_the_round_and_the_one_before`, `test_highlights_in_context_are_grouped_by_kind_and_folded`, `test_highlights_in_context_list_five_then_show_all` |
 | `proposal` | `src/collusion_lab/report/highlights.py` | `test_proposal_is_the_first_message_naming_a_price`, `test_proposal_never_counts_round_numbers_as_prices` |
 | `agreement` | `src/collusion_lab/report/highlights.py` | `test_agreement_is_every_firm_naming_then_charging_one_new_price` |
 | `overshoot` | `src/collusion_lab/report/highlights.py` | `test_overshoot_is_once_per_stretch_above_the_joint_price` |
 | `defection` | `src/collusion_lab/report/highlights.py` | `test_defection_includes_the_last_round` |
 | `breakdowns` | `src/collusion_lab/report/highlights.py` | `test_breakdowns_are_every_retry_and_fallback` |
-| `transcripts` | `src/collusion_lab/report/page.py` | `test_transcripts_hold_every_round_folded_away`, `test_transcripts_escape_what_models_wrote`, `test_transcripts_show_retries_and_fallbacks` |
-| `self-contained` | `src/collusion_lab/report/page.py` | `test_self_contained_needs_no_network_and_suits_phones_and_dark_mode` |
+| `transcripts` | `src/collusion_lab/report/page.py` | `test_transcripts_are_cards_with_a_strip_of_rounds`, `test_transcripts_hold_every_round`, `test_transcripts_escape_what_models_wrote`, `test_transcripts_show_retries_and_fallbacks` |
+| `self-contained` | `src/collusion_lab/report/page.py`, `src/collusion_lab/report/style.py` | `test_self_contained_needs_no_network_and_suits_phones_and_dark_mode` |
 | `from-run-files` | `src/collusion_lab/report/games.py` | `test_from_run_files_only` |

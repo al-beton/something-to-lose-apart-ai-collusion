@@ -1,8 +1,8 @@
-# Implements: reports/from-run-files
+# Implements: reports/from-run-files, reports/setup
 """A game read back from its run directory, round by round.
 
 Only the files every run writes are read: `config.yaml` for the market and
-the firms, `turns.jsonl` for what each firm said, thought and charged,
+the firms, `turns.jsonl` for what each firm was told, said, thought and charged,
 `summary.json` and `manifest.json` (the latter optional, as in `lab summary`).
 Nothing is recomputed from a model, so a report of a folder of runs costs
 nothing and works offline.
@@ -29,6 +29,9 @@ class Turn:
     profit: float | None
     error: str | None
     retried: bool
+    system: str | None = None
+    user: str | None = None
+    notice: str | None = None
 
     @property
     def fallback(self):
@@ -115,6 +118,7 @@ def _by_firm(turns, number, phase, firms):
 
 def _turn(line):
     used = line["used"]
+    told = {m["role"]: m["content"] for m in reversed(line.get("messages") or [])}
     return Turn(
         firm=line["agent"],
         phase=line["phase"],
@@ -124,4 +128,7 @@ def _turn(line):
         profit=(line.get("outcome") or {}).get("profit"),
         error=line["error"],
         retried=line["retry"] is not None,
+        system=told.get("system"),
+        user=told.get("user"),
+        notice=line.get("notice"),
     )
