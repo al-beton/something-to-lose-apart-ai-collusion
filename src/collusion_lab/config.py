@@ -1,4 +1,4 @@
-# Implements: runs/one-config, runs/overrides, runs/sweeps, runs/parallel, market/known-benchmarks, backends/keys-from-environment, backends/any-model
+# Implements: market/history-window, backends/spend-cap, runs/one-config, runs/overrides, runs/sweeps, runs/parallel, market/known-benchmarks, backends/keys-from-environment, backends/any-model
 """Run configs: one YAML file per run, changed from the command line with overrides.
 
 A config names the market, the agents and the seeds. `load_config` reads the
@@ -43,6 +43,7 @@ class MarketConfig:
     b: float = 2
     c: float = 1
     talk: bool = True
+    history_window: int | None = None  # rounds shown in full; None shows all
 
 
 @dataclass(frozen=True)
@@ -70,6 +71,7 @@ class RunConfig:
     prompts_dir: str = "prompts"
     sweep: dict = field(default_factory=dict)
     concurrency: int = 4
+    budget: float | None = None  # dollars the run may spend; None for no cap
     labels: dict = field(default_factory=dict)
     slug: str = ""
 
@@ -145,6 +147,7 @@ def from_dict(raw):
         prompts_dir=raw.get("prompts_dir", "prompts"),
         sweep=_sweep(raw.get("sweep") or {}),
         concurrency=_concurrency(raw.get("concurrency", 4)),
+        budget=_budget(raw.get("budget")),
         labels=raw.get("labels") or {},
         slug=raw.get("slug", ""),
     )
@@ -192,6 +195,14 @@ def _make_slugs_unique(children):
             child["slug"] += "__" + hashlib.sha256(exact).hexdigest()[:8]
 
 
+def _budget(value):
+    if value is not None and (
+        isinstance(value, bool) or not isinstance(value, int | float) or value <= 0
+    ):
+        raise ConfigError("budget must be a positive number of dollars.")
+    return value
+
+
 def _concurrency(value):
     if isinstance(value, bool) or not isinstance(value, int) or value < 1:
         raise ConfigError("concurrency must be a whole number of at least 1.")
@@ -208,6 +219,11 @@ def _safe(value):
 
 
 def _check_market(m):
+    window = m.history_window
+    if window is not None and (
+        isinstance(window, bool) or not isinstance(window, int) or window < 1
+    ):
+        raise ConfigError("market.history_window must be a whole number of at least 1.")
     try:
         Bertrand(m.a, m.b, m.c, m.price_min, m.price_max)
     except ValueError as error:
