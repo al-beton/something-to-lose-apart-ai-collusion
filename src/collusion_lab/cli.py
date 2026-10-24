@@ -1,4 +1,4 @@
-# Implements: runs/stops-cleanly, runs/one-config, runs/overrides, backends/keys-from-environment, backends/spend-asks-first, reproducibility/cache-modes, runs/summary-table, reports/one-page
+# Implements: backends/spend-cap, runs/stops-cleanly, runs/one-config, runs/overrides, backends/keys-from-environment, backends/spend-asks-first, reproducibility/cache-modes, runs/summary-table, reports/one-page
 """The `lab` command.
 
 - `lab run CONFIG [--set path=value ...] [--out DIR] [-y]` plays a config;
@@ -11,11 +11,14 @@ rerun replays for free; `--cache refresh` calls again, `--cache off` skips it.
 
 API keys are read from the environment, topped up from the `.env` file in the
 directory `lab` runs from (gitignored), never one found elsewhere. A config
-that calls paid models says how many calls it will make and waits for a yes;
-`-y` answers yes in advance.
+that calls paid models says how many calls it will make and what they are
+estimated to cost (see estimate.py), and waits for a yes; `-y` answers yes in
+advance. `--max-cost DOLLARS` (or `budget:` in the config) refuses to start
+when the estimate is over it, and stops the run once actual spend passes it.
 """
 
 import argparse
+import dataclasses
 import sys
 from pathlib import Path
 
@@ -23,6 +26,8 @@ from dotenv import load_dotenv
 
 from collusion_lab.cache import DEFAULT_PATH, MODES, Cache
 from collusion_lab.config import ConfigError, load_config
+from collusion_lab.estimate import estimate
+from collusion_lab.prices import price_for
 from collusion_lab.report import write_report
 from collusion_lab.runner import RunFailed, paid_calls, run_config
 from collusion_lab.summary import format_table, summarize
@@ -47,6 +52,12 @@ def main(argv=None):
     )
     run.add_argument("--cache", choices=MODES, default="use", help="response cache")
     run.add_argument("--cache-path", default=DEFAULT_PATH)
+    run.add_argument(
+        "--max-cost",
+        type=float,
+        metavar="DOLLARS",
+        help="most the run may spend (overrides the config's budget)",
+    )
     summary = commands.add_parser("summary", help="one table for a folder of runs")
     summary.add_argument("folder")
     summary.add_argument(
@@ -67,7 +78,9 @@ def main(argv=None):
         config = load_config(args.config, args.overrides)
     except ConfigError as error:
         parser.error(str(error))
-    if not args.yes and not _spending_agreed(paid_calls(config)):
+    if args.max_cost is not None:
+        config = dataclasses.replace(config, budget=args.max_cost)
+    if not _spend_checked(config, args.yes):
         return 1
     cache = Cache(args.cache_path, args.cache)
     try:
@@ -80,12 +93,46 @@ def main(argv=None):
     return 0
 
 
-def _spending_agreed(calls):
-    if not calls:
-        return True
-    print(
-        f"This run makes {calls} calls to paid models (up to {2 * calls} with retries)."
+def _spend_checked(config, yes):
+    """Say what a paid run will cost; whether it may go ahead."""
+    calls = paid_calls(config)
+    guess = estimate(config, price_for) if calls else None
+    if calls:
+        print(_spend_line(calls, guess))
+    if over := _over_budget(config.budget, guess):
+        print(f"lab: {over}", file=sys.stderr)
+        return False
+    if config.budget is not None and guess and guess.unpriced:
+        print(
+            f"lab: no price for {', '.join(guess.unpriced)}, so the spend cap "
+            "can't be enforced for it.",
+            file=sys.stderr,
+        )
+    return not calls or yes or _spending_agreed()
+
+
+def _spend_line(calls, guess):
+    line = (
+        f"This run makes {calls} calls to paid models (up to {2 * calls} with retries)"
     )
+    if guess.cost is None:
+        return f"{line}; no price for {', '.join(guess.unpriced)}, so no estimate."
+    return (
+        f"{line}, estimated ${guess.cost:.4f} "
+        f"({guess.prompt_tokens:,} prompt tokens, before retries)."
+    )
+
+
+def _over_budget(budget, guess):
+    if budget is None or guess is None or guess.cost is None or guess.cost <= budget:
+        return None
+    return (
+        f"the estimated ${guess.cost:.4f} is over the ${budget:g} spend cap; "
+        "nothing was run."
+    )
+
+
+def _spending_agreed():
     try:
         answer = input("Go ahead? [y/N] ")
     except EOFError:

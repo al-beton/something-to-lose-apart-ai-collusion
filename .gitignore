@@ -1,4 +1,4 @@
-# Implements: safety/no-secrets, backends/keys-from-environment, research/outputs-home
+# Implements: safety/no-secrets, backends/keys-from-environment, research/outputs-home, specs-and-docs/runs-are-evidence
 .venv/
 __pycache__/
 .pytest_cache/

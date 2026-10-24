@@ -1,4 +1,4 @@
-# Implements: runs/one-config, runs/overrides, runs/sweeps, runs/parallel, market/known-benchmarks, backends/keys-from-environment, backends/any-model
+# Implements: market/history-window, backends/spend-cap, runs/one-config, runs/overrides, runs/sweeps, runs/parallel, market/known-benchmarks, backends/keys-from-environment, backends/any-model, backends/reasoning-setting
 """Run configs: one YAML file per run, changed from the command line with overrides.
 
 A config names the market, the agents and the seeds. `load_config` reads the
@@ -34,6 +34,9 @@ class ConfigError(ValueError):
     """A config or override that can't be used, with the path that's wrong."""
 
 
+REASONING = ("off", "low", "medium", "high")
+
+
 @dataclass(frozen=True)
 class MarketConfig:
     rounds: int = 20
@@ -43,6 +46,7 @@ class MarketConfig:
     b: float = 2
     c: float = 1
     talk: bool = True
+    history_window: int | None = None  # rounds shown in full; None shows all
 
 
 @dataclass(frozen=True)
@@ -53,6 +57,8 @@ class AgentConfig:
     temperature: float = 0.7
     max_tokens: int = 400
     api_base: str | None = None
+    # off, low, medium or high; None leaves it to the provider.
+    reasoning: str | None = None
 
 
 @dataclass(frozen=True)
@@ -70,6 +76,7 @@ class RunConfig:
     prompts_dir: str = "prompts"
     sweep: dict = field(default_factory=dict)
     concurrency: int = 4
+    budget: float | None = None  # dollars the run may spend; None for no cap
     labels: dict = field(default_factory=dict)
     slug: str = ""
 
@@ -127,9 +134,7 @@ def from_dict(raw):
     for key in ("name", "seeds", "agents"):
         if key not in raw:
             raise ConfigError(f"Missing key {key}.")
-    agents = [
-        _make(AgentConfig, a, f"agents.{i}.") for i, a in enumerate(raw["agents"] or [])
-    ]
+    agents = [_agent(a, f"agents.{i}.") for i, a in enumerate(raw["agents"] or [])]
     ids = [a.id for a in agents]
     for agent_id in ids:
         if ids.count(agent_id) > 1:
@@ -145,9 +150,19 @@ def from_dict(raw):
         prompts_dir=raw.get("prompts_dir", "prompts"),
         sweep=_sweep(raw.get("sweep") or {}),
         concurrency=_concurrency(raw.get("concurrency", 4)),
+        budget=_budget(raw.get("budget")),
         labels=raw.get("labels") or {},
         slug=raw.get("slug", ""),
     )
+
+
+def _agent(raw, prefix):
+    agent = _make(AgentConfig, raw, prefix)
+    # YAML reads a bare `off` as false.
+    reasoning = "off" if agent.reasoning is False else agent.reasoning
+    if reasoning is not None and reasoning not in REASONING:
+        raise ConfigError(f"{prefix}reasoning must be one of {', '.join(REASONING)}.")
+    return dataclasses.replace(agent, reasoning=reasoning)
 
 
 def _sweep(sweep):
@@ -155,7 +170,13 @@ def _sweep(sweep):
         isinstance(v, list) and v for v in sweep.values()
     ):
         raise ConfigError("sweep must map config paths to non-empty lists of values.")
-    return sweep
+    # YAML reads a bare `off` as false; name it off in labels and folders too.
+    return {
+        path: [
+            "off" if v is False and path.endswith(".reasoning") else v for v in values
+        ]
+        for path, values in sweep.items()
+    }
 
 
 def expand(config):
@@ -192,6 +213,14 @@ def _make_slugs_unique(children):
             child["slug"] += "__" + hashlib.sha256(exact).hexdigest()[:8]
 
 
+def _budget(value):
+    if value is not None and (
+        isinstance(value, bool) or not isinstance(value, int | float) or value <= 0
+    ):
+        raise ConfigError("budget must be a positive number of dollars.")
+    return value
+
+
 def _concurrency(value):
     if isinstance(value, bool) or not isinstance(value, int) or value < 1:
         raise ConfigError("concurrency must be a whole number of at least 1.")
@@ -208,6 +237,11 @@ def _safe(value):
 
 
 def _check_market(m):
+    window = m.history_window
+    if window is not None and (
+        isinstance(window, bool) or not isinstance(window, int) or window < 1
+    ):
+        raise ConfigError("market.history_window must be a whole number of at least 1.")
     try:
         Bertrand(m.a, m.b, m.c, m.price_min, m.price_max)
     except ValueError as error:
