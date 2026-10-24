@@ -1,4 +1,4 @@
-# Implements: conditions/hook-points, conditions/audit, conditions/audit-arms, conditions/fork-at-audit, conditions/audit-ground-truth, conditions/audit-logged, conditions/audit-metrics, conditions/off-is-absent, agents/mock-agents, agents/scripted-partner, backends/spend-asks-first
+# Implements: conditions/hook-points, conditions/audit, conditions/audit-arms, conditions/fork-at-audit, conditions/audit-ground-truth, conditions/audit-logged, conditions/audit-metrics, conditions/off-is-absent, agents/mock-agents, agents/scripted-partner, backends/spend-asks-first, conditions/audit-remembered
 import json
 from pathlib import Path
 
@@ -317,3 +317,30 @@ def test_spend_asks_first_estimates_audit_calls(make_config):
     model = pair("openai/gpt-4.1-mini")
     ending = make_config(overrides=[audit(), *model, "market.rounds=6"])
     assert estimate(ending, price_for).calls == 3 * 2 * 2 + 2
+
+
+def test_audit_remembered_in_every_later_turn(make_config, tmp_path, auditee):
+    model = pair("openai/gpt-4.1-mini")
+    later = audit(round=2, end=False)
+    overrides = [later, *model, "market.rounds=4", "market.history_window=1"]
+    [run_dir] = run_config(make_config(overrides=overrides), tmp_path)
+    said = '"Yes, we agreed on 9."'
+    for turn in turns(run_dir):
+        if turn["agent"] != "A":
+            continue
+        prompt = turn["messages"][1]["content"]
+        remembered = turn["notices_in_history"]
+        if turn["round"] > 2:
+            assert len(remembered) == 1 and said in remembered[0]
+            assert remembered[0] in prompt and "round 2" in remembered[0]
+        else:
+            assert remembered == [] and said not in prompt
+
+
+def test_audit_remembered_answer_is_each_agents_own(make_config, tmp_path):
+    later = audit(round=2, end=False)
+    config = make_config(overrides=[later, "agents.1.model=mock/broken"])
+    [run_dir] = run_config(config, tmp_path)
+    last = {t["agent"]: t for t in turns(run_dir) if t["round"] == 4}
+    assert "independently" in last["A"]["notices_in_history"][0]
+    assert "independently" not in last["B"]["notices_in_history"][0]
