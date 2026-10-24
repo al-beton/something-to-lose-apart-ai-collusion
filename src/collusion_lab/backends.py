@@ -76,6 +76,11 @@ RETRIES = 5
 FIRST_WAIT = 2
 TIMEOUT = 180  # seconds before a hung call is cut off and retried
 MAX_WAIT = 120  # a rate limit lifting later than this stops the run
+# A self-hosted model's host answers 503 while it starts (Modal loads the
+# weights for minutes); calls keep trying that long, as deploy/modal_vllm.py
+# allows its container to start.
+COLD_START = 20 * 60
+COLD_WAIT = 15
 TRANSIENT = {408, 409, 425, 429}  # plus every 5xx
 RESET_IN_BODY = re.compile(r"X-RateLimit-Reset\W+(\d+)", re.IGNORECASE)
 
@@ -222,6 +227,11 @@ class LiteLLMBackend:
             extra["reasoning_effort"] = "none" if off else self.reasoning
         return extra
 
+    def _starting(self, error, started):
+        """Whether a self-hosted model's host is still starting up."""
+        starting = getattr(error, "status_code", None) == 503
+        return bool(self.api_base) and starting and _now() - started < COLD_START
+
     def _secrets(self, request):
         """Keys an error might echo: the one sent, and any in the environment."""
         keys = [request.get("api_key")]
@@ -273,7 +283,9 @@ class LiteLLMBackend:
     async def _call(self, **request):
         """The response, and the errors retried on the way to it."""
         retries = []
+        tries = 0  # retries other than waiting for a host to start
         wait = FIRST_WAIT
+        started = _now()
         while True:
             await self.gates.wait(self.model)
             self.budget.check(self.model)
@@ -283,13 +295,18 @@ class LiteLLMBackend:
                 if not _provider_error(error):
                     raise
                 said = _one_line(error, self._secrets(request))
+                if self._starting(error, started):
+                    retries.append({"error": said})
+                    await _sleep(COLD_WAIT)
+                    continue
                 if not _transient(error):
                     raise ModelCallError(f"{self.model}: {said}") from None
-                if len(retries) == RETRIES:
+                if tries == RETRIES:
                     raise ModelCallError(
                         f"{self.model}: gave up after {RETRIES + 1} tries: {said}"
                     ) from None
                 retries.append({"error": said})
+                tries += 1
                 if (until := reset_time(error)) and until > _now():
                     if until - _now() > MAX_WAIT:
                         lifts = time.strftime(
