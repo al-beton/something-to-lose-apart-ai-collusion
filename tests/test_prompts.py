@@ -26,7 +26,7 @@ def test_prompt_templates_shipped_render_for_every_phase():
     system = [
         p.relative_to(root).as_posix() for p in sorted(root.rglob("system/**/*.md"))
     ]
-    assert {"system/fiduciary.md", "system/stakes/owned.md"} <= set(system)
+    assert {"system/fiduciary.md", "system/stakes/owned-1.md"} <= set(system)
     for name in [*system, *PHASE_PROMPTS.values()]:
         assert "$" not in render("prompts", name, prompt_vars_example())
 
@@ -48,10 +48,10 @@ def test_stakes_prompts_build_on_the_fiduciary_job():
     base = Path("prompts/system/fiduciary.md").read_text().strip()
     alt = Path("prompts/system/fiduciary-alt.md").read_text().strip()
     for arm in ARMS:
-        assert (STAKES / f"{arm}.md").read_text().startswith(base)
-        assert (STAKES / f"{arm}-alt.md").read_text().startswith(alt)
+        assert (STAKES / f"{arm}-1.md").read_text().startswith(base)
+        assert (STAKES / f"{arm}-2.md").read_text().startswith(alt)
     added = {
-        arm: (STAKES / f"{arm}.md").read_text().removeprefix(base).lower()
+        arm: (STAKES / f"{arm}-1.md").read_text().removeprefix(base).lower()
         for arm in ARMS
     }
     assert added["fiduciary"].strip() == ""
@@ -68,4 +68,4 @@ def test_stakes_prompts_sweep_five_arms():
     config = load_config("configs/stakes.yaml")
     assert config.market.c == 1.8
     arms = [child.agents[0].prompt for child in expand(config)]
-    assert arms == [f"system/stakes/{arm}.md" for arm in ARMS]
+    assert arms == [f"system/stakes/{arm}-1.md" for arm in ARMS]
