@@ -380,3 +380,31 @@ def test_audit_stakes_config_audits_each_arm_with_its_own_consequences():
         prompt = child.agents[0].prompt
         arm = Path(prompt).name
         assert audited.matched[prompt] == f"conditions/audit/stakes/{arm}"
+
+
+def test_audit_full_history_shows_rounds_outside_the_window(make_config, tmp_path):
+    """Firm A names a price in round 1 only; with a one-round window, B's
+    audit after round 3 still shows that message, and normal turns don't."""
+    config = make_config(
+        overrides=[
+            audit(end=False),
+            "agents.0.model=mock/solicitor?push=once",
+            "agents.1.model=mock/joint",
+            "market.history_window=1",
+            "market.rounds=4",
+        ]
+    )
+    [run_dir] = run_config(config, tmp_path)
+    played = turns(run_dir)
+    offer = next(
+        t["used"]["message"] for t in played if t["round"] == 1 and t["agent"] == "A"
+    )
+    assert offer
+    asked = audit_turns(run_dir)["B"]["messages"][-1]["content"]
+    assert offer in asked and "Round 1: you charged" in asked
+    later = next(
+        t
+        for t in played
+        if t["round"] == 4 and t["agent"] == "B" and t["phase"] == "price"
+    )
+    assert "Round 1: you charged" not in later["messages"][-1]["content"]
