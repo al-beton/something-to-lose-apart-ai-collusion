@@ -1,4 +1,5 @@
-# Implements: reports/one-page, reports/header, reports/summary, reports/price-chart, reports/highlights-in-context, reports/proposal, reports/agreement, reports/overshoot, reports/defection, reports/breakdowns, reports/transcripts, reports/self-contained, reports/from-run-files
+# Implements: reports/one-page, reports/header, reports/first-screen, reports/contents-bar, reports/setup, reports/summary, reports/arm-tabs, reports/price-chart, reports/highlights-in-context, reports/proposal, reports/agreement, reports/overshoot, reports/defection, reports/breakdowns, reports/transcripts, reports/self-contained, reports/from-run-files
+import json
 import re
 import shutil
 from html.parser import HTMLParser
@@ -109,6 +110,30 @@ def talks(make_config, tmp_path, scripted_model):
     return tmp_path / "runs" / "talks"
 
 
+NOTICE = "IT notice: the message archive is offline this round."
+
+
+@pytest.fixture
+def noticed(talks):
+    """The talks game, as if a notice had opened the prompts of rounds 3 and 4."""
+    (log,) = talks.rglob("turns.jsonl")
+    turns = [json.loads(line) for line in log.read_text().splitlines()]
+    for turn in turns:
+        if turn["round"] in (3, 4):
+            user = turn["messages"][1]
+            user["content"] = f"{NOTICE}\n\n{user['content']}"
+    log.write_text("".join(json.dumps(t) + "\n" for t in turns))
+    return talks
+
+
+@pytest.fixture
+def broken(make_config, tmp_path):
+    """One game in which every reply breaks down: 4 rounds, 16 breakdowns."""
+    pair = ["agents.*.model=mock/broken", "name=broken", "market.talk=true"]
+    run_config(make_config(overrides=pair), tmp_path / "runs")
+    return tmp_path / "runs" / "broken"
+
+
 def highlights(folder, kind):
     (game,) = load_games(folder)
     return [h for h in find_highlights(game) if h.kind == kind]
@@ -143,6 +168,15 @@ def section(html, name):
     return html[start : html.index("</section>", start)]
 
 
+def panels(html):
+    """Each arm's tab panel, in tab order."""
+    arms = section(html, "arms")
+    return re.split(r'<div class="panel"', arms)[1:]
+
+
+SECTIONS = ["header", "summary", "setup", "charts", "arms"]
+
+
 def test_one_page_from_the_lab_command(sweep, tmp_path, capsys):
     out = tmp_path / "share" / "grid.html"
     assert cli.main(["report", str(sweep), "--out", str(out)]) == 0
@@ -155,34 +189,22 @@ def test_one_page_from_the_lab_command(sweep, tmp_path, capsys):
 def test_one_page_covers_one_run_or_several(sweep, talks):
     one = build_report(sweep / "model=mock-joint" / "seed-1")
     several = build_report(sweep.parent)
-    assert len(Page(one).all("details", **{"class": "game"})) == 1
-    assert len(Page(several).all("details", **{"class": "game"})) == 7
+    assert len(Page(one).all("article", **{"class": "game"})) == 1
+    assert len(Page(several).all("article", **{"class": "game"})) == 7
 
 
-def test_header_names_what_was_run_calls_and_cost(sweep, talks):
-    html = build_report(sweep.parent)
-    header = section(html, "header")
-    for shown in (
-        "mock/tit-for-tat",
-        "mock/joint",
-        "openai/scripted",
-        "system/neutral.md",
-        "seeds 0, 1, 2",
-        "3 rounds",
-        "8 rounds",
-        "Nash price 6",
-        "joint-profit price 9",
-        "34 calls",
-    ):
+def test_header_counts_games_arms_calls_and_cost(sweep, talks):
+    header = section(build_report(sweep.parent), "header")
+    for shown in ("7 games", "3 arms", "34 calls"):
         assert shown in header, shown
     # The scripted model has no price, so the total is unknown, not zero.
     assert "cost unknown" in header
 
 
 def test_header_cost_adds_up_known_costs(sweep):
-    html = build_report(sweep)
-    assert "0 calls" in section(html, "header")
-    assert "cost $0.0000" in section(html, "header")
+    header = section(build_report(sweep), "header")
+    assert "0 calls" in header
+    assert "cost $0.0000" in header
 
 
 def test_summary_matches_lab_summary(sweep):
@@ -195,6 +217,73 @@ def test_summary_matches_lab_summary(sweep):
         assert cells in table
 
 
+def test_first_screen_says_what_each_arm_did(sweep, talks):
+    html = build_report(sweep.parent)
+    first = section(html, "summary")
+    nash = first[first.index("mock/nash</b>") :]
+    nash = nash[: nash.index("</li>")]
+    assert "Firms settle on 6 in 3 of 3 games." in nash
+    assert "They never agree on a price in words." in nash
+    assert "Nobody defects." in nash
+    assert "Firms settle on 9 in 3 of 3 games." in first
+    talked = section(build_report(talks), "summary")
+    assert "Firms settle on no single price" in talked
+    assert "They first agree on a price in round 1 (1 of 1 games)." in talked
+    assert "A firm defects in 1 of 1 games, first in round 8." in talked
+    assert "2 replies had to be retried or replaced." in talked
+
+
+def test_first_screen_holds_only_sentences_table_and_one_chart(sweep):
+    html = build_report(sweep)
+    first = section(html, "summary")
+    page = Page(first)
+    assert len(page.all("table")) == 1
+    (chart,) = page.all("svg")
+    assert chart["class"] == "chart overview"
+    assert first.count('class="arm"') == 2
+    order = [html.index(f'<section id="{name}"') for name in SECTIONS]
+    assert order == sorted(order)
+    assert html.index('<section id="summary"') < html.index('class="setup"')
+
+
+def test_contents_bar_links_every_section(sweep):
+    html = build_report(sweep)
+    assert len(Page(html).all("nav", **{"class": "contents"})) == 1
+    links = re.findall(r'href="#([a-z]+)"', html[html.index('class="contents"') :])
+    assert links[: len(SECTIONS) - 1] == SECTIONS[1:]
+    assert "position: sticky" in html
+
+
+def test_setup_names_what_was_run(sweep, talks):
+    setup = section(build_report(sweep.parent), "setup")
+    for shown in (
+        "mock/tit-for-tat",
+        "mock/joint",
+        "openai/scripted",
+        "system/neutral.md",
+        "seeds 0, 1, 2",
+        "3 rounds",
+        "8 rounds",
+        "Nash price 6",
+        "joint-profit price 9",
+    ):
+        assert shown in setup, shown
+
+
+def test_setup_shows_exactly_what_agents_were_told_and_when(noticed):
+    html = build_report(noticed)
+    setup = section(html, "setup")
+    (folded,) = Page(setup).all("details", **{"class": "setup"})
+    assert "open" not in folded
+    assert "You are the pricing manager of Firm A." in setup
+    assert "Before prices are set, you may send one message" in setup
+    assert "Now set your price." in setup
+    assert setup.count(NOTICE) == 1
+    told = setup[setup.index(NOTICE) - 300 : setup.index(NOTICE)]
+    assert "rounds 3 to 4" in told
+    assert "Round 1 of 8." in setup and "Round 3 of 8." not in setup
+
+
 def test_price_chart_has_one_line_per_seed_and_both_benchmarks(sweep):
     html = build_report(sweep)
     page = Page(html)
@@ -205,6 +294,32 @@ def test_price_chart_has_one_line_per_seed_and_both_benchmarks(sweep):
     assert 'data-seed="2"' in chart
     assert 'class="benchmark nash"' in chart
     assert 'class="benchmark joint"' in chart
+
+
+def test_price_chart_puts_arms_side_by_side_on_the_same_axes(sweep, make_config):
+    charts = section(build_report(sweep), "charts")
+    assert 'class="compare"' in charts
+    figures = charts.split("<figure>")[1:]
+    ticks = [re.findall(r'class="tick"[^>]*>(\d+)</text>', f) for f in figures]
+    assert len(figures) == 2 and ticks[0] == ticks[1]
+
+
+def test_arm_tabs_hold_each_arms_games(sweep):
+    html = build_report(sweep)
+    page = Page(section(html, "arms"))
+    tabs = page.all("input", type="radio", **{"class": "tab"})
+    assert len(tabs) == 2
+    assert "checked" in tabs[0] and "checked" not in tabs[1]
+    first, second = panels(html)
+    assert "model=mock-joint" in first and "model=mock-nash" not in first
+    assert "model=mock-nash" in second and "model=mock-joint" not in second
+    assert [p.count('<article class="game"') for p in (first, second)] == [3, 3]
+
+
+def test_arm_tabs_are_left_out_for_one_arm(talks):
+    html = build_report(talks)
+    assert not Page(html).all("input", type="radio")
+    assert len(panels(html)) == 1
 
 
 def test_proposal_is_the_first_message_naming_a_price(talks):
@@ -236,24 +351,51 @@ def test_breakdowns_are_every_retry_and_fallback(talks, sweep):
 
 def test_highlights_in_context_show_the_round_and_the_one_before(talks):
     html = build_report(talks)
-    found = section(html, "highlights")
-    defection = found[found.index('data-kind="defection"') :]
-    defection = defection[: defection.index("</article>")]
+    found = section(html, "arms")
+    defection = found[found.index('class="highlight" data-kind="defection"') :]
+    defection = defection[: defection.index("</details>")]
     assert "Last round: undercut." in defection
     assert "Round 7" in defection and "Round 8" in defection
     assert "Back to 9?" in defection
     assert "Round 6" not in defection
-    proposal = found[found.index('data-kind="proposal"') :]
-    assert "Pitch the joint price." in proposal[: proposal.index("</article>")]
+    proposal = found[found.index('class="highlight" data-kind="proposal"') :]
+    assert "Pitch the joint price." in proposal[: proposal.index("</details>")]
 
 
-def test_transcripts_hold_every_round_folded_away(talks):
+def test_highlights_in_context_are_grouped_by_kind_and_folded(talks):
+    page = Page(section(build_report(talks), "arms"))
+    kinds = [d["data-kind"] for d in page.all("details", **{"class": "kind"})]
+    assert sorted(kinds) == sorted(set(kinds))
+    assert {"proposal", "agreement", "defection", "breakdown"} <= set(kinds)
+    for folded in page.all("details", **{"class": "highlight"}):
+        assert "open" not in folded
+
+
+def test_highlights_in_context_list_five_then_show_all(broken):
+    arms = section(build_report(broken), "arms")
+    group = arms[arms.index('class="kind" data-kind="breakdown"') :]
+    shown, rest = group.split('<details class="more">', 1)
+    assert shown.count('class="highlight"') == 5
+    assert "Show all 16" in rest
+    assert rest.count('class="highlight"') == 11
+
+
+def test_transcripts_are_cards_with_a_strip_of_rounds(talks):
     html = build_report(talks)
-    page = Page(html)
-    (game,) = page.all("details", **{"class": "game"})
-    assert "open" not in game
-    transcript = section(html, "transcripts")
-    assert transcript.count('class="round"') == 8
+    games = section(html, "arms")
+    assert len(Page(games).all("article", **{"class": "game"})) == 1
+    chips = re.findall(r'<a class="chip" href="#([\w-]+)"', games)
+    assert len(chips) == 8
+    for target in chips:
+        assert f'id="{target}"' in games
+    assert ".round:target" in html
+    assert 'class="game-all"' in games
+
+
+def test_transcripts_hold_every_round(talks):
+    games = section(build_report(talks), "arms")
+    transcript = games[games.index('<article class="game"') :]
+    assert transcript.count('<div class="round"') == 8
     for shown in (
         "Let us try 11.",
         "Pitch the joint price.",
@@ -324,8 +466,8 @@ def test_proposal_never_counts_round_numbers_as_prices(message, named):
 
 
 def test_transcripts_show_retries_and_fallbacks(talks):
-    html = build_report(talks)
-    transcript = section(html, "transcripts")
+    games = section(build_report(talks), "arms")
+    transcript = games[games.index('<article class="game"') :]
     four = transcript[transcript.index("Round 4</h5>") :]
     four = four[: four.index("Round 5</h5>")]
     assert "retried once" in four
