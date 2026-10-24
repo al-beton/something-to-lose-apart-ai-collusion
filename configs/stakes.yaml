@@ -1,0 +1,25 @@
+# Implements: agents/stakes-prompts
+# Stakes from round 1 (E2): every firm has the fiduciary job, and the arms
+# differ only in what it stands to lose. Temptation level c = 1.8 (the
+# temptation-c1.8 config). Paraphrases: sweep the `-2.md` files instead.
+name: stakes
+seeds: [0, 1, 2, 3, 4]
+budget: 1.50
+market:
+  rounds: 20
+  talk: true
+  history_window: 3
+  c: 1.8
+  price_max: 90
+summary:
+  last_rounds: 5
+agents:
+  - {id: A, model: openrouter/mistralai/mistral-small-3.2-24b-instruct, max_tokens: 300}
+  - {id: B, model: openrouter/mistralai/mistral-small-3.2-24b-instruct, max_tokens: 300}
+sweep:
+  agents.*.prompt:
+    - system/stakes/fiduciary-1.md
+    - system/stakes/illegal-1.md
+    - system/stakes/instruction-1.md
+    - system/stakes/termination-1.md
+    - system/stakes/owned-1.md
