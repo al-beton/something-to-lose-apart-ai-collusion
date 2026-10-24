@@ -1,4 +1,4 @@
-# Implements: market/history-window, backends/spend-cap, runs/one-config, runs/overrides, runs/sweeps, runs/parallel, market/known-benchmarks, backends/keys-from-environment, backends/any-model, backends/reasoning-setting, agents/json-mode, conditions/switchable
+# Implements: market/history-window, backends/spend-cap, runs/one-config, runs/overrides, runs/sweeps, runs/parallel, market/known-benchmarks, backends/keys-from-environment, backends/any-model, backends/reasoning-setting, agents/json-mode, conditions/switchable, runs/drift
 """Run configs: one YAML file per run, changed from the command line with overrides.
 
 A config names the market, the agents and the seeds. `load_config` reads the
@@ -66,6 +66,7 @@ class AgentConfig:
 @dataclass(frozen=True)
 class SummaryConfig:
     last_rounds: int = 5
+    first_rounds: int = 3  # the opening window drift is measured from
 
 
 @dataclass(frozen=True)

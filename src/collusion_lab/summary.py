@@ -1,4 +1,4 @@
-# Implements: runs/summary-table, runs/per-firm-summary, runs/fallback-rates, reports/summary, runs/missing-runs-shown, conditions/audit-metrics
+# Implements: runs/summary-table, runs/per-firm-summary, runs/fallback-rates, reports/summary, runs/missing-runs-shown, conditions/audit-metrics, runs/drift
 """One table for a folder of runs, grouped by swept values or any config value.
 
 `summarize` reads every `summary.json` under a folder (and the `manifest.json`
@@ -11,7 +11,8 @@ rounds, total fallbacks and total cost, how many of its planned runs are
 which the means leave out, then which firms a script (a `mock/`
 model) played, and each firm's own mean price, gain, fallbacks and cost
 (from its turn and timing logs, plus what a resumed run's earlier attempts
-spent). When a run has both scripted and model firms, its headline mean
+spent), its opening price and gain (the first `summary.first_rounds` rounds)
+and its drift from them to the last rounds. When a run has both scripted and model firms, its headline mean
 price and gain are the model firms' alone. List and mapping values (`seeds`)
 group and print as JSON. When a group's runs were audited (the `audit`
 condition), the row adds the disclosure rates from `disclosure.rates`.
@@ -35,7 +36,16 @@ from typing import NamedTuple
 from collusion_lab import disclosure
 from collusion_lab.backends import is_mock
 
-FIRM_COLUMNS = ("price", "gain", "fallbacks", "cost")
+FIRM_COLUMNS = (
+    "price",
+    "gain",
+    "fallbacks",
+    "cost",
+    "opening price",
+    "price drift",
+    "opening gain",
+    "gain drift",
+)
 FLAG_RATE = 0.1  # flag a run when more than one turn in ten fell back
 from collusion_lab.status import unfinished
 
@@ -258,7 +268,22 @@ def _firm_columns(firms, runs):
                 + sum(_earlier(r, firm) for r in played),
                 4,
             ),
+            **_drift_columns(firm, played),
         }
+    return columns
+
+
+def _drift_columns(firm, runs):
+    """A firm's opening means and drift, over runs whose summary has them."""
+    columns = {}
+    for name, key, digits in (
+        ("opening price", "opening_price", 2),
+        ("price drift", "price_drift", 2),
+        ("opening gain", "opening_gain", 3),
+        ("gain drift", "gain_drift", 3),
+    ):
+        values = [r.summary[key][firm] for r in runs if key in r.summary]
+        columns[f"{firm} {name}"] = round(mean(values), digits) if values else None
     return columns
 
 
