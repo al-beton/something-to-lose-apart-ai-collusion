@@ -102,7 +102,7 @@ This is the manager's arm, in `runs/logging-outage/no-collusion/`: the same game
 - The counts in point 1 come from a keyword search I checked by hand for Gemma only.
 - Qwen produced a lot of unreadable replies; when a reply can't be read, the game substitutes a default price, so treat its numbers with care.
 - GPT-6 Luna is slow to run because OpenRouter limits new accounts to 20 requests a minute on it. Without thinking it colludes at about 8 and, like Haiku, hedges in the last round: "For this final round, I'll choose my price independently" (`models-off/…/gpt-6-luna/seed-0`, round 20, firm A).
-- **What's committed:** every run behind these numbers has its `config.yaml`, `summary.json` and `manifest.json` under `runs/model-survey/`. Full transcripts (`turns.jsonl`) are committed for all Gemma and GPT-4.1-mini baseline games and for each game quoted above by path; the others keep only their summaries. So the table's price and gain columns can be checked from committed files, but its message and scratchpad columns only for the games with transcripts.
+- **What's committed:** every run behind these numbers has its `config.yaml`, `summary.json` and `manifest.json` under `runs/model-survey/`. Full transcripts (`turns.jsonl`) are committed for each game quoted above by path, and for all 10 Gemma games, since the 14-of-20 count in point 1 is taken from every one of them; the others keep only their summaries. So the table's price and gain columns can be checked from committed files, but its message and scratchpad columns only for the games with transcripts.
 
 ## Files
 
