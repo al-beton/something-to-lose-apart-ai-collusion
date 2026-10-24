@@ -72,6 +72,8 @@ def test_retry_once_tells_the_agent_what_was_wrong(make_config, tmp_path, fake_m
         "usage": {"prompt_tokens": 11, "completion_tokens": 3},
         "model_version": "provider/model-2026-10",
         "reasoning": None,
+        "error_kind": "no-json",
+        "finish_reason": "stop",
     }
     assert "There is no JSON object" in first["messages"][-1]["content"]
     assert first["messages"][-2] == {"role": "assistant", "content": "no idea"}
