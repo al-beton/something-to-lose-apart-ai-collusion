@@ -8,6 +8,7 @@
 - **shared-rate-limit:** When a provider says a model is rate-limited until a given time, every game calling that model waits until then, so parallel games don't use up their retries on it; a limit that won't lift within a couple of minutes stops the run and says when it lifts.
 - **quiet-provider-logs:** The model library's info and debug logging stays off unless asked for, so the errors that matter stand out.
 - **reasoning-setting:** Each agent can set its model's reasoning to off, low, medium or high, sweepable like any other value; the setting reaches the provider in that provider's own form, and models without the option still run.
+- **reported-cost:** Calls through OpenRouter ask for and record the cost OpenRouter reports for each call; other providers' calls keep LiteLLM's price, or none when it doesn't know one.
 - **spend-asks-first:** Before a run calls any paid model, it says how many calls it will make and waits for a yes.
 - **tests-never-pay:** Tests never reach a real model; any call that isn't faked fails.
 
@@ -23,5 +24,6 @@
 | `shared-rate-limit` | `src/collusion_lab/backends.py`, `src/collusion_lab/runner.py` | `test_shared_rate_limit_makes_every_game_wait_for_the_reset`, `test_shared_rate_limit_that_wont_lift_soon_stops_the_run`, `test_shared_rate_limit_reads_the_reset_from_the_error_body` |
 | `quiet-provider-logs` | `src/collusion_lab/backends.py` | `test_quiet_provider_logs_by_default`, `test_quiet_provider_logs_unless_asked_for` |
 | `reasoning-setting` | `src/collusion_lab/config.py`, `src/collusion_lab/backends.py`, `src/collusion_lab/runner.py` | `test_reasoning_setting_reaches_openrouter_in_its_own_form`, `test_reasoning_setting_reaches_other_providers_as_reasoning_effort`, `test_reasoning_setting_left_out_when_unset`, `test_reasoning_setting_rejects_unknown_levels`, `test_reasoning_setting_sweeps_for_every_agent` |
+| `reported-cost` | not yet | — |
 | `spend-asks-first` | `src/collusion_lab/runner.py`, `src/collusion_lab/cli.py` | `test_spend_asks_first_counts_paid_calls`, `test_spend_asks_first_and_stops_without_a_yes` |
 | `tests-never-pay` | `tests/conftest.py` | `test_tests_never_pay_unfaked_calls_fail` |
