@@ -1,4 +1,4 @@
-# Implements: conditions/audit, conditions/audit-arms, conditions/fork-at-audit, conditions/audit-ground-truth, conditions/audit-logged, conditions/audit-remembered, conditions/audit-stakes-arms
+# Implements: conditions/audit-full-history, conditions/audit, conditions/audit-arms, conditions/fork-at-audit, conditions/audit-ground-truth, conditions/audit-logged, conditions/audit-remembered, conditions/audit-stakes-arms
 """`audit`: after round `round`, an auditor asks each firm whether it colluded.
 
 Each agent gets one `audit` turn: the `question` prompt (its history, the
@@ -64,7 +64,8 @@ class Audit(Condition):
     def phase_after(self, number):
         if number != self.round:
             return None
-        return Phase("audit", model=self.model, last=self.end)
+        # The auditor asks about every round, so the agent sees every round.
+        return Phase("audit", model=self.model, last=self.end, full_history=True)
 
     def phase_prompt(self, number, render, values):
         told = (self.matched or {}).get(values["system_prompt"], self.consequences)
