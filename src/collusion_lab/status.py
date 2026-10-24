@@ -44,10 +44,13 @@ def load(path):
 
 
 def unfinished(folder):
-    """Every planned run under a folder that hasn't finished, by run id."""
+    """Every planned run under a folder that hasn't finished, by its path
+    relative to the folder: run ids repeat across output folders."""
+    folder = Path(folder)
     runs = {}
-    for path in sorted(Path(folder).rglob(NAME)):
+    for path in sorted(folder.rglob(NAME)):
+        out = path.parent.parent  # status.json sits in <out>/<name>/
         for run, entry in load(path).items():
             if entry["state"] not in DONE:
-                runs[run] = entry
+                runs[(out / run).relative_to(folder).as_posix()] = entry
     return runs
