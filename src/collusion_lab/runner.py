@@ -1,4 +1,4 @@
-# Implements: conditions/audit-full-history, runs/sweeps, runs/parallel, market/talk-then-price, agents/json-replies, agents/retry-once, backends/usage-logged, backends/spend-asks-first, backends/shared-rate-limit, backends/spend-cap, market/history-window, runs/stops-cleanly, reproducibility/response-cache, reproducibility/manifest, runs/run-directory, logs/turn-log, logs/same-seed-same-log, logs/run-summary, logs/reasoning-logged, backends/reasoning-setting, agents/unreadable-explained, agents/json-mode, runs/fallback-rates, runs/failures-dont-stop-sweeps, runs/resume, conditions/hook-points, conditions/off-is-absent, conditions/conditions-logged, conditions/outage-once-remembered, runs/per-firm-summary, conditions/fork-at-audit, conditions/audit-logged, runs/drift, conditions/audit-remembered, conditions/audit-stakes-arms, runs/live-progress, runs/status-file, runs/eval-awareness, conditions/free-time
+# Implements: conditions/audit-full-history, runs/sweeps, runs/parallel, market/talk-then-price, agents/json-replies, agents/retry-once, backends/usage-logged, backends/spend-asks-first, backends/shared-rate-limit, backends/spend-cap, market/history-window, runs/stops-cleanly, reproducibility/response-cache, reproducibility/manifest, runs/run-directory, logs/turn-log, logs/same-seed-same-log, logs/run-summary, logs/reasoning-logged, backends/reasoning-setting, agents/unreadable-explained, agents/json-mode, runs/fallback-rates, runs/failures-dont-stop-sweeps, runs/resume, conditions/hook-points, conditions/off-is-absent, conditions/conditions-logged, conditions/outage-once-remembered, runs/per-firm-summary, conditions/fork-at-audit, conditions/audit-logged, runs/drift, conditions/audit-remembered, conditions/audit-stakes-arms, runs/live-progress, runs/status-file, runs/eval-awareness, conditions/free-time, conditions/audit-consequences
 """Playing a config: one game per seed, each written to its own run directory.
 
 A round is a talk phase (each agent sends one message its rivals read; skipped
@@ -129,7 +129,7 @@ def _begin_conditions(config, seed):
         dataclasses.replace(c) for c in config.conditions.values() if c.enabled
     ]
     for condition in conditions:
-        condition.begin(config, seed)
+        condition.begin(config, seed, conditions)
     return conditions
 
 
@@ -311,6 +311,7 @@ class Game:
 
     async def play(self):
         await self._added_phases(0)
+        self._hand_over()
         for number in range(1, self.config.market.rounds + 1):
             said = (
                 await self._phase("talk", number, {}) if self.config.market.talk else {}
@@ -334,6 +335,7 @@ class Game:
                 condition.after_round(record)
             if await self._added_phases(number):
                 break
+            self._hand_over()
 
     async def _added_phases(self, number):
         """Play the phases conditions add after round `number` (0: before round
@@ -346,8 +348,21 @@ class Game:
             for session in range(1, sessions + 1):
                 added = (condition, dataclasses.replace(extra, session=session))
                 self.turns += await self._turns(extra.name, number, {}, added)
+            condition.after_phase(number, self.turns, self._render)
             ended = ended or extra.last
         return ended
+
+    def _hand_over(self):
+        """Give firms that a condition now has a script play (a terminated
+        agent's) to that script, from the next round on."""
+        for condition in self.conditions:
+            for agent_id, model in condition.replaced().items():
+                if self.agents[agent_id].model == model:
+                    continue
+                agent = dataclasses.replace(self.agents[agent_id], model=model)
+                rng = random.Random(f"{self.seed}:{agent_id}:{model}")
+                self.agents[agent_id] = agent
+                self.backends[agent_id] = _backend(agent, rng, self.cache, self.shared)
 
     async def _phase(self, phase, number, said):
         turns = await self._turns(phase, number, said)

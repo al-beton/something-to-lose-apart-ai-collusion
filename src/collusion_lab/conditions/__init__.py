@@ -9,7 +9,9 @@ Conditions that aren't enabled do nothing at all.
 Each game plays with its own copy of every enabled condition, so a condition
 may keep state for the game it is in. The game calls each one at these
 points, in config order:
-- `begin(config, seed)`: once, before anything else, with the game's config;
+- `begin(config, seed, conditions)`: once, before anything else, with the
+  game's config and its (begun or not yet begun) copies of every condition,
+  so one condition can reach another (the audit takes free time away);
 - `system(render)`: text added, after a blank line, to every agent's system
   prompt;
 - `round_start(number, render)`: a notice shown before the round's first phase;
@@ -23,6 +25,10 @@ points, in config order:
   usual prompt values (`$history` and so on) plus `agent` (its id) and
   `session` (which of its turns this is); replies are read by
   `agents.parse_reply` under the phase's name;
+- `after_phase(number, turns, render)`: once a phase it added after round
+  `number` has been played, with every turn so far;
+- `replaced()`: firms a scripted player now plays, as {agent: model}; the
+  game hands each over before its next round;
 - `in_history(agent, turns, render)`: lines kept in that agent's history
   for its later turns (each a string), given the turns played so far;
 - `summary(turns, market)`: the condition's results for `summary.json`, under
@@ -78,8 +84,14 @@ class Condition:
 
     name = ""
 
-    def begin(self, config, seed):
+    def begin(self, config, seed, conditions):
         return None
+
+    def after_phase(self, number, turns, render):
+        return None
+
+    def replaced(self):
+        return {}
 
     def active(self, number):
         return True
