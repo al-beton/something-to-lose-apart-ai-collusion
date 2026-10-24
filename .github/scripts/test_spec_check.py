@@ -193,6 +193,26 @@ class SpecCheckTests(unittest.TestCase):
             warnings,
         )
 
+    def test_everything_traces_matches_listed_tests_by_their_whole_name(self):
+        tests = TESTS.replace(
+            "test_pr_types_accepts_feat()", "test_pr_types_accepts_feat_and_more()"
+        )
+        warnings = warnings_for(**{".github/scripts/test_pr_gate.py": tests})
+        self.assertIn(
+            "contributing/spec/pull-requests.md: 'three-types' lists test "
+            "'test_pr_types_accepts_feat', which doesn't exist.",
+            warnings,
+        )
+
+    def test_everything_traces_requires_each_row_to_name_an_enforcer(self):
+        spec = SPEC.replace("`.github/scripts/pr_gate.py`, reviewer", " ")
+        warnings = warnings_for(**{"contributing/spec/pull-requests.md": spec})
+        self.assertIn(
+            "contributing/spec/pull-requests.md: 'closing-block' names nothing "
+            "that enforces it; name files, reviewer or a setting, or 'not yet'.",
+            warnings,
+        )
+
     def test_tests_are_functions_or_it_and_test_titles_only(self):
         files = {
             ".github/scripts/test_pr_gate.py": (

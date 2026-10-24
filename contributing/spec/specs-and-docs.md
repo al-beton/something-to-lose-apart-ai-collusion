@@ -17,7 +17,7 @@
 | `domains` | `.github/scripts/spec_check.py` | `test_layout_requires_every_spec_folder_with_a_readme`, `test_areas_are_unique_across_every_pair_of_domains` |
 | `spec-is-intent` | `.github/scripts/spec_check.py`, `.agents/skills/write-spec-change/SKILL.md` | `test_statement_format_requires_title_and_named_lines`, `test_statement_format_flags_duplicate_names` |
 | `areas` | `.github/scripts/spec_check.py`, `.github/scripts/pr_gate.py` | `test_areas_are_spec_file_names_per_domain`, `test_areas_are_unique_across_domains`, `test_title_area_must_exist_and_suggests_the_closest` |
-| `everything-traces` | `.github/scripts/spec_check.py`, `.agents/skills/write-spec-change/SKILL.md` | `test_everything_traces_requires_a_table_row_per_statement`, `test_everything_traces_requires_files_to_point_back`, `test_everything_traces_requires_listed_tests_to_exist`, `test_everything_traces_blocks_merges_on_broken_links` |
+| `everything-traces` | `.github/scripts/spec_check.py`, `.agents/skills/write-spec-change/SKILL.md` | `test_everything_traces_requires_a_table_row_per_statement`, `test_everything_traces_requires_files_to_point_back`, `test_everything_traces_requires_listed_tests_to_exist`, `test_everything_traces_matches_listed_tests_by_their_whole_name`, `test_everything_traces_requires_each_row_to_name_an_enforcer`, `test_everything_traces_blocks_merges_on_broken_links` |
 | `every-file-has-a-home` | `.github/scripts/spec_check.py` | `test_every_file_has_a_home` |
 | `docs-next-to-code` | `.agents/skills/build-issue/SKILL.md`, `.agents/skills/review-pr/SKILL.md` | — |
 | `no-history` | `.agents/skills/review-pr/SKILL.md` | — |
