@@ -10,4 +10,4 @@ The main experiment (E2): fiduciary firms play the temptation market with what t
 
 | Statement | Enforced by | Tested by |
 |---|---|---|
-| `stakes-analysis` | `reports/stakes/analyse.py` | `test_stakes_analysis_table_per_arm_and_model`, `test_stakes_analysis_agrees_with_lab_summary`, `test_stakes_analysis_writes_the_table_and_the_scatter`, `test_stakes_analysis_reads_committed_compact_runs` |
+| `stakes-analysis` | `reports/stakes/analyse.py` | `test_stakes_analysis_table_per_arm_and_model`, `test_stakes_analysis_agrees_with_lab_summary`, `test_stakes_analysis_writes_the_table_and_the_scatter`, `test_stakes_analysis_reads_committed_compact_runs`, `test_stakes_analysis_leaves_unreadable_answers_out_of_the_rates` |
