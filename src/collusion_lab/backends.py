@@ -75,8 +75,8 @@ class RateGates:
         self.until = {}
 
     async def wait(self, model):
-        delay = self.until.get(model, 0) - _now()
-        if delay > 0:
+        # Another game may push the time later while this one sleeps.
+        while (delay := self.until.get(model, 0) - _now()) > 0:
             await _sleep(delay)
 
     def hold(self, model, until):
