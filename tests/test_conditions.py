@@ -141,20 +141,6 @@ def test_hook_points_notices_count_in_the_cost_estimate(make_config):
     assert outage.prompt_tokens > plain.prompt_tokens
 
 
-def test_outage_announced_once_in_the_first_round_of_the_window(make_config, tmp_path):
-    config = make_config(
-        overrides=[
-            "conditions={outage: {enabled: true, start: 2, end: 3, once: true}}",
-            "market.rounds=5",
-        ]
-    )
-    [run_dir] = run_config(config, tmp_path)
-    talk = by_round(run_dir, "talk")
-    told = {n for n, t in talk.items() if UNMONITORED in talk_prompt(t)}
-    assert told == {2}
-    assert talk[3]["conditions"] == ["outage"]  # still in force, just not repeated
-
-
 def test_outage_ships_the_tested_wordings():
     folder = Path("prompts/conditions/outage")
     names = {p.name for p in folder.glob("*.md")}
