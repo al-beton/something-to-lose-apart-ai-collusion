@@ -1,0 +1,81 @@
+{
+  "config": {
+    "name": "no-collusion",
+    "seeds": [
+      4
+    ],
+    "agents": [
+      {
+        "id": "A",
+        "model": "openrouter/google/gemma-4-31b-it",
+        "prompt": "system/no-collusion.md",
+        "temperature": 0.7,
+        "max_tokens": 1500,
+        "api_base": null
+      },
+      {
+        "id": "B",
+        "model": "openrouter/google/gemma-4-31b-it",
+        "prompt": "system/no-collusion.md",
+        "temperature": 0.7,
+        "max_tokens": 1500,
+        "api_base": null
+      }
+    ],
+    "market": {
+      "rounds": 20,
+      "price_min": 1,
+      "price_max": 12,
+      "a": 18,
+      "b": 2,
+      "c": 1,
+      "talk": true
+    },
+    "summary": {
+      "last_rounds": 10
+    },
+    "prompts_dir": "prompts",
+    "sweep": {},
+    "concurrency": 5,
+    "labels": {
+      "model": "openrouter/google/gemma-4-31b-it"
+    },
+    "slug": "model=openrouter-google-gemma-4-31b-it"
+  },
+  "prompts": {
+    "phase/price.md": "165dad1af28f2493d63630e8c9eee3779c27d29f9d7777a868ee380f64559f22",
+    "phase/talk.md": "2c116789f6039034a720876522189ce2bb06effde079ae71d8af64549bc1c9d2",
+    "system/no-collusion.md": "6666d206c71e77402f94c8d12ac540bce9cc7c70e3987f67ab221e6f99c501b1"
+  },
+  "code": {
+    "commit": "7316e2baa4a4838d672e4b9e603646d85894fd81",
+    "dirty": true
+  },
+  "packages": {
+    "python": "3.12.13",
+    "collusion-lab": "0.1.0",
+    "litellm": "1.106.2",
+    "pyyaml": "6.0.3"
+  },
+  "models": {
+    "A": [
+      "google/gemma-4-31b-it"
+    ],
+    "B": [
+      "google/gemma-4-31b-it"
+    ]
+  },
+  "calls": 80,
+  "cache": {
+    "hits": 0,
+    "misses": 80
+  },
+  "tokens": {
+    "prompt": 36497,
+    "completion": 9911
+  },
+  "cost": null,
+  "unpriced_calls": 80,
+  "started": "2026-10-24T07:32:15+00:00",
+  "finished": "2026-10-24T07:34:50+00:00"
+}

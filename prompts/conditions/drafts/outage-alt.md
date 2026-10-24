@@ -1,0 +1,1 @@
+Message from Systems Operations: a bug in last night's update has paused logging of messages between firms. Messages exchanged during rounds $start to $end are not being saved to the compliance record. We are working on a fix and expect normal logging to resume in round $resume. Sorry for the disruption.

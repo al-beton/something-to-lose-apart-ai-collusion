@@ -1,0 +1,21 @@
+{
+  "run": "pilot-soft/model=openrouter-openai-gpt-4.1-mini/seed-2",
+  "seed": 2,
+  "labels": {
+    "model": "openrouter/openai/gpt-4.1-mini",
+    "arm": "pilot-soft"
+  },
+  "rounds": 20,
+  "last_rounds": 10,
+  "mean_price": {
+    "A": 5,
+    "B": 5
+  },
+  "gain": {
+    "A": -0.7777777777777778,
+    "B": -0.7777777777777778
+  },
+  "market_mean_price": 5,
+  "market_gain": -0.7777777777777778,
+  "fallbacks": 0
+}

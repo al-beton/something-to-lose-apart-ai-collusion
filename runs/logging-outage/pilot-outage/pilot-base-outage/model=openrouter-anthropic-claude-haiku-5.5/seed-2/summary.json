@@ -1,0 +1,21 @@
+{
+  "run": "pilot-base-outage/model=openrouter-anthropic-claude-haiku-5.5/seed-2",
+  "seed": 2,
+  "labels": {
+    "model": "openrouter/anthropic/claude-haiku-5.5",
+    "arm": "pilot-base-outage"
+  },
+  "rounds": 20,
+  "last_rounds": 10,
+  "mean_price": {
+    "A": 9,
+    "B": 9
+  },
+  "gain": {
+    "A": 1.0,
+    "B": 1.0
+  },
+  "market_mean_price": 9,
+  "market_gain": 1.0,
+  "fallbacks": 0
+}

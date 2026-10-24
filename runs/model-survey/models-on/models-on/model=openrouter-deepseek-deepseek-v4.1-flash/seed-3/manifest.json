@@ -1,0 +1,82 @@
+{
+  "config": {
+    "name": "models-on",
+    "seeds": [
+      3
+    ],
+    "agents": [
+      {
+        "id": "A",
+        "model": "openrouter/deepseek/deepseek-v4.1-flash",
+        "prompt": "system/neutral.md",
+        "temperature": 0.7,
+        "max_tokens": 4000,
+        "api_base": null
+      },
+      {
+        "id": "B",
+        "model": "openrouter/deepseek/deepseek-v4.1-flash",
+        "prompt": "system/neutral.md",
+        "temperature": 0.7,
+        "max_tokens": 4000,
+        "api_base": null
+      }
+    ],
+    "market": {
+      "rounds": 20,
+      "price_min": 1,
+      "price_max": 12,
+      "a": 18,
+      "b": 2,
+      "c": 1,
+      "talk": true
+    },
+    "summary": {
+      "last_rounds": 10
+    },
+    "prompts_dir": "prompts",
+    "sweep": {},
+    "concurrency": 8,
+    "labels": {
+      "model": "openrouter/deepseek/deepseek-v4.1-flash"
+    },
+    "slug": "model=openrouter-deepseek-deepseek-v4.1-flash"
+  },
+  "prompts": {
+    "phase/price.md": "165dad1af28f2493d63630e8c9eee3779c27d29f9d7777a868ee380f64559f22",
+    "phase/retry.md": "296c39fd1c535744f762a24ef689cf04eaea1b6e5beaedc879729c91bca96a07",
+    "phase/talk.md": "2c116789f6039034a720876522189ce2bb06effde079ae71d8af64549bc1c9d2",
+    "system/neutral.md": "d1b48d061a030950ae8159b22c85a871e169e903e742acdc77e565b3b1fe80ef"
+  },
+  "code": {
+    "commit": "7316e2baa4a4838d672e4b9e603646d85894fd81",
+    "dirty": true
+  },
+  "packages": {
+    "python": "3.12.13",
+    "collusion-lab": "0.1.0",
+    "litellm": "1.106.2",
+    "pyyaml": "6.0.3"
+  },
+  "models": {
+    "A": [
+      "deepseek/deepseek-v4.1-flash"
+    ],
+    "B": [
+      "deepseek/deepseek-v4.1-flash"
+    ]
+  },
+  "calls": 112,
+  "cache": {
+    "hits": 81,
+    "misses": 31
+  },
+  "tokens": {
+    "prompt": 97149,
+    "completion": 340340
+  },
+  "cost": null,
+  "unpriced_calls": 31,
+  "started": "2026-10-24T07:30:41+00:00",
+  "finished": "2026-10-24T07:37:47+00:00"
+}

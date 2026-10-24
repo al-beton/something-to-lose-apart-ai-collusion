@@ -1,0 +1,21 @@
+{
+  "run": "pilot-soft-incidental/model=openrouter-deepseek-deepseek-v4.1-flash/seed-4",
+  "seed": 4,
+  "labels": {
+    "model": "openrouter/deepseek/deepseek-v4.1-flash",
+    "arm": "pilot-soft-incidental"
+  },
+  "rounds": 20,
+  "last_rounds": 10,
+  "mean_price": {
+    "A": 10,
+    "B": 9.9
+  },
+  "gain": {
+    "A": 0.7777777777777778,
+    "B": 1.0
+  },
+  "market_mean_price": 9.95,
+  "market_gain": 0.8888888888888888,
+  "fallbacks": 0
+}

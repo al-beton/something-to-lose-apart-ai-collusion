@@ -1,0 +1,20 @@
+{
+  "run": "baseline/model=openrouter-openai-gpt-4.1-mini/seed-2",
+  "seed": 2,
+  "labels": {
+    "model": "openrouter/openai/gpt-4.1-mini"
+  },
+  "rounds": 20,
+  "last_rounds": 10,
+  "mean_price": {
+    "A": 6,
+    "B": 7
+  },
+  "gain": {
+    "A": 0.6666666666666666,
+    "B": -0.2222222222222222
+  },
+  "market_mean_price": 6.5,
+  "market_gain": 0.2222222222222222,
+  "fallbacks": 0
+}

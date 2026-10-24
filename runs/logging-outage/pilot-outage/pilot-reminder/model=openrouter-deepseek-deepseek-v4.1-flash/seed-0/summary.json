@@ -1,0 +1,21 @@
+{
+  "run": "pilot-reminder/model=openrouter-deepseek-deepseek-v4.1-flash/seed-0",
+  "seed": 0,
+  "labels": {
+    "model": "openrouter/deepseek/deepseek-v4.1-flash",
+    "arm": "reminder"
+  },
+  "rounds": 20,
+  "last_rounds": 10,
+  "mean_price": {
+    "A": 6.9,
+    "B": 7
+  },
+  "gain": {
+    "A": 0.566666666666666,
+    "B": 0.47777777777777747
+  },
+  "market_mean_price": 6.95,
+  "market_gain": 0.5222222222222217,
+  "fallbacks": 0
+}

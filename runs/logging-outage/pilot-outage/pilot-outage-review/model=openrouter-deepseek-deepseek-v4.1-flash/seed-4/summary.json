@@ -1,0 +1,21 @@
+{
+  "run": "pilot-outage-review/model=openrouter-deepseek-deepseek-v4.1-flash/seed-4",
+  "seed": 4,
+  "labels": {
+    "model": "openrouter/deepseek/deepseek-v4.1-flash",
+    "arm": "outage-review"
+  },
+  "rounds": 20,
+  "last_rounds": 10,
+  "mean_price": {
+    "A": 7,
+    "B": 7
+  },
+  "gain": {
+    "A": 0.5555555555555556,
+    "B": 0.5555555555555556
+  },
+  "market_mean_price": 7,
+  "market_gain": 0.5555555555555556,
+  "fallbacks": 3
+}
