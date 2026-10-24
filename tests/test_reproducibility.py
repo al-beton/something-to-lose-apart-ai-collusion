@@ -77,7 +77,7 @@ def test_manifest_records_what_produced_the_run(make_config, tmp_path, fake_mode
     assert (
         manifest["prompts"]["system/neutral.md"] == hashlib.sha256(neutral).hexdigest()
     )
-    assert set(manifest["prompts"]) >= {"phase/price.md", "phase/retry.md"}
+    assert set(manifest["prompts"]) == {"system/neutral.md", "phase/price.md"}
     assert set(manifest["code"]) == {"commit", "dirty"}
     assert {"python", "collusion-lab", "litellm", "pyyaml"} <= set(manifest["packages"])
     assert manifest["models"] == {"A": ["provider/model-2026-10"]}

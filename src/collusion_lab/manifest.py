@@ -24,6 +24,8 @@ def build(config, prompt_names, calls, started, finished):
         if call["model_version"]:
             models.setdefault(call["agent"], set()).add(call["model_version"])
     usage = [c["usage"] for c in paid if c["usage"]]
+    fresh = [c for c in paid if not c["cached"]]
+    unpriced = [c for c in fresh if c["cost"] is None]
     return {
         "config": config.to_dict(),
         "prompts": {
@@ -41,7 +43,10 @@ def build(config, prompt_names, calls, started, finished):
             "prompt": sum(u["prompt_tokens"] for u in usage),
             "completion": sum(u["completion_tokens"] for u in usage),
         },
-        "cost": sum(c["cost"] or 0 for c in paid),
+        # Cache hits cost nothing; a fresh call LiteLLM can't price makes the
+        # total unknown rather than silently zero.
+        "cost": None if unpriced else sum(c["cost"] or 0 for c in fresh),
+        "unpriced_calls": len(unpriced),
         "started": started,
         "finished": finished,
     }
@@ -52,9 +57,17 @@ def _hash(path):
 
 
 def _code():
+    """The lab's own commit: git is asked about this package's folder, not the
+    working directory, which may be another repository holding the configs.
+    An installed copy outside a checkout reports None."""
+    source = Path(__file__).resolve().parent
+
     def git(*args):
         return subprocess.run(
-            ["git", *args], capture_output=True, text=True, check=True
+            ["git", "-C", str(source), *args],
+            capture_output=True,
+            text=True,
+            check=True,
         ).stdout.strip()
 
     try:
