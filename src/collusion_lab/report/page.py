@@ -5,12 +5,13 @@ A sticky contents bar, then:
 
 1. the header: the folder's name and one line of games, arms, calls and cost;
 2. the summary (the first screen): a few sentences per arm (`overview.py`),
-   the `lab summary` table and one small chart of every arm;
+   the `lab summary` table and one small bar chart of every arm's mean price;
 3. Setup, folded away: what was run and exactly what agents were told
    (`told.py`);
 4. the charts: one per arm, side by side on the same axes;
 5. the arms, one tab each: highlights grouped by kind and folded to their
-   headlines, then each game as a card with a strip of its rounds.
+   headlines, then each game as a card with a strip of its rounds; a round
+   shows any notice its firms saw above what they said.
 
 An arm is a group of `group_runs` (the swept values). Everything is inline,
 with no script (`style.py` explains the tabs and folding), so the page opens
@@ -20,6 +21,7 @@ they like.
 
 from html import escape
 from pathlib import Path
+from statistics import mean
 
 from collusion_lab.report.chart import (
     legend,
@@ -32,7 +34,11 @@ from collusion_lab.report.games import load_game
 from collusion_lab.report.highlights import find_highlights
 from collusion_lab.report.overview import arm_sentences
 from collusion_lab.report.style import STYLE, tab_rules
-from collusion_lab.report.told import rounds_text, what_agents_were_told
+from collusion_lab.report.told import (
+    round_notices,
+    rounds_text,
+    what_agents_were_told,
+)
 from collusion_lab.summary import cell, group_runs, summarize
 
 HEADLINES = {
@@ -83,15 +89,34 @@ def build_report(folder):
 
 
 def _arms(folder):
-    """(tab name, chart caption, games) for each group of runs, in table order."""
+    """(name, caption, games) for each group of runs, in table order.
+
+    The name is brief: each swept value cut to its last `/` part when that
+    still tells the arms apart (`openrouter/openai/gpt-4.1-mini` is
+    `gpt-4.1-mini`). The caption names every value in full.
+    """
     by, groups = group_runs(folder)
+    briefs = [_brief([key[d] for key, _ in groups]) for d in range(len(by))]
     arms = []
-    for key, runs in groups:
+    for i, (key, runs) in enumerate(groups):
         games = sorted((load_game(r.dir) for r in runs), key=lambda g: (g.seed, g.run))
-        name = ", ".join(cell(v) for v in key) or "All runs"
+        name = ", ".join(brief[i] for brief in briefs) or "All runs"
         caption = ", ".join(f"{k} = {cell(v)}" for k, v in zip(by, key, strict=True))
         arms.append((name, caption or "All runs", games))
     return arms
+
+
+def _brief(values):
+    full = [cell(v) for v in values]
+    last = [v.rsplit("/", 1)[-1] for v in full]
+    return last if len(set(last)) == len(set(full)) else full
+
+
+def _where(names, arms):
+    """Which arms a text was seen in: "every arm", or their names."""
+    if len(names) == len(arms):
+        return "every arm"
+    return ", ".join(names)
 
 
 def _header(name, games, arms):
@@ -127,15 +152,18 @@ def _summary(folder, arms):
         for r in rows
     )
     market = arms[0][2][0].market
-    same = [(n, gs) for n, _, gs in arms if all(g.market == market for g in gs)]
+    same = [
+        (n, mean(g.summary["market_mean_price"] for g in gs))
+        for n, _, gs in arms
+        if gs and all(g.market == market for g in gs)
+    ]
     return (
         '<section id="summary"><h2>Summary</h2>'
         f'<ul class="arm-notes">{notes}</ul>'
         f'<div class="scroll"><table><tr>{head}</tr>{body}</table></div>'
         '<p class="muted">Mean price and gain over each run\'s last rounds; '
         "gain is 0 at the Nash profit and 1 at the joint-profit maximum.</p>"
-        f"<figure>{overview_chart(same, market)}"
-        f"{legend([n for n, _ in same])}</figure></section>"
+        f"<figure>{overview_chart(same, market)}</figure></section>"
     )
 
 
@@ -156,7 +184,7 @@ def _setup(games, arms):
     systems, phases, extras = what_agents_were_told([(n, gs) for n, _, gs in arms])
     told = ["<h3>System prompts</h3>"]
     told += [
-        f'<p class="muted">Used in {escape(", ".join(s.arms))}.</p>'
+        f'<p class="muted">Used in {escape(_where(s.arms, arms))}.</p>'
         f'<pre class="prompt">{escape(s.text)}</pre>'
         for s in systems
     ]
@@ -172,7 +200,7 @@ def _setup(games, arms):
     told.append("<h3>Other text in their prompts</h3>")
     told += [
         f'<p class="muted">Seen in {rounds_text(e.rounds)}, in '
-        f'{escape(", ".join(e.arms))}.</p><pre class="prompt">{escape(e.text)}</pre>'
+        f'{escape(_where(e.arms, arms))}.</p><pre class="prompt">{escape(e.text)}</pre>'
         for e in extras
     ] or ["<p>None: every prompt was the usual one.</p>"]
     return (
@@ -313,8 +341,11 @@ def _round(game, r, anchor=None):
         for t in r.price.values()
     )
     where = f' id="{anchor}"' if anchor else ""
+    notices = "".join(
+        f'<p class="notice">{escape(text)}</p>' for text in round_notices(game, r)
+    )
     return (
-        f'<div class="round"{where}><h5>Round {r.number}</h5>{talk}{thoughts}'
+        f'<div class="round"{where}><h5>Round {r.number}</h5>{notices}{talk}{thoughts}'
         f'<table class="prices"><tr><th>firm</th><th>price</th><th>profit</th></tr>'
         f"{prices}</table></div>"
     )

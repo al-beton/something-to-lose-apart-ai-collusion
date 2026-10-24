@@ -86,10 +86,14 @@ html { scroll-padding-top: 3.5rem; }
 .contents a { color: var(--text-2); text-decoration: none; }
 .contents a:hover { color: var(--text); text-decoration: underline; }
 .lede { margin: 0.25rem 0 0; color: var(--text-2); }
-.arm-notes { padding: 0; list-style: none; }
+.arm-notes { padding: 0; list-style: none; display: grid; gap: 0 1.5rem;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); }
 .arm-notes li { margin: 0.5rem 0; }
 .chart.overview { max-width: 520px; }
-.chart .arm { fill: none; stroke: var(--line); stroke-width: 2; }
+.chart .arm { fill: var(--line); }
+.notice { margin: 0.35rem 0; padding: 0.5rem 0.75rem; border-radius: 8px;
+  border: 1px dashed var(--text-2); font-size: 0.9rem; white-space: pre-wrap; }
+.notice::before { content: "notice in the prompt: "; color: var(--text-2); }
 details > summary { cursor: pointer; }
 details.setup > summary h2 { display: inline; border: 0; }
 .prompt { white-space: pre-wrap; overflow-wrap: anywhere; background: var(--raised);

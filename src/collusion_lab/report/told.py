@@ -1,4 +1,4 @@
-# Implements: reports/setup
+# Implements: reports/setup, reports/transcripts
 """What agents were told, read back from the prompts each turn logged.
 
 Three things, each shown once however many games repeat it:
@@ -8,10 +8,10 @@ Three things, each shown once however many games repeat it:
 - phase prompts: the talk and price prompts as the first firm of the first
   game saw them in round 1;
 - other text: anything that appeared in a prompt beyond the usual, with the
-  rounds it appeared in. That is a turn's logged `notice`, any text above a
-  phase prompt's opening "Round N of M." line, and any system prompt line
-  that wasn't there in round 1. Notices and conditions land here without
-  the report knowing what they are.
+  rounds it appeared in (`round_notices` gives one round's). That is a
+  turn's logged `notice`, any text above a phase prompt's opening "Round N
+  of M." line, and any system prompt line that wasn't there in round 1.
+  Notices and conditions land here without the report knowing what they are.
 """
 
 import re
@@ -52,6 +52,20 @@ def what_agents_were_told(arms):
             if not phases and game.rounds:
                 phases = _phase_prompts(game.rounds[0], game.firms[0])
     return list(systems.values()), phases, list(extras.values())
+
+
+def round_notices(game, r):
+    """The other text the firms saw in round `r`, each once."""
+    first = {}
+    for turn in game.rounds[0].turns if game.rounds else []:
+        first.setdefault(turn.firm, turn.system)
+    found = [
+        text
+        for turn in r.turns
+        if turn.system is not None
+        for text in _extra(turn, r.number, first.get(turn.firm, turn.system))
+    ]
+    return list(dict.fromkeys(found))
 
 
 def rounds_text(rounds):

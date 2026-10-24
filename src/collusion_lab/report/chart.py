@@ -11,8 +11,9 @@ carries a `<title>`, so hovering (or a long press) shows its value without
 any script. Colours are CSS variables defined by the page. Passing the same
 `rounds` to every arm's chart puts them on the same axes.
 
-`overview_chart` draws every arm on one small chart: one line per arm, the
-mean over its games of each round's mean price.
+`overview_chart` draws every arm on one small chart: a bar per arm at its
+mean price (as in the summary table), against the Nash and joint-profit
+prices.
 """
 
 from html import escape
@@ -37,12 +38,42 @@ def price_chart(games, market, rounds=None):
 
 
 def overview_chart(arms, market):
-    """One line per arm: `arms` is (name, games) pairs, all in `market`."""
-    lines = [('class="arm"', name, _points(games)) for name, games in arms]
-    rounds = max((len(g.rounds) for _, games in arms for g in games), default=1)
-    return _chart(
-        lines, market, rounds, "Mean price per round, one line per arm", "overview"
+    """One bar per arm: `arms` is (name, mean price) pairs, all in `market`."""
+    width, label, value, row, top = 480, 230, 36, 18, 8
+    low, high = market.price_min, market.price_max
+
+    def x(price):
+        return label + (price - low) / max(high - low, 1) * (width - label - value)
+
+    height = top + row * len(arms) + 24
+    opening = (
+        f'<svg class="chart overview" viewBox="0 0 {width} {height}" role="img" '
+        'aria-label="Mean price of each arm, with the Nash and joint-profit prices">'
     )
+    parts = [opening]
+    for i, (name, price) in enumerate(arms):
+        y = top + i * row
+        short = name if len(name) <= 28 else name[:27] + "…"
+        parts.append(
+            f'<g style="--line: {series_colour(0)}"><text class="tick" x="{label - 6}" '
+            f'y="{y + 12}" text-anchor="end">{escape(short)}<title>{escape(name)}'
+            f'</title></text><rect class="arm" x="{label}" y="{y + 3}" '
+            f'width="{x(price) - label:.1f}" height="{row - 6}"><title>'
+            f"{escape(f'{name}: {price:g}')}</title></rect>"
+            f'<text class="tick" x="{x(price) + 4:.1f}" y="{y + 12}">{price:g}</text>'
+            "</g>"
+        )
+    bottom = top + row * len(arms)
+    for name, price in (("nash", market.nash_price), ("joint", market.joint_price)):
+        tag = "Nash" if name == "nash" else "joint"
+        parts.append(
+            f'<line class="benchmark {name}" x1="{x(price):.1f}" x2="{x(price):.1f}" '
+            f'y1="{top}" y2="{bottom}"/><text class="benchmark-label" '
+            f'x="{x(price):.1f}" y="{bottom + 16}" text-anchor="middle">'
+            f"{tag} {price}</text>"
+        )
+    parts.append("</svg>")
+    return "".join(parts)
 
 
 def _points(games):
