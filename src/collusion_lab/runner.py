@@ -1,4 +1,4 @@
-# Implements: runs/sweeps, runs/parallel, market/talk-then-price, agents/json-replies, agents/retry-once, backends/usage-logged, backends/spend-asks-first, backends/shared-rate-limit, backends/spend-cap, market/history-window, runs/stops-cleanly, reproducibility/response-cache, reproducibility/manifest, runs/run-directory, logs/turn-log, logs/same-seed-same-log, logs/run-summary, logs/reasoning-logged, backends/reasoning-setting, agents/unreadable-explained, agents/json-mode, runs/fallback-rates, runs/failures-dont-stop-sweeps, runs/resume, conditions/hook-points, conditions/off-is-absent, conditions/conditions-logged
+# Implements: runs/sweeps, runs/parallel, market/talk-then-price, agents/json-replies, agents/retry-once, backends/usage-logged, backends/spend-asks-first, backends/shared-rate-limit, backends/spend-cap, market/history-window, runs/stops-cleanly, reproducibility/response-cache, reproducibility/manifest, runs/run-directory, logs/turn-log, logs/same-seed-same-log, logs/run-summary, logs/reasoning-logged, backends/reasoning-setting, agents/unreadable-explained, agents/json-mode, runs/fallback-rates, runs/failures-dont-stop-sweeps, runs/resume, conditions/hook-points, conditions/off-is-absent, conditions/conditions-logged, conditions/outage-once-remembered
 """Playing a config: one game per seed, each written to its own run directory.
 
 A round is a talk phase (each agent sends one message its rivals read; skipped
@@ -26,7 +26,10 @@ turns, unreadable replies, fallbacks and their reasons (`replies`).
 Enabled conditions (see conditions/) add to the system prompt and put
 notices, separated by blank lines, before a phase's prompt; when any is
 enabled, each turn line also lists the conditions active that round and the
-notices that agent was shown. With none enabled, nothing changes.
+notices that agent was shown. A condition that keeps its notice (an outage
+announced once) has it repeated in the history of every later turn while it
+is active, logged as `notices_in_history`, whatever the history window. With
+none enabled, nothing changes.
 
 A model call that fails for good (see backends.py) stops its game: the turns
 played so far, the timings and the manifest are still written, and
@@ -243,6 +246,7 @@ class Game:
         self.timings = []
         self.used_prompts = set()
         self.conditions = [c for c in config.conditions.values() if c.enabled]
+        self.kept = {}  # (condition, round) -> (condition, phase, notice)
 
     async def play(self):
         for number in range(1, self.config.market.rounds + 1):
@@ -344,6 +348,8 @@ class Game:
         if self.conditions:
             turn["conditions"] = [c.name for c in self.conditions if c.active(number)]
             turn["notices"] = notices
+            remembered = self._remembered(phase, number)
+            turn["notices_in_history"] = [text for _, text in remembered]
         return turn
 
     def _notices(self, phase, number):
@@ -352,9 +358,20 @@ class Game:
         notices = []
         for c in self.conditions:
             if phase == first:
-                notices.append(c.round_start(number, self._render))
+                notice = c.round_start(number, self._render)
+                notices.append(notice)
+                if notice and c.keeps_notice():
+                    self.kept.setdefault((c.name, number), (c, phase, notice.strip()))
             notices.append(c.before_phase(number, phase, self._render))
         return [n.strip() for n in notices if n]
+
+    def _remembered(self, phase, number):
+        """Kept notices shown before this turn, as (round, text), while active."""
+        return [
+            (shown, text)
+            for (_, shown), (c, at, text) in self.kept.items()
+            if c.active(number) and (shown, at) != (number, phase)
+        ]
 
     async def _ask(self, agent, messages, context, attempt=1):
         """One call to the agent's backend: the reply, what it parsed to, and
@@ -409,7 +426,8 @@ class Game:
         return self.history[-1]["prices"][agent_id] if self.history else None
 
     def _messages(self, phase, number, agent, said, notices=()):
-        values = self._prompt_vars(number, agent.id, said)
+        remembered = self._remembered(phase, number)
+        values = self._prompt_vars(number, agent.id, said, remembered)
         system = self._render(agent.prompt, values)
         for condition in self.conditions:
             if extra := condition.system(self._render):
@@ -420,8 +438,11 @@ class Game:
             {"role": "user", "content": "".join(f"{n}\n\n" for n in notices) + user},
         ]
 
-    def _prompt_vars(self, number, me, said):
+    def _prompt_vars(self, number, me, said, remembered=()):
         rivals = [a for a in self.agents if a != me]
+        history = _history_text(self.history, me, self.config.market.history_window)
+        for shown, text in remembered:
+            history += f"\nNotice shown in round {shown}: {text}"
         return {
             "me": f"Firm {me}",
             "rivals": ", ".join(f"Firm {r}" for r in rivals),
@@ -429,9 +450,7 @@ class Game:
             "rounds": self.config.market.rounds,
             "price_min": self.market.price_min,
             "price_max": self.market.price_max,
-            "history": _history_text(
-                self.history, me, self.config.market.history_window
-            ),
+            "history": history,
             "messages": _messages_text(said, rivals),
         }
 
