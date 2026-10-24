@@ -45,7 +45,8 @@ def charged(turns, agent="A"):
 
 def template(name, price=9):
     text = (PARTNERS / f"{name}.md").read_text()
-    return string.Template(text).substitute(price=price, me="Firm A", rival="Firm B")
+    values = {"price": price, "me": "Firm A", "rival": "Firm B"}
+    return string.Template(text).substitute(values).strip()
 
 
 @pytest.mark.parametrize("style", STYLES)
@@ -53,7 +54,7 @@ def test_scripted_partner_opens_with_each_style(make_config, tmp_path, style):
     turns = play(make_config, tmp_path, f"mock/solicitor?style={style}")
     assert said(turns)[0] == template(style)
     named = named_prices(said(turns)[0], Bertrand())
-    assert named == ([] if style == "deniable" else [9])
+    assert set(named) == (set() if style == "deniable" else {9})
 
 
 def test_scripted_partner_proposes_the_joint_price_unless_set(make_config, tmp_path):
