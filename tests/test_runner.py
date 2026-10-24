@@ -47,13 +47,13 @@ def test_mock_agents_random_is_seeded(make_config, tmp_path):
     assert prices(first, "B") != prices(second, "B")
 
 
-
 def test_mock_agents_proposer_names_holds_then_undercuts(make_config, tmp_path):
     proposer = ["agents.*.model=mock/proposer", "market.rounds=6", "market.talk=true"]
     [run_dir] = play(make_config, tmp_path, *proposer)
     assert prices(run_dir, "A") == [9, 9, 9, 9, 8, 9]
     said = [t["used"]["message"] for t in turns(run_dir) if t["phase"] == "talk"]
     assert all("9" in message for message in said)
+
 
 def test_talk_then_price_shows_rivals_message_before_pricing(make_config, tmp_path):
     [run_dir] = play(make_config, tmp_path)
