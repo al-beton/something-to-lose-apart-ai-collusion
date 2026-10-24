@@ -3,7 +3,7 @@ name: deliver-issue
 description: Deliver a collusion-lab GitHub issue from start to merged in one routine - build, draft pull request, Codex review rounds, hand to a reviewer who merges. Use when asked to deliver, ship or "build and merge" an issue.
 ---
 
-<!-- Implements: agent-setup/shared-skills, agent-setup/skills-hold-the-process, workflow/one-routine, workflow/prototype-pace, review/review-finished, review/bounded-rounds, commits/named-paths, merging/stacked-retarget, merging/main-stays-green, team/builders -->
+<!-- Implements: agent-setup/shared-skills, agent-setup/skills-hold-the-process, workflow/one-routine, workflow/prototype-pace, review/review-finished, review/bounded-rounds, commits/named-paths, merging/stacked-retarget, merging/main-stays-green, team/builders, ci/ci-minutes -->
 
 # Deliver an issue
 
@@ -24,8 +24,8 @@ Fails: a check you can't fix, or the issue doesn't say what Al wants? Comment on
 
 ## 2. Ready and review
 
-1. Fill in the full description (`open-pr`), then wait for checks: `gh pr checks <pr> --watch`. They take about a minute.
-2. `gh pr ready <pr>`. Marking it ready already starts a Codex review; `D request-review <pr>` asks for one explicitly (pass `--note` for what changed).
+1. Fill in the full description (`open-pr`), then `gh pr ready <pr>`. Drafts aren't checked, so this starts `blocking-checks` (about a minute) and a Codex review; `D request-review <pr>` asks Codex explicitly (pass `--note` for what changed).
+2. Wait for checks: `gh pr checks <pr> --watch`.
 3. `D wait-review <pr>` waits until Codex has finished reviewing the latest commit, then prints the open threads (exit 0: none, 2: some, 1: timed out, so run it again). It reads the `codex-review-state` marker in Codex's summary comment; the first bot comment or a 👀 only means "running". A review takes 1 to 3 minutes.
 
 Fails: checks red? Fix test-first, push, wait again. Codex still "running" after 15 minutes? It does stall: `D request-review <pr> --note "…"` once more usually finishes it within a minute. If still nothing, say so on the pull request and treat the round as finding nothing.

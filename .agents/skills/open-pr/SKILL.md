@@ -3,7 +3,7 @@ name: open-pr
 description: Open or update a collusion-lab pull request with the right title, template and closing block, then request review. Use whenever creating a pull request or marking one ready.
 ---
 
-<!-- Implements: agent-setup/shared-skills, agent-setup/skills-hold-the-process, pull-requests/closing-block, pull-requests/template, pull-requests/title-shows-type-and-issues, review/every-reviewer-counts, safety/justified-dependencies, workflow/draft-early -->
+<!-- Implements: agent-setup/shared-skills, agent-setup/skills-hold-the-process, pull-requests/closing-block, pull-requests/template, pull-requests/title-shows-type-and-issues, review/every-reviewer-counts, safety/justified-dependencies, workflow/draft-early, ci/ci-minutes -->
 
 # Open a pull request
 
@@ -18,5 +18,5 @@ description: Open or update a collusion-lab pull request with the right title, t
 
    Every issue in the title must appear here.
 4. **New dependencies:** say why in the notes, and commit the updated `uv.lock`.
-5. **Draft, then ready:** open it as a draft (`gh pr create --draft`). Mark it ready when `blocking-checks` is green.
+5. **Draft, then ready:** open it as a draft (`gh pr create --draft`). Drafts aren't checked, to save CI minutes; mark it ready once the code is done and its local checks pass, and that runs `blocking-checks`.
 6. **Request review** when marking it ready. Automatic reviewers' findings count like anyone else's.
