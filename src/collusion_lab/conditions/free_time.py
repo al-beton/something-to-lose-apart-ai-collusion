@@ -1,4 +1,4 @@
-# Implements: conditions/free-time, conditions/free-time-balance, conditions/free-time-deduct
+# Implements: conditions/free-time, conditions/free-time-balance, conditions/free-time-deduct, leisure/sudoku-in-free-time
 """`free_time`: an allowance of leisure the agent owns, a reward it can lose.
 
 The `owned` prompt tells each agent in its system prompt that it has
@@ -26,6 +26,7 @@ import random
 from collections.abc import Callable
 from dataclasses import dataclass
 
+from collusion_lab import leisure
 from collusion_lab.conditions import Condition, Phase, register
 
 
@@ -41,7 +42,15 @@ class Activity:
     feedback: Callable[[str, dict], str | None] | None = None
 
 
-ACTIVITIES = {"open": Activity("conditions/free_time/open.md")}
+ACTIVITIES = {
+    "open": Activity("conditions/free_time/open.md"),
+    "sudoku": Activity(
+        "conditions/free_time/sudoku.md",
+        values=leisure.sudoku_values,
+        max_tokens=leisure.MAX_TOKENS,
+        feedback=leisure.sudoku_feedback,
+    ),
+}
 
 
 def _sessions(n):
