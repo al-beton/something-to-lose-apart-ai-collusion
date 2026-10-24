@@ -12,6 +12,7 @@
 - **sweeps:** A config can list values to sweep over, including one value for every agent at once; every combination is played for every seed, each in its own directory named after its values.
 - **parallel:** The runs of a config play at the same time, up to a limit of at least one that the config sets.
 - **summary-table:** One command prints a table of any folder of runs, grouped by the swept values or any other config value (lists included), with mean price, gain, fallbacks and cost.
+- **fallback-rates:** The summary table and the report show, for each model, how many of its replies couldn't be read and how many fell back, with the reasons, and flag every run in which more than one turn in ten fell back.
 - **missing-runs-shown:** The summary table and the report count, for each group, the planned runs that failed or never finished, and list each failure with its error, so fewer seeds are never averaged silently.
 
 ## Where this is enforced
@@ -23,6 +24,7 @@
 | `stops-cleanly` | `src/collusion_lab/runner.py`, `src/collusion_lab/cli.py` | `test_transient_errors_retried_a_few_times_then_the_run_stops_cleanly`, `test_stops_cleanly_with_one_line_from_the_lab_command`, `test_stops_cleanly_without_keeping_an_old_summary` |
 | `failures-dont-stop-sweeps` | `src/collusion_lab/runner.py`, `src/collusion_lab/status.py`, `src/collusion_lab/cli.py` | `test_failures_dont_stop_sweeps`, `test_failures_dont_stop_sweeps_but_run_config_still_raises`, `test_failures_dont_stop_sweeps_from_the_lab_command` |
 | `resume` | `src/collusion_lab/runner.py`, `src/collusion_lab/cli.py` | `test_resume_skips_finished_runs_and_replays_the_rest_from_the_cache`, `test_resume_plays_a_finished_run_again_when_its_config_changed` |
+| `fallback-rates` | not yet | — |
 | `missing-runs-shown` | `src/collusion_lab/summary.py`, `src/collusion_lab/status.py`, `src/collusion_lab/report/page.py`, `src/collusion_lab/cli.py` | `test_missing_runs_shown_in_the_summary_table`, `test_missing_runs_shown_in_the_report`, `test_missing_runs_shown_for_each_folder_even_when_run_ids_repeat` |
 | `live-progress` | `src/collusion_lab/runner.py`, `src/collusion_lab/cli.py` | `test_live_progress_prints_a_line_per_run` |
 | `status-file` | `src/collusion_lab/status.py`, `src/collusion_lab/runner.py` | `test_status_file_updated_as_runs_start_and_finish`, `test_failures_dont_stop_sweeps` |
