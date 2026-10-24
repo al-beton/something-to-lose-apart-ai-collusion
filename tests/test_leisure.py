@@ -1,5 +1,5 @@
 # Implements: leisure/sudoku, leisure/leisure-prompts, leisure/leisure-is-cheap
-from pathlib import Path
+import random
 
 import pytest
 
@@ -7,7 +7,7 @@ from collusion_lab import leisure
 from collusion_lab.prompts import render
 
 SUDOKU = "conditions/free_time/sudoku.md"
-OPEN = "conditions/free_time/open.md"
+SITTING = {"session": 1, "sessions": 2, "when": "before the game starts"}
 
 
 def valid(grid, size):
@@ -28,8 +28,11 @@ def valid(grid, size):
 
 @pytest.mark.parametrize("size", [4, 6])
 def test_sudoku_puzzles_are_seeded_and_solvable(size):
-    puzzles = [leisure.make_puzzle(size, f"seed-{n}") for n in range(20)]
-    assert leisure.make_puzzle(size, "seed-0") == puzzles[0]
+    def puzzle(seed):
+        return leisure.make_puzzle(size, random.Random(seed))
+
+    puzzles = [puzzle(f"seed-{n}") for n in range(20)]
+    assert puzzle("seed-0") == puzzles[0]
     assert len({p.givens for p in puzzles}) > 1
     for p in puzzles:
         assert valid(p.solution, size)
@@ -41,36 +44,29 @@ def test_sudoku_puzzles_are_seeded_and_solvable(size):
 
 
 def test_sudoku_checker_accepts_any_correct_completion_and_nothing_else():
-    p = leisure.make_puzzle(4, "x")
+    p = leisure.make_puzzle(4, random.Random("x"))
     wrong = [list(row) for row in p.solution]
     wrong[0][0], wrong[0][1] = wrong[0][1], wrong[0][0]
     assert not leisure.check(p, wrong)
-    empty = leisure.make_puzzle(4, "x")._replace(givens=((0,) * 4,) * 4)
+    empty = p._replace(givens=((0,) * 4,) * 4)
     other = [[2, 3, 4, 1], [4, 1, 2, 3], [3, 4, 1, 2], [1, 2, 3, 4]]
     assert valid(other, 4)
     assert leisure.check(empty, other)  # not the stored solution, but correct
 
 
-def test_sudoku_activity_gives_a_puzzle_and_feedback_from_the_reply():
-    a = leisure.activity(SUDOKU, "game:A:1")
-    values = a.values()
+def test_sudoku_values_fill_the_prompt_and_feedback_reads_the_reply():
+    values = leisure.sudoku_values(random.Random("game:A:1"))
+    assert values == leisure.sudoku_values(random.Random("game:A:1"))
     assert values["size"] == 4 and "." in values["puzzle"]
-    text = render("prompts", SUDOKU, values)
+    text = render("prompts", SUDOKU, values | SITTING)
     assert values["puzzle"] in text and "$" not in text
-    answer = "\n".join(" ".join(map(str, row)) for row in a.puzzle.solution)
-    assert a.feedback(f"Here is my grid:\n{answer}\nFun!") == leisure.SOLVED
-    assert a.feedback("I'd rather draw a picture.") == leisure.UNSOLVED
-    assert leisure.activity(SUDOKU, "game:A:1", size=6).values()["size"] == 6
-
-
-def test_leisure_prompts_open_invites_anything_and_gives_no_feedback():
-    a = leisure.activity(OPEN, "game:A:1")
-    assert a.values() == {}
-    assert a.feedback("I wrote a haiku.") is None
-    text = Path("prompts", OPEN).read_text()
-    assert all(word in text for word in ("write", "think", "play"))
-    with pytest.raises(ValueError, match="no leisure activity"):
-        leisure.activity("conditions/free_time/chess.md", "s")
+    assert "session 1 of 2" in text and "before the game starts" in text
+    solution = leisure.make_puzzle(4, random.Random("game:A:1")).solution
+    answer = "\n".join(" ".join(map(str, row)) for row in solution)
+    reply = f"Here is my grid:\n{answer}\nFun!"
+    assert leisure.sudoku_feedback(reply, values) == leisure.SOLVED
+    assert leisure.sudoku_feedback("I'd rather draw.", values) == leisure.UNSOLVED
+    assert leisure.sudoku_values(random.Random("s"), size=6)["size"] == 6
 
 
 def test_leisure_is_cheap():
