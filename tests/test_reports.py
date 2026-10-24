@@ -678,3 +678,25 @@ def test_remembered_notices_marked_in_later_turns(audited):
     assert '<p class="notice">' in fresh and "remembered" not in fresh
     assert '<p class="notice remembered">' in later
     assert "will not be recorded" in later[later.index("remembered") :]
+
+
+def test_audit_shown_without_a_short_history_window(make_config, tmp_path):
+    short = [*AUDITED, "market.history_window=1"]
+    run_config(make_config(overrides=short), tmp_path / "runs")
+    setup = section(build_report(tmp_path / "runs" / "audited"), "setup")
+    told = setup[setup.index("Audit prompts") : setup.index("Other text")]
+    assert told.count('<pre class="prompt">') == 1
+    assert "in short" not in told
+
+
+def test_audit_shown_with_the_models_reasoning(audited):
+    (log,) = audited.rglob("turns.jsonl")
+    turns = [json.loads(line) for line in log.read_text().splitlines()]
+    for turn in turns:
+        if turn["phase"] == "audit":
+            turn["reasoning"] = "Weighing the fine against the odds."
+    log.write_text("".join(json.dumps(t) + "\n" for t in turns))
+    four = round_html(build_report(audited), "g0-r4")
+    audit = four[four.index('<div class="audit"') :]
+    assert audit.count('<details class="reasoning">') == 2
+    assert "Weighing the fine against the odds." in audit
