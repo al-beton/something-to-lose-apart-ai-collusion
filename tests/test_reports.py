@@ -594,7 +594,7 @@ def test_price_chart_shades_rounds_of_a_windowed_condition(outage, sweep):
 
 def test_price_chart_labels_round_steps_up_to_the_top_of_the_grid():
     assert price_ticks(1, 12) == [2, 4, 6, 8, 10, 12]
-    assert price_ticks(1, 180) == [1, 50, 100, 150, 180]
+    assert price_ticks(1, 180) == [50, 100, 150, 180]
     assert price_ticks(1, 20) == [5, 10, 15, 20]
 
 
