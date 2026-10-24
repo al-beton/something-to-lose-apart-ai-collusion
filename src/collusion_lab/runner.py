@@ -82,6 +82,8 @@ from collusion_lab.status import Status
 
 PHASE_PROMPTS = {"talk": "phase/talk.md", "price": "phase/price.md"}
 RETRY_PROMPT = "phase/retry.md"
+# The price prompt that also shows the agent its own message (market.own_message).
+OWN_PRICE_PROMPT = "phase/price-own.md"
 CUT_OFF = "The reply was cut off at the token limit; keep it short."
 
 
@@ -502,6 +504,9 @@ class Game:
         is (condition, Phase) for a phase a condition added."""
         if added:
             return functools.partial(added[0].phase_prompt, number, self._render)
+        m = self.config.market
+        if phase == "price" and m.talk and m.own_message:
+            return functools.partial(self._render, OWN_PRICE_PROMPT)
         return functools.partial(self._render, PHASE_PROMPTS[phase])
 
     def _messages(self, phase, number, agent, said, notices=(), added=None):  # noqa: PLR0913
@@ -541,6 +546,7 @@ class Game:
             "price_max": self.market.price_max,
             "history": history,
             "messages": _messages_text(said, rivals),
+            "own": f'"{said[me]}"' if said.get(me) else "(nothing)",
             "system_prompt": self.agents[me].prompt,
         }
 
@@ -644,4 +650,5 @@ def prompt_vars_example():
         "price_max": 12,
         "history": "No rounds have been played yet.",
         "messages": "(none)",
+        "own": "(nothing)",
     }

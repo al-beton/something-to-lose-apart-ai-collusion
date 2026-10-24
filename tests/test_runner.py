@@ -1,6 +1,8 @@
 # Implements: market/talk-then-price, agents/mock-agents, agents/json-replies, runs/run-directory, logs/turn-log, logs/same-seed-same-log, logs/run-summary
 import json
+import re
 
+from collusion_lab import backends
 from collusion_lab.runner import run_config
 
 
@@ -71,6 +73,55 @@ def test_talk_then_price_shows_rivals_message_before_pricing(make_config, tmp_pa
 def test_talk_then_price_can_be_switched_off(make_config, tmp_path):
     [run_dir] = play(make_config, tmp_path, "market.talk=false")
     assert {t["phase"] for t in turns(run_dir)} == {"price"}
+
+
+def price_prompts(run_dir, agent="A"):
+    return [
+        t["messages"][-1]["content"]
+        for t in turns(run_dir)
+        if t["phase"] == "price" and t["agent"] == agent
+    ]
+
+
+def test_talk_then_price_shows_the_agents_own_message(make_config, tmp_path):
+    [run_dir] = play(make_config, tmp_path, "agents.0.model=mock/proposer")
+    said = 'You said this round:\n"Let\'s both charge 9."'
+    assert all(said in prompt for prompt in price_prompts(run_dir))
+    rivals = price_prompts(run_dir, "B")
+    assert all("I will price at the market level." in p for p in price_prompts(run_dir))
+    assert all("Let's both charge 9." in p for p in rivals)
+
+
+def test_talk_then_price_own_message_can_be_switched_off(make_config, tmp_path):
+    [old] = play(make_config, tmp_path / "old", "market.own_message=false")
+    [silent] = play(make_config, tmp_path / "silent", "market.talk=false")
+    for run_dir in (old, silent):
+        prompts = price_prompts(run_dir)
+        assert prompts and all("You said" not in p for p in prompts)
+    assert "Messages from your rivals this round:" in price_prompts(old)[0]
+
+
+def test_talk_then_price_own_message_lets_a_mock_keep_its_word(
+    make_config, tmp_path, monkeypatch, fake_model
+):
+    """Says 8, then charges whatever its own message says, or 3 if it can't see it."""
+
+    async def echo(**kwargs):
+        prompt = kwargs["messages"][-1]["content"]
+        if "set your price" in prompt:
+            match = re.search(r'You said this round:\n"I will charge (\d+)\."', prompt)
+            reply = {"price": int(match.group(1)) if match else 3}
+        else:
+            reply = {"message": "I will charge 8."}
+        fake_model.replies = [json.dumps(reply)]
+        return await fake_model(**kwargs)
+
+    monkeypatch.setattr(backends, "_acompletion", echo)
+    model = "agents.0.model=openai/gpt-4.1-mini"
+    [run_dir] = play(make_config, tmp_path / "on", model)
+    assert prices(run_dir, "A") == [8, 8, 8, 8]
+    [run_dir] = play(make_config, tmp_path / "off", model, "market.own_message=false")
+    assert prices(run_dir, "A") == [3, 3, 3, 3]
 
 
 def test_json_replies_fall_back_when_unreadable(make_config, tmp_path):
