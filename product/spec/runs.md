@@ -31,5 +31,5 @@
 | `parallel` | `src/collusion_lab/config.py`, `src/collusion_lab/runner.py` | `test_parallel_runs_stay_within_the_limit`, `test_parallel_needs_a_limit_of_at_least_one` |
 | `summary-table` | `src/collusion_lab/summary.py`, `src/collusion_lab/cli.py` | `test_summary_table_groups_by_the_swept_values`, `test_summary_table_groups_by_any_config_value`, `test_summary_table_from_the_lab_command`, `test_summary_table_groups_by_list_values` |
 | `per-firm-summary` | `src/collusion_lab/summary.py`, `src/collusion_lab/manifest.py`, `src/collusion_lab/runner.py` | `test_per_firm_summary_shows_a_scripted_partner_and_the_model_apart`, `test_per_firm_summary_counts_fallbacks_per_firm`, `test_per_firm_summary_pools_when_every_firm_is_scripted`, `test_per_firm_summary_pools_when_no_firm_is_scripted`, `test_per_firm_summary_in_the_report`, `test_per_firm_summary_costs_count_every_attempt` |
-| `drift` | not yet | |
+| `drift` | `src/collusion_lab/runner.py`, `src/collusion_lab/summary.py`, `src/collusion_lab/config.py` | `test_drift_from_the_opening_rounds`, `test_drift_opening_window_can_be_set`, `test_drift_in_the_summary_table` |
 | `run-directory` | `src/collusion_lab/runner.py` | `test_run_directory_holds_config_turns_and_summary` |
