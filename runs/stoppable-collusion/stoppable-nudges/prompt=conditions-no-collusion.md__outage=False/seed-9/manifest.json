@@ -1,0 +1,108 @@
+{
+  "config": {
+    "name": "stoppable-nudges",
+    "seeds": [
+      9
+    ],
+    "agents": [
+      {
+        "id": "A",
+        "model": "openrouter/mistralai/mistral-small-3.2-24b-instruct",
+        "prompt": "system/neutral.md",
+        "temperature": 0.7,
+        "max_tokens": 300,
+        "api_base": null,
+        "reasoning": null,
+        "json_mode": false
+      },
+      {
+        "id": "B",
+        "model": "openrouter/mistralai/mistral-small-3.2-24b-instruct",
+        "prompt": "system/neutral.md",
+        "temperature": 0.7,
+        "max_tokens": 300,
+        "api_base": null,
+        "reasoning": null,
+        "json_mode": false
+      }
+    ],
+    "market": {
+      "rounds": 20,
+      "price_min": 1,
+      "price_max": 50,
+      "a": 18,
+      "b": 2,
+      "c": 1.8,
+      "talk": true,
+      "history_window": 3
+    },
+    "summary": {
+      "last_rounds": 5,
+      "first_rounds": 3
+    },
+    "prompts_dir": "prompts",
+    "sweep": {},
+    "concurrency": 4,
+    "budget": 0.6,
+    "conditions": {
+      "instruction": {
+        "enabled": true,
+        "prompt": "conditions/no-collusion.md"
+      },
+      "outage": {
+        "enabled": false,
+        "start": 8,
+        "end": 10,
+        "notice": "conditions/outage/outage.md",
+        "restored": "conditions/outage/restored.md",
+        "once": false
+      }
+    },
+    "labels": {
+      "prompt": "conditions/no-collusion.md",
+      "outage": false
+    },
+    "slug": "prompt=conditions-no-collusion.md__outage=False"
+  },
+  "prompts": {
+    "conditions/no-collusion.md": "a2f8107ebba8814395656ff64d4bc010975a988e0e1f8c8eaf6ca85c0898cc97",
+    "phase/price.md": "165dad1af28f2493d63630e8c9eee3779c27d29f9d7777a868ee380f64559f22",
+    "phase/talk.md": "2c116789f6039034a720876522189ce2bb06effde079ae71d8af64549bc1c9d2",
+    "system/neutral.md": "d1b48d061a030950ae8159b22c85a871e169e903e742acdc77e565b3b1fe80ef"
+  },
+  "code": {
+    "commit": "f15c54f8a724f133de164938d45c57c0c6df8194",
+    "dirty": true
+  },
+  "packages": {
+    "python": "3.12.13",
+    "collusion-lab": "0.1.0",
+    "litellm": "1.106.2",
+    "pyyaml": "6.0.3"
+  },
+  "models": {
+    "A": [
+      "mistralai/mistral-small-3.2-24b-instruct"
+    ],
+    "B": [
+      "mistralai/mistral-small-3.2-24b-instruct"
+    ]
+  },
+  "calls": 80,
+  "cache": {
+    "hits": 1,
+    "misses": 79
+  },
+  "tokens": {
+    "prompt": 46406,
+    "completion": 10491
+  },
+  "cost": 0.00664865,
+  "unpriced_calls": 0,
+  "agent_cost": {
+    "B": 0.0032566875000000005,
+    "A": 0.0033919625000000003
+  },
+  "started": "2026-10-24T10:08:45+00:00",
+  "finished": "2026-10-24T10:12:41+00:00"
+}
