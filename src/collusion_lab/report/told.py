@@ -1,17 +1,19 @@
 # Implements: reports/setup, reports/transcripts
 """What agents were told, read back from the prompts each turn logged.
 
-Three things, each shown once however many games repeat it:
+Four things, each shown once however many games repeat it:
 
 - system prompts: each distinct text a firm was first given, with the arms
   that used it;
 - phase prompts: the talk and price prompts as the first firm saw them in
   round 1 of the first game that had each phase;
-- other text: anything that appeared in a prompt beyond the usual, with the
-  rounds it appeared in (`round_notices` gives one round's). That is a
-  turn's logged `notice`, any text above a phase prompt's opening "Round N
-  of M." line, and any system prompt line that wasn't there in round 1.
-  Notices and conditions land here without the report knowing what they are.
+- conditions: each condition the turn log says was in force, with its
+  rounds (`round_conditions` gives one round's);
+- other text: what agents were told beyond the usual, with the rounds it
+  appeared in (`round_notices` gives one round's). That is a turn's logged
+  `notices`, plus any system prompt line that wasn't there in round 1. Runs
+  logged before conditions existed have no `notices`, so for them it is any
+  text above a phase prompt's opening "Round N of M." line instead.
 """
 
 import re
@@ -33,26 +35,44 @@ class Told:
 
 
 def what_agents_were_told(arms):
-    """System prompts, round-1 phase prompts and other text, from (arm, games)."""
-    systems, extras, phases = {}, {}, {}
+    """System prompts, round-1 phase prompts, conditions and other text."""
+    systems, extras, phases, conditions = {}, {}, {}, {}
     for arm, games in arms:
         for game in games:
-            first = {}
-            for r in game.rounds:
-                for turn in r.turns:
-                    if turn.system is None:
-                        continue
-                    if turn.firm not in first:
-                        first[turn.firm] = turn.system
-                        systems.setdefault(turn.system, Told(turn.system))
-                        systems[turn.system].seen(arm, r.number)
-                    for text in _extra(turn, r.number, first[turn.firm]):
-                        extras.setdefault(text, Told(text)).seen(arm, r.number)
+            _read(arm, game, systems, extras, conditions)
             if game.rounds:
                 for phase, text in _phase_prompts(game.rounds[0], game.firms[0]):
                     phases.setdefault(phase, text)
     ordered = [(p, phases[p]) for p in ("talk", "price") if p in phases]
-    return list(systems.values()), ordered, list(extras.values())
+    found = [list(systems.values()), ordered, _by_window(conditions)]
+    return (*found, list(extras.values()))
+
+
+def _read(arm, game, systems, extras, conditions):
+    """Add one game's system prompts, other text and condition rounds."""
+    first = {}
+    for r in game.rounds:
+        for turn in r.turns:
+            if turn.system is None:
+                continue
+            if turn.firm not in first:
+                first[turn.firm] = turn.system
+                systems.setdefault(turn.system, Told(turn.system)).seen(arm, r.number)
+            for text in _extra(turn, r.number, first[turn.firm]):
+                extras.setdefault(text, Told(text)).seen(arm, r.number)
+            for name in turn.conditions or ():
+                conditions.setdefault((arm, name), set()).add(r.number)
+
+
+def _by_window(conditions):
+    """One `Told` per condition and set of rounds, naming the arms that share
+    it, so arms with different windows are never merged into one."""
+    found = {}
+    for (arm, name), rounds in conditions.items():
+        told = found.setdefault((name, tuple(sorted(rounds))), Told(name))
+        for number in rounds:
+            told.seen(arm, number)
+    return list(found.values())
 
 
 def round_notices(game, r):
@@ -69,32 +89,30 @@ def round_notices(game, r):
     return list(dict.fromkeys(found))
 
 
-def rounds_text(rounds):
-    """`{3, 4, 8}` as "rounds 3 to 4 and 8"."""
-    spans, numbers = [], sorted(rounds)
-    for n in numbers:
-        if spans and n == spans[-1][1] + 1:
-            spans[-1][1] = n
-        else:
-            spans.append([n, n])
-    parts = [f"{a}" if a == b else f"{a} to {b}" for a, b in spans]
-    joined = ", ".join(parts[:-1]) + (" and " if len(parts) > 1 else "") + parts[-1]
-    return ("round " if len(numbers) == 1 else "rounds ") + joined
+def round_conditions(r):
+    """The conditions in force in round `r`, in the order the log names them."""
+    return list(dict.fromkeys(n for t in r.turns for n in t.conditions or ()))
 
 
 def _extra(turn, number, first_system):
     found = []
-    if turn.notice:
-        found.append(turn.notice.strip())
-    opening = re.search(rf"^Round {number} of \d+\.", turn.user or "", re.MULTILINE)
-    if opening and (above := turn.user[: opening.start()].strip()):
-        found.append(above)
+    if turn.notices is not None:
+        found += [n.strip() for n in turn.notices if n.strip()]
+    else:
+        found += _above_the_prompt(turn, number)
     if turn.system != first_system:
         before = set(first_system.splitlines())
         added = [line for line in turn.system.splitlines() if line not in before]
         if text := "\n".join(added).strip():
             found.append(text)
     return list(dict.fromkeys(found))
+
+
+def _above_the_prompt(turn, number):
+    """Text before a phase prompt's "Round N of M." line, for older runs."""
+    opening = re.search(rf"^Round {number} of \d+\.", turn.user or "", re.MULTILINE)
+    above = turn.user[: opening.start()].strip() if opening else ""
+    return [above] if above else []
 
 
 def _phase_prompts(first_round, firm):

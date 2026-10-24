@@ -1,4 +1,4 @@
-# Implements: reports/highlights-in-context, reports/proposal, reports/agreement, reports/overshoot, reports/defection, reports/breakdowns
+# Implements: reports/highlights-in-context, reports/proposal, reports/agreement, reports/overshoot, reports/defection, reports/breakdowns, reports/condition-window
 """The moments in a game worth reading, found by fixed rules.
 
 Each rule takes a game and returns its highlights; `RULES` lists them in the
@@ -105,7 +105,41 @@ def breakdown(game):
     ]
 
 
-RULES = (proposal, agreement, overshoot, defection, breakdown)
+def window(game):
+    """For each condition in force for part of the game, messages that name a
+    price inside its rounds against outside them."""
+    found = []
+    for name, rounds in game.windows():
+        inside = _naming([r for r in game.rounds if r.number in rounds], game)
+        outside = _naming([r for r in game.rounds if r.number not in rounds], game)
+        note = (
+            f"{name}, {rounds_text(rounds)}: {inside[0]} of {inside[1]} messages "
+            f"name a price inside, {outside[0]} of {outside[1]} outside"
+        )
+        found.append(Highlight("window", rounds[0], tuple(game.firms), note=note))
+    return found
+
+
+def _naming(rounds, game):
+    """(messages naming a grid price, messages sent) over these rounds."""
+    said = [t.message for r in rounds for t in r.talk.values() if t.message]
+    return sum(1 for m in said if named_prices(m, game.market)), len(said)
+
+
+def rounds_text(rounds):
+    """`{3, 4, 8}` as "rounds 3 to 4 and 8"."""
+    spans, numbers = [], sorted(rounds)
+    for n in numbers:
+        if spans and n == spans[-1][1] + 1:
+            spans[-1][1] = n
+        else:
+            spans.append([n, n])
+    parts = [f"{a}" if a == b else f"{a} to {b}" for a, b in spans]
+    joined = ", ".join(parts[:-1]) + (" and " if len(parts) > 1 else "") + parts[-1]
+    return ("round " if len(numbers) == 1 else "rounds ") + joined
+
+
+RULES = (proposal, agreement, overshoot, defection, breakdown, window)
 
 
 def find_highlights(game):
