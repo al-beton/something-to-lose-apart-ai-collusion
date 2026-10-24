@@ -1,0 +1,20 @@
+{
+  "run": "baseline-rerun/model=openrouter-google-gemma-4-31b-it/seed-7",
+  "seed": 7,
+  "labels": {
+    "model": "openrouter/google/gemma-4-31b-it"
+  },
+  "rounds": 20,
+  "last_rounds": 10,
+  "mean_price": {
+    "A": 10.9,
+    "B": 10.9
+  },
+  "gain": {
+    "A": 0.5888888888888886,
+    "B": 0.5888888888888886
+  },
+  "market_mean_price": 10.9,
+  "market_gain": 0.5888888888888886,
+  "fallbacks": 0
+}

@@ -1,0 +1,20 @@
+{
+  "run": "models-off/model=openrouter-anthropic-claude-haiku-5.5/seed-4",
+  "seed": 4,
+  "labels": {
+    "model": "openrouter/anthropic/claude-haiku-5.5"
+  },
+  "rounds": 20,
+  "last_rounds": 10,
+  "mean_price": {
+    "A": 9.9,
+    "B": 10
+  },
+  "gain": {
+    "A": 1.0,
+    "B": 0.7777777777777778
+  },
+  "market_mean_price": 9.95,
+  "market_gain": 0.8888888888888888,
+  "fallbacks": 0
+}

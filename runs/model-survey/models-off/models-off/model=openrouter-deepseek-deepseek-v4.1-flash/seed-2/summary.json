@@ -1,0 +1,20 @@
+{
+  "run": "models-off/model=openrouter-deepseek-deepseek-v4.1-flash/seed-2",
+  "seed": 2,
+  "labels": {
+    "model": "openrouter/deepseek/deepseek-v4.1-flash"
+  },
+  "rounds": 20,
+  "last_rounds": 10,
+  "mean_price": {
+    "A": 11.9,
+    "B": 12
+  },
+  "gain": {
+    "A": 0.17777777777777715,
+    "B": -0.13333333333333364
+  },
+  "market_mean_price": 11.95,
+  "market_gain": 0.022222222222221755,
+  "fallbacks": 0
+}
