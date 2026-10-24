@@ -97,7 +97,7 @@ This is the manager's arm. Its runs are in `runs/logging-outage/no-collusion/` (
 - The message and scratchpad counts, including the 14 of 20 in point 1, come from keyword rules in `analyse.py`. I checked the quotes by hand, and every Gemma match in point 1.
 - Qwen produced a lot of unreadable replies; when a reply can't be read, the game substitutes a default price, so treat its numbers with care.
 - GPT-6 Luna is slow to run because OpenRouter limits new accounts to 20 requests a minute on it. Without thinking it colludes at about 8 and, like Haiku, hedges in the last round: "For this final round, I'll choose my price independently" (`models-off/…/gpt-6-luna/seed-0`, round 20, firm A).
-- **What's committed:** every game behind these numbers keeps its `config.yaml`, `summary.json`, `manifest.json` and `turns.compact.jsonl` under `runs/model-survey/` or `runs/logging-outage/no-collusion/`. The compact turn record holds each turn's round, firm, price or message, scratchpad and any error; it leaves out the prompts, which the lab rebuilds from the config and the history. `uv run python reports/model-survey/analyse.py` reprints every table and count in this note from those files.
+- **What's committed:** every game behind these numbers keeps its `config.yaml`, `summary.json`, `manifest.json` and `turns.compact.jsonl` under `runs/model-survey/` or `runs/logging-outage/no-collusion/`. `reports/compact_turns.py` wrote the compact turn record from the full logs; it holds each turn's round, firm, price or message, scratchpad and any error; it leaves out the prompts, which the lab rebuilds from the config and the history. `uv run python reports/model-survey/analyse.py` reprints every table and count in this note from those files.
 
 ## Files
 
