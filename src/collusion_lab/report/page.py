@@ -183,7 +183,9 @@ def _round(game, r):
     side = {firm: i for i, firm in enumerate(game.firms)}
     talk = "".join(_bubble(t, side[t.firm]) for t in r.talk.values())
     thoughts = "".join(
-        _bubble(t, side[t.firm]) for t in r.price.values() if t.scratchpad or t.error
+        _bubble(t, side[t.firm])
+        for t in r.price.values()
+        if t.scratchpad or t.error or t.retried
     )
     prices = "".join(
         f"<tr><td>Firm {escape(t.firm)}</td><td>{t.price}</td>"
