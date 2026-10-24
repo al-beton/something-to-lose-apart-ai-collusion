@@ -220,12 +220,13 @@ def test_summary_matches_lab_summary(sweep):
 def test_first_screen_says_what_each_arm_did(sweep, talks):
     html = build_report(sweep.parent)
     first = section(html, "summary")
-    nash = first[first.index("mock/nash</b>") :]
+    nash = first[first.index("<b>nash</b>") :]
     nash = nash[: nash.index("</li>")]
     assert "Firms settle on 6 in 3 of 3 games." in nash
     assert "They never agree on a price in words." in nash
     assert "Nobody defects." in nash
     assert "Firms settle on 9 in 3 of 3 games." in first
+    assert "<td>mock/nash</td>" in first
     talked = section(build_report(talks), "summary")
     assert "Firms settle on no single price" in talked
     assert "They first agree on a price in round 1 (1 of 1 games)." in talked
@@ -241,6 +242,7 @@ def test_first_screen_holds_only_sentences_table_and_one_chart(sweep):
     (chart,) = page.all("svg")
     assert chart["class"] == "chart overview"
     assert first.count('class="arm"') == 2
+    assert 'class="benchmark nash"' in first and 'class="benchmark joint"' in first
     order = [html.index(f'<section id="{name}"') for name in SECTIONS]
     assert order == sorted(order)
     assert html.index('<section id="summary"') < html.index('class="setup"')
@@ -268,6 +270,7 @@ def test_setup_names_what_was_run(sweep, talks):
         "joint-profit price 9",
     ):
         assert shown in setup, shown
+    assert "Used in every arm." in section(build_report(sweep), "setup")
 
 
 def test_setup_shows_exactly_what_agents_were_told_and_when(noticed):
@@ -314,6 +317,12 @@ def test_arm_tabs_hold_each_arms_games(sweep):
     assert "model=mock-joint" in first and "model=mock-nash" not in first
     assert "model=mock-nash" in second and "model=mock-joint" not in second
     assert [p.count('<article class="game"') for p in (first, second)] == [3, 3]
+
+
+def test_arm_tabs_name_arms_briefly(sweep):
+    arms = section(build_report(sweep), "arms")
+    labels = re.findall(r'<label for="arm-\d+">([^<]*)</label>', arms)
+    assert labels == ["joint", "nash"]
 
 
 def test_arm_tabs_are_left_out_for_one_arm(talks):
@@ -390,6 +399,13 @@ def test_transcripts_are_cards_with_a_strip_of_rounds(talks):
         assert f'id="{target}"' in games
     assert ".round:target" in html
     assert 'class="game-all"' in games
+
+
+def test_transcripts_show_the_notice_each_round_carried(noticed):
+    games = section(build_report(noticed), "arms")
+    rounds = re.split(r'<div class="round" id="', games)[1:]
+    told = [r.split('"', 1)[0] for r in rounds if NOTICE in r]
+    assert told == ["g0-r3", "g0-r4"]
 
 
 def test_transcripts_hold_every_round(talks):
