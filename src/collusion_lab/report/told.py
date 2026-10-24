@@ -39,30 +39,40 @@ def what_agents_were_told(arms):
     systems, extras, phases, conditions = {}, {}, {}, {}
     for arm, games in arms:
         for game in games:
-            first = {}
-            for r in game.rounds:
-                for turn in r.turns:
-                    if turn.system is None:
-                        continue
-                    if turn.firm not in first:
-                        first[turn.firm] = turn.system
-                        systems.setdefault(turn.system, Told(turn.system))
-                        systems[turn.system].seen(arm, r.number)
-                    seen = [
-                        *(
-                            (t, extras)
-                            for t in _extra(turn, r.number, first[turn.firm])
-                        ),
-                        *((n, conditions) for n in turn.conditions or ()),
-                    ]
-                    for text, into in seen:
-                        into.setdefault(text, Told(text)).seen(arm, r.number)
+            _read(arm, game, systems, extras, conditions)
             if game.rounds:
                 for phase, text in _phase_prompts(game.rounds[0], game.firms[0]):
                     phases.setdefault(phase, text)
     ordered = [(p, phases[p]) for p in ("talk", "price") if p in phases]
-    found = [list(systems.values()), ordered, list(conditions.values())]
+    found = [list(systems.values()), ordered, _by_window(conditions)]
     return (*found, list(extras.values()))
+
+
+def _read(arm, game, systems, extras, conditions):
+    """Add one game's system prompts, other text and condition rounds."""
+    first = {}
+    for r in game.rounds:
+        for turn in r.turns:
+            if turn.system is None:
+                continue
+            if turn.firm not in first:
+                first[turn.firm] = turn.system
+                systems.setdefault(turn.system, Told(turn.system)).seen(arm, r.number)
+            for text in _extra(turn, r.number, first[turn.firm]):
+                extras.setdefault(text, Told(text)).seen(arm, r.number)
+            for name in turn.conditions or ():
+                conditions.setdefault((arm, name), set()).add(r.number)
+
+
+def _by_window(conditions):
+    """One `Told` per condition and set of rounds, naming the arms that share
+    it, so arms with different windows are never merged into one."""
+    found = {}
+    for (arm, name), rounds in conditions.items():
+        told = found.setdefault((name, tuple(sorted(rounds))), Told(name))
+        for number in rounds:
+            told.seen(arm, number)
+    return list(found.values())
 
 
 def round_notices(game, r):
