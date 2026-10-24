@@ -1,4 +1,4 @@
-# Implements: conditions/hook-points, conditions/audit, conditions/audit-arms, conditions/fork-at-audit, conditions/audit-ground-truth, conditions/audit-logged, conditions/audit-metrics, conditions/off-is-absent, agents/mock-agents, backends/spend-asks-first
+# Implements: conditions/hook-points, conditions/audit, conditions/audit-arms, conditions/fork-at-audit, conditions/audit-ground-truth, conditions/audit-logged, conditions/audit-metrics, conditions/off-is-absent, agents/mock-agents, agents/scripted-partner, backends/spend-asks-first
 import json
 from pathlib import Path
 
@@ -83,6 +83,13 @@ def test_audit_runs_after_the_chosen_round_and_ends_the_game(make_config, tmp_pa
 
 def test_mock_agents_deny_when_audited(make_config, tmp_path):
     [run_dir] = run_config(make_config(overrides=[audit()]), tmp_path)
+    turn = audit_turns(run_dir)["A"]
+    assert turn["error"] is None and turn["used"]["admits"] is False
+
+
+def test_scripted_partner_denies_when_audited(make_config, tmp_path):
+    partner = ["agents.0.model=mock/solicitor"]
+    [run_dir] = run_config(make_config(overrides=[audit(), *partner]), tmp_path)
     turn = audit_turns(run_dir)["A"]
     assert turn["error"] is None and turn["used"]["admits"] is False
 
