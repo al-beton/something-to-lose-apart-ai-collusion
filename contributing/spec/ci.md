@@ -5,7 +5,7 @@
 - **checks-over-prose:** Anything that can be checked automatically ends up checked by CI rather than left to the reviewer.
 - **simple-code:** Code stays simple enough that the linter never calls it too complex.
 - **ci-runs-everything:** CI runs the linter, every test and the spec check before anything merges.
-- **smoke-evidence:** Every pull request shows the summary table of a free mock run as one comment, kept up to date on each push, and its checks fail if that run fails.
+- **end-to-end:** Every pull request proves the whole path works: free scripted agents play a small sweep with talk through the real `lab` commands, then `lab summary` and `lab report` turn it into a table and a page whose numbers, sections and highlights are checked; `make e2e` runs the same test offline, for free, in seconds.
 
 ## Where this is enforced
 
@@ -15,5 +15,5 @@
 | `checks-on-every-pr` | `.github/workflows/blocking-checks.yml` | — |
 | `checks-over-prose` | `.agents/skills/review-pr/SKILL.md` | — |
 | `simple-code` | `pyproject.toml` | — |
-| `smoke-evidence` | `.github/workflows/blocking-checks.yml`, `.github/scripts/smoke_comment.py`, `Makefile` | `test_smoke_evidence_comment_shows_the_table_and_commit`, `test_smoke_evidence_is_one_comment_edited_in_place`, `test_smoke_evidence_posts_once_then_edits_in_place` |
+| `end-to-end` | not yet | — |
 | `ci-runs-everything` | `.github/workflows/ci.yml` | — |
