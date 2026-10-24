@@ -1,4 +1,5 @@
 # Implements: runs/failures-dont-stop-sweeps, runs/resume, runs/missing-runs-shown
+import asyncio
 import json
 import shutil
 
@@ -180,3 +181,22 @@ def test_missing_runs_spend_counts_in_the_report_header(
     run_sweep(make_config(CONFIG), tmp_path, cache)
     run_sweep(make_config(CONFIG), tmp_path, cache)
     assert "cost $3.5000" in build_report(tmp_path)
+
+
+def test_failures_dont_stop_sweeps_but_wait_for_calls_in_flight(
+    make_config, tmp_path, fake_model, monkeypatch
+):
+    """A fails at once while B's call is still out: B's call is logged."""
+
+    async def model(**kwargs):
+        if "Firm A" in kwargs["messages"][0]["content"]:
+            raise litellm.AuthenticationError("Bad key", "openrouter", MODEL_NAME)
+        await asyncio.sleep(0.01)
+        return await fake_model(**kwargs)
+
+    monkeypatch.setattr(backends, "_acompletion", model)
+    both = ["agents.1.model=" + MODEL_NAME, "seeds=[0]", "market.rounds=1"]
+    [outcome] = run_sweep(make_config(CONFIG, both), tmp_path)
+    assert outcome.state == "failed"
+    timings = (outcome.dir / "timings.jsonl").read_text()
+    assert '"agent": "B"' in timings
