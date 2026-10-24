@@ -1,4 +1,4 @@
-# Implements: runs/sweeps, runs/parallel, market/talk-then-price, agents/json-replies, agents/retry-once, backends/usage-logged, backends/spend-asks-first, backends/shared-rate-limit, runs/stops-cleanly, reproducibility/response-cache, reproducibility/manifest, runs/run-directory, logs/turn-log, logs/same-seed-same-log, logs/run-summary
+# Implements: runs/sweeps, runs/parallel, market/talk-then-price, agents/json-replies, agents/retry-once, backends/usage-logged, backends/spend-asks-first, backends/shared-rate-limit, backends/spend-cap, market/history-window, runs/stops-cleanly, reproducibility/response-cache, reproducibility/manifest, runs/run-directory, logs/turn-log, logs/same-seed-same-log, logs/run-summary
 """Playing a config: one game per seed, each written to its own run directory.
 
 A round is a talk phase (each agent sends one message its rivals read; skipped
@@ -22,13 +22,20 @@ uses the fallback, and the turn line keeps both attempts.
 A model call that fails for good (see backends.py) stops its game: the turns
 played so far, the timings and the manifest are still written, and
 `RunFailed` says which run and which call. Every game shares one `RateGates`,
-so a rate limit on a model holds all of them.
+so a rate limit on a model holds all of them, and one `Budget`: once the
+fresh calls of all games together have cost more than `config.budget`, the
+next call anywhere stops its run instead (a call with no known cost counts
+as free).
+
+With `market.history_window: N`, agents see their last N rounds in full and
+one line summing up the rounds before them.
 """
 
 import asyncio
 import dataclasses
 import json
 import random
+from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from pathlib import Path
 from statistics import mean
@@ -49,6 +56,35 @@ class RunFailed(Exception):
     """A run stopped because a model call failed for good; one line saying where."""
 
 
+@dataclass
+class RunWide:
+    """What every game in one `run_config` shares."""
+
+    gates: RateGates = field(default_factory=RateGates)
+    budget: "Budget" = None
+
+    def __post_init__(self):
+        self.budget = self.budget or Budget()
+
+
+class Budget:
+    """What every game in a run has spent, against an optional cap."""
+
+    def __init__(self, cap=None):
+        self.cap = cap
+        self.spent = 0.0
+
+    def charge(self, reply):
+        if not reply.cached:
+            self.spent += reply.cost or 0
+
+    def problem(self):
+        """Why no more calls may be made, or None while they may."""
+        if self.cap is not None and self.spent > self.cap:
+            return f"spend cap of ${self.cap:g} passed (${self.spent:.4f} spent)"
+        return None
+
+
 def paid_calls(config):
     """How many calls a config makes to non-mock models, before retries."""
     total = 0
@@ -66,11 +102,11 @@ def run_config(config, out, cache=None):
 
 async def _play_all(config, out, cache):
     limit = asyncio.Semaphore(config.concurrency)
-    gates = RateGates()
+    shared = RunWide(budget=Budget(config.budget))
 
     async def limited(child, seed):
         async with limit:
-            return await play(child, seed, out, cache, gates)
+            return await play(child, seed, out, cache, shared)
 
     jobs = [limited(c, seed) for c in expand(config) for seed in c.seeds]
     return list(await asyncio.gather(*jobs))
@@ -84,7 +120,7 @@ def _now():
     return datetime.now(UTC).isoformat(timespec="seconds")
 
 
-async def play(config, seed, out, cache=None, gates=None):
+async def play(config, seed, out, cache=None, shared=None):
     run_dir = Path(out) / run_id(config, seed)
     run_dir.mkdir(parents=True, exist_ok=True)
     # An old summary must not outlive a replay that fails.
@@ -92,7 +128,7 @@ async def play(config, seed, out, cache=None, gates=None):
     resolved = dataclasses.replace(config, seeds=[seed])
     (run_dir / "config.yaml").write_text(resolved.to_yaml())
     started = _now()
-    game = Game(config, seed, cache, gates)
+    game = Game(config, seed, cache, shared)
     try:
         await game.play()
     finally:
@@ -121,16 +157,18 @@ def _write_lines(path, records):
 
 
 class Game:
-    def __init__(self, config, seed, cache=None, gates=None):
+    def __init__(self, config, seed, cache=None, shared=None):
+        shared = shared or RunWide()
         m = config.market
         self.config = config
         self.seed = seed
         self.market = Bertrand(m.a, m.b, m.c, m.price_min, m.price_max)
         self.agents = {a.id: a for a in config.agents}
         self.backends = {
-            a.id: _backend(a, random.Random(f"{seed}:{a.id}"), cache, gates)
+            a.id: _backend(a, random.Random(f"{seed}:{a.id}"), cache, shared.gates)
             for a in config.agents
         }
+        self.budget = shared.budget
         self.history = []
         self.turns = []
         self.timings = []
@@ -216,6 +254,12 @@ class Game:
 
     async def _ask(self, agent, messages, context, attempt=1):
         """One call to the agent's backend: the reply, and what it parsed to."""
+        where = (
+            f"{run_id(self.config, self.seed)} stopped at round "
+            f"{context['round']}, {context['phase']} phase, agent {agent.id}"
+        )
+        if not is_mock(agent.model) and (problem := self.budget.problem()):
+            raise RunFailed(f"{where}: {problem}")
         try:
             reply = await self.backends[agent.id].complete(
                 messages,
@@ -225,11 +269,8 @@ class Game:
                 seed=self.seed,
             )
         except ModelCallError as error:
-            raise RunFailed(
-                f"{run_id(self.config, self.seed)} stopped at round "
-                f"{context['round']}, {context['phase']} phase, agent {agent.id}: "
-                f"{error}"
-            ) from error
+            raise RunFailed(f"{where}: {error}") from error
+        self.budget.charge(reply)
         self.timings.append(
             {
                 "round": context["round"],
@@ -279,7 +320,9 @@ class Game:
             "rounds": self.config.market.rounds,
             "price_min": self.market.price_min,
             "price_max": self.market.price_max,
-            "history": _history_text(self.history, me),
+            "history": _history_text(
+                self.history, me, self.config.market.history_window
+            ),
             "messages": _messages_text(said, rivals),
         }
 
@@ -304,11 +347,22 @@ class Game:
         }
 
 
-def _history_text(history, me):
+def _history_text(history, me, window=None):
     if not history:
         return "No rounds have been played yet."
+    shown = history[-window:] if window else history
+    earlier = history[: len(history) - len(shown)]
     lines = ["What happened so far:"]
-    for r in history:
+    if earlier:
+        mine = mean(r["prices"][me] for r in earlier)
+        rivals = mean(p for r in earlier for f, p in r["prices"].items() if f != me)
+        profit = sum(r["profits"][me] for r in earlier)
+        lines.append(
+            f"Rounds {earlier[0]['round']} to {earlier[-1]['round']} in short: you "
+            f"charged {mine:.3g} on average and made a profit of {profit:g} in "
+            f"total; rivals charged {rivals:.3g} on average."
+        )
+    for r in shown:
         rivals = ", ".join(f"Firm {f} {p}" for f, p in r["prices"].items() if f != me)
         line = (
             f"Round {r['round']}: you charged {r['prices'][me]} and made a profit of "

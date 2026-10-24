@@ -1,4 +1,4 @@
-# Implements: agents/mock-agents, backends/any-model, backends/sampling-from-config, backends/usage-logged, backends/transient-errors-retried, backends/shared-rate-limit
+# Implements: agents/mock-agents, backends/any-model, backends/sampling-from-config, backends/usage-logged, backends/transient-errors-retried, backends/shared-rate-limit, backends/reported-cost
 """Backends turn a prompt into a reply: scripted mocks, or any model via LiteLLM.
 
 A backend is anything with `async complete(messages, *, context, temperature,
@@ -21,6 +21,11 @@ Every other name goes to LiteLLM as it is (`openrouter/openai/gpt-4.1-mini`,
 `api_base` for any OpenAI-compatible server). `drop_params` lets providers
 without a `seed` parameter ignore it. LiteLLM is imported on first use, so
 mock games never pay its import time.
+
+Cost: OpenRouter calls ask for usage accounting (`usage: {include: true}`)
+and record the `usage.cost` OpenRouter reports, which LiteLLM's price table
+can't give for OpenRouter model names. Every other call keeps LiteLLM's price,
+or None when it has none.
 
 Provider errors: rate limits, timeouts and server errors are retried with
 doubling waits (`RETRIES` times); anything else (a bad key, an unknown model)
@@ -132,6 +137,8 @@ class LiteLLMBackend:
 
     async def complete(self, messages, *, context, temperature, max_tokens, seed):
         extra = {"api_base": self.api_base} if self.api_base else {}
+        if self.model.startswith("openrouter/"):
+            extra["extra_body"] = {"usage": {"include": True}}
         started = time.perf_counter()
         response, retries = await self._call(
             model=self.model,
@@ -191,7 +198,11 @@ class LiteLLMBackend:
 
 
 def _cost(response):
-    """LiteLLM's price for a response, or None when it can't price it."""
+    """What the provider says the call cost, else LiteLLM's price for it, or
+    None when neither is known."""
+    reported = getattr(getattr(response, "usage", None), "cost", None)
+    if isinstance(reported, int | float):
+        return reported
     try:
         import litellm
 

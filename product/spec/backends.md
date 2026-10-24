@@ -21,7 +21,7 @@
 | `usage-logged` | `src/collusion_lab/backends.py`, `src/collusion_lab/runner.py` | `test_usage_logged_per_turn_and_timings_kept_apart`, `test_retry_once_tells_the_agent_what_was_wrong`, `test_transient_errors_retried_with_growing_waits_and_logged` |
 | `transient-errors-retried` | `src/collusion_lab/backends.py` | `test_transient_errors_retried_with_growing_waits_and_logged`, `test_transient_errors_retried_a_few_times_then_the_run_stops_cleanly`, `test_transient_errors_that_wont_fix_themselves_stop_at_once` |
 | `shared-rate-limit` | `src/collusion_lab/backends.py`, `src/collusion_lab/runner.py` | `test_shared_rate_limit_makes_every_game_wait_for_the_reset`, `test_shared_rate_limit_that_wont_lift_soon_stops_the_run`, `test_shared_rate_limit_reads_the_reset_from_the_error_body` |
-| `reported-cost` | not yet | — |
-| `spend-cap` | not yet | — |
-| `spend-asks-first` | `src/collusion_lab/runner.py`, `src/collusion_lab/cli.py` | `test_spend_asks_first_counts_paid_calls`, `test_spend_asks_first_and_stops_without_a_yes` |
+| `reported-cost` | `src/collusion_lab/backends.py` | `test_reported_cost_asked_for_and_logged`, `test_reported_cost_wins_over_litellms_price`, `test_reported_cost_other_providers_keep_litellms_price`, `test_reported_cost_unknown_stays_unknown` |
+| `spend-cap` | `src/collusion_lab/config.py`, `src/collusion_lab/runner.py`, `src/collusion_lab/cli.py`, `src/collusion_lab/estimate.py` | `test_spend_cap_refuses_to_start_over_the_estimate`, `test_spend_cap_from_the_config_budget`, `test_spend_cap_stops_cleanly_once_actual_spend_passes_it` |
+| `spend-asks-first` | `src/collusion_lab/runner.py`, `src/collusion_lab/cli.py`, `src/collusion_lab/estimate.py`, `src/collusion_lab/prices.py` | `test_spend_asks_first_counts_paid_calls`, `test_spend_asks_first_and_stops_without_a_yes`, `test_spend_asks_first_with_an_estimated_cost`, `test_spend_asks_first_says_when_a_price_is_unknown`, `test_spend_asks_first_estimate_within_a_quarter_of_actual` |
 | `tests-never-pay` | `tests/conftest.py` | `test_tests_never_pay_unfaked_calls_fail` |
