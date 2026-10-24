@@ -1,4 +1,4 @@
-# Implements: runs/one-config, runs/overrides, backends/keys-from-environment, backends/spend-asks-first, reproducibility/cache-modes, runs/summary-table, reports/one-page
+# Implements: runs/stops-cleanly, runs/one-config, runs/overrides, backends/keys-from-environment, backends/spend-asks-first, reproducibility/cache-modes, runs/summary-table, reports/one-page
 """The `lab` command.
 
 - `lab run CONFIG [--set path=value ...] [--out DIR] [-y]` plays a config;
@@ -24,7 +24,7 @@ from dotenv import load_dotenv
 from collusion_lab.cache import DEFAULT_PATH, MODES, Cache
 from collusion_lab.config import ConfigError, load_config
 from collusion_lab.report import write_report
-from collusion_lab.runner import paid_calls, run_config
+from collusion_lab.runner import RunFailed, paid_calls, run_config
 from collusion_lab.summary import format_table, summarize
 
 
@@ -70,7 +70,12 @@ def main(argv=None):
     if not args.yes and not _spending_agreed(paid_calls(config)):
         return 1
     cache = Cache(args.cache_path, args.cache)
-    for run_dir in run_config(config, args.out, cache):
+    try:
+        run_dirs = run_config(config, args.out, cache)
+    except RunFailed as error:
+        print(f"lab: {error}", file=sys.stderr)
+        return 1
+    for run_dir in run_dirs:
         print(run_dir)
     return 0
 

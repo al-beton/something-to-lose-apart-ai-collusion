@@ -1,4 +1,4 @@
-# Implements: agents/mock-agents, backends/any-model, backends/sampling-from-config, backends/usage-logged
+# Implements: agents/mock-agents, backends/any-model, backends/sampling-from-config, backends/usage-logged, backends/transient-errors-retried, backends/shared-rate-limit
 """Backends turn a prompt into a reply: scripted mocks, or any model via LiteLLM.
 
 A backend is anything with `async complete(messages, *, context, temperature,
@@ -21,11 +21,37 @@ Every other name goes to LiteLLM as it is (`openrouter/openai/gpt-4.1-mini`,
 `api_base` for any OpenAI-compatible server). `drop_params` lets providers
 without a `seed` parameter ignore it. LiteLLM is imported on first use, so
 mock games never pay its import time.
+
+Provider errors: rate limits, timeouts and server errors are retried with
+doubling waits (`RETRIES` times); anything else (a bad key, an unknown model)
+raises `ModelCallError` at once. Exceptions that aren't from a provider
+(no status code, not a timeout) pass through untouched. When a rate limit says when it lifts (the
+`X-RateLimit-Reset` or `Retry-After` header, or OpenRouter's copy of its
+headers inside the error body), the model's entry in the shared `RateGates`
+holds every call to that model, from any game, until then. Each error got
+past is listed in the reply's `retries`, which goes to the timings log.
 """
 
+import asyncio
 import json
+import re
 import time
 from dataclasses import dataclass
+
+RETRIES = 5
+FIRST_WAIT = 2
+TIMEOUT = 180  # seconds before a hung call is cut off and retried
+MAX_WAIT = 120  # a rate limit lifting later than this stops the run
+TRANSIENT = {408, 409, 425, 429}  # plus every 5xx
+RESET_IN_BODY = re.compile(r"X-RateLimit-Reset\W+(\d+)", re.IGNORECASE)
+
+# Patched in tests, so retries never really sleep.
+_sleep = asyncio.sleep
+_now = time.time
+
+
+class ModelCallError(Exception):
+    """A model call that failed for good, in one line naming the model."""
 
 
 @dataclass(frozen=True)
@@ -36,6 +62,7 @@ class Reply:
     seconds: float | None = None
     cost: float | None = None
     cached: bool = False
+    retries: list | None = None
 
 
 async def _acompletion(**kwargs):
@@ -44,21 +71,76 @@ async def _acompletion(**kwargs):
     return await litellm.acompletion(**kwargs)
 
 
+class RateGates:
+    """When each model may be called again, shared by every game in a run."""
+
+    def __init__(self):
+        self.until = {}
+
+    async def wait(self, model):
+        # Another game may push the time later while this one sleeps.
+        while (delay := self.until.get(model, 0) - _now()) > 0:
+            await _sleep(delay)
+
+    def hold(self, model, until):
+        self.until[model] = max(until, self.until.get(model, 0))
+
+
+def _one_line(error):
+    text = " ".join(str(error).split())
+    return f"{type(error).__name__}: {text[:200]}"
+
+
+def _provider_error(error):
+    """Whether a provider (not our own code) raised this."""
+    status = getattr(error, "status_code", None)
+    return isinstance(status, int) or isinstance(error, TimeoutError | ConnectionError)
+
+
+def _transient(error):
+    status = getattr(error, "status_code", None)
+    if isinstance(status, int):
+        return status in TRANSIENT or status >= 500
+    return True  # a timeout or a dropped connection
+
+
+def reset_time(error):
+    """When a rate limit lifts (seconds since the epoch), or None if unsaid."""
+    response = getattr(error, "response", None)
+    headers = getattr(response, "headers", None) or {}
+    value = headers.get("x-ratelimit-reset")
+    if value is None and (found := RESET_IN_BODY.search(str(error))):
+        value = found.group(1)
+    if value is None and (after := headers.get("retry-after")):
+        value = after
+    try:
+        number = float(value)
+    except (TypeError, ValueError):
+        return None
+    if number > 1e12:  # milliseconds since the epoch, as OpenRouter sends it
+        return number / 1000
+    if number > 1e9:  # seconds since the epoch
+        return number
+    return _now() + number  # seconds from now
+
+
 class LiteLLMBackend:
-    def __init__(self, model, api_base=None):
+    def __init__(self, model, api_base=None, gates=None):
         self.model = model
         self.api_base = api_base
+        self.gates = gates or RateGates()
 
     async def complete(self, messages, *, context, temperature, max_tokens, seed):
         extra = {"api_base": self.api_base} if self.api_base else {}
         started = time.perf_counter()
-        response = await _acompletion(
+        response, retries = await self._call(
             model=self.model,
             messages=messages,
             temperature=temperature,
             max_tokens=max_tokens,
             seed=seed,
             drop_params=True,
+            timeout=TIMEOUT,
             **extra,
         )
         usage = getattr(response, "usage", None)
@@ -72,7 +154,40 @@ class LiteLLMBackend:
             model_version=getattr(response, "model", None),
             seconds=time.perf_counter() - started,
             cost=_cost(response),
+            retries=retries or None,
         )
+
+    async def _call(self, **request):
+        """The response, and the errors retried on the way to it."""
+        retries = []
+        wait = FIRST_WAIT
+        while True:
+            await self.gates.wait(self.model)
+            try:
+                return await _acompletion(**request), retries
+            except Exception as error:
+                if not _provider_error(error):
+                    raise
+                if not _transient(error):
+                    raise ModelCallError(f"{self.model}: {_one_line(error)}") from error
+                if len(retries) == RETRIES:
+                    raise ModelCallError(
+                        f"{self.model}: gave up after {RETRIES + 1} tries: "
+                        f"{_one_line(error)}"
+                    ) from error
+                retries.append({"error": _one_line(error)})
+                if (until := reset_time(error)) and until > _now():
+                    if until - _now() > MAX_WAIT:
+                        lifts = time.strftime(
+                            "%Y-%m-%d %H:%M %Z", time.localtime(until)
+                        )
+                        raise ModelCallError(
+                            f"{self.model}: rate-limited; the limit lifts at {lifts}"
+                        ) from error
+                    self.gates.hold(self.model, until)
+                else:
+                    await _sleep(wait)
+                    wait *= 2
 
 
 def _cost(response):
@@ -143,10 +258,10 @@ def is_mock(model):
     return model.startswith("mock/")
 
 
-def backend_for(model, rng, api_base=None):
+def backend_for(model, rng, api_base=None, gates=None):
     """The backend a model name selects."""
     if not is_mock(model):
-        return LiteLLMBackend(model, api_base)
+        return LiteLLMBackend(model, api_base, gates)
     name = model.removeprefix("mock/")
     if name not in _POLICIES and name != "broken":
         known = ", ".join(f"mock/{p}" for p in [*_POLICIES, "broken"])

@@ -98,7 +98,9 @@ class CachedBackend:
             return Reply(**hit, cached=True)
         if self.cache.mode != "off" and key in self.cache.in_flight:
             reply = await self.cache.in_flight[key]
-            return dataclasses.replace(reply, cached=True, cost=None, seconds=None)
+            return dataclasses.replace(
+                reply, cached=True, cost=None, seconds=None, retries=None
+            )
         ask = self.inner.complete(
             messages,
             context=context,

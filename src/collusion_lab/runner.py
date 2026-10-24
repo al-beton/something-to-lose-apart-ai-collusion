@@ -1,4 +1,4 @@
-# Implements: runs/sweeps, runs/parallel, market/talk-then-price, agents/json-replies, agents/retry-once, backends/usage-logged, backends/spend-asks-first, reproducibility/response-cache, reproducibility/manifest, runs/run-directory, logs/turn-log, logs/same-seed-same-log, logs/run-summary
+# Implements: runs/sweeps, runs/parallel, market/talk-then-price, agents/json-replies, agents/retry-once, backends/usage-logged, backends/spend-asks-first, backends/shared-rate-limit, runs/stops-cleanly, reproducibility/response-cache, reproducibility/manifest, runs/run-directory, logs/turn-log, logs/same-seed-same-log, logs/run-summary
 """Playing a config: one game per seed, each written to its own run directory.
 
 A round is a talk phase (each agent sends one message its rivals read; skipped
@@ -18,6 +18,11 @@ between identical runs; each call's time, cost and cache hit go in
 A reply that can't be read is retried once: the agent sees its own reply and
 `prompts/phase/retry.md` saying what was wrong. If that fails too, the game
 uses the fallback, and the turn line keeps both attempts.
+
+A model call that fails for good (see backends.py) stops its game: the turns
+played so far, the timings and the manifest are still written, and
+`RunFailed` says which run and which call. Every game shares one `RateGates`,
+so a rate limit on a model holds all of them.
 """
 
 import asyncio
@@ -30,7 +35,7 @@ from statistics import mean
 
 from collusion_lab import manifest
 from collusion_lab.agents import ReplyError, decision, fallback, parse_reply
-from collusion_lab.backends import backend_for, is_mock
+from collusion_lab.backends import ModelCallError, RateGates, backend_for, is_mock
 from collusion_lab.cache import CachedBackend
 from collusion_lab.config import expand
 from collusion_lab.market import Bertrand
@@ -38,6 +43,10 @@ from collusion_lab.prompts import render
 
 PHASE_PROMPTS = {"talk": "phase/talk.md", "price": "phase/price.md"}
 RETRY_PROMPT = "phase/retry.md"
+
+
+class RunFailed(Exception):
+    """A run stopped because a model call failed for good; one line saying where."""
 
 
 def paid_calls(config):
@@ -57,10 +66,11 @@ def run_config(config, out, cache=None):
 
 async def _play_all(config, out, cache):
     limit = asyncio.Semaphore(config.concurrency)
+    gates = RateGates()
 
     async def limited(child, seed):
         async with limit:
-            return await play(child, seed, out, cache)
+            return await play(child, seed, out, cache, gates)
 
     jobs = [limited(c, seed) for c in expand(config) for seed in c.seeds]
     return list(await asyncio.gather(*jobs))
@@ -74,27 +84,31 @@ def _now():
     return datetime.now(UTC).isoformat(timespec="seconds")
 
 
-async def play(config, seed, out, cache=None):
+async def play(config, seed, out, cache=None, gates=None):
     run_dir = Path(out) / run_id(config, seed)
     run_dir.mkdir(parents=True, exist_ok=True)
+    # An old summary must not outlive a replay that fails.
+    (run_dir / "summary.json").unlink(missing_ok=True)
     resolved = dataclasses.replace(config, seeds=[seed])
     (run_dir / "config.yaml").write_text(resolved.to_yaml())
     started = _now()
-    game = Game(config, seed, cache)
-    await game.play()
-    _write_lines(run_dir / "turns.jsonl", game.turns)
-    _write_lines(run_dir / "timings.jsonl", game.timings)
-    record = manifest.build(
-        resolved, game.prompt_names(), game.timings, started, _now()
-    )
-    (run_dir / "manifest.json").write_text(json.dumps(record, indent=2) + "\n")
+    game = Game(config, seed, cache, gates)
+    try:
+        await game.play()
+    finally:
+        _write_lines(run_dir / "turns.jsonl", game.turns)
+        _write_lines(run_dir / "timings.jsonl", game.timings)
+        record = manifest.build(
+            resolved, game.prompt_names(), game.timings, started, _now()
+        )
+        (run_dir / "manifest.json").write_text(json.dumps(record, indent=2) + "\n")
     summary = game.summary(run_id(config, seed))
     (run_dir / "summary.json").write_text(json.dumps(summary, indent=2) + "\n")
     return run_dir
 
 
-def _backend(agent, rng, cache):
-    backend = backend_for(agent.model, rng, agent.api_base)
+def _backend(agent, rng, cache, gates):
+    backend = backend_for(agent.model, rng, agent.api_base, gates)
     if cache is None or is_mock(agent.model):
         return backend
     return CachedBackend(backend, cache)
@@ -107,14 +121,14 @@ def _write_lines(path, records):
 
 
 class Game:
-    def __init__(self, config, seed, cache=None):
+    def __init__(self, config, seed, cache=None, gates=None):
         m = config.market
         self.config = config
         self.seed = seed
         self.market = Bertrand(m.a, m.b, m.c, m.price_min, m.price_max)
         self.agents = {a.id: a for a in config.agents}
         self.backends = {
-            a.id: _backend(a, random.Random(f"{seed}:{a.id}"), cache)
+            a.id: _backend(a, random.Random(f"{seed}:{a.id}"), cache, gates)
             for a in config.agents
         }
         self.history = []
@@ -202,13 +216,20 @@ class Game:
 
     async def _ask(self, agent, messages, context, attempt=1):
         """One call to the agent's backend: the reply, and what it parsed to."""
-        reply = await self.backends[agent.id].complete(
-            messages,
-            context={**context, "attempt": attempt},
-            temperature=agent.temperature,
-            max_tokens=agent.max_tokens,
-            seed=self.seed,
-        )
+        try:
+            reply = await self.backends[agent.id].complete(
+                messages,
+                context={**context, "attempt": attempt},
+                temperature=agent.temperature,
+                max_tokens=agent.max_tokens,
+                seed=self.seed,
+            )
+        except ModelCallError as error:
+            raise RunFailed(
+                f"{run_id(self.config, self.seed)} stopped at round "
+                f"{context['round']}, {context['phase']} phase, agent {agent.id}: "
+                f"{error}"
+            ) from error
         self.timings.append(
             {
                 "round": context["round"],
@@ -221,6 +242,7 @@ class Game:
                 "cost": reply.cost,
                 "usage": reply.usage,
                 "model_version": reply.model_version,
+                "retries": reply.retries,
             }
         )
         m = self.market
