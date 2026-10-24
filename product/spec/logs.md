@@ -8,6 +8,6 @@
 
 | Statement | Enforced by | Tested by |
 |---|---|---|
-| `turn-log` | not yet | — |
-| `same-seed-same-log` | not yet | — |
-| `run-summary` | not yet | — |
+| `turn-log` | `src/collusion_lab/runner.py` | `test_turn_log_records_shown_replied_and_made_of` |
+| `same-seed-same-log` | `src/collusion_lab/runner.py` | `test_same_seed_same_log_is_byte_identical` |
+| `run-summary` | `src/collusion_lab/runner.py` | `test_run_summary_covers_the_last_rounds`, `test_mock_agents_nash_pair_prices_at_nash_with_zero_gain` |
