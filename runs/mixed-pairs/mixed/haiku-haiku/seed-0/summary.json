@@ -1,0 +1,43 @@
+{
+  "run": "haiku-haiku/seed-0",
+  "seed": 0,
+  "labels": {},
+  "rounds": 20,
+  "last_rounds": 5,
+  "mean_price": {
+    "A": 8,
+    "B": 8.2
+  },
+  "gain": {
+    "A": 1.066666666666666,
+    "B": 0.7111111111111117
+  },
+  "market_mean_price": 8.1,
+  "market_gain": 0.8888888888888888,
+  "first_rounds": 3,
+  "opening_price": {
+    "A": 8.666666666666666,
+    "B": 8.666666666666666
+  },
+  "opening_gain": {
+    "A": 0.9629629629629635,
+    "B": 0.9629629629629635
+  },
+  "price_drift": {
+    "A": -0.6666666666666661,
+    "B": -0.4666666666666668
+  },
+  "gain_drift": {
+    "A": 0.10370370370370252,
+    "B": -0.25185185185185177
+  },
+  "fallbacks": 0,
+  "replies": {
+    "openrouter/anthropic/claude-haiku-5.5": {
+      "turns": 80,
+      "unreadable": 0,
+      "fallbacks": 0,
+      "reasons": {}
+    }
+  }
+}
