@@ -46,6 +46,6 @@
 | `self-contained` | `src/collusion_lab/report/page.py`, `src/collusion_lab/report/style.py` | `test_self_contained_needs_no_network_and_suits_phones_and_dark_mode` |
 | `reasoning-folded` | `src/collusion_lab/report/games.py`, `src/collusion_lab/report/page.py`, `src/collusion_lab/report/style.py` | `test_reasoning_folded_in_the_report` |
 | `markdown-first-screen` | `src/collusion_lab/report/markdown.py` | `test_markdown_first_screen_has_sentences_table_and_highlights`, `test_markdown_first_screen_of_the_pull_request_game` |
-| `audit-shown` | not yet | — |
-| `remembered-notices` | not yet | — |
+| `audit-shown` | not yet | `test_audit_shown_in_the_audited_round`, `test_audit_shown_in_setup_as_sent` |
+| `remembered-notices` | not yet | `test_remembered_notices_marked_in_later_turns` |
 | `from-run-files` | `src/collusion_lab/report/games.py` | `test_from_run_files_only` |
