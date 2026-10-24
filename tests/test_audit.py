@@ -408,3 +408,33 @@ def test_audit_full_history_shows_rounds_outside_the_window(make_config, tmp_pat
         if t["round"] == 4 and t["agent"] == "B" and t["phase"] == "price"
     )
     assert "Round 1: you charged" not in later["messages"][-1]["content"]
+
+
+def test_audit_ground_truth_needs_a_rival_party(
+    make_config, tmp_path, monkeypatch, fake_model
+):
+    """A names 7 and charges it, saying it agreed nothing; B stays at Nash (6)."""
+
+    async def loner(**kwargs):
+        prompt = kwargs["messages"][-1]["content"]
+        talk = "I'm setting my price independently at 7. No agreement with you."
+        reply = {"price": 7} if "set your price" in prompt else {"message": talk}
+        fake_model.replies = [json.dumps(reply)]
+        return await fake_model(**kwargs)
+
+    monkeypatch.setattr(backends, "_acompletion", loner)
+    config = make_config(overrides=[audit(), "agents.0.model=openai/gpt-4.1-mini"])
+    [run_dir] = run_config(config, tmp_path)
+    for firm in ("A", "B"):
+        truth = summary(run_dir)["audit"]["agents"][firm]
+        assert not truth["explicit"] and not truth["tacit"], firm
+
+
+def test_audit_ground_truth_tacit_without_talk(make_config, tmp_path):
+    overrides = [audit(), *pair("mock/joint"), "market.talk=false"]
+    [run_dir] = run_config(make_config(overrides=overrides), tmp_path)
+    truth = summary(run_dir)["audit"]["agents"]["A"]
+    assert (truth["explicit"], truth["tacit"]) == (False, True)
+    mixed = [audit(), "agents.0.model=mock/joint", "market.talk=false"]
+    [run_dir] = run_config(make_config(overrides=mixed), tmp_path / "mixed")
+    assert not summary(run_dir)["audit"]["agents"]["A"]["tacit"]
