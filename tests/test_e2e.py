@@ -77,7 +77,7 @@ def test_end_to_end_plays_every_arm_and_seed_into_its_own_folder(played):
     for arm in ARMS:
         for seed in (0, 1):
             folder = runs / f"model={arm}" / f"seed-{seed}"
-            assert str(folder) in printed
+            assert f"runs/e2e/model={arm}/seed-{seed}" in printed.splitlines()
             for name in ("config.yaml", "manifest.json", "summary.json", "turns.jsonl"):
                 assert (folder / name).is_file(), folder / name
             manifest = json.loads((folder / "manifest.json").read_text())
