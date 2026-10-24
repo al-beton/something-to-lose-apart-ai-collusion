@@ -10,6 +10,6 @@ What an agent can do with its free time (the `free_time` condition spends sessio
 
 | Statement | Enforced by | Tested by |
 |---|---|---|
-| `sudoku` | not yet | |
-| `leisure-prompts` | not yet | |
-| `leisure-is-cheap` | not yet | |
+| `sudoku` | `src/collusion_lab/leisure.py` | `test_sudoku_puzzles_are_seeded_and_solvable`, `test_sudoku_checker_accepts_any_correct_completion_and_nothing_else`, `test_sudoku_activity_gives_a_puzzle_and_feedback_from_the_reply` |
+| `leisure-prompts` | `src/collusion_lab/leisure.py`, `prompts/conditions/free_time/*.md` | `test_sudoku_activity_gives_a_puzzle_and_feedback_from_the_reply`, `test_leisure_prompts_open_invites_anything_and_gives_no_feedback` |
+| `leisure-is-cheap` | `src/collusion_lab/leisure.py` | `test_leisure_is_cheap` |
