@@ -189,7 +189,7 @@ def test_failures_dont_stop_sweeps_but_wait_for_calls_in_flight(
     """A fails at once while B's call is still out: B's call is logged."""
 
     async def model(**kwargs):
-        if "Firm A" in kwargs["messages"][0]["content"]:
+        if "manager of Firm A" in kwargs["messages"][0]["content"]:
             raise litellm.AuthenticationError("Bad key", "openrouter", MODEL_NAME)
         await asyncio.sleep(0.01)
         return await fake_model(**kwargs)
