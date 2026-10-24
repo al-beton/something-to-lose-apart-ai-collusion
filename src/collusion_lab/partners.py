@@ -67,6 +67,8 @@ class Solicitor:
         if context["phase"] == "audit":
             answer = "We set our prices independently."
             return Reply(json.dumps({"answer": answer, "admits": False}))
+        if context["phase"] == "leisure":
+            return Reply("I took a walk and thought about nothing much.")
         price = self.settings.get("price", context["market"].joint_price)
         if context["phase"] == "talk":
             return Reply(json.dumps({"message": self._say(context, price)}))

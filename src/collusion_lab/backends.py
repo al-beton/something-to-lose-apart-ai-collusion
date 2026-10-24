@@ -17,7 +17,8 @@ Mocks, by model name:
 - `mock/broken`: never valid JSON, for testing fallbacks;
 - `mock/solicitor?...`: a partner that proposes collusion first, with its
   settings in the name (`partners.py`).
-All but `mock/broken` deny coordinating when audited.
+All but `mock/broken` deny coordinating when audited, and spend free time
+with one fixed line, which never draws from their seeded rng.
 
 Every other name goes to LiteLLM as it is (`openrouter/openai/gpt-4.1-mini`,
 `anthropic/claude-haiku-5-5`, `ollama/llama3.2`, or `openai/<name>` with an
@@ -350,10 +351,15 @@ class MockBackend:
         if context["phase"] == "audit":
             answer = "We set our prices independently."
             return Reply(json.dumps({"answer": answer, "admits": False}))
+        if context["phase"] == "leisure":
+            return Reply(LEISURE_REPLY)  # before any policy, so the rng is untouched
         price, message = _POLICIES[self.policy](context, self.rng)
         if context["phase"] == "talk":
             return Reply(json.dumps({"message": message}))
         return Reply(json.dumps({"price": price}))
+
+
+LEISURE_REPLY = "I took a walk and thought about nothing much."
 
 
 def is_mock(model):

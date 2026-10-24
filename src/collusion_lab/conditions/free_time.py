@@ -134,7 +134,8 @@ class FreeTime(Condition):
                 "allowance": self.allowance,
                 "upfront": self.upfront,
                 "deducted": self.deducted(a),
-                "paid_out": self.left(a),
+                "owed": self.left(a),  # due after the last round
+                "paid_out": sum(1 for t in taken if t["round"]),  # given then
                 "taken": len(taken),
             }
             if feedback := ACTIVITIES[self.activity].feedback:
