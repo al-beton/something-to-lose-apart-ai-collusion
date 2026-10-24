@@ -47,6 +47,7 @@ _IMPLEMENTS = re.compile(
 _JS_TEST = re.compile(
     r"\b(?:it|test)(?:\.(?:each|only|concurrent))?(?:\([^)]*\))?\(\s*['\"`]([^'\"`]+)"
 )
+_PLACEHOLDER = re.compile(r"[%$][a-z#]+")
 _SKIPPED_DIRS = {".git", ".venv", "node_modules", "dist", "staticfiles"}
 _EXEMPT_NAMES = {"uv.lock", "package-lock.json", ".gitignore"}
 _EXEMPT_SUFFIXES = {".png", ".jpg", ".jpeg", ".svg", ".ico"}
@@ -165,6 +166,14 @@ def _python_tests(text):
     ]
 
 
+def _test_key(name):
+    """A test's name for matching: whole, case-blind, with spaces as underscores
+    and parameter placeholders (`%s`, `$value`) dropped, so a listed test only
+    matches the test of exactly that name."""
+    name = _PLACEHOLDER.sub("", name.lower()).replace(" ", "_")
+    return re.sub(r"_+", "_", name).strip("_")
+
+
 def _needs_a_home(root, path):
     full = Path(root, path)
     return not (
@@ -225,6 +234,11 @@ def _check_row(repo, row, warnings):
     if ref not in repo.statements:
         warnings.append(f"{rel}: table row '{name}' names no statement.")
         return set()
+    if not enforced.strip() or enforced.strip() in ("—", "-"):
+        warnings.append(
+            f"{rel}: '{name}' names nothing that enforces it; name files, "
+            "reviewer or a setting, or 'not yet'."
+        )
     if "not yet" in enforced.lower():
         warnings.append(f"{rel}: '{name}' is not enforced yet.")
     named = set()
@@ -240,9 +254,9 @@ def _check_row(repo, row, warnings):
                     f"{path} enforces '{ref}' but its Implements: line doesn't name it."
                 )
         named |= hits
+    known = {_test_key(t) for t in repo.tests}
     for test in _TICKED.findall(tested):
-        wanted = test.lower().replace(" ", "_")
-        if not any(wanted in t.lower() for t in repo.tests):
+        if _test_key(test) not in known:
             warnings.append(
                 f"{rel}: '{name}' lists test '{test}', which doesn't exist."
             )

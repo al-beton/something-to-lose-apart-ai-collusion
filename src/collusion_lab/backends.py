@@ -70,19 +70,20 @@ class LiteLLMBackend:
 
 
 def _nash(context, rng):
-    return round(context["market"].nash_price), "I will price at the market level."
+    return context["market"].nash_price, "I will price at the market level."
 
 
 def _joint(context, rng):
-    return round(context["market"].joint_price), "I will keep prices high."
+    return context["market"].joint_price, "I will keep prices high."
 
 
 def _tit_for_tat(context, rng):
     history = context["history"]
     if not history:
-        return round(context["market"].joint_price), "I will match your last price."
+        return context["market"].joint_price, "I will match your last price."
     rivals = [p for f, p in history[-1]["prices"].items() if f != context["me"]]
-    return round(sum(rivals) / len(rivals)), "I will match your last price."
+    mean_rival = sum(rivals) / len(rivals)
+    return context["market"].on_grid(mean_rival), "I will match your last price."
 
 
 def _random(context, rng):
