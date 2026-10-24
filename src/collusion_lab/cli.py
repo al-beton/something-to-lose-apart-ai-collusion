@@ -6,8 +6,8 @@ rerun replays for free; `--cache refresh` calls again, `--cache off` skips it.
 
 API keys are read from the environment, topped up from the `.env` file in the
 directory `lab` runs from (gitignored), never one found elsewhere. A config
-that calls paid models says how many
-calls it will make and waits for a yes; `-y` answers yes in advance.
+that calls paid models says how many calls it will make and waits for a yes;
+`-y` answers yes in advance.
 """
 
 import argparse

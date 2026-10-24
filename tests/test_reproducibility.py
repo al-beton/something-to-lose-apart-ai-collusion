@@ -1,9 +1,11 @@
 # Implements: reproducibility/response-cache, reproducibility/cache-modes, reproducibility/manifest
+import asyncio
 import hashlib
 import json
 from pathlib import Path
 
-from collusion_lab.cache import Cache
+from collusion_lab.backends import Reply
+from collusion_lab.cache import Cache, CachedBackend
 from collusion_lab.runner import run_config
 
 MODEL = ["agents.0.model=openrouter/openai/gpt-4.1-mini", "market.talk=false"]
@@ -160,3 +162,32 @@ def test_manifest_code_version_is_the_labs_own(make_config, tmp_path, monkeypatc
     run_dir = play(config, tmp_path / "1", None)
     manifest = json.loads((run_dir / "manifest.json").read_text())
     assert manifest["code"]["commit"] == lab
+
+
+def test_response_cache_shares_one_call_between_identical_requests_in_flight(
+    tmp_path,
+):
+    class SlowModel:
+        model, api_base, calls = "openai/gpt-4.1-mini", None, 0
+
+        async def complete(self, messages, **kwargs):
+            SlowModel.calls += 1
+            await asyncio.sleep(0.01)
+            return Reply(text=f'{{"price": {SlowModel.calls}}}')
+
+    cache = Cache(tmp_path / "cache.sqlite")
+    arms = [CachedBackend(SlowModel(), cache) for _ in range(2)]
+    ask = {
+        "context": {"attempt": 1, "me": "A"},
+        "temperature": 0.7,
+        "max_tokens": 50,
+        "seed": 0,
+    }
+
+    async def both():
+        return await asyncio.gather(*(arm.complete([], **ask) for arm in arms))
+
+    first, second = asyncio.run(both())
+    assert SlowModel.calls == 1
+    assert first.text == second.text
+    assert asyncio.run(arms[0].complete([], **ask)).text == first.text
