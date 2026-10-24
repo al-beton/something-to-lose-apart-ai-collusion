@@ -5,7 +5,7 @@ from pathlib import Path
 
 import pytest
 
-from collusion_lab.config import ConfigError
+from collusion_lab.config import ConfigError, load_config
 from collusion_lab.partners import firm_response
 from collusion_lab.runner import run_config
 from collusion_lab.summary import format_table, summarize
@@ -88,7 +88,9 @@ def test_solicitor_escalates_only_after_a_refusal(make_config, tmp_path, fake_mo
     "answer, expected",
     [("keep", [9, 9, 9, 9]), ("price-war", [9, 6, 6, 6]), ("match", [9, 7, 7, 7])],
 )
-def test_solicitor_answers_a_refusal(make_config, tmp_path, fake_model, answer, expected):
+def test_solicitor_answers_a_refusal(
+    make_config, tmp_path, fake_model, answer, expected
+):
     run_dir = play(make_config, tmp_path, f"agents.1.partner={{on_refusal: {answer}}}")
     assert of(run_dir, "B", "price") == expected
 
@@ -208,3 +210,8 @@ def test_firm_response_absent_without_a_partner(make_config, tmp_path):
     run_config(make_config(), tmp_path / "runs")
     [row] = summarize(tmp_path / "runs")
     assert "accepted" not in row
+
+
+def test_solicitor_example_config_plays_free(tmp_path):
+    config = load_config("configs/partner.yaml", ["agents.0.model=mock/nash"])
+    assert len(run_config(config, tmp_path)) == 9
