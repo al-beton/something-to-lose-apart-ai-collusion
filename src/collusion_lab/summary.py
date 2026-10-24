@@ -53,8 +53,8 @@ def group_runs(folder, by=None):
     missing runs come with `summary` None."""
     runs = _finished(folder)
     runs += [
-        Run(Path(folder), None, {"config": entry["config"]})
-        for entry in unfinished(folder).values()
+        _missing(Path(folder) / path, entry)
+        for path, entry in unfinished(folder).items()
     ]
     if by is None:
         by = list(dict.fromkeys(k for r in runs for k in r.labels))
@@ -173,6 +173,14 @@ def format_table(rows):
     ]
     lines += ["| " + " | ".join(cell(r[c]) for c in columns) + " |" for r in rows]
     return "\n".join(lines)
+
+
+def _missing(run_dir, entry):
+    """A run with no summary; its manifest, when it got that far, keeps what
+    it spent counted in the group's cost."""
+    path = run_dir / "manifest.json"
+    manifest = json.loads(path.read_text()) if path.exists() else {}
+    return Run(run_dir, None, {**manifest, "config": entry["config"]})
 
 
 def _load(path):
