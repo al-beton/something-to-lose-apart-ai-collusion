@@ -1,4 +1,4 @@
-<!-- Implements: agent-setup/entry-point, review/spec-first, safety/no-secrets, workflow/al-only -->
+<!-- Implements: agent-setup/entry-point, review/spec-first, safety/no-secrets, workflow/al-only, workflow/prototype-pace, workflow/one-routine -->
 # collusion-lab: agent guide
 
 collusion-lab is a small, quickly iterable environment for studying collusion between LLM agents in simulated markets, built for the Apart AI Collusion Research Sprint. A run is a config: the market, each agent's model, prompt and temperature, and a seed. Any run can be replayed exactly, and a sweep is one command.
@@ -7,10 +7,14 @@ collusion-lab is a small, quickly iterable environment for studying collusion be
 
 - **Spec (intent, read first):** `product/spec/` (the lab), `experiments/spec/` (what we're finding out with it) and `contributing/spec/` (how we build it). One file per area. Each ends with "Where this is enforced", which says which files enforce each statement and which tests prove it.
 - **Code:** `src/collusion_lab/`, tests in `tests/`, CI in `.github/`. Prompts in `prompts/` are sent to models verbatim, so they carry no comments; their spec rows trace them. Every file names the statements it implements on an `Implements:` line (files that can't hold comments, such as JSON, lockfiles and symlinks, are traced by their table row). Docs are the comments and docstrings next to the code.
-- **How to do each step:** the skills in `.agents/skills/` (also linked as `.claude/skills/`): `build-issue`, `write-spec-change`, `trace-spec`, `open-pr`, `review-pr`, `address-review`, `merge-pr`.
+- **How to do each step:** the skills in `.agents/skills/` (also linked as `.claude/skills/`): `deliver-issue` (the whole routine, issue to merged), and the steps it chains: `build-issue`, `write-spec-change`, `trace-spec`, `open-pr`, `review-pr`, `address-review`, `merge-pr`.
 - **Work** is tracked as GitHub issues on this repository.
 
 Al handles accounts, API keys and spending. Agents never put keys in code, configs, logs or commits.
+
+## Pace
+
+This is a hackathon prototype: submissions close Sunday 25 October 2026, 23:59 AoE. Aim for the smallest change that works and can be shared. Fix real bugs; decline speculative hardening and edge cases nobody has hit, with a reason. Automatic review stops after three rounds, or sooner when a round finds nothing real.
 
 ## Commands
 
@@ -23,7 +27,7 @@ make spec-check   # spec ↔ code ↔ tests traceability (fails CI if broken)
 
 ## The loop
 
-Every issue goes **spec → failing test → code → trace → draft PR**, one small commit at a time (`build-issue`).
+Every issue goes **spec → failing test → code → trace → draft PR → review → merge**, one small commit at a time (`deliver-issue`).
 
 ## Code review rules
 
