@@ -139,3 +139,24 @@ def test_free_time_leisure_reply_needs_no_json(
     [run_dir] = run_config(config, tmp_path)
     assert all(t["error"] is None for t in leisure(run_dir))
     assert leisure(run_dir)[0]["reply"] == "I watched the clouds for a while."
+
+
+def test_free_time_activity_feedback_is_logged(make_config, tmp_path, monkeypatch):
+    from collusion_lab.conditions import free_time
+
+    def values(rng):
+        return {"target": rng.randint(1, 9)}
+
+    def feedback(reply, values):
+        return f"target was {values['target']}"
+
+    guess = free_time.Activity(
+        "conditions/free_time/open.md", values=values, feedback=feedback
+    )
+    monkeypatch.setitem(free_time.ACTIVITIES, "guess", guess)
+    on = "conditions={free_time: {enabled: true, allowance: 3, upfront: 1, activity: guess}}"
+    [run_dir] = run_config(make_config(overrides=[on]), tmp_path)
+    logged = summary(run_dir)["free_time"]["A"]["feedback"]
+    assert len(logged) == 3 and all(f.startswith("target was ") for f in logged)
+    [again] = run_config(make_config(overrides=[on]), tmp_path / "again")
+    assert summary(again)["free_time"]["A"]["feedback"] == logged
