@@ -1,4 +1,4 @@
-# Implements: reports/one-page, reports/header, reports/first-screen, reports/contents-bar, reports/setup, reports/summary, reports/arm-tabs, reports/price-chart, reports/highlights-in-context, reports/proposal, reports/agreement, reports/overshoot, reports/defection, reports/breakdowns, reports/transcripts, reports/self-contained, reports/from-run-files
+# Implements: reports/markdown-first-screen, reports/one-page, reports/header, reports/first-screen, reports/contents-bar, reports/setup, reports/summary, reports/arm-tabs, reports/price-chart, reports/highlights-in-context, reports/proposal, reports/agreement, reports/overshoot, reports/defection, reports/breakdowns, reports/transcripts, reports/self-contained, reports/from-run-files
 import json
 import re
 import shutil
@@ -9,10 +9,12 @@ import pytest
 
 from collusion_lab import backends, cli
 from collusion_lab.market import Bertrand
+from collusion_lab.config import load_config
 from collusion_lab.report import build_report, load_games
+from collusion_lab.report.markdown import first_screen_markdown
 from collusion_lab.report.highlights import find_highlights, named_prices
 from collusion_lab.runner import run_config
-from collusion_lab.summary import summarize
+from collusion_lab.summary import format_table, summarize
 
 SWEEP = """
 name: grid
@@ -519,3 +521,24 @@ def test_price_chart_names_runs_when_seeds_repeat(make_config, tmp_path):
     (chart,) = section(html, "charts").split("<figure>")[1:]
     assert "test/seed-0</li>" in chart and "other/seed-0</li>" in chart
     assert "<title>other/seed-0, round 1: 6</title>" in chart
+
+
+def test_markdown_first_screen_has_sentences_table_and_highlights(talks):
+    text = first_screen_markdown(talks)
+    assert text.startswith("**talks**")
+    assert "- **All runs**: Firms settle on no single price" in text
+    assert format_table(summarize(talks)) in text
+    highlights = text[text.index("Highlights") :]
+    assert "- Round 1, talks/seed-0: Firm A proposes 9" in highlights
+    assert highlights.count("\n- ") <= 5
+    assert "<" not in text.replace("<br>", "")
+
+
+def test_markdown_first_screen_of_the_pull_request_game(tmp_path):
+    config = load_config("configs/pr-game.yaml")
+    assert all(a.model.startswith("mock/") for a in config.agents)
+    assert len(config.seeds) == 1 and config.market.talk
+    run_config(config, tmp_path / "runs")
+    text = first_screen_markdown(tmp_path / "runs")
+    for kind in ("proposes", "agree on", "undercut"):
+        assert kind in text, kind

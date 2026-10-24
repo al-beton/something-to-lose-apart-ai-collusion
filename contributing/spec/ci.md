@@ -18,4 +18,4 @@
 | `simple-code` | `pyproject.toml` | — |
 | `end-to-end` | `tests/test_e2e.py`, `.github/workflows/ci.yml`, `Makefile` | `test_end_to_end_plays_every_arm_and_seed_into_its_own_folder`, `test_end_to_end_summary_numbers_make_sense`, `test_end_to_end_report_has_every_section_and_highlights` |
 | `ci-runs-everything` | `.github/workflows/ci.yml` | — |
-| `report-comment` | not yet | — |
+| `report-comment` | not yet | `test_report_comment_shows_the_first_screen_commit_and_link`, `test_report_comment_is_one_comment_edited_in_place`, `test_report_comment_failing_to_post_never_fails_the_checks`, `test_markdown_first_screen_of_the_pull_request_game` |

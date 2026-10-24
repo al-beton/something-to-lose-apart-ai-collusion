@@ -41,5 +41,5 @@
 | `transcripts` | `src/collusion_lab/report/page.py`, `src/collusion_lab/report/told.py` | `test_transcripts_are_cards_with_a_strip_of_rounds`, `test_transcripts_hold_every_round`, `test_transcripts_show_the_notice_each_round_carried`, `test_transcripts_escape_what_models_wrote`, `test_transcripts_show_retries_and_fallbacks` |
 | `self-contained` | `src/collusion_lab/report/page.py`, `src/collusion_lab/report/style.py` | `test_self_contained_needs_no_network_and_suits_phones_and_dark_mode` |
 | `reasoning-folded` | `src/collusion_lab/report/games.py`, `src/collusion_lab/report/page.py`, `src/collusion_lab/report/style.py` | `test_reasoning_folded_in_the_report` |
-| `markdown-first-screen` | not yet | — |
+| `markdown-first-screen` | not yet | `test_markdown_first_screen_has_sentences_table_and_highlights`, `test_markdown_first_screen_of_the_pull_request_game` |
 | `from-run-files` | `src/collusion_lab/report/games.py` | `test_from_run_files_only` |
