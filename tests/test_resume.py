@@ -132,3 +132,14 @@ def test_missing_runs_shown_in_the_report(make_config, tmp_path, seed_one_fails)
     page = build_report(tmp_path)
     assert "Missing runs" in page
     assert "test/seed-1" in page and "AuthenticationError" in page
+
+
+def test_missing_runs_shown_for_each_folder_even_when_run_ids_repeat(
+    make_config, tmp_path, seed_one_fails
+):
+    for out in ("first", "second"):
+        run_sweep(make_config(CONFIG), tmp_path / out)
+    [row] = summarize(tmp_path)
+    assert (row["runs"], row["missing"]) == (4, 2)
+    shown = sorted(m["run"] for m in missing_runs(tmp_path))
+    assert shown == ["first/test/seed-1", "second/test/seed-1"]
