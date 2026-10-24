@@ -9,7 +9,7 @@ from collusion_lab.config import ConfigError
 from collusion_lab.runner import run_config
 
 OUTAGE = "conditions={outage: {enabled: true, start: 2, end: 3}}"
-UNMONITORED = "are not recorded"
+UNMONITORED = "will not be recorded"
 RESTORED = "recorded again"
 
 
@@ -79,6 +79,7 @@ def test_outage_notices_appear_on_exactly_the_right_rounds(make_config, tmp_path
     back = {n for n, t in talk.items() if RESTORED in talk_prompt(t)}
     assert (told, back) == ({2, 3}, {4})
     assert "rounds 2 to 3" in talk_prompt(talk[2])
+    assert "back in round 4" in talk_prompt(talk[2])
     assert [talk[n]["conditions"] for n in (1, 2, 3, 4)] == [
         [],
         ["outage"],
@@ -138,3 +139,23 @@ def test_hook_points_notices_count_in_the_cost_estimate(make_config):
 
     plain, outage = tokens(), tokens(OUTAGE)
     assert outage.prompt_tokens > plain.prompt_tokens
+
+
+def test_outage_announced_once_in_the_first_round_of_the_window(make_config, tmp_path):
+    config = make_config(
+        overrides=[
+            "conditions={outage: {enabled: true, start: 2, end: 3, once: true}}",
+            "market.rounds=5",
+        ]
+    )
+    [run_dir] = run_config(config, tmp_path)
+    talk = by_round(run_dir, "talk")
+    told = {n for n, t in talk.items() if UNMONITORED in talk_prompt(t)}
+    assert told == {2}
+    assert talk[3]["conditions"] == ["outage"]  # still in force, just not repeated
+
+
+def test_outage_ships_the_tested_wordings():
+    folder = Path("prompts/conditions/outage")
+    names = {p.name for p in folder.glob("*.md")}
+    assert {"outage.md", "restored.md", "outage-alt.md", "restored-alt.md"} <= names
