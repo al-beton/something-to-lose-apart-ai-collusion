@@ -6,6 +6,7 @@
 - **simple-code:** Code stays simple enough that the linter never calls it too complex.
 - **ci-runs-everything:** CI runs the linter, every test and the spec check before anything merges.
 - **end-to-end:** Every pull request proves the whole path works: free scripted agents play a small sweep with talk through the real `lab` commands, then `lab summary` and `lab report` turn it into a table and a page whose numbers, sections and highlights are checked; `make e2e` runs the same test offline, for free, in seconds.
+- **report-comment:** Every pull request carries one comment, edited in place on each push, with the first screen of a report on one free scripted game and a link to the full report; the game or report failing fails the checks, while a comment that can't be posted doesn't.
 
 ## Where this is enforced
 
@@ -17,3 +18,4 @@
 | `simple-code` | `pyproject.toml` | — |
 | `end-to-end` | `tests/test_e2e.py`, `.github/workflows/ci.yml`, `Makefile` | `test_end_to_end_plays_every_arm_and_seed_into_its_own_folder`, `test_end_to_end_summary_numbers_make_sense`, `test_end_to_end_report_has_every_section_and_highlights` |
 | `ci-runs-everything` | `.github/workflows/ci.yml` | — |
+| `report-comment` | not yet | — |
