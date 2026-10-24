@@ -46,8 +46,7 @@ def test_sudoku_checker_accepts_any_correct_completion_and_nothing_else():
     wrong[0][0], wrong[0][1] = wrong[0][1], wrong[0][0]
     assert not leisure.check(p, wrong)
     empty = leisure.make_puzzle(4, "x")._replace(givens=((0,) * 4,) * 4)
-    other = [row[1:] + row[:1] for row in ([1, 2, 3, 4], [3, 4, 1, 2])]
-    other = [other[0], other[1], [2, 3, 4, 1], [4, 1, 2, 3]]
+    other = [[2, 3, 4, 1], [4, 1, 2, 3], [3, 4, 1, 2], [1, 2, 3, 4]]
     assert valid(other, 4)
     assert leisure.check(empty, other)  # not the stored solution, but correct
 
