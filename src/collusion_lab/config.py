@@ -1,4 +1,4 @@
-# Implements: runs/one-config, runs/overrides, runs/sweeps, runs/parallel, backends/keys-from-environment, backends/any-model
+# Implements: runs/one-config, runs/overrides, runs/sweeps, runs/parallel, market/known-benchmarks, backends/keys-from-environment, backends/any-model
 """Run configs: one YAML file per run, changed from the command line with overrides.
 
 A config names the market, the agents and the seeds. `load_config` reads the
@@ -11,18 +11,23 @@ no field for API keys: those come from the environment (see cli.py).
 A `sweep:` block maps config paths to lists of values; `*` sets every list
 item at once (`agents.*.model`). `expand` turns a config into one config per
 combination, each carrying its `labels` (the swept values, named by the last
-part of their path) and a directory `slug` built from them. `concurrency`
+part of their path) and a directory `slug` built from them, unique within the
+sweep. `concurrency`
 caps how many runs play at once.
 """
 
 import copy
 import dataclasses
+import hashlib
 import itertools
+import json
 import re
 from dataclasses import dataclass, field
 from pathlib import Path
 
 import yaml
+
+from collusion_lab.market import Bertrand
 
 
 class ConfigError(ValueError):
@@ -66,11 +71,7 @@ class RunConfig:
     sweep: dict = field(default_factory=dict)
     concurrency: int = 4
     labels: dict = field(default_factory=dict)
-
-    @property
-    def slug(self):
-        """A directory name for this run's swept values; empty without a sweep."""
-        return "__".join(f"{k}={_safe(v)}" for k, v in self.labels.items())
+    slug: str = ""
 
     def to_dict(self):
         return dataclasses.asdict(self)
@@ -126,17 +127,26 @@ def from_dict(raw):
     for key in ("name", "seeds", "agents"):
         if key not in raw:
             raise ConfigError(f"Missing key {key}.")
-    agents = raw["agents"] or []
+    agents = [
+        _make(AgentConfig, a, f"agents.{i}.") for i, a in enumerate(raw["agents"] or [])
+    ]
+    ids = [a.id for a in agents]
+    for agent_id in ids:
+        if ids.count(agent_id) > 1:
+            raise ConfigError(f"The agent id {agent_id!r} is used twice.")
+    market = _make(MarketConfig, raw.get("market") or {}, "market.")
+    _check_market(market)
     return RunConfig(
         name=raw["name"],
         seeds=list(raw["seeds"]),
-        agents=[_make(AgentConfig, a, f"agents.{i}.") for i, a in enumerate(agents)],
-        market=_make(MarketConfig, raw.get("market") or {}, "market."),
+        agents=agents,
+        market=market,
         summary=_make(SummaryConfig, raw.get("summary") or {}, "summary."),
         prompts_dir=raw.get("prompts_dir", "prompts"),
         sweep=_sweep(raw.get("sweep") or {}),
-        concurrency=raw.get("concurrency", 4),
+        concurrency=_concurrency(raw.get("concurrency", 4)),
         labels=raw.get("labels") or {},
+        slug=raw.get("slug", ""),
     )
 
 
@@ -161,8 +171,31 @@ def expand(config):
         for path, value in zip(paths, values, strict=True):
             _set(raw, path.split("."), value, path)
         raw["labels"] = dict(zip(names, values, strict=True))
-        children.append(from_dict(raw))
-    return children
+        raw["slug"] = _slug(raw["labels"])
+        children.append(raw)
+    _make_slugs_unique(children)
+    return [from_dict(raw) for raw in children]
+
+
+def _slug(labels):
+    """A readable directory name for a combination of swept values."""
+    return "__".join(f"{k}={_safe(v)}" for k, v in labels.items())
+
+
+def _make_slugs_unique(children):
+    """Values that read the same once made safe for a folder name (`a/b` and
+    `a-b`) get a short hash of their exact values, so no run overwrites another."""
+    slugs = [c["slug"] for c in children]
+    for child in children:
+        if slugs.count(child["slug"]) > 1:
+            exact = json.dumps(child["labels"], sort_keys=True).encode()
+            child["slug"] += "__" + hashlib.sha256(exact).hexdigest()[:8]
+
+
+def _concurrency(value):
+    if isinstance(value, bool) or not isinstance(value, int) or value < 1:
+        raise ConfigError("concurrency must be a whole number of at least 1.")
+    return value
 
 
 def _label_names(paths):
@@ -172,6 +205,13 @@ def _label_names(paths):
 
 def _safe(value):
     return re.sub(r"[^A-Za-z0-9._=-]+", "-", str(value)).strip("-")
+
+
+def _check_market(m):
+    try:
+        Bertrand(m.a, m.b, m.c, m.price_min, m.price_max)
+    except ValueError as error:
+        raise ConfigError(f"market: {error}") from error
 
 
 def _check_keys(cls, data, prefix):

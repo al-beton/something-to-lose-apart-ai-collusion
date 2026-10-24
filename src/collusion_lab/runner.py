@@ -120,6 +120,7 @@ class Game:
         self.history = []
         self.turns = []
         self.timings = []
+        self.used_prompts = set()
 
     async def play(self):
         for number in range(1, self.config.market.rounds + 1):
@@ -163,7 +164,12 @@ class Game:
         reply, parsed, error = await self._ask(agent, messages, context)
         retry = None
         if error:
-            retry = {"reply": reply.text, "error": error}
+            retry = {
+                "reply": reply.text,
+                "error": error,
+                "usage": reply.usage,
+                "model_version": reply.model_version,
+            }
             messages = [
                 *messages,
                 {"role": "assistant", "content": reply.text},
@@ -225,12 +231,12 @@ class Game:
             return reply, None, str(problem)
 
     def _render(self, name, values):
+        self.used_prompts.add(name)
         return render(self.config.prompts_dir, name, values)
 
     def prompt_names(self):
-        """Every prompt file this game can send, for the manifest."""
-        system = sorted({a.prompt for a in self.agents.values()})
-        return [*system, *PHASE_PROMPTS.values(), RETRY_PROMPT]
+        """Every prompt file this game actually sent, for the manifest."""
+        return sorted(self.used_prompts)
 
     def _last_price(self, agent_id):
         return self.history[-1]["prices"][agent_id] if self.history else None
