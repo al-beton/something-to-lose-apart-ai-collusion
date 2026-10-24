@@ -22,7 +22,7 @@
 |---|---|---|
 | `any-model` | `src/collusion_lab/backends.py`, `src/collusion_lab/config.py` | `test_any_model_goes_through_one_call_with_config_sampling` |
 | `sampling-from-config` | `src/collusion_lab/backends.py` | `test_any_model_goes_through_one_call_with_config_sampling`, `test_sampling_from_config_leaves_api_base_out_when_unset` |
-| `keys-from-environment` | `src/collusion_lab/config.py`, `src/collusion_lab/cli.py`, `.gitignore` | `test_keys_from_environment_never_from_a_config`, `test_keys_from_environment_read_the_working_directorys_env_file`, `test_keys_from_environment_only_the_named_key_goes_to_an_address` |
+| `keys-from-environment` | `src/collusion_lab/config.py`, `src/collusion_lab/cli.py`, `src/collusion_lab/backends.py`, `.gitignore` | `test_keys_from_environment_never_from_a_config`, `test_keys_from_environment_read_the_working_directorys_env_file`, `test_keys_from_environment_only_the_named_key_goes_to_an_address`, `test_keys_from_environment_missing_named_key_stops_the_run` |
 | `usage-logged` | `src/collusion_lab/backends.py`, `src/collusion_lab/runner.py` | `test_usage_logged_per_turn_and_timings_kept_apart`, `test_retry_once_tells_the_agent_what_was_wrong`, `test_transient_errors_retried_with_growing_waits_and_logged` |
 | `transient-errors-retried` | `src/collusion_lab/backends.py` | `test_transient_errors_retried_with_growing_waits_and_logged`, `test_transient_errors_retried_a_few_times_then_the_run_stops_cleanly`, `test_transient_errors_that_wont_fix_themselves_stop_at_once` |
 | `shared-rate-limit` | `src/collusion_lab/backends.py`, `src/collusion_lab/runner.py` | `test_shared_rate_limit_makes_every_game_wait_for_the_reset`, `test_shared_rate_limit_waits_for_a_reset_moved_later_meanwhile`, `test_shared_rate_limit_that_wont_lift_soon_stops_the_run`, `test_shared_rate_limit_reads_the_reset_from_the_error_body` |
@@ -33,5 +33,5 @@
 | `reasoning-in-estimate` | `src/collusion_lab/estimate.py` | `test_reasoning_in_estimate_adds_tokens_per_call`, `test_reasoning_in_estimate_rises_with_the_level`, `test_reasoning_in_estimate_off_or_unset_is_unchanged` |
 | `quiet-provider-logs` | `src/collusion_lab/backends.py` | `test_quiet_provider_logs_by_default`, `test_quiet_provider_logs_unless_asked_for` |
 | `tests-never-pay` | `tests/conftest.py` | `test_tests_never_pay_unfaked_calls_fail` |
-| `self-hosted` | not yet | — |
-| `modal` | not yet | — |
+| `self-hosted` | `src/collusion_lab/backends.py`, `src/collusion_lab/estimate.py`, `src/collusion_lab/cli.py` | `test_self_hosted_says_billed_by_gpu_time`, `test_self_hosted_costs_nothing_against_the_cap` |
+| `modal` | `deploy/modal_vllm.py`, `configs/modal.yaml`, `README.md`, `.env.example` | `test_modal_config_runs_against_a_served_model`, `test_modal_readme_says_how_to_set_up_deploy_run_and_tear_down` |

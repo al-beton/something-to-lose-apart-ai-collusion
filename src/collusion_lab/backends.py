@@ -1,4 +1,4 @@
-# Implements: agents/mock-agents, backends/any-model, backends/sampling-from-config, backends/usage-logged, backends/transient-errors-retried, backends/shared-rate-limit, backends/reported-cost, backends/spend-cap, backends/reasoning-setting, logs/reasoning-logged, agents/json-mode, agents/unreadable-explained, backends/quiet-provider-logs
+# Implements: agents/mock-agents, backends/any-model, backends/sampling-from-config, backends/usage-logged, backends/transient-errors-retried, backends/shared-rate-limit, backends/reported-cost, backends/spend-cap, backends/reasoning-setting, logs/reasoning-logged, agents/json-mode, agents/unreadable-explained, backends/quiet-provider-logs, backends/self-hosted, backends/keys-from-environment
 """Backends turn a prompt into a reply: scripted mocks, or any model via LiteLLM.
 
 A backend is anything with `async complete(messages, *, context, temperature,
@@ -22,7 +22,11 @@ with one fixed line, which never draws from their seeded rng.
 
 Every other name goes to LiteLLM as it is (`openrouter/openai/gpt-4.1-mini`,
 `anthropic/claude-haiku-5-5`, `ollama/llama3.2`, or `openai/<name>` with an
-`api_base` for any OpenAI-compatible server). `drop_params` lets providers
+`api_base` for any OpenAI-compatible server, such as an open model on Modal:
+see `modal/serve.py`). A model at its own address is self-hosted: it gets
+only the key in the variable `api_key_env` names (a placeholder when none is
+named, so no provider's own key goes there), and LiteLLM's per-token price
+is never applied to it. `drop_params` lets providers
 without a `seed` parameter ignore it. LiteLLM is imported on first use, so
 mock games never pay its import time.
 
@@ -192,11 +196,14 @@ class LiteLLMBackend:
         self.budget = budget or Budget()
         self.reasoning = options.get("reasoning")
         self.json_mode = options.get("json_mode", False)
+        self.api_key_env = options.get("api_key_env")
 
     def _extra(self):
         """Request fields beyond the sampling ones: address, usage, reasoning
         and JSON mode."""
-        extra = {"api_base": self.api_base} if self.api_base else {}
+        extra = {}
+        if self.api_base:
+            extra = {"api_base": self.api_base, "api_key": self._address_key()}
         if self.json_mode:
             extra["response_format"] = {"type": "json_object"}
         off = self.reasoning == "off"
@@ -210,6 +217,16 @@ class LiteLLMBackend:
         elif self.reasoning is not None:
             extra["reasoning_effort"] = "none" if off else self.reasoning
         return extra
+
+    def _address_key(self):
+        """The key for a model at its own address, from `api_key_env` only."""
+        if not self.api_key_env:
+            return "none"
+        if key := os.environ.get(self.api_key_env):
+            return key
+        raise ModelCallError(
+            f"{self.model}: {self.api_key_env} isn't set in the environment or .env"
+        )
 
     async def complete(self, messages, *, context, temperature, max_tokens, seed):
         extra = self._extra()
@@ -225,7 +242,7 @@ class LiteLLMBackend:
             **extra,
         )
         usage = getattr(response, "usage", None)
-        cost = _cost(response)
+        cost = None if self.api_base else _cost(response)  # self-hosted: GPU time
         self.budget.spent += cost or 0
         self.budget.calls += 1
         message = response.choices[0].message
@@ -367,8 +384,8 @@ def is_mock(model):
 
 
 def backend_for(model, rng, api_base=None, gates=None, **options):
-    """The backend a model name selects; `options` (budget, reasoning, json_mode) go to
-    model backends."""
+    """The backend a model name selects; `options` (budget, reasoning, json_mode,
+    api_key_env) go to model backends."""
     if not is_mock(model):
         return LiteLLMBackend(model, api_base, gates, **options)
     name = model.removeprefix("mock/")

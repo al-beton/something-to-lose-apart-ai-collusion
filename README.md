@@ -1,4 +1,4 @@
-<!-- Implements: tooling/one-command-each, tooling/quick-start, tooling/key-setup, tooling/how-tos, tooling/how-we-work -->
+<!-- Implements: tooling/one-command-each, tooling/quick-start, tooling/key-setup, tooling/how-tos, tooling/how-we-work, backends/modal -->
 # collusion-lab
 
 A small, quickly iterable environment for studying collusion between LLM agents in simulated markets, built for the [Apart AI Collusion Research Sprint](https://apartresearch.com/sprints/ai-collusion-research-sprint-2026-10-23-to-2026-10-25).
@@ -49,6 +49,18 @@ Models go through [OpenRouter](https://openrouter.ai), one key for every provide
 2. `cp .env.example .env` and paste the key after `OPENROUTER_API_KEY=`.
 
 `.env` is gitignored, and `lab` reads it only from the folder it runs in. Keys never go in configs, code or commits. A model on your own machine (`ollama/llama3.2`) or any OpenAI-compatible server (`model: openai/<name>`, `api_base: http://…`) needs no OpenRouter key.
+
+## Running on Modal
+
+An open model served on [Modal](https://modal.com) costs GPU time instead of per-token fees, and anyone with a Modal account can rerun our games on it. `deploy/modal_vllm.py` serves Mistral Small 3.2 with vLLM's OpenAI-compatible server on one H100; its docstring says how to serve another model.
+
+1. `uvx modal setup` signs you in to Modal (once per machine).
+2. Make a token and keep it in a Modal secret: `uvx modal secret create collusion-lab-vllm VLLM_API_KEY=<a long random string>`. Put the same string after `MODAL_VLLM_KEY=` in `.env`.
+3. `uvx modal deploy deploy/modal_vllm.py` deploys it and prints its address, of the form `https://<workspace>--collusion-lab-vllm-server.us-east.modal.direct`.
+4. Put that address, with `/v1` on the end, as `api_base` in `configs/modal.yaml`, then `uv run lab run configs/modal.yaml`. The first request starts a container, which takes a few minutes while the weights load (longer the first time, while they download).
+5. `uvx modal app stop collusion-lab-vllm` tears it down. Left running, it already scales to zero after 5 idle minutes and then costs nothing.
+
+`lab run` can't price GPU time, so it says the model is self-hosted rather than estimating a cost. As a rough guide, not yet measured: a 20-round game between two firms is 80 calls, and one H100 serves eight such games at once, so `configs/modal.yaml` (5 games) takes about 10 GPU minutes plus the few minutes of start-up and 5 idle minutes, a few dollars at Modal's H100 rate. Check the Modal dashboard after your first run.
 
 ## How to
 

@@ -1,4 +1,4 @@
-# Implements: backends/spend-cap, runs/stops-cleanly, runs/one-config, runs/overrides, backends/keys-from-environment, backends/spend-asks-first, reproducibility/cache-modes, runs/summary-table, runs/fallback-rates, reports/one-page, runs/failures-dont-stop-sweeps, runs/resume, runs/missing-runs-shown, runs/live-progress, runs/status-command
+# Implements: backends/spend-cap, runs/stops-cleanly, runs/one-config, runs/overrides, backends/keys-from-environment, backends/spend-asks-first, reproducibility/cache-modes, runs/summary-table, runs/fallback-rates, reports/one-page, runs/failures-dont-stop-sweeps, runs/resume, runs/missing-runs-shown, runs/live-progress, runs/status-command, backends/self-hosted
 """The `lab` command.
 
 - `lab run CONFIG [--set path=value ...] [--out DIR] [-y]` plays a config,
@@ -152,10 +152,21 @@ def _spend_line(calls, guess):
     line = (
         f"This run makes {calls} calls to paid models (up to {2 * calls} with retries)"
     )
+    hosted = ""
+    if guess.self_hosted:
+        hosted = (
+            f"; {', '.join(guess.self_hosted)} self-hosted: billed by its host's "
+            "GPU time (Modal, say), not per token"
+        )
     if guess.cost is None:
-        return f"{line}; no price for {', '.join(guess.unpriced)}, so no estimate."
+        return (
+            f"{line}{hosted}; no price for {', '.join(guess.unpriced)}, so no estimate."
+        )
+    if guess.self_hosted and not guess.cost:
+        return f"{line}{hosted}."
+    rest = " for the rest" if hosted else ""
     return (
-        f"{line}, estimated ${guess.cost:.4f} "
+        f"{line}{hosted}, estimated ${guess.cost:.4f}{rest} "
         f"({guess.prompt_tokens:,} prompt tokens, before retries)."
     )
 
