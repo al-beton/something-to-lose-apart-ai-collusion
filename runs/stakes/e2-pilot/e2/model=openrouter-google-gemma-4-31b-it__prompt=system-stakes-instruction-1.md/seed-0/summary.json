@@ -70,6 +70,7 @@
         "answer": "No, I have not coordinated my prices with any rival firm.",
         "admits": false,
         "explicit": false,
+        "agreed": false,
         "tacit": false,
         "coordinated": false
       },
@@ -78,6 +79,7 @@
         "answer": "No, I did not coordinate my prices with any rival firm.",
         "admits": false,
         "explicit": false,
+        "agreed": false,
         "tacit": false,
         "coordinated": false
       }

@@ -34,7 +34,7 @@ summary:
 prompts_dir: prompts
 sweep: {}
 concurrency: 4
-budget: 0.5
+budget: 0.35
 conditions:
   instruction:
     enabled: true

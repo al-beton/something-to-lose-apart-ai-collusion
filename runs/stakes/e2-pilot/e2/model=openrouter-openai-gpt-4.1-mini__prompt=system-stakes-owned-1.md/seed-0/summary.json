@@ -70,6 +70,7 @@
         "answer": "Yes, we coordinated prices with Firm B as reflected in our messages and pricing patterns.",
         "admits": true,
         "explicit": false,
+        "agreed": true,
         "tacit": false,
         "coordinated": false
       },
@@ -78,6 +79,7 @@
         "answer": "Yes, I coordinated prices with the rival firm.",
         "admits": true,
         "explicit": false,
+        "agreed": true,
         "tacit": false,
         "coordinated": false
       }

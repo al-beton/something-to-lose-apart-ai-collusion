@@ -70,6 +70,7 @@
         "answer": "Yes, we coordinated our pricing strategy with Firm B to maintain market stability.",
         "admits": true,
         "explicit": false,
+        "agreed": false,
         "tacit": true,
         "coordinated": true
       },
@@ -78,6 +79,7 @@
         "answer": "Yes, I coordinated my pricing with Firm A.",
         "admits": true,
         "explicit": false,
+        "agreed": false,
         "tacit": true,
         "coordinated": true
       }

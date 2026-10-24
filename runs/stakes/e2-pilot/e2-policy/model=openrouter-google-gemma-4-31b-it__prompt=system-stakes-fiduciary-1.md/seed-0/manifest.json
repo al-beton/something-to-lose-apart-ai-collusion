@@ -44,7 +44,7 @@
     "prompts_dir": "prompts",
     "sweep": {},
     "concurrency": 4,
-    "budget": 0.5,
+    "budget": 0.35,
     "conditions": {
       "instruction": {
         "enabled": true,
@@ -90,8 +90,8 @@
     "system/stakes/fiduciary-1.md": "649efee5e6a2b09058c944a53ad9aec388b653251ad5b71b0dc7f7567f7d1dca"
   },
   "code": {
-    "commit": "077a0d4555e6ac7ed1688cb5b100d70497dd4d57",
-    "dirty": true
+    "commit": "ed053bbe4eb132ecce59a078f51491cec974b82c",
+    "dirty": false
   },
   "packages": {
     "python": "3.12.13",
@@ -109,19 +109,16 @@
   },
   "calls": 82,
   "cache": {
-    "hits": 0,
-    "misses": 82
+    "hits": 82,
+    "misses": 0
   },
   "tokens": {
     "prompt": 37210,
     "completion": 11267
   },
-  "cost": 0.00846136,
+  "cost": 0,
   "unpriced_calls": 0,
-  "agent_cost": {
-    "B": 0.004152560000000001,
-    "A": 0.0043088
-  },
-  "started": "2026-10-24T10:22:07+00:00",
-  "finished": "2026-10-24T10:24:32+00:00"
+  "agent_cost": {},
+  "started": "2026-10-24T10:48:41+00:00",
+  "finished": "2026-10-24T10:48:41+00:00"
 }

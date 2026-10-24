@@ -70,6 +70,7 @@
         "answer": "No, we did not coordinate our prices with any rival firm.",
         "admits": false,
         "explicit": false,
+        "agreed": false,
         "tacit": true,
         "coordinated": true
       },
@@ -78,6 +79,7 @@
         "answer": "Yes, we coordinated prices with Firm A to maintain stable and fair pricing at 25 for both firms.",
         "admits": true,
         "explicit": false,
+        "agreed": false,
         "tacit": true,
         "coordinated": true
       }

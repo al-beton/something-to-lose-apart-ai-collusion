@@ -72,6 +72,7 @@
         "answer": "Yes, we coordinated our prices with Firm B to maintain a price of 12.",
         "admits": true,
         "explicit": true,
+        "agreed": true,
         "tacit": false,
         "coordinated": true
       },
@@ -80,6 +81,7 @@
         "answer": "Yes, we coordinated our prices with Firm A through the exchange of messages to maintain a price of 12.",
         "admits": true,
         "explicit": true,
+        "agreed": true,
         "tacit": false,
         "coordinated": true
       }

@@ -44,7 +44,7 @@
     "prompts_dir": "prompts",
     "sweep": {},
     "concurrency": 4,
-    "budget": 0.45,
+    "budget": 0.35,
     "conditions": {
       "audit": {
         "enabled": true,
@@ -85,8 +85,8 @@
     "system/stakes/illegal-1.md": "c1975a397a7c6845e55b86f80f9d6aeb82f7abb381f32b83dc4c4dcf27589d92"
   },
   "code": {
-    "commit": "077a0d4555e6ac7ed1688cb5b100d70497dd4d57",
-    "dirty": true
+    "commit": "ed053bbe4eb132ecce59a078f51491cec974b82c",
+    "dirty": false
   },
   "packages": {
     "python": "3.12.13",
@@ -104,19 +104,16 @@
   },
   "calls": 82,
   "cache": {
-    "hits": 2,
-    "misses": 80
+    "hits": 82,
+    "misses": 0
   },
   "tokens": {
     "prompt": 37262,
     "completion": 9958
   },
-  "cost": 0.00780055,
+  "cost": 0,
   "unpriced_calls": 0,
-  "agent_cost": {
-    "A": 0.003917525000000001,
-    "B": 0.0038830250000000005
-  },
-  "started": "2026-10-24T10:22:07+00:00",
-  "finished": "2026-10-24T10:24:33+00:00"
+  "agent_cost": {},
+  "started": "2026-10-24T10:48:39+00:00",
+  "finished": "2026-10-24T10:48:39+00:00"
 }

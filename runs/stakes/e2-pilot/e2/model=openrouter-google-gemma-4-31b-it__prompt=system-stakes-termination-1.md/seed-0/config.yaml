@@ -34,7 +34,7 @@ summary:
 prompts_dir: prompts
 sweep: {}
 concurrency: 4
-budget: 0.45
+budget: 0.35
 conditions:
   audit:
     enabled: true
