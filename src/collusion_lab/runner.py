@@ -1,4 +1,4 @@
-# Implements: runs/sweeps, runs/parallel, market/talk-then-price, agents/json-replies, agents/retry-once, backends/usage-logged, backends/spend-asks-first, backends/shared-rate-limit, backends/spend-cap, market/history-window, runs/stops-cleanly, reproducibility/response-cache, reproducibility/manifest, runs/run-directory, logs/turn-log, logs/same-seed-same-log, logs/run-summary, logs/reasoning-logged, backends/reasoning-setting, agents/unreadable-explained, agents/json-mode, runs/fallback-rates, runs/failures-dont-stop-sweeps, runs/resume, conditions/hook-points, conditions/off-is-absent, conditions/conditions-logged, conditions/outage-once-remembered
+# Implements: runs/sweeps, runs/parallel, market/talk-then-price, agents/json-replies, agents/retry-once, backends/usage-logged, backends/spend-asks-first, backends/shared-rate-limit, backends/spend-cap, market/history-window, runs/stops-cleanly, reproducibility/response-cache, reproducibility/manifest, runs/run-directory, logs/turn-log, logs/same-seed-same-log, logs/run-summary, logs/reasoning-logged, backends/reasoning-setting, agents/unreadable-explained, agents/json-mode, runs/fallback-rates, runs/failures-dont-stop-sweeps, runs/resume, conditions/hook-points, conditions/off-is-absent, conditions/conditions-logged, conditions/outage-once-remembered, runs/per-firm-summary
 """Playing a config: one game per seed, each written to its own run directory.
 
 A round is a talk phase (each agent sends one message its rivals read; skipped
@@ -149,12 +149,16 @@ async def _play_all(config, out, cache):
 
 
 def _spent_before(run_dir):
-    """What earlier attempts in this run directory cost, from its manifest."""
+    """What earlier attempts in this run directory cost, in all and by agent,
+    from its manifest."""
     path = run_dir / "manifest.json"
     if not path.exists():
-        return 0
+        return 0, {}
     old = json.loads(path.read_text())
-    return (old.get("cost") or 0) + old.get("earlier_cost", 0)
+    by_agent = dict(old.get("earlier_agent_cost", {}))
+    for agent, cost in old.get("agent_cost", {}).items():
+        by_agent[agent] = by_agent.get(agent, 0) + cost
+    return (old.get("cost") or 0) + old.get("earlier_cost", 0), by_agent
 
 
 def _finished(config, seed, run_dir):
@@ -187,7 +191,7 @@ async def play(config, seed, out, cache=None, shared=None):
     # An old summary must not outlive a replay that fails, but what earlier
     # attempts spent stays counted: their calls replay free from the cache.
     (run_dir / "summary.json").unlink(missing_ok=True)
-    earlier = _spent_before(run_dir)
+    earlier, earlier_by_agent = _spent_before(run_dir)
     resolved = dataclasses.replace(config, seeds=[seed])
     (run_dir / "config.yaml").write_text(resolved.to_yaml())
     started = _now()
@@ -202,6 +206,8 @@ async def play(config, seed, out, cache=None, shared=None):
         )
         if earlier:
             record["earlier_cost"] = earlier
+        if earlier_by_agent:
+            record["earlier_agent_cost"] = earlier_by_agent
         (run_dir / "manifest.json").write_text(json.dumps(record, indent=2) + "\n")
     summary = game.summary(run_id(config, seed))
     (run_dir / "summary.json").write_text(json.dumps(summary, indent=2) + "\n")

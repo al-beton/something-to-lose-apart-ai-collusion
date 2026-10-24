@@ -76,3 +76,35 @@ def test_per_firm_summary_in_the_report(make_config, tmp_path, fake_model):
     html = build_report(tmp_path / "runs")
     assert "<th>scripted</th>" in html
     assert "<th>A price</th>" in html
+
+
+def test_per_firm_summary_costs_count_every_attempt(
+    make_config, tmp_path, fake_model, monkeypatch
+):
+    import litellm
+
+    from collusion_lab.cache import Cache
+    from collusion_lab.runner import run_sweep
+
+    monkeypatch.setattr(litellm, "completion_cost", lambda **kwargs: 0.5)
+    refusing = [True]
+
+    async def model(**kwargs):
+        later = "What happened so far" in kwargs["messages"][-1]["content"]
+        if refusing[0] and later:
+            raise litellm.AuthenticationError("Bad key", "openrouter", "x")
+        return await fake_model(**kwargs)
+
+    monkeypatch.setattr(backends, "_acompletion", model)
+    config = make_config(
+        GAME.replace("seeds: [0, 1]", "seeds: [0]")
+        .replace("fake/llm", "openrouter/openai/gpt-4.1-mini")
+        .replace("rounds: 4", "rounds: 3\n  talk: false")
+    )
+    cache = Cache(tmp_path / "c.sqlite")
+    run_sweep(config, tmp_path / "runs", cache)  # one paid call, then fails
+    refusing[0] = False
+    run_sweep(config, tmp_path / "runs", cache)  # round 1 from the cache, 2 paid
+    [row] = summarize(tmp_path / "runs")
+    assert row["cost"] == 1.5
+    assert (row["A cost"], row["B cost"]) == (1.5, 0)

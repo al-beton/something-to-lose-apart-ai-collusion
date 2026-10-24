@@ -1,9 +1,11 @@
-# Implements: reproducibility/manifest, runs/resume
+# Implements: reproducibility/manifest, runs/resume, runs/per-firm-summary
 """What produced a run: config, prompt hashes, code, packages, models, spend.
 
 Written as `manifest.json` next to each run's logs. Unlike `turns.jsonl`, it
 holds things that vary between identical runs (times, cache hits, cost), so
-the turn log stays byte-identical on replay.
+the turn log stays byte-identical on replay. `agent_cost` splits `cost` by
+agent; a resumed run's runner adds `earlier_cost` and `earlier_agent_cost`,
+what earlier attempts spent.
 """
 
 import hashlib
@@ -47,6 +49,7 @@ def build(config, prompt_names, calls, started, finished):
         # total unknown rather than silently zero.
         "cost": None if unpriced else sum(c["cost"] or 0 for c in fresh),
         "unpriced_calls": len(unpriced),
+        "agent_cost": _agent_cost(fresh),
         "started": started,
         "finished": finished,
     }
@@ -59,6 +62,14 @@ def prompts_unchanged(record, prompts_dir):
         if not path.exists() or _hash(path) != digest:
             return False
     return True
+
+
+def _agent_cost(fresh):
+    """What each paid agent's fresh calls cost, for per-firm summaries."""
+    cost = {}
+    for call in fresh:
+        cost[call["agent"]] = cost.get(call["agent"], 0) + (call["cost"] or 0)
+    return cost
 
 
 def _hash(path):
