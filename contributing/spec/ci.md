@@ -17,7 +17,7 @@
 | `checks-on-every-pr` | `.github/workflows/blocking-checks.yml` | — |
 | `checks-over-prose` | `.agents/skills/review-pr/SKILL.md` | — |
 | `simple-code` | `pyproject.toml` | — |
-| `end-to-end` | `tests/test_e2e.py`, `.github/workflows/ci.yml`, `Makefile` | `test_end_to_end_plays_every_arm_and_seed_into_its_own_folder`, `test_end_to_end_summary_numbers_make_sense`, `test_end_to_end_report_has_every_section_and_highlights` |
-| `ci-runs-everything` | `.github/workflows/ci.yml` | — |
-| `ci-minutes` | not yet | |
+| `end-to-end` | `tests/test_e2e.py`, `.github/workflows/blocking-checks.yml`, `Makefile` | `test_end_to_end_plays_every_arm_and_seed_into_its_own_folder`, `test_end_to_end_summary_numbers_make_sense`, `test_end_to_end_report_has_every_section_and_highlights` |
+| `ci-runs-everything` | `.github/workflows/blocking-checks.yml` | `test_ci_minutes_one_job_runs_every_check` |
+| `ci-minutes` | `.github/workflows/blocking-checks.yml`, `.agents/skills/open-pr/SKILL.md`, `.agents/skills/deliver-issue/SKILL.md` | `test_ci_minutes_one_job_named_like_the_gate`, `test_ci_minutes_one_job_runs_every_check`, `test_ci_minutes_newer_runs_cancel_older_ones_and_drafts_wait` |
 | `report-comment` | `.github/workflows/blocking-checks.yml`, `.github/scripts/report_comment.py`, `configs/pr-game.yaml` | `test_report_comment_shows_the_first_screen_commit_and_link`, `test_report_comment_is_one_comment_edited_in_place`, `test_report_comment_failing_to_post_never_fails_the_checks`, `test_markdown_first_screen_of_the_pull_request_game` |
