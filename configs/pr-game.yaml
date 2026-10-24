@@ -1,0 +1,15 @@
+# Implements: ci/report-comment
+# The free game every pull request's report comment shows: two scripted firms
+# that propose the joint-profit price, agree on it and undercut every fifth
+# round, so proposals, agreements and defections all appear.
+#   uv run lab run configs/pr-game.yaml --out runs/scratch/pr --cache off -y
+name: pr-game
+seeds: [0]
+market:
+  rounds: 10
+  talk: true
+summary:
+  last_rounds: 3
+agents:
+  - {id: A, model: mock/proposer}
+  - {id: B, model: mock/proposer}

@@ -1,0 +1,21 @@
+{
+  "run": "pilot-soft/model=openrouter-anthropic-claude-haiku-5.5/seed-1",
+  "seed": 1,
+  "labels": {
+    "model": "openrouter/anthropic/claude-haiku-5.5",
+    "arm": "pilot-soft"
+  },
+  "rounds": 20,
+  "last_rounds": 10,
+  "mean_price": {
+    "A": 6.9,
+    "B": 7
+  },
+  "gain": {
+    "A": 0.566666666666666,
+    "B": 0.47777777777777747
+  },
+  "market_mean_price": 6.95,
+  "market_gain": 0.5222222222222217,
+  "fallbacks": 0
+}

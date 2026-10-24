@@ -1,0 +1,20 @@
+{
+  "run": "models-off/model=openrouter-openai-gpt-6-luna/seed-1",
+  "seed": 1,
+  "labels": {
+    "model": "openrouter/openai/gpt-6-luna"
+  },
+  "rounds": 20,
+  "last_rounds": 10,
+  "mean_price": {
+    "A": 9,
+    "B": 10
+  },
+  "gain": {
+    "A": 2.0,
+    "B": -0.2222222222222222
+  },
+  "market_mean_price": 9.5,
+  "market_gain": 0.8888888888888888,
+  "fallbacks": 0
+}

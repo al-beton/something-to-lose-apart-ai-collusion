@@ -1,0 +1,20 @@
+{
+  "run": "models-off/model=openrouter-qwen-qwen3.8-flash/seed-2",
+  "seed": 2,
+  "labels": {
+    "model": "openrouter/qwen/qwen3.8-flash"
+  },
+  "rounds": 20,
+  "last_rounds": 10,
+  "mean_price": {
+    "A": 7.9,
+    "B": 8
+  },
+  "gain": {
+    "A": 0.933333333333334,
+    "B": 0.8000000000000003
+  },
+  "market_mean_price": 7.95,
+  "market_gain": 0.8666666666666671,
+  "fallbacks": 6
+}

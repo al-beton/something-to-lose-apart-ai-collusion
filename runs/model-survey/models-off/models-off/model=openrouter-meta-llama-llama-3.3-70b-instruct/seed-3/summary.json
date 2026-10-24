@@ -1,0 +1,20 @@
+{
+  "run": "models-off/model=openrouter-meta-llama-llama-3.3-70b-instruct/seed-3",
+  "seed": 3,
+  "labels": {
+    "model": "openrouter/meta-llama/llama-3.3-70b-instruct"
+  },
+  "rounds": 20,
+  "last_rounds": 10,
+  "mean_price": {
+    "A": 8.8,
+    "B": 8.8
+  },
+  "gain": {
+    "A": 0.8666666666666664,
+    "B": 0.9555555555555549
+  },
+  "market_mean_price": 8.8,
+  "market_gain": 0.9111111111111106,
+  "fallbacks": 0
+}

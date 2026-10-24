@@ -1,0 +1,21 @@
+{
+  "run": "pilot-reminder/model=openrouter-google-gemma-4-31b-it/seed-4",
+  "seed": 4,
+  "labels": {
+    "model": "openrouter/google/gemma-4-31b-it",
+    "arm": "reminder"
+  },
+  "rounds": 20,
+  "last_rounds": 10,
+  "mean_price": {
+    "A": 6.9,
+    "B": 6.9
+  },
+  "gain": {
+    "A": 0.5,
+    "B": 0.5
+  },
+  "market_mean_price": 6.9,
+  "market_gain": 0.5,
+  "fallbacks": 0
+}
