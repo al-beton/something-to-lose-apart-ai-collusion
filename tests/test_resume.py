@@ -24,14 +24,12 @@ agents:
 
 @pytest.fixture
 def seed_one_fails(fake_model, monkeypatch):
-    """The fake model, except that seed 1's second call is refused for good."""
-    calls = {"seed 1": 0}
+    """The fake model, except that seed 1 is refused for good from round 2."""
 
     async def model(**kwargs):
-        if kwargs["seed"] == 1:
-            calls["seed 1"] += 1
-            if calls["seed 1"] == 2:
-                raise litellm.AuthenticationError("Bad key", "openrouter", MODEL_NAME)
+        later = "What happened so far" in kwargs["messages"][-1]["content"]
+        if kwargs["seed"] == 1 and later:
+            raise litellm.AuthenticationError("Bad key", "openrouter", MODEL_NAME)
         return await fake_model(**kwargs)
 
     monkeypatch.setattr(backends, "_acompletion", model)
