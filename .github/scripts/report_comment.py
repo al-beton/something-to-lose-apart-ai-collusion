@@ -2,7 +2,7 @@
 """report-comment: keep one comment on the pull request with the game's report.
 
 Usage: `python3 .github/scripts/report_comment.py FIRST_SCREEN_MD`, inside the
-blocking-checks report job, after `configs/pr-game.yaml` was played and its
+blocking-checks job, after `configs/pr-game.yaml` was played and its
 report built. REPORT_URL links the full page (the uploaded artifact). The
 comment starts with a hidden marker, so each push edits the same comment.
 Needs GITHUB_TOKEN (pull-requests: write), GITHUB_REPOSITORY and

@@ -4,7 +4,7 @@
 - **issue-scope:** A pull request handles one issue, or a parent issue together with its children.
 - **test-first:** The tests that prove a statement are written, and seen failing, before the code that makes them pass.
 - **blocked-means-ask:** When an agent is blocked or the spec is unclear, it asks on the issue instead of guessing.
-- **draft-early:** Pull requests are opened early as drafts and marked ready once checks are green.
+- **draft-early:** Pull requests are opened early as drafts and marked ready once the code is done and passes locally; marking one ready runs CI, since drafts aren't checked.
 - **al-only:** Only Al deals with accounts, API keys and spending.
 - **prototype-pace:** collusion-lab is a prototype racing a hackathon deadline, so each issue aims for the smallest change that works and can be shared, and review stops once only edge cases remain.
 - **one-routine:** An issue goes from start to merged through one routine that chains every step and says what to do when a step fails.
