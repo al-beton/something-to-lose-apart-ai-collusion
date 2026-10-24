@@ -1,4 +1,4 @@
-# Implements: runs/sweeps, runs/parallel, market/talk-then-price, agents/json-replies, agents/retry-once, backends/usage-logged, backends/spend-asks-first, backends/shared-rate-limit, backends/spend-cap, market/history-window, runs/stops-cleanly, reproducibility/response-cache, reproducibility/manifest, runs/run-directory, logs/turn-log, logs/same-seed-same-log, logs/run-summary
+# Implements: runs/sweeps, runs/parallel, market/talk-then-price, agents/json-replies, agents/retry-once, backends/usage-logged, backends/spend-asks-first, backends/shared-rate-limit, backends/spend-cap, market/history-window, runs/stops-cleanly, reproducibility/response-cache, reproducibility/manifest, runs/run-directory, logs/turn-log, logs/same-seed-same-log, logs/run-summary, logs/reasoning-logged, backends/reasoning-setting
 """Playing a config: one game per seed, each written to its own run directory.
 
 A round is a talk phase (each agent sends one message its rivals read; skipped
@@ -127,7 +127,14 @@ async def play(config, seed, out, cache=None, shared=None):
 
 
 def _backend(agent, rng, cache, shared):
-    backend = backend_for(agent.model, rng, agent.api_base, shared.gates, shared.budget)
+    backend = backend_for(
+        agent.model,
+        rng,
+        agent.api_base,
+        shared.gates,
+        budget=shared.budget,
+        reasoning=agent.reasoning,
+    )
     if cache is None or is_mock(agent.model):
         return backend
     return CachedBackend(backend, cache)
@@ -203,6 +210,7 @@ class Game:
                 "error": error,
                 "usage": reply.usage,
                 "model_version": reply.model_version,
+                "reasoning": reply.reasoning,
             }
             messages = [
                 *messages,
@@ -232,6 +240,7 @@ class Game:
             "used": used,
             "usage": reply.usage,
             "model_version": reply.model_version,
+            "reasoning": reply.reasoning,
         }
 
     async def _ask(self, agent, messages, context, attempt=1):

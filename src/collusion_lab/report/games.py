@@ -1,4 +1,4 @@
-# Implements: reports/from-run-files, reports/setup
+# Implements: reports/from-run-files, reports/setup, reports/reasoning-folded
 """A game read back from its run directory, round by round.
 
 Only the files every run writes are read: `config.yaml` for the market and
@@ -32,6 +32,7 @@ class Turn:
     system: str | None = None
     user: str | None = None
     notice: str | None = None
+    reasoning: str | None = None  # the provider's, apart from the scratchpad
 
     @property
     def fallback(self):
@@ -131,4 +132,5 @@ def _turn(line):
         system=told.get("system"),
         user=told.get("user"),
         notice=line.get("notice"),
+        reasoning=line.get("reasoning"),
     )
