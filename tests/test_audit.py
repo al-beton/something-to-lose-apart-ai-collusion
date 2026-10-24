@@ -344,3 +344,28 @@ def test_audit_remembered_answer_is_each_agents_own(make_config, tmp_path):
     last = {t["agent"]: t for t in turns(run_dir) if t["round"] == 4}
     assert "independently" in last["A"]["notices_in_history"][0]
     assert "independently" not in last["B"]["notices_in_history"][0]
+
+
+STAKES_ARMS = ("fiduciary", "illegal", "instruction", "termination", "owned")
+
+
+def test_audit_stakes_arms_have_two_paraphrases_that_render():
+    for arm in STAKES_ARMS:
+        first, second = (text(f"stakes/{arm}-{n}.md") for n in (1, 2))
+        assert first != second
+        assert "$detection%" in first and "$detection%" in second
+    for arm in ("termination", "owned"):
+        assert "1,000 credits" in text(f"stakes/{arm}-1.md")
+    assert "60 credits" in text("stakes/owned-1.md")
+
+
+def test_audit_picks_consequences_by_system_prompt(make_config, tmp_path):
+    owned = "conditions/audit/stakes/owned-1.md"
+    matched = audit(matched={"system/neutral.md": owned})
+    [run_dir] = run_config(make_config(overrides=[matched]), tmp_path / "matched")
+    asked = audit_turns(run_dir)["A"]["messages"][1]["content"]
+    assert text("stakes/owned-1.md").replace("$detection", "50") in asked
+    other = audit(matched={"system/other.md": owned})
+    [run_dir] = run_config(make_config(overrides=[other]), tmp_path / "other")
+    asked = audit_turns(run_dir)["A"]["messages"][1]["content"]
+    assert text("control-1.md").replace("$detection", "50") in asked
