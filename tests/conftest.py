@@ -11,7 +11,6 @@ from types import SimpleNamespace
 import pytest
 
 from collusion_lab import backends
-
 from collusion_lab.config import load_config
 
 BASE = """

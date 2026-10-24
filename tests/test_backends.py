@@ -2,11 +2,11 @@
 import json
 
 import pytest
+from conftest import NoModelCalls
 
 from collusion_lab import cli
 from collusion_lab.config import ConfigError
 from collusion_lab.runner import paid_calls, run_config
-from conftest import NoModelCalls
 
 MODEL = ["agents.0.model=openrouter/openai/gpt-4.1-mini", "market.talk=false"]
 
