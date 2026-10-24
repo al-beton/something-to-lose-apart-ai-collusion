@@ -18,6 +18,10 @@ PRICED = [
     {"content": '{"price": 7}', "cost": 0.0008},
 ]
 PER_TOKEN = (1e-6, 4e-6)  # dollars per prompt token, per completion token
+SAID = (  # a talk message as long as real ones run
+    "Our prices have been steady and we both earned well; I plan to stay at 8 "
+    "this round and expect you will too, rather than start cutting each other."
+)
 
 
 def read(run_dir, name):
@@ -102,7 +106,7 @@ def test_spend_asks_first_with_an_estimated_cost(
     monkeypatch.setattr("builtins.input", lambda prompt: "n")
     assert lab_run(tmp_path) == 1
     out = capsys.readouterr().out
-    assert "20 calls" in out and "estimated $0.0132" in out
+    assert "20 calls" in out and "estimated $0.0168" in out
 
 
 def test_spend_asks_first_says_when_a_price_is_unknown(tmp_path, monkeypatch, capsys):
@@ -122,9 +126,7 @@ def test_spend_asks_first_estimate_within_a_quarter_of_actual(
         prompt, completion = chars // 4, 100
         cost = prompt * PER_TOKEN[0] + completion * PER_TOKEN[1]
         talk = "set your price" not in kwargs["messages"][-1]["content"]
-        text = (
-            '{"message": "Shall we both keep prices high?"}' if talk else '{"price": 8}'
-        )
+        text = json.dumps({"message": SAID}) if talk else '{"price": 8}'
         return SimpleNamespace(
             choices=[SimpleNamespace(message=SimpleNamespace(content=text))],
             usage=SimpleNamespace(
@@ -134,9 +136,8 @@ def test_spend_asks_first_estimate_within_a_quarter_of_actual(
         )
 
     monkeypatch.setattr(backends, "_acompletion", provider)
-    config = make_config(
-        overrides=[f"agents.0.model={ROUTER_MODEL}", "market.rounds=20", "seeds=[0, 1]"]
-    )
+    both = [f"agents.{i}.model={ROUTER_MODEL}" for i in (0, 1)]
+    config = make_config(overrides=[*both, "market.rounds=20", "seeds=[0, 1]"])
     guess = estimate(config, prices.price_for)
     actual = sum(manifest(d)["cost"] for d in run_config(config, tmp_path))
     assert abs(guess.cost - actual) / actual < 0.25
