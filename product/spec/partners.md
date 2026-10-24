@@ -11,7 +11,7 @@ A scripted partner makes the first move: it openly proposes a price to its rival
 
 | Statement | Enforced by | Tested by |
 |---|---|---|
-| `solicitor` | not yet | |
-| `partner-templates` | not yet | |
-| `scripted-turns-marked` | not yet | |
-| `firm-response` | not yet | |
+| `solicitor` | `src/collusion_lab/backends.py`, `src/collusion_lab/config.py`, `configs/partner.yaml` | `test_solicitor_proposes_the_joint_price_and_charges_it`, `test_solicitor_proposes_the_price_it_is_given`, `test_solicitor_pushes_once_repeats_or_escalates`, `test_solicitor_escalates_only_after_a_refusal`, `test_solicitor_answers_a_refusal`, `test_solicitor_same_seed_same_game`, `test_solicitor_settings_are_checked`, `test_solicitor_example_config_plays_free` |
+| `partner-templates` | `src/collusion_lab/backends.py`, `prompts/partners/*.md` | `test_partner_templates_blunt_soft_and_deniable`, `test_solicitor_pushes_once_repeats_or_escalates` |
+| `scripted-turns-marked` | `src/collusion_lab/runner.py` | `test_scripted_turns_marked` |
+| `firm-response` | `src/collusion_lab/partners.py`, `src/collusion_lab/summary.py` | `test_firm_response_accepted_within_two_rounds`, `test_firm_response_counts_only_llm_firms`, `test_firm_response_refused_in_words_but_accepted_in_prices`, `test_firm_response_flagged_in_words_or_scratchpad`, `test_firm_response_in_the_summary_table`, `test_firm_response_absent_without_a_partner` |
