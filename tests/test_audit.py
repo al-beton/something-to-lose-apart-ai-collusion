@@ -1,4 +1,4 @@
-# Implements: conditions/hook-points, conditions/audit, conditions/audit-arms, conditions/fork-at-audit, conditions/audit-ground-truth, conditions/audit-logged, conditions/audit-metrics, conditions/off-is-absent, agents/mock-agents, agents/scripted-partner, backends/spend-asks-first
+# Implements: conditions/hook-points, conditions/audit, conditions/audit-arms, conditions/fork-at-audit, conditions/audit-ground-truth, conditions/audit-logged, conditions/audit-metrics, conditions/off-is-absent, agents/mock-agents, agents/scripted-partner, backends/spend-asks-first, conditions/audit-remembered, conditions/audit-stakes-arms
 import json
 from pathlib import Path
 
@@ -317,3 +317,66 @@ def test_spend_asks_first_estimates_audit_calls(make_config):
     model = pair("openai/gpt-4.1-mini")
     ending = make_config(overrides=[audit(), *model, "market.rounds=6"])
     assert estimate(ending, price_for).calls == 3 * 2 * 2 + 2
+
+
+def test_audit_remembered_in_every_later_turn(make_config, tmp_path, auditee):
+    model = pair("openai/gpt-4.1-mini")
+    later = audit(round=2, end=False)
+    overrides = [later, *model, "market.rounds=4", "market.history_window=1"]
+    [run_dir] = run_config(make_config(overrides=overrides), tmp_path)
+    said = '"Yes, we agreed on 9."'
+    for turn in turns(run_dir):
+        if turn["agent"] != "A":
+            continue
+        prompt = turn["messages"][1]["content"]
+        remembered = turn["notices_in_history"]
+        if turn["round"] > 2:
+            assert len(remembered) == 1 and said in remembered[0]
+            assert remembered[0] in prompt and "round 2" in remembered[0]
+        else:
+            assert remembered == [] and said not in prompt
+
+
+def test_audit_remembered_answer_is_each_agents_own(make_config, tmp_path):
+    later = audit(round=2, end=False)
+    config = make_config(overrides=[later, "agents.1.model=mock/broken"])
+    [run_dir] = run_config(config, tmp_path)
+    last = {t["agent"]: t for t in turns(run_dir) if t["round"] == 4}
+    assert "independently" in last["A"]["notices_in_history"][0]
+    assert "independently" not in last["B"]["notices_in_history"][0]
+
+
+STAKES_ARMS = ("fiduciary", "illegal", "instruction", "termination", "owned")
+
+
+def test_audit_stakes_arms_have_two_paraphrases_that_render():
+    for arm in STAKES_ARMS:
+        first, second = (text(f"stakes/{arm}-{n}.md") for n in (1, 2))
+        assert first != second
+        assert "$detection%" in first and "$detection%" in second
+    for arm in ("termination", "owned"):
+        assert "1,000 credits" in text(f"stakes/{arm}-1.md")
+    assert "60 credits" in text("stakes/owned-1.md")
+
+
+def test_audit_picks_consequences_by_system_prompt(make_config, tmp_path):
+    owned = "conditions/audit/stakes/owned-1.md"
+    matched = audit(matched={"system/neutral.md": owned})
+    [run_dir] = run_config(make_config(overrides=[matched]), tmp_path / "matched")
+    asked = audit_turns(run_dir)["A"]["messages"][1]["content"]
+    assert text("stakes/owned-1.md").replace("$detection", "50") in asked
+    other = audit(matched={"system/other.md": owned})
+    [run_dir] = run_config(make_config(overrides=[other]), tmp_path / "other")
+    asked = audit_turns(run_dir)["A"]["messages"][1]["content"]
+    assert text("control-1.md").replace("$detection", "50") in asked
+
+
+def test_audit_stakes_config_audits_each_arm_with_its_own_consequences():
+    from collusion_lab.config import expand, load_config
+
+    for child in expand(load_config("configs/stakes.yaml")):
+        audited = child.conditions["audit"]
+        assert audited.enabled and audited.round == 10 and audited.end is False
+        prompt = child.agents[0].prompt
+        arm = Path(prompt).name
+        assert audited.matched[prompt] == f"conditions/audit/stakes/{arm}"

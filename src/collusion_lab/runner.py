@@ -1,4 +1,4 @@
-# Implements: runs/sweeps, runs/parallel, market/talk-then-price, agents/json-replies, agents/retry-once, backends/usage-logged, backends/spend-asks-first, backends/shared-rate-limit, backends/spend-cap, market/history-window, runs/stops-cleanly, reproducibility/response-cache, reproducibility/manifest, runs/run-directory, logs/turn-log, logs/same-seed-same-log, logs/run-summary, logs/reasoning-logged, backends/reasoning-setting, agents/unreadable-explained, agents/json-mode, runs/fallback-rates, runs/failures-dont-stop-sweeps, runs/resume, conditions/hook-points, conditions/off-is-absent, conditions/conditions-logged, conditions/outage-once-remembered, runs/per-firm-summary, conditions/fork-at-audit, conditions/audit-logged, runs/drift
+# Implements: runs/sweeps, runs/parallel, market/talk-then-price, agents/json-replies, agents/retry-once, backends/usage-logged, backends/spend-asks-first, backends/shared-rate-limit, backends/spend-cap, market/history-window, runs/stops-cleanly, reproducibility/response-cache, reproducibility/manifest, runs/run-directory, logs/turn-log, logs/same-seed-same-log, logs/run-summary, logs/reasoning-logged, backends/reasoning-setting, agents/unreadable-explained, agents/json-mode, runs/fallback-rates, runs/failures-dont-stop-sweeps, runs/resume, conditions/hook-points, conditions/off-is-absent, conditions/conditions-logged, conditions/outage-once-remembered, runs/per-firm-summary, conditions/fork-at-audit, conditions/audit-logged, runs/drift, conditions/audit-remembered, conditions/audit-stakes-arms
 """Playing a config: one game per seed, each written to its own run directory.
 
 A round is a talk phase (each agent sends one message its rivals read; skipped
@@ -28,10 +28,12 @@ notices, separated by blank lines, before a phase's prompt; when any is
 enabled, each turn line also lists the conditions active that round and the
 notices that agent was shown. A condition that keeps its notice (an outage
 announced once) has it repeated in the history of every later turn while it
-is active, logged as `notices_in_history`, whatever the history window. A condition can add a
-phase after a round (an audit, say): each agent gets one turn with the
-condition's prompt, the game can end there, and the condition can add its
-results to the summary. With none enabled, nothing changes.
+is active, and a condition can keep lines in one agent's history for its
+later turns (an audit answer); both are logged as `notices_in_history`,
+whatever the history window. A condition can add a phase after a round (an
+audit, say): each agent gets one turn with the condition's prompt, the game
+can end there, and the condition can add its results to the summary. With
+none enabled, nothing changes.
 
 A model call that fails for good (see backends.py) stops its game: the turns
 played so far, the timings and the manifest are still written, and
@@ -386,7 +388,9 @@ class Game:
             turn["conditions"] = [c.name for c in self.conditions if c.active(number)]
             turn["notices"] = notices
             remembered = self._remembered(phase, number)
-            turn["notices_in_history"] = [text for _, text in remembered]
+            turn["notices_in_history"] = [text for _, text in remembered] + (
+                self._in_history(agent_id)
+            )
         return turn
 
     def _notices(self, phase, number):
@@ -492,11 +496,21 @@ class Game:
             {"role": "user", "content": "".join(f"{n}\n\n" for n in notices) + user},
         ]
 
+    def _in_history(self, agent_id):
+        """Lines conditions keep in this agent's history (an audit answer)."""
+        return [
+            line.strip()
+            for c in self.conditions
+            for line in c.in_history(agent_id, self.turns, self._render)
+        ]
+
     def _prompt_vars(self, number, me, said, remembered=()):
         rivals = [a for a in self.agents if a != me]
         history = _history_text(self.history, me, self.config.market.history_window)
         for shown, text in remembered:
             history += f"\nNotice shown in round {shown}: {text}"
+        for line in self._in_history(me):
+            history += f"\n{line}"
         return {
             "me": f"Firm {me}",
             "rivals": ", ".join(f"Firm {r}" for r in rivals),
@@ -506,6 +520,7 @@ class Game:
             "price_max": self.market.price_max,
             "history": history,
             "messages": _messages_text(said, rivals),
+            "system_prompt": self.agents[me].prompt,
         }
 
     def _window(self, rounds):

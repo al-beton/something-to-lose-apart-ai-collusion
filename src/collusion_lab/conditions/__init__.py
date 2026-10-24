@@ -1,4 +1,4 @@
-# Implements: conditions/hook-points, conditions/outage-once-remembered, conditions/adding-a-condition, conditions/switchable
+# Implements: conditions/hook-points, conditions/outage-once-remembered, conditions/adding-a-condition, conditions/switchable, conditions/audit-remembered
 """Scenario conditions: named, switchable changes to what agents are told.
 
 A config's `conditions:` block maps a condition's name to its settings, for
@@ -20,6 +20,8 @@ The game calls each enabled condition at these points, in config order:
   `phase_prompt(number, render, values)`, where `values` are that agent's
   usual prompt values (`$history` and so on); replies are read by
   `agents.parse_reply` under the phase's name;
+- `in_history(agent, turns, render)`: lines kept in that agent's history
+  for its later turns (each a string), given the turns played so far;
 - `summary(turns, market)`: the condition's results for `summary.json`, under
   its name, or None.
 The notice hooks return the text to show, or None. `render(name, values)` fills a prompt
@@ -87,6 +89,9 @@ class Condition:
 
     def phase_prompt(self, number, render, values):
         return None
+
+    def in_history(self, agent, turns, render):
+        return []
 
     def summary(self, turns, market):
         return None
