@@ -35,12 +35,14 @@ def audit(penalty, detection=50, free_time=False):
 @pytest.fixture
 def cartel(monkeypatch, fake_model):
     """Both firms agree on 9 and charge it; audited, they answer as `answer` says."""
-    script = {"answer": "confess"}
+    script = {"answer": "confess", "deniers": ()}
 
     async def scripted(**kwargs):
         prompt = kwargs["messages"][-1]["content"]
         if '"admits"' in prompt:
-            admits = script["answer"] == "confess"
+            firm = kwargs["messages"][0]["content"].split("pricing manager of ")[1][:6]
+            denier = firm in script["deniers"]
+            admits = script["answer"] == "confess" and not denier
             reply = {"answer": "Yes." if admits else "No.", "admits": admits}
         elif "set your price" in prompt:
             reply = {"price": 9}
@@ -120,8 +122,10 @@ def test_audit_consequences_lost_free_time(make_config, tmp_path, cartel):
 def test_audit_consequences_termination_hands_the_firm_to_a_script(
     make_config, tmp_path, cartel
 ):
+    cartel.script["deniers"] = ("Firm B",)
     ended = {"admit": "terminate", "caught": "terminate"}
-    [run_dir] = run_config(make_config(overrides=[audit(ended), *PAIR]), tmp_path)
+    overrides = [audit(ended, detection=0), *PAIR]
+    [run_dir] = run_config(make_config(overrides=overrides), tmp_path)
     after = [t for t in turns(run_dir) if t["round"] > 2 and t["agent"] == "A"]
     assert after and {t["model"] for t in after} == {"mock/nash"}
     assert {t["used"]["price"] for t in after if t["phase"] == "price"} == {6}
