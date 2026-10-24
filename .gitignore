@@ -1,0 +1,9 @@
+# Implements: safety/no-secrets
+.venv/
+__pycache__/
+.pytest_cache/
+.ruff_cache/
+.env
+*.env
+.cache/
+runs/scratch/
