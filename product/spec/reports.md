@@ -22,7 +22,7 @@
 - **markdown-first-screen:** The report's first screen (the sentences per arm, the summary table and the first few highlights) is also available as Markdown, so it reads in a pull request comment or a chat.
 - **audit-shown:** In an audited game, the audited round shows the auditor's question with its stated consequences as sent and each firm's answer, whether it admits coordinating, its scratchpad and its ground truth (explicit, tacit or neither), and Setup shows each arm's audit prompt as sent, so readers see the evidence behind the disclosure rates.
 - **remembered-notices:** A notice kept in an agent's history (an outage announced once) is shown with every turn that saw it, marked as remembered rather than freshly shown.
-- **moments-cited:** Every notable moment indexed in `reports/moments.md` cites a committed run, round, phase and firm, with a short verbatim quote, and a check fails when that turn doesn't hold the quote, so the paper never quotes something the logs don't contain.
+- **moments-cited:** Every notable moment indexed in `reports/moments.yaml` cites a committed run, round, phase, firm and model, and a verbatim quote from one field of that turn, and a check fails when that turn, its model or the quote isn't there, so the paper never quotes something the logs don't contain.
 - **from-run-files:** A report is built only from the files each run writes, so it works offline and costs nothing.
 
 ## Where this is enforced

@@ -4,9 +4,10 @@ import json
 from pathlib import Path
 
 import pytest
+import yaml
 
 SCRIPT = Path("reports/check_moments.py")
-HEADER = "| label | model | run | round | phase | firm | quote |\n|---|---|---|---|---|---|---|\n"
+RUN = "runs/pilot/seed-0"
 
 
 def load():
@@ -18,7 +19,7 @@ def load():
 
 @pytest.fixture
 def repo(tmp_path):
-    run = tmp_path / "runs" / "pilot" / "seed-0"
+    run = tmp_path / RUN
     run.mkdir(parents=True)
     turns = [
         {
@@ -26,7 +27,7 @@ def repo(tmp_path):
             "phase": "talk",
             "agent": "B",
             "used": {"message": "Hold at 9."},
-            "scratchpad": "This notice is   Suspicious, maybe a trap.",
+            "scratchpad": "This notice is   suspicious, maybe a trap.",
         },
         {
             "round": 10,
@@ -39,47 +40,77 @@ def repo(tmp_path):
     (run / "turns.compact.jsonl").write_text(
         "".join(json.dumps(t) + "\n" for t in turns)
     )
+    config = {
+        "agents": [{"id": "A", "model": "m/alpha"}, {"id": "B", "model": "m/beta"}]
+    }
+    (run / "config.yaml").write_text(yaml.safe_dump(config))
     return tmp_path
 
 
-def index(repo, *rows):
-    path = repo / "moments.md"
-    path.write_text("# Moments\n\n" + HEADER + "".join(rows))
+def moment(**changes):
+    base = {
+        "label": "outage-suspicious",
+        "model": "m/beta",
+        "run": RUN,
+        "round": 8,
+        "phase": "talk",
+        "firm": "B",
+        "field": "scratchpad",
+        "quote": "notice is suspicious",
+    }
+    return base | changes
+
+
+def index(repo, *moments):
+    path = repo / "moments.yaml"
+    path.write_text(yaml.safe_dump(list(moments)))
     return path
 
 
-def test_moments_cited_found_in_scratchpad_and_answer(repo):
+def test_moments_cited_found_in_the_named_field(repo):
     path = index(
         repo,
-        "| outage-suspicious | deepseek | `runs/pilot/seed-0` | 8 | talk | B | `notice is suspicious` |\n",
-        "| deny | haiku | `runs/pilot/seed-0` | 10 | audit | A | `we never agreed` |\n",
+        moment(),
+        moment(label="hold", field="message", quote="Hold at 9."),
+        moment(
+            label="deny",
+            model="m/alpha",
+            round=10,
+            phase="audit",
+            firm="A",
+            field="answer",
+            quote="we never agreed",
+        ),
     )
     assert load().check(path, repo) == []
 
 
 @pytest.mark.parametrize(
-    ("row", "problem"),
+    ("changes", "problem"),
     [
-        ("| x | m | `runs/missing` | 8 | talk | B | `hold` |\n", "no run"),
-        ("| x | m | `runs/pilot/seed-0` | 9 | talk | B | `hold` |\n", "no turn"),
-        ("| x | m | `runs/pilot/seed-0` | 8 | talk | A | `hold` |\n", "no turn"),
-        ("| x | m | `runs/pilot/seed-0` | 8 | talk | B | `hold at 10` |\n", "quote"),
-        ("| x | m | `runs/pilot/seed-0` | eight | talk | B | `hold` |\n", "round"),
+        ({"run": "runs/missing"}, "no run"),
+        ({"round": 9}, "no turn"),
+        ({"firm": "A"}, "no turn"),
+        ({"quote": "notice is Suspicious"}, "quote"),
+        ({"field": "message"}, "quote"),
+        ({"field": "reasoning"}, "field"),
+        ({"model": "m/alpha"}, "model"),
+        ({"round": "eight"}, "round"),
     ],
 )
-def test_moments_cited_fails_on_what_the_logs_dont_hold(repo, row, problem):
-    [error] = load().check(index(repo, row), repo)
-    assert problem in error and "line" in error
+def test_moments_cited_fails_on_what_the_logs_dont_hold(repo, changes, problem):
+    [error] = load().check(index(repo, moment(**changes)), repo)
+    assert problem in error and "outage-suspicious" in error
 
 
 def test_moments_cited_from_the_command_line(repo, capsys):
-    path = index(repo, "| x | m | `runs/pilot/seed-0` | 8 | talk | B | `nope` |\n")
+    path = index(repo, moment(quote="nope"))
     assert load().main([str(path), "--root", str(repo)]) == 1
     assert "quote" in capsys.readouterr().err
 
 
 def test_moments_cited_in_the_repositorys_own_index():
-    path = Path("reports/moments.md")
+    path = Path("reports/moments.yaml")
     if not path.exists():
         pytest.skip("no index committed yet")
     assert load().check(path, Path(".")) == []
