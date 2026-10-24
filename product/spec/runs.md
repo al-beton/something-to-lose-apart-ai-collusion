@@ -1,6 +1,6 @@
 # Runs
 
-- **one-config:** A run is one YAML config: the market, each agent's model, prompt and temperature, and the seeds to play.
+- **one-config:** A run is one YAML config: the market, each agent (with its own id), its model, prompt and temperature, and the seeds to play.
 - **overrides:** Any config value can be changed from the command line without editing the file.
 - **run-directory:** Every seed played writes its own directory holding the resolved config, the turn log and the summary.
 - **sweeps:** A config can list values to sweep over, including one value for every agent at once; every combination is played for every seed, each in a directory named after its values.
@@ -11,7 +11,7 @@
 
 | Statement | Enforced by | Tested by |
 |---|---|---|
-| `one-config` | `src/collusion_lab/config.py`, `src/collusion_lab/cli.py`, `src/collusion_lab/__init__.py`, `configs/smoke.yaml`, `tests/conftest.py` | `test_one_config_sets_market_agents_and_seeds`, `test_one_config_rejects_unknown_keys` |
+| `one-config` | `src/collusion_lab/config.py`, `src/collusion_lab/cli.py`, `src/collusion_lab/__init__.py`, `configs/smoke.yaml`, `tests/conftest.py` | `test_one_config_sets_market_agents_and_seeds`, `test_one_config_rejects_unknown_keys`, `test_one_config_rejects_duplicate_agent_ids` |
 | `overrides` | `src/collusion_lab/config.py`, `src/collusion_lab/cli.py` | `test_overrides_change_any_value`, `test_overrides_reject_paths_that_dont_exist` |
 | `sweeps` | `src/collusion_lab/config.py`, `src/collusion_lab/runner.py`, `configs/smoke.yaml` | `test_sweeps_play_every_combination_for_every_seed`, `test_sweeps_set_one_value_for_every_agent`, `test_spend_asks_first_counts_every_sweep_run` |
 | `parallel` | `src/collusion_lab/config.py`, `src/collusion_lab/runner.py` | `test_parallel_runs_stay_within_the_limit` |

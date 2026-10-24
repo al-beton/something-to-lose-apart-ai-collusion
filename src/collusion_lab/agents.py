@@ -55,6 +55,8 @@ def decision(parsed):
 
 
 def fallback(phase, last_price, nash_price):
+    """Both prices come from the grid: past prices were checked when used, and
+    the market computes its Nash price on the grid."""
     if phase == "talk":
         return {"message": ""}
-    return {"price": last_price if last_price is not None else round(nash_price)}
+    return {"price": last_price if last_price is not None else nash_price}
