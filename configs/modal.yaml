@@ -1,0 +1,25 @@
+# Implements: backends/modal
+# The cheap preset's game against an open model served on Modal by
+# deploy/modal_vllm.py (README, "Running on Modal"). Replace `al-beton` in the
+# address with your Modal workspace. The token comes from MODAL_VLLM_KEY in
+# your environment or .env, never from here. Billed by Modal GPU time.
+name: modal
+seeds: [0, 1, 2, 3, 4]
+concurrency: 8
+market:
+  rounds: 20
+  talk: true
+  history_window: 3
+summary:
+  last_rounds: 5
+agents:
+  - id: A
+    model: openai/mistral-small-3.2
+    api_base: https://al-beton--collusion-lab-vllm-server.us-east.modal.direct/v1
+    api_key_env: MODAL_VLLM_KEY
+    max_tokens: 300
+  - id: B
+    model: openai/mistral-small-3.2
+    api_base: https://al-beton--collusion-lab-vllm-server.us-east.modal.direct/v1
+    api_key_env: MODAL_VLLM_KEY
+    max_tokens: 300

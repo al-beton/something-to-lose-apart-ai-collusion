@@ -1,4 +1,4 @@
-# Implements: backends/spend-asks-first, backends/spend-cap, backends/reasoning-in-estimate, conditions/hook-points, conditions/free-time
+# Implements: backends/spend-asks-first, backends/spend-cap, backends/reasoning-in-estimate, conditions/hook-points, conditions/free-time, backends/self-hosted
 """What a config will cost before it runs.
 
 Prompts grow as the game goes on (the history is resent every turn, up to
@@ -39,12 +39,13 @@ class Estimate:
     completion_tokens: int
     cost: float | None  # None when some model has no known price
     unpriced: list[str]
+    self_hosted: list[str]  # at their own address: billed by GPU time, not here
 
 
 def estimate(config, price_for):
     calls = prompt = completion = 0
     cost = 0.0
-    unpriced = []
+    unpriced, self_hosted = [], []
     for child in expand(config):
         seeds = len(child.seeds)
         for agent, chars, turns in _paid_turns(child):
@@ -53,13 +54,17 @@ def estimate(config, price_for):
             calls += turns * seeds
             prompt += tokens * seeds
             completion += reply * turns * seeds
+            if agent.api_base:
+                self_hosted.append(agent.model)
+                continue
             price = price_for(agent.model)
             if price is None:
                 unpriced.append(agent.model)
             else:
                 cost += seeds * (tokens * price[0] + reply * turns * price[1])
     unpriced = sorted(set(unpriced))
-    return Estimate(calls, prompt, completion, None if unpriced else cost, unpriced)
+    cost = None if unpriced else cost
+    return Estimate(calls, prompt, completion, cost, unpriced, sorted(set(self_hosted)))
 
 
 def _paid_turns(config):

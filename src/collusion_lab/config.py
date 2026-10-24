@@ -59,6 +59,7 @@ class AgentConfig:
     temperature: float = 0.7
     max_tokens: int = 400
     api_base: str | None = None
+    api_key_env: str | None = None  # names the variable holding its address's key
     # off, low, medium or high; None leaves it to the provider.
     reasoning: str | None = None
     json_mode: bool = False  # ask the provider for JSON-only replies

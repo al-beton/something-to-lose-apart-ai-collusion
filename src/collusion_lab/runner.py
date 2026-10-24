@@ -275,6 +275,7 @@ def _backend(agent, rng, cache, shared):
         budget=shared.budget,
         reasoning=agent.reasoning,
         json_mode=agent.json_mode,
+        api_key_env=agent.api_key_env,
     )
     if cache is None or is_mock(agent.model):
         return backend
