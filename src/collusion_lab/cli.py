@@ -1,15 +1,20 @@
-# Implements: runs/stops-cleanly, runs/failures-dont-stop-sweeps, runs/resume, runs/missing-runs-shown, runs/one-config, runs/overrides, backends/keys-from-environment, backends/spend-asks-first, reproducibility/cache-modes, runs/summary-table, reports/one-page
+# Implements: runs/stops-cleanly, runs/failures-dont-stop-sweeps, runs/resume, runs/missing-runs-shown, runs/live-progress, runs/status-command, runs/one-config, runs/overrides, backends/keys-from-environment, backends/spend-asks-first, reproducibility/cache-modes, runs/summary-table, reports/one-page
 """The `lab` command.
 
 - `lab run CONFIG [--set path=value ...] [--out DIR] [-y]` plays a config,
   skipping runs that already finished, and ends with how many finished,
   failed and were skipped (exit 1 if any failed, each failure on stderr);
+- `lab status FOLDER` prints every planned run under a folder by state, from
+  the `status.json` files `lab run` keeps up to date;
 - `lab summary FOLDER [--by PATH ...]` prints one table for a folder of runs;
 - `lab report FOLDER [--out FILE]` writes one shareable HTML page for it
   (`FOLDER/report.html` by default) and prints where.
 
 Model replies are cached in `.cache/responses.sqlite` (`--cache use`), so a
 rerun replays for free; `--cache refresh` calls again, `--cache off` skips it.
+
+LiteLLM's own info and debug logging is off; set `LITELLM_LOG=INFO` (or
+`DEBUG`) to see it.
 
 API keys are read from the environment, topped up from the `.env` file in the
 directory `lab` runs from (gitignored), never one found elsewhere. A config
@@ -23,6 +28,7 @@ from pathlib import Path
 
 from dotenv import load_dotenv
 
+from collusion_lab import status as run_status
 from collusion_lab.cache import DEFAULT_PATH, MODES, Cache
 from collusion_lab.config import ConfigError, load_config
 from collusion_lab.report import write_report
@@ -54,6 +60,8 @@ def main(argv=None):
     summary.add_argument(
         "--by", action="append", metavar="PATH", help="group by a config value"
     )
+    status = commands.add_parser("status", help="where every run in a folder stands")
+    status.add_argument("folder")
     report = commands.add_parser("report", help="one HTML page for a folder of runs")
     report.add_argument("folder")
     report.add_argument("--out", help="where to write it (default FOLDER/report.html)")
@@ -62,6 +70,11 @@ def main(argv=None):
         print(format_table(summarize(args.folder, args.by)))
         if missing := format_missing(args.folder):
             print("\n" + missing)
+        return 0
+    if args.command == "status":
+        if rows := run_status.rows(args.folder):
+            print(run_status.counts(args.folder) + ".\n")
+        print(format_table(rows))
         return 0
     if args.command == "report":
         print(write_report(args.folder, args.out))
@@ -74,7 +87,7 @@ def main(argv=None):
     if not args.yes and not _spending_agreed(paid_calls(config)):
         return 1
     cache = Cache(args.cache_path, args.cache)
-    outcomes = run_sweep(config, args.out, cache)
+    outcomes = run_sweep(config, args.out, cache, progress=_progress)
     count = {state: 0 for state in ("finished", "failed", "skipped")}
     for outcome in outcomes:
         count[outcome.state] += 1
@@ -84,6 +97,10 @@ def main(argv=None):
             print(outcome.dir)
     print(", ".join(f"{n} {state}" for state, n in count.items()) + ".")
     return 1 if count["failed"] else 0
+
+
+def _progress(line):
+    print(line, flush=True)
 
 
 def _spending_agreed(calls):
