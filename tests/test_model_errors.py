@@ -1,4 +1,5 @@
 # Implements: backends/transient-errors-retried, backends/shared-rate-limit, backends/usage-logged, runs/stops-cleanly
+import asyncio
 import json
 
 import httpx
@@ -19,14 +20,18 @@ def lines(run_dir, name):
 
 @pytest.fixture
 def waits(monkeypatch):
-    """Record every wait instead of sleeping; the clock stands still at NOW."""
+    """Record every wait instead of sleeping. The clock starts at NOW and moves
+    on by each wait once the waiter resumes, so other games run meanwhile."""
     waited = []
+    clock = [NOW]
 
     async def wait(seconds):
         waited.append(seconds)
+        await asyncio.sleep(0)
+        clock[0] += seconds
 
     monkeypatch.setattr(backends, "_sleep", wait)
-    monkeypatch.setattr(backends, "_now", lambda: NOW)
+    monkeypatch.setattr(backends, "_now", lambda: clock[0])
     return waited
 
 
@@ -62,7 +67,7 @@ def test_transient_errors_retried_with_growing_waits_and_logged(
     fake_model.replies = [rate_limited(), timed_out(), server_error()]
     [run_dir] = run_config(config, tmp_path / "bumpy")
     assert waits == sorted(waits) and len(waits) == 3 and waits[0] > 0
-    first = lines(run_dir, "timings.jsonl")[0]
+    first = next(t for t in lines(run_dir, "timings.jsonl") if t["agent"] == "A")
     assert [r["error"].split(":")[0] for r in first["retries"]] == [
         "RateLimitError",
         "Timeout",
@@ -120,12 +125,30 @@ def test_shared_rate_limit_makes_every_game_wait_for_the_reset(
 ):
     reset_ms = str(int((NOW + 30) * 1000))
     fake_model.replies = [rate_limited(**{"X-RateLimit-Reset": reset_ms})]
-    config = make_config(overrides=[*MODEL, "seeds=[0, 1]", "concurrency=1"])
+    config = make_config(overrides=[*MODEL, "seeds=[0, 1]", "concurrency=2"])
     run_config(config, tmp_path)
-    # The clock stands still, so the limit never lifts: every later call,
-    # in either game, first waits out the 30 seconds.
-    assert waits == [30] * (len(fake_model.calls) - 1)
+    # Seed 0's first call is refused; seed 1's first call, not yet made,
+    # waits for the same reset instead of trying.
+    assert waits == [30, 30]
     assert len(fake_model.calls) == 2 * 4 + 1
+
+
+def test_shared_rate_limit_waits_for_a_reset_moved_later_meanwhile(monkeypatch):
+    gates = backends.RateGates()
+    clock = [NOW]
+    waited = []
+
+    async def wait(seconds):
+        waited.append(seconds)
+        if len(waited) == 1:  # another game hears of a later reset meanwhile
+            gates.hold("m", NOW + 20)
+        clock[0] += seconds
+
+    monkeypatch.setattr(backends, "_sleep", wait)
+    monkeypatch.setattr(backends, "_now", lambda: clock[0])
+    gates.hold("m", NOW + 10)
+    asyncio.run(gates.wait("m"))
+    assert waited == [10, 10] and clock[0] == NOW + 20
 
 
 def test_shared_rate_limit_that_wont_lift_soon_stops_the_run(
