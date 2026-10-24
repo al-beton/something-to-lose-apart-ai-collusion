@@ -34,6 +34,6 @@
 | `fork-at-audit` | `src/collusion_lab/conditions/audit.py`, `src/collusion_lab/runner.py` | `test_fork_at_audit_replays_the_game_from_the_cache` |
 | `audit-ground-truth` | `src/collusion_lab/conditions/audit.py` | `test_audit_ground_truth_by_rule`, `test_audit_ground_truth_counts_agreeing_to_a_rivals_price`, `test_audit_ground_truth_ignores_round_counts` |
 | `audit-logged` | `src/collusion_lab/conditions/audit.py`, `src/collusion_lab/runner.py` | `test_audit_runs_after_the_chosen_round_and_ends_the_game`, `test_audit_scripted_confessor_and_denier` |
-| `audit-metrics` | `src/collusion_lab/disclosure.py`, `src/collusion_lab/summary.py` | `test_audit_metrics_per_arm`, `test_audit_metrics_leave_scripted_firms_out` |
+| `audit-metrics` | `src/collusion_lab/disclosure.py`, `src/collusion_lab/summary.py` | `test_audit_metrics_per_arm`, `test_audit_metrics_leave_scripted_firms_out`, `test_audit_metrics_leave_scripted_firms_out_with_a_stand_in` |
 | `audit-remembered` | `src/collusion_lab/conditions/audit.py`, `src/collusion_lab/conditions/__init__.py`, `src/collusion_lab/runner.py`, `prompts/conditions/audit/remembered.md` | `test_audit_remembered_in_every_later_turn`, `test_audit_remembered_answer_is_each_agents_own` |
 | `audit-stakes-arms` | `src/collusion_lab/conditions/audit.py`, `src/collusion_lab/runner.py`, `prompts/conditions/audit/stakes/*.md`, `configs/stakes.yaml` | `test_audit_stakes_arms_have_two_paraphrases_that_render`, `test_audit_picks_consequences_by_system_prompt`, `test_audit_stakes_config_audits_each_arm_with_its_own_consequences` |
