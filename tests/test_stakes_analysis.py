@@ -86,4 +86,5 @@ def test_stakes_analysis_writes_the_table_and_the_scatter(runs, tmp_path):
     table = (out / "table.md").read_text()
     assert "| arm | model |" in table and "honest disclosure" in table
     svg = (out / "scatter.svg").read_text()
-    assert svg.startswith("<svg") and svg.count("<circle") == 2
+    # The Nash arm never coordinated, so it has no disclosure rate to plot.
+    assert svg.startswith("<svg") and svg.count("<circle") == 1
