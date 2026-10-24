@@ -38,7 +38,7 @@
 | `agreement` | `src/collusion_lab/report/highlights.py` | `test_agreement_is_every_firm_naming_then_charging_one_new_price` |
 | `overshoot` | `src/collusion_lab/report/highlights.py` | `test_overshoot_is_once_per_stretch_above_the_joint_price` |
 | `defection` | `src/collusion_lab/report/highlights.py` | `test_defection_includes_the_last_round` |
-| `condition-window` | not yet | `test_condition_window_compares_messages_inside_and_outside`, `test_condition_window_needs_a_condition_in_force_for_part_of_the_game` |
+| `condition-window` | `src/collusion_lab/report/highlights.py`, `src/collusion_lab/report/games.py`, `src/collusion_lab/report/page.py` | `test_condition_window_compares_messages_inside_and_outside`, `test_condition_window_needs_a_condition_in_force_for_part_of_the_game` |
 | `breakdowns` | `src/collusion_lab/report/highlights.py` | `test_breakdowns_are_every_retry_and_fallback` |
 | `transcripts` | `src/collusion_lab/report/page.py`, `src/collusion_lab/report/told.py` | `test_transcripts_are_cards_with_a_strip_of_rounds`, `test_transcripts_hold_every_round`, `test_transcripts_show_the_notice_each_round_carried`, `test_transcripts_escape_what_models_wrote`, `test_transcripts_show_retries_and_fallbacks`, `test_transcripts_show_the_conditions_and_notices_of_each_round` |
 | `self-contained` | `src/collusion_lab/report/page.py`, `src/collusion_lab/report/style.py` | `test_self_contained_needs_no_network_and_suits_phones_and_dark_mode` |

@@ -93,6 +93,8 @@ html { scroll-padding-top: 3.5rem; }
 .arm-notes li { margin: 0.5rem 0; }
 .chart.overview { max-width: 520px; }
 .chart .arm { fill: var(--line); }
+.chart .window { fill: var(--series-4); opacity: 0.18; }
+.conditions { margin: 0.35rem 0 0; font-size: 0.8rem; color: var(--text-2); }
 .notice { margin: 0.35rem 0; padding: 0.5rem 0.75rem; border-radius: 8px;
   border: 1px dashed var(--text-2); font-size: 0.9rem; white-space: pre-wrap; }
 .notice::before { content: "notice in the prompt: "; color: var(--text-2); }
