@@ -46,6 +46,7 @@ def test_free_time_upfront_then_paid_out_after_the_last_round(make_config, tmp_p
         "allowance": 10,
         "upfront": 1,
         "deducted": 0,
+        "owed": 9,
         "paid_out": 9,
         "taken": 10,
     }
