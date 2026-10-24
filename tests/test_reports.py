@@ -1,4 +1,4 @@
-# Implements: reports/markdown-first-screen, reports/one-page, reports/header, reports/first-screen, reports/contents-bar, reports/setup, reports/summary, reports/arm-tabs, reports/price-chart, reports/highlights-in-context, reports/proposal, reports/agreement, reports/overshoot, reports/defection, reports/breakdowns, reports/transcripts, reports/self-contained, reports/from-run-files
+# Implements: reports/condition-window, reports/markdown-first-screen, reports/one-page, reports/header, reports/first-screen, reports/contents-bar, reports/setup, reports/summary, reports/arm-tabs, reports/price-chart, reports/highlights-in-context, reports/proposal, reports/agreement, reports/overshoot, reports/defection, reports/breakdowns, reports/transcripts, reports/self-contained, reports/from-run-files
 import json
 import re
 import shutil
@@ -11,6 +11,7 @@ from collusion_lab import backends, cli
 from collusion_lab.config import load_config
 from collusion_lab.market import Bertrand
 from collusion_lab.report import build_report, load_games
+from collusion_lab.report.chart import price_ticks
 from collusion_lab.report.highlights import find_highlights, named_prices
 from collusion_lab.report.markdown import first_screen_markdown
 from collusion_lab.runner import run_config
@@ -162,6 +163,22 @@ class Page(HTMLParser):
             for t, a in self.tags
             if t == tag and all(a.get(k) == v for k, v in attrs.items())
         ]
+
+
+OUTAGE = [
+    "conditions={outage: {enabled: true, start: 3, end: 4}}",
+    "agents.*.model=mock/proposer",
+    "market.rounds=6",
+    "market.talk=true",
+    "name=outage",
+]
+
+
+@pytest.fixture
+def outage(make_config, tmp_path):
+    """Two proposers, told in rounds 3 and 4 that messages aren't recorded."""
+    run_config(make_config(overrides=OUTAGE), tmp_path / "runs")
+    return tmp_path / "runs" / "outage"
 
 
 def section(html, name):
@@ -542,3 +559,66 @@ def test_markdown_first_screen_of_the_pull_request_game(tmp_path):
     text = first_screen_markdown(tmp_path / "runs")
     for kind in ("proposes", "agree on", "undercut"):
         assert kind in text, kind
+
+
+def test_setup_reads_conditions_and_notices_from_the_log(outage):
+    (log,) = outage.rglob("turns.jsonl")
+    turns = [json.loads(line) for line in log.read_text().splitlines()]
+    for turn in turns:
+        turn["notices"] = ["Logged notice." for _ in turn["notices"]]
+    log.write_text("".join(json.dumps(t) + "\n" for t in turns))
+    setup = section(build_report(outage), "setup")
+    told = setup[setup.index("Conditions") :]
+    assert "outage" in told and "rounds 3 to 4" in told
+    assert told.count("Logged notice.") == 1
+    assert "rounds 3 to 5" in told[: told.index("Logged notice.")]
+    assert "will not be recorded" not in setup
+
+
+def test_setup_keeps_each_arms_condition_rounds_apart(make_config, tmp_path):
+    early_late = ["sweep={conditions.outage.start: [2, 4]}", "market.rounds=6"]
+    run_config(make_config(overrides=[*OUTAGE, *early_late]), tmp_path / "runs")
+    setup = section(build_report(tmp_path / "runs"), "setup")
+    told = setup[setup.index("Conditions") : setup.index("Other text")]
+    assert "rounds 2 to 4, in 2." in told
+    assert "rounds 4, in 4." in told or "round 4, in 4." in told
+    assert "rounds 2 to 4, in every arm" not in told
+
+
+def test_transcripts_show_the_conditions_and_notices_of_each_round(outage):
+    games = section(build_report(outage), "arms")
+    parts = games.split('<div class="round" id="')[1:]
+    rounds = {r.split('"', 1)[0]: r for r in parts}
+    assert "outage" in rounds["g0-r3"] and "will not be recorded" in rounds["g0-r3"]
+    assert "recorded again" in rounds["g0-r5"]
+    assert "will not be recorded" not in rounds["g0-r2"]
+    assert 'class="conditions"' not in rounds["g0-r2"]
+
+
+def test_price_chart_shades_rounds_of_a_windowed_condition(outage, sweep):
+    charts = section(build_report(outage), "charts")
+    assert charts.count('class="window"') == 1
+    assert "outage, rounds 3 to 4" in charts
+    assert 'class="window"' not in build_report(sweep)
+
+
+def test_price_chart_labels_round_steps_up_to_the_top_of_the_grid():
+    assert price_ticks(1, 12) == [2, 4, 6, 8, 10, 12]
+    assert price_ticks(1, 180) == [50, 100, 150, 180]
+    assert price_ticks(1, 20) == [5, 10, 15, 20]
+
+
+def test_condition_window_compares_messages_inside_and_outside(outage):
+    (game,) = load_games(outage)
+    (found,) = [h for h in find_highlights(game) if h.kind == "window"]
+    assert found.round == 3
+    assert found.note == (
+        "outage, rounds 3 to 4: 4 of 4 messages name a price inside, 8 of 8 outside"
+    )
+    arms = section(build_report(outage), "arms")
+    assert 'class="highlight" data-kind="window"' in arms
+
+
+def test_condition_window_needs_a_condition_in_force_for_part_of_the_game(talks):
+    (game,) = load_games(talks)
+    assert not [h for h in find_highlights(game) if h.kind == "window"]

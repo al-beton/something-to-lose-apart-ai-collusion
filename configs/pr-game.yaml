@@ -1,13 +1,16 @@
 # Implements: ci/report-comment
 # The free game every pull request's report comment shows: two scripted firms
 # that propose the joint-profit price, agree on it and undercut every fifth
-# round, so proposals, agreements and defections all appear.
+# round, told in rounds 4 to 6 that their messages aren't recorded, so
+# proposals, agreements, defections, notices and a shaded outage all appear.
 #   uv run lab run configs/pr-game.yaml --out runs/scratch/pr --cache off -y
 name: pr-game
 seeds: [0]
 market:
   rounds: 10
   talk: true
+conditions:
+  outage: {enabled: true, start: 4, end: 6}
 summary:
   last_rounds: 3
 agents:

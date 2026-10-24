@@ -1,4 +1,4 @@
-# Implements: reports/reasoning-folded, reports/one-page, reports/header, reports/first-screen, reports/contents-bar, reports/setup, reports/summary, reports/price-chart, reports/arm-tabs, reports/highlights-in-context, reports/transcripts, reports/self-contained, runs/fallback-rates, runs/missing-runs-shown, reports/solicitation
+# Implements: reports/reasoning-folded, reports/one-page, reports/header, reports/first-screen, reports/contents-bar, reports/setup, reports/summary, reports/price-chart, reports/arm-tabs, reports/highlights-in-context, reports/transcripts, reports/self-contained, runs/fallback-rates, runs/missing-runs-shown, reports/condition-window, reports/solicitation
 """The report page: one self-contained HTML file, read from the top down.
 
 A sticky contents bar, then:
@@ -33,13 +33,13 @@ from collusion_lab.report.chart import (
     series_colour,
 )
 from collusion_lab.report.games import load_game
-from collusion_lab.report.highlights import find_highlights
+from collusion_lab.report.highlights import find_highlights, rounds_text
 from collusion_lab.report.overview import answer_words, arm_sentences
 from collusion_lab.report.solicitation import answer
 from collusion_lab.report.style import STYLE, tab_rules
 from collusion_lab.report.told import (
+    round_conditions,
     round_notices,
-    rounds_text,
     what_agents_were_told,
 )
 from collusion_lab.summary import (
@@ -60,6 +60,7 @@ HEADLINES = {
     "overshoot": "{who} price above the joint-profit price",
     "defection": "{who} undercut {price}, which every firm charged the round before",
     "breakdown": "{who}'s reply broke down ({note})",
+    "window": "{note}",
 }
 KINDS = {
     "proposal": "Proposals",
@@ -67,6 +68,7 @@ KINDS = {
     "overshoot": "Overshoots",
     "defection": "Defections",
     "breakdown": "Breakdowns",
+    "window": "Condition windows",
 }
 SHOWN = 5
 CONTENTS = {
@@ -255,7 +257,8 @@ def _setup(games, arms):
         "Market": "; ".join(_market(m) for m in markets),
     }
     dl = "".join(f"<dt>{k}</dt><dd>{escape(v)}</dd>" for k, v in facts.items())
-    systems, phases, extras = what_agents_were_told([(n, gs) for n, _, gs in arms])
+    found = what_agents_were_told([(n, gs) for n, _, gs in arms])
+    systems, phases, conditions, extras = found
     told = ["<h3>System prompts</h3>"]
     told += [
         f'<p class="muted">Used in {escape(_where(s.arms, arms))}.</p>'
@@ -271,6 +274,14 @@ def _setup(games, arms):
         f'<h4>{phase}</h4><pre class="prompt">{escape(text)}</pre>'
         for phase, text in phases
     ]
+    if conditions:
+        told.append("<h3>Conditions</h3><ul>")
+        told += [
+            f"<li><b>{escape(c.text)}</b>: in force in {rounds_text(c.rounds)}, "
+            f"in {escape(_where(c.arms, arms))}.</li>"
+            for c in conditions
+        ]
+        told.append("</ul>")
     told.append("<h3>Other text in their prompts</h3>")
     told += [
         f'<p class="muted">Seen in {rounds_text(e.rounds)}, in '
@@ -431,6 +442,9 @@ def _round(game, r, anchor=None):
     notices = "".join(
         f'<p class="notice">{escape(text)}</p>' for text in round_notices(game, r)
     )
+    if active := round_conditions(r):
+        in_force = escape(", ".join(active))
+        notices = f'<p class="conditions">in force: {in_force}</p>{notices}'
     return (
         f'<div class="round"{where}><h5>Round {r.number}</h5>{notices}{talk}{thoughts}'
         f'<table class="prices"><tr><th>firm</th><th>price</th><th>profit</th></tr>'

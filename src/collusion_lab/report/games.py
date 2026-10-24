@@ -1,4 +1,4 @@
-# Implements: reports/from-run-files, reports/setup, reports/reasoning-folded
+# Implements: reports/from-run-files, reports/setup, reports/reasoning-folded, reports/condition-window
 """A game read back from its run directory, round by round.
 
 Only the files every run writes are read: `config.yaml` for the market and
@@ -31,7 +31,8 @@ class Turn:
     retried: bool
     system: str | None = None
     user: str | None = None
-    notice: str | None = None
+    conditions: tuple[str, ...] | None = None  # None: logged before conditions
+    notices: tuple[str, ...] | None = None
     reasoning: str | None = None  # the provider's, apart from the scratchpad
 
     @property
@@ -64,6 +65,20 @@ class Game:
     config: dict
     summary: dict
     manifest: dict
+
+    def windows(self):
+        """Conditions in force for only part of the game, with their rounds.
+
+        `(name, rounds)` pairs, in the order conditions first apply; a
+        condition in force every round (an instruction) has no window.
+        """
+        found = {}
+        for r in self.rounds:
+            for turn in r.turns:
+                for name in turn.conditions or ():
+                    found.setdefault(name, set()).add(r.number)
+        everywhere = {r.number for r in self.rounds}
+        return [(n, sorted(rs)) for n, rs in found.items() if rs != everywhere]
 
     def round(self, number):
         """Round `number` (1-based), or None outside the game."""
@@ -117,6 +132,10 @@ def _by_firm(turns, number, phase, firms):
     return {firm: found[firm] for firm in firms if firm in found}
 
 
+def _tuple(value):
+    return None if value is None else tuple(value)
+
+
 def _turn(line):
     used = line["used"]
     told = {m["role"]: m["content"] for m in reversed(line.get("messages") or [])}
@@ -131,6 +150,7 @@ def _turn(line):
         retried=line["retry"] is not None,
         system=told.get("system"),
         user=told.get("user"),
-        notice=line.get("notice"),
+        conditions=_tuple(line.get("conditions")),
+        notices=_tuple(line.get("notices")),
         reasoning=line.get("reasoning"),
     )

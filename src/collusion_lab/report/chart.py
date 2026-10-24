@@ -16,8 +16,11 @@ mean price (as in the summary table), against the Nash and joint-profit
 prices.
 """
 
+import math
 from html import escape
 from statistics import mean
+
+from collusion_lab.report.highlights import rounds_text
 
 SERIES = 8
 WIDTH, HEIGHT = 400, 220
@@ -29,12 +32,47 @@ def series_colour(index):
 
 
 def price_chart(games, market, rounds=None):
+    """One line per game; rounds of a condition in force for only part of a
+    game (`Game.windows`, e.g. an outage) are shaded and named on hover."""
     lines = [
         (f'class="seed" data-seed="{game.seed}"', name, _points([game]))
         for game, name in zip(games, line_names(games), strict=True)
     ]
     rounds = rounds or max((len(g.rounds) for g in games), default=1)
-    return _chart(lines, market, rounds, "Mean price per round, one line per seed")
+    windows = {}
+    for game in games:
+        for name, numbers in game.windows():
+            for span in _spans(numbers):
+                windows.setdefault((name, span), None)
+    return _chart(
+        lines, market, rounds, "Mean price per round, one line per seed", windows
+    )
+
+
+def _spans(numbers):
+    """Sorted round numbers as (first, last) runs: [3, 4, 8] -> (3, 4), (8, 8)."""
+    spans = []
+    for n in numbers:
+        if spans and n == spans[-1][1] + 1:
+            spans[-1] = (spans[-1][0], n)
+        else:
+            spans.append((n, n))
+    return spans
+
+
+def price_ticks(low, high):
+    """Price-axis labels at a round step (1, 2 or 5 times a power of ten),
+    about six of them, from the first multiple of the step up to the top of
+    the grid, which is always labelled."""
+    raw = max((high - low) / 6, 1)
+    power = 10 ** math.floor(math.log10(raw))
+    step = next(m * power for m in (1, 2, 5, 10) if m * power >= raw)
+    ticks = list(range(math.ceil(low / step) * step, high + 1, step)) or [high]
+    if ticks[-1] != high:
+        if high - ticks[-1] < step / 2:
+            ticks.pop()
+        ticks.append(high)
+    return ticks
 
 
 def overview_chart(arms, market):
@@ -86,7 +124,7 @@ def _points(games):
     return [(n, mean(ps)) for n, ps in sorted(by_round.items())]
 
 
-def _chart(lines, market, rounds, label, extra_class=""):
+def _chart(lines, market, rounds, label, windows=()):
     low, high = market.price_min, market.price_max
 
     def x(number):
@@ -95,12 +133,18 @@ def _chart(lines, market, rounds, label, extra_class=""):
     def y(price):
         return TOP + (high - price) / max(high - low, 1) * (HEIGHT - TOP - BOTTOM)
 
-    css = f"chart {extra_class}".strip()
     opening = (
-        f'<svg class="{css}" viewBox="0 0 {WIDTH} {HEIGHT}" role="img" '
+        f'<svg class="chart" viewBox="0 0 {WIDTH} {HEIGHT}" role="img" '
         f'aria-label="{label}">'
     )
     parts = [opening]
+    for name, (first, last) in windows:
+        left, right = max(x(first - 0.5), LEFT), min(x(last + 0.5), WIDTH - RIGHT)
+        parts.append(
+            f'<rect class="window" x="{left:.1f}" y="{TOP}" width="{right - left:.1f}" '
+            f'height="{HEIGHT - TOP - BOTTOM}"><title>'
+            f"{escape(name)}, {rounds_text(range(first, last + 1))}</title></rect>"
+        )
     parts += _axes(rounds, low, high, x, y)
     for name, price in (("nash", market.nash_price), ("joint", market.joint_price)):
         label = "Nash" if name == "nash" else "joint"
@@ -150,7 +194,7 @@ def _axes(rounds, low, high, x, y):
         f'<line class="grid" x1="{LEFT}" x2="{WIDTH - RIGHT}" y1="{y(p):.1f}" '
         f'y2="{y(p):.1f}"/><text class="tick" x="{LEFT - 6}" y="{y(p) + 4:.1f}" '
         f'text-anchor="end">{p}</text>'
-        for p in range(low, high + 1, max(1, (high - low) // 6))
+        for p in price_ticks(low, high)
     ]
     parts += [
         f'<text class="tick" x="{x(n):.1f}" y="{HEIGHT - BOTTOM + 16}" '
