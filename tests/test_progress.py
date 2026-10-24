@@ -28,7 +28,7 @@ def lab(tmp_path, *args):
 
 def test_live_progress_prints_a_line_per_run(tmp_path, fake_model, capsys):
     assert lab(tmp_path) == 0
-    lines = [line for line in capsys.readouterr().err.splitlines() if line]
+    lines = [line for line in capsys.readouterr().out.splitlines() if "[" in line]
     assert len(lines) == 2
     for line in lines:
         assert "finished" in line and "3 rounds" in line and "s," in line
