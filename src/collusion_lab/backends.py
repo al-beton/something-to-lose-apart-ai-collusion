@@ -1,4 +1,4 @@
-# Implements: agents/mock-agents, backends/any-model, backends/sampling-from-config, backends/usage-logged, backends/transient-errors-retried, backends/shared-rate-limit, backends/reported-cost, backends/spend-cap
+# Implements: agents/mock-agents, backends/any-model, backends/sampling-from-config, backends/usage-logged, backends/transient-errors-retried, backends/shared-rate-limit, backends/reported-cost, backends/spend-cap, backends/reasoning-setting, logs/reasoning-logged
 """Backends turn a prompt into a reply: scripted mocks, or any model via LiteLLM.
 
 A backend is anything with `async complete(messages, *, context, temperature,
@@ -34,6 +34,13 @@ request (after any rate-limit wait or retry delay) it checks that the run's
 fresh calls haven't cost more than its cap, and raises `ModelCallError` if
 they have; each answered call adds its cost. A call with no known cost adds
 nothing.
+
+An agent's `reasoning` (off, low, medium, high) goes to OpenRouter as its
+`reasoning` request field (`{"effort": ...}`, or `{"enabled": false}` for
+off) and to every other provider as LiteLLM's `reasoning_effort` (`none` for
+off), which `drop_params` drops for models that don't take it. The reasoning
+text a provider returns (`reasoning_content` or `reasoning`) and its
+reasoning-token count come back on the Reply.
 
 Provider errors: rate limits, timeouts and server errors are retried with
 doubling waits (`RETRIES` times); anything else (a bad key, an unknown model)
@@ -78,6 +85,7 @@ class Reply:
     cost: float | None = None
     cached: bool = False
     retries: list | None = None
+    reasoning: str | None = None
 
 
 async def _acompletion(**kwargs):
@@ -154,16 +162,30 @@ def reset_time(error):
 
 
 class LiteLLMBackend:
-    def __init__(self, model, api_base=None, gates=None, budget=None):
+    def __init__(self, model, api_base=None, gates=None, budget=None, reasoning=None):
         self.model = model
         self.api_base = api_base
         self.gates = gates or RateGates()
         self.budget = budget or Budget()
+        self.reasoning = reasoning
+
+    def _extra(self):
+        """Request fields beyond the sampling ones: address, usage, reasoning."""
+        extra = {"api_base": self.api_base} if self.api_base else {}
+        off = self.reasoning == "off"
+        if self.model.startswith("openrouter/"):
+            body = {"usage": {"include": True}}
+            if self.reasoning is not None:
+                body["reasoning"] = (
+                    {"enabled": False} if off else {"effort": self.reasoning}
+                )
+            extra["extra_body"] = body
+        elif self.reasoning is not None:
+            extra["reasoning_effort"] = "none" if off else self.reasoning
+        return extra
 
     async def complete(self, messages, *, context, temperature, max_tokens, seed):
-        extra = {"api_base": self.api_base} if self.api_base else {}
-        if self.model.startswith("openrouter/"):
-            extra["extra_body"] = {"usage": {"include": True}}
+        extra = self._extra()
         started = time.perf_counter()
         response, retries = await self._call(
             model=self.model,
@@ -178,13 +200,12 @@ class LiteLLMBackend:
         usage = getattr(response, "usage", None)
         cost = _cost(response)
         self.budget.spent += cost or 0
+        message = response.choices[0].message
         return Reply(
-            text=response.choices[0].message.content or "",
-            usage=usage
-            and {
-                "prompt_tokens": usage.prompt_tokens,
-                "completion_tokens": usage.completion_tokens,
-            },
+            text=message.content or "",
+            usage=usage and _usage(usage),
+            reasoning=getattr(message, "reasoning_content", None)
+            or getattr(message, "reasoning", None),
             model_version=getattr(response, "model", None),
             seconds=time.perf_counter() - started,
             cost=cost,
@@ -223,6 +244,17 @@ class LiteLLMBackend:
                 else:
                     await _sleep(wait)
                     wait *= 2
+
+
+def _usage(usage):
+    counted = {
+        "prompt_tokens": usage.prompt_tokens,
+        "completion_tokens": usage.completion_tokens,
+    }
+    details = getattr(usage, "completion_tokens_details", None)
+    if (thought := getattr(details, "reasoning_tokens", None)) is not None:
+        counted["reasoning_tokens"] = thought
+    return counted
 
 
 def _cost(response):
@@ -297,10 +329,11 @@ def is_mock(model):
     return model.startswith("mock/")
 
 
-def backend_for(model, rng, api_base=None, gates=None, budget=None):
-    """The backend a model name selects."""
+def backend_for(model, rng, api_base=None, gates=None, **options):
+    """The backend a model name selects; `options` (budget, reasoning) go to
+    model backends."""
     if not is_mock(model):
-        return LiteLLMBackend(model, api_base, gates, budget)
+        return LiteLLMBackend(model, api_base, gates, **options)
     name = model.removeprefix("mock/")
     if name.split("?")[0] == "solicitor":
         return Solicitor(model)

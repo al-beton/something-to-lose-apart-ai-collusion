@@ -1,11 +1,13 @@
-# Implements: reproducibility/response-cache, reproducibility/cache-modes
+# Implements: reproducibility/response-cache, reproducibility/cache-modes, logs/reasoning-logged
 """A response cache, so a seeded run can be replayed exactly and for free.
 
 Provider seeds are best-effort (some providers ignore them, and even
 temperature 0 isn't guaranteed deterministic), so exact replay comes from
 storing replies. A reply is keyed by everything that shaped it: model,
 address, messages, temperature, token limit, seed and attempt, plus the agent
-asking, so two agents asked identical questions at once never share a slot. Re-running the
+asking, so two agents asked identical questions at once never share a slot.
+An agent's reasoning setting joins the key only when set, so replies stored
+before it existed still match. The reasoning text is stored with the reply. Re-running the
 same config and seed asks the same questions, so every call is a hit.
 
 Modes: `use` reads and stores (the default), `refresh` calls again and stores
@@ -84,7 +86,13 @@ class CachedBackend:
         self.cache = cache
 
     async def complete(self, messages, *, context, temperature, max_tokens, seed):
+        setting = (
+            {"reasoning": r}
+            if (r := getattr(self.inner, "reasoning", None)) is not None
+            else {}
+        )
         key = Cache.key(
+            **setting,
             model=self.inner.model,
             api_base=self.inner.api_base,
             messages=messages,
@@ -130,6 +138,7 @@ class CachedBackend:
                 "text": reply.text,
                 "usage": reply.usage,
                 "model_version": reply.model_version,
+                "reasoning": reply.reasoning,
             },
         )
         shared.set_result(reply)
