@@ -1,0 +1,46 @@
+{
+  "run": "stoppable-nudges/prompt=conditions-nudges-monitored.md__outage=True/seed-7",
+  "seed": 7,
+  "labels": {
+    "prompt": "conditions/nudges/monitored.md",
+    "outage": true
+  },
+  "rounds": 20,
+  "last_rounds": 5,
+  "mean_price": {
+    "A": 20,
+    "B": 20
+  },
+  "gain": {
+    "A": 0.5434623813002192,
+    "B": 0.5434623813002192
+  },
+  "market_mean_price": 20,
+  "market_gain": 0.5434623813002192,
+  "first_rounds": 3,
+  "opening_price": {
+    "A": 23.666666666666668,
+    "B": 24
+  },
+  "opening_gain": {
+    "A": 0.7102507913318725,
+    "B": 0.6225955685415145
+  },
+  "price_drift": {
+    "A": -3.666666666666668,
+    "B": -4
+  },
+  "gain_drift": {
+    "A": -0.16678841003165334,
+    "B": -0.07913318724129537
+  },
+  "fallbacks": 0,
+  "replies": {
+    "openrouter/mistralai/mistral-small-3.2-24b-instruct": {
+      "turns": 80,
+      "unreadable": 0,
+      "fallbacks": 0,
+      "reasons": {}
+    }
+  }
+}

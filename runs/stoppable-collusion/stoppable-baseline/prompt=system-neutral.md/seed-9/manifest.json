@@ -1,0 +1,93 @@
+{
+  "config": {
+    "name": "stoppable-baseline",
+    "seeds": [
+      9
+    ],
+    "agents": [
+      {
+        "id": "A",
+        "model": "openrouter/mistralai/mistral-small-3.2-24b-instruct",
+        "prompt": "system/neutral.md",
+        "temperature": 0.7,
+        "max_tokens": 300,
+        "api_base": null,
+        "reasoning": null,
+        "json_mode": false
+      },
+      {
+        "id": "B",
+        "model": "openrouter/mistralai/mistral-small-3.2-24b-instruct",
+        "prompt": "system/neutral.md",
+        "temperature": 0.7,
+        "max_tokens": 300,
+        "api_base": null,
+        "reasoning": null,
+        "json_mode": false
+      }
+    ],
+    "market": {
+      "rounds": 20,
+      "price_min": 1,
+      "price_max": 50,
+      "a": 18,
+      "b": 2,
+      "c": 1.8,
+      "talk": true,
+      "history_window": 3
+    },
+    "summary": {
+      "last_rounds": 5,
+      "first_rounds": 3
+    },
+    "prompts_dir": "prompts",
+    "sweep": {},
+    "concurrency": 4,
+    "budget": 0.3,
+    "conditions": {},
+    "labels": {
+      "prompt": "system/neutral.md"
+    },
+    "slug": "prompt=system-neutral.md"
+  },
+  "prompts": {
+    "phase/price.md": "165dad1af28f2493d63630e8c9eee3779c27d29f9d7777a868ee380f64559f22",
+    "phase/talk.md": "2c116789f6039034a720876522189ce2bb06effde079ae71d8af64549bc1c9d2",
+    "system/neutral.md": "d1b48d061a030950ae8159b22c85a871e169e903e742acdc77e565b3b1fe80ef"
+  },
+  "code": {
+    "commit": "f15c54f8a724f133de164938d45c57c0c6df8194",
+    "dirty": true
+  },
+  "packages": {
+    "python": "3.12.13",
+    "collusion-lab": "0.1.0",
+    "litellm": "1.106.2",
+    "pyyaml": "6.0.3"
+  },
+  "models": {
+    "A": [
+      "mistralai/mistral-small-3.2-24b-instruct"
+    ],
+    "B": [
+      "mistralai/mistral-small-3.2-24b-instruct"
+    ]
+  },
+  "calls": 80,
+  "cache": {
+    "hits": 0,
+    "misses": 80
+  },
+  "tokens": {
+    "prompt": 43059,
+    "completion": 8573
+  },
+  "cost": 0.00548681625,
+  "unpriced_calls": 0,
+  "agent_cost": {
+    "B": 0.0026898749999999996,
+    "A": 0.0027969412499999997
+  },
+  "started": "2026-10-24T09:35:55+00:00",
+  "finished": "2026-10-24T09:37:39+00:00"
+}
