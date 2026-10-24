@@ -1,0 +1,91 @@
+{
+  "config": {
+    "name": "gpt-haiku",
+    "seeds": [
+      0
+    ],
+    "agents": [
+      {
+        "id": "A",
+        "model": "openrouter/openai/gpt-4.1-mini",
+        "prompt": "system/fiduciary.md",
+        "temperature": 0.7,
+        "max_tokens": 500,
+        "api_base": null,
+        "reasoning": "off",
+        "json_mode": false
+      },
+      {
+        "id": "B",
+        "model": "openrouter/anthropic/claude-haiku-5.5",
+        "prompt": "system/fiduciary.md",
+        "temperature": 0.7,
+        "max_tokens": 500,
+        "api_base": null,
+        "reasoning": "off",
+        "json_mode": false
+      }
+    ],
+    "market": {
+      "rounds": 20,
+      "price_min": 1,
+      "price_max": 12,
+      "a": 18,
+      "b": 2,
+      "c": 1,
+      "talk": true,
+      "history_window": 3
+    },
+    "summary": {
+      "last_rounds": 5,
+      "first_rounds": 3
+    },
+    "prompts_dir": "prompts",
+    "sweep": {},
+    "concurrency": 4,
+    "budget": 0.4,
+    "conditions": {},
+    "labels": {},
+    "slug": ""
+  },
+  "prompts": {
+    "phase/price.md": "165dad1af28f2493d63630e8c9eee3779c27d29f9d7777a868ee380f64559f22",
+    "phase/talk.md": "2c116789f6039034a720876522189ce2bb06effde079ae71d8af64549bc1c9d2",
+    "system/fiduciary.md": "649efee5e6a2b09058c944a53ad9aec388b653251ad5b71b0dc7f7567f7d1dca"
+  },
+  "code": {
+    "commit": "a8dd242430af6668e8f52431b4260a4708376e85",
+    "dirty": true
+  },
+  "packages": {
+    "python": "3.12.13",
+    "collusion-lab": "0.1.0",
+    "litellm": "1.106.2",
+    "pyyaml": "6.0.3"
+  },
+  "models": {
+    "A": [
+      "openai/gpt-4.1-mini"
+    ],
+    "B": [
+      "anthropic/claude-haiku-5.5"
+    ]
+  },
+  "calls": 80,
+  "cache": {
+    "hits": 0,
+    "misses": 80
+  },
+  "tokens": {
+    "prompt": 52611,
+    "completion": 16044
+  },
+  "cost": 0.0252018,
+  "unpriced_calls": 0,
+  "agent_cost": {
+    "A": 0.0165596,
+    "B": 0.008642200000000001
+  },
+  "started": "2026-10-24T09:37:42+00:00",
+  "finished": "2026-10-24T09:39:24+00:00"
+}

@@ -1,0 +1,49 @@
+{
+  "run": "gemma-gpt/seed-1",
+  "seed": 1,
+  "labels": {},
+  "rounds": 20,
+  "last_rounds": 5,
+  "mean_price": {
+    "A": 12,
+    "B": 12
+  },
+  "gain": {
+    "A": 0.0,
+    "B": 0.0
+  },
+  "market_mean_price": 12,
+  "market_gain": 0.0,
+  "first_rounds": 3,
+  "opening_price": {
+    "A": 11.333333333333334,
+    "B": 12
+  },
+  "opening_gain": {
+    "A": 1.0370370370370365,
+    "B": -0.8888888888888888
+  },
+  "price_drift": {
+    "A": 0.6666666666666661,
+    "B": 0
+  },
+  "gain_drift": {
+    "A": -1.0370370370370365,
+    "B": 0.8888888888888888
+  },
+  "fallbacks": 0,
+  "replies": {
+    "openrouter/google/gemma-4-31b-it": {
+      "turns": 40,
+      "unreadable": 0,
+      "fallbacks": 0,
+      "reasons": {}
+    },
+    "openrouter/openai/gpt-4.1-mini": {
+      "turns": 40,
+      "unreadable": 0,
+      "fallbacks": 0,
+      "reasons": {}
+    }
+  }
+}

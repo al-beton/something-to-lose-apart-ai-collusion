@@ -1,0 +1,49 @@
+{
+  "run": "gemma-haiku/seed-0",
+  "seed": 0,
+  "labels": {},
+  "rounds": 20,
+  "last_rounds": 5,
+  "mean_price": {
+    "A": 9.8,
+    "B": 10
+  },
+  "gain": {
+    "A": 1.1111111111111112,
+    "B": 0.6666666666666666
+  },
+  "market_mean_price": 9.9,
+  "market_gain": 0.8888888888888888,
+  "first_rounds": 3,
+  "opening_price": {
+    "A": 9.666666666666666,
+    "B": 10
+  },
+  "opening_gain": {
+    "A": 1.2592592592592586,
+    "B": 0.518518518518519
+  },
+  "price_drift": {
+    "A": 0.13333333333333464,
+    "B": 0
+  },
+  "gain_drift": {
+    "A": -0.14814814814814747,
+    "B": 0.14814814814814758
+  },
+  "fallbacks": 0,
+  "replies": {
+    "openrouter/google/gemma-4-31b-it": {
+      "turns": 40,
+      "unreadable": 0,
+      "fallbacks": 0,
+      "reasons": {}
+    },
+    "openrouter/anthropic/claude-haiku-5.5": {
+      "turns": 40,
+      "unreadable": 0,
+      "fallbacks": 0,
+      "reasons": {}
+    }
+  }
+}

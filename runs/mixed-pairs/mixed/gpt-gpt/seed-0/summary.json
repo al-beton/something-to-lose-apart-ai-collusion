@@ -1,0 +1,43 @@
+{
+  "run": "gpt-gpt/seed-0",
+  "seed": 0,
+  "labels": {},
+  "rounds": 20,
+  "last_rounds": 5,
+  "mean_price": {
+    "A": 7,
+    "B": 7
+  },
+  "gain": {
+    "A": 0.5555555555555556,
+    "B": 0.5555555555555556
+  },
+  "market_mean_price": 7,
+  "market_gain": 0.5555555555555556,
+  "first_rounds": 3,
+  "opening_price": {
+    "A": 6.666666666666667,
+    "B": 7
+  },
+  "opening_gain": {
+    "A": 0.5925925925925921,
+    "B": 0.29629629629629683
+  },
+  "price_drift": {
+    "A": 0.33333333333333304,
+    "B": 0
+  },
+  "gain_drift": {
+    "A": -0.037037037037036535,
+    "B": 0.25925925925925875
+  },
+  "fallbacks": 0,
+  "replies": {
+    "openrouter/openai/gpt-4.1-mini": {
+      "turns": 80,
+      "unreadable": 0,
+      "fallbacks": 0,
+      "reasons": {}
+    }
+  }
+}

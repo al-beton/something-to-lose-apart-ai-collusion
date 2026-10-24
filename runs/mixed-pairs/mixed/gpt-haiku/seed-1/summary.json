@@ -1,0 +1,49 @@
+{
+  "run": "gpt-haiku/seed-1",
+  "seed": 1,
+  "labels": {},
+  "rounds": 20,
+  "last_rounds": 5,
+  "mean_price": {
+    "A": 7.2,
+    "B": 7.4
+  },
+  "gain": {
+    "A": 0.7555555555555552,
+    "B": 0.48888888888888954
+  },
+  "market_mean_price": 7.300000000000001,
+  "market_gain": 0.6222222222222223,
+  "first_rounds": 3,
+  "opening_price": {
+    "A": 9,
+    "B": 7
+  },
+  "opening_gain": {
+    "A": -2.2222222222222223,
+    "B": 1.7777777777777777
+  },
+  "price_drift": {
+    "A": -1.7999999999999998,
+    "B": 0.40000000000000036
+  },
+  "gain_drift": {
+    "A": 2.9777777777777774,
+    "B": -1.288888888888888
+  },
+  "fallbacks": 0,
+  "replies": {
+    "openrouter/openai/gpt-4.1-mini": {
+      "turns": 40,
+      "unreadable": 0,
+      "fallbacks": 0,
+      "reasons": {}
+    },
+    "openrouter/anthropic/claude-haiku-5.5": {
+      "turns": 40,
+      "unreadable": 0,
+      "fallbacks": 0,
+      "reasons": {}
+    }
+  }
+}
