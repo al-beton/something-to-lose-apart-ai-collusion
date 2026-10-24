@@ -28,6 +28,7 @@ Each open issue carries exactly one of these:
 | `in-progress` | a builder is on it | the builder, when it starts |
 | `in-review` | its pull request is green, Codex has finished, and it waits for a reviewer | the builder, when it hands over |
 | `blocked` | waiting on Al or another issue; the issue says on what | whoever finds the block |
+| `on-hold` | parked on purpose until Al or the manager picks it up again | manager |
 
 The lead checks the queue (`gh issue list --label ready`, `--label in-review`, …) and fixes any label that's wrong. Merging closes the issue, which ends its label's meaning.
 

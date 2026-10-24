@@ -6,7 +6,7 @@
 - **reviewers:** A reviewer that isn't the pull request's author reviews it and merges it once it is clean.
 - **codex:** Codex reviews every pull request adversarially, independently of the agent that built it.
 - **researcher:** A research agent uses the lab to run experiments and surfaces reports and findings worth Al's attention.
-- **queue-labels:** Each open issue shows where it stands with one label, `ready`, `in-progress`, `in-review` or `blocked`, so anyone can see the queue at a glance.
+- **queue-labels:** Each open issue shows where it stands with one label, `ready`, `in-progress`, `in-review`, `blocked` or `on-hold`, so anyone can see the queue at a glance.
 
 ## Where this is enforced
 
