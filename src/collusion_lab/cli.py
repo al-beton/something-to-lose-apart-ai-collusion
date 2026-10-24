@@ -80,14 +80,7 @@ def main(argv=None):
         parser.error(str(error))
     if args.max_cost is not None:
         config = dataclasses.replace(config, budget=args.max_cost)
-    calls = paid_calls(config)
-    guess = estimate(config, price_for) if calls else None
-    if calls:
-        print(_spend_line(calls, guess))
-    if over := _over_budget(config.budget, guess):
-        print(f"lab: {over}", file=sys.stderr)
-        return 1
-    if calls and not args.yes and not _spending_agreed():
+    if not _spend_checked(config, args.yes):
         return 1
     cache = Cache(args.cache_path, args.cache)
     try:
@@ -98,6 +91,24 @@ def main(argv=None):
     for run_dir in run_dirs:
         print(run_dir)
     return 0
+
+
+def _spend_checked(config, yes):
+    """Say what a paid run will cost; whether it may go ahead."""
+    calls = paid_calls(config)
+    guess = estimate(config, price_for) if calls else None
+    if calls:
+        print(_spend_line(calls, guess))
+    if over := _over_budget(config.budget, guess):
+        print(f"lab: {over}", file=sys.stderr)
+        return False
+    if config.budget is not None and guess and guess.unpriced:
+        print(
+            f"lab: no price for {', '.join(guess.unpriced)}, so the spend cap "
+            "can't be enforced for it.",
+            file=sys.stderr,
+        )
+    return not calls or yes or _spending_agreed()
 
 
 def _spend_line(calls, guess):

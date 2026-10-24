@@ -22,10 +22,8 @@ uses the fallback, and the turn line keeps both attempts.
 A model call that fails for good (see backends.py) stops its game: the turns
 played so far, the timings and the manifest are still written, and
 `RunFailed` says which run and which call. Every game shares one `RateGates`,
-so a rate limit on a model holds all of them, and one `Budget`: once the
-fresh calls of all games together have cost more than `config.budget`, the
-next call anywhere stops its run instead (a call with no known cost counts
-as free).
+so a rate limit on a model holds all of them, and one `Budget` (see
+backends.py), so the spend cap counts every game's calls.
 
 With `market.history_window: N`, agents see their last N rounds in full and
 one line summing up the rounds before them.
@@ -42,7 +40,13 @@ from statistics import mean
 
 from collusion_lab import manifest
 from collusion_lab.agents import ReplyError, decision, fallback, parse_reply
-from collusion_lab.backends import ModelCallError, RateGates, backend_for, is_mock
+from collusion_lab.backends import (
+    Budget,
+    ModelCallError,
+    RateGates,
+    backend_for,
+    is_mock,
+)
 from collusion_lab.cache import CachedBackend
 from collusion_lab.config import expand
 from collusion_lab.market import Bertrand
@@ -61,28 +65,7 @@ class RunWide:
     """What every game in one `run_config` shares."""
 
     gates: RateGates = field(default_factory=RateGates)
-    budget: "Budget" = None
-
-    def __post_init__(self):
-        self.budget = self.budget or Budget()
-
-
-class Budget:
-    """What every game in a run has spent, against an optional cap."""
-
-    def __init__(self, cap=None):
-        self.cap = cap
-        self.spent = 0.0
-
-    def charge(self, reply):
-        if not reply.cached:
-            self.spent += reply.cost or 0
-
-    def problem(self):
-        """Why no more calls may be made, or None while they may."""
-        if self.cap is not None and self.spent > self.cap:
-            return f"spend cap of ${self.cap:g} passed (${self.spent:.4f} spent)"
-        return None
+    budget: Budget = field(default_factory=Budget)
 
 
 def paid_calls(config):
@@ -143,8 +126,8 @@ async def play(config, seed, out, cache=None, shared=None):
     return run_dir
 
 
-def _backend(agent, rng, cache, gates):
-    backend = backend_for(agent.model, rng, agent.api_base, gates)
+def _backend(agent, rng, cache, shared):
+    backend = backend_for(agent.model, rng, agent.api_base, shared.gates, shared.budget)
     if cache is None or is_mock(agent.model):
         return backend
     return CachedBackend(backend, cache)
@@ -165,10 +148,9 @@ class Game:
         self.market = Bertrand(m.a, m.b, m.c, m.price_min, m.price_max)
         self.agents = {a.id: a for a in config.agents}
         self.backends = {
-            a.id: _backend(a, random.Random(f"{seed}:{a.id}"), cache, shared.gates)
+            a.id: _backend(a, random.Random(f"{seed}:{a.id}"), cache, shared)
             for a in config.agents
         }
-        self.budget = shared.budget
         self.history = []
         self.turns = []
         self.timings = []
@@ -258,8 +240,6 @@ class Game:
             f"{run_id(self.config, self.seed)} stopped at round "
             f"{context['round']}, {context['phase']} phase, agent {agent.id}"
         )
-        if not is_mock(agent.model) and (problem := self.budget.problem()):
-            raise RunFailed(f"{where}: {problem}")
         try:
             reply = await self.backends[agent.id].complete(
                 messages,
@@ -270,7 +250,6 @@ class Game:
             )
         except ModelCallError as error:
             raise RunFailed(f"{where}: {error}") from error
-        self.budget.charge(reply)
         self.timings.append(
             {
                 "round": context["round"],

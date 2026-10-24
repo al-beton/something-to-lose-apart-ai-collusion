@@ -1,7 +1,7 @@
 # Implements: runs/cheap-preset
 # The default for exploration: a low-cost model, a 3-round history window and
-# 20 rounds. A batch of 4 arms x 5 seeds is estimated at about $0.07 (lab run
-# prints the estimate first) and is capped at $0.30. Sweep anything on top:
+# 20 rounds, capped at $0.30; lab run prints the estimated cost before it
+# spends anything. Sweep anything on top:
 #   uv run lab run configs/cheap.yaml --set 'sweep={agents.*.temperature: [0.3, 0.7, 1.0, 1.3]}'
 name: cheap
 seeds: [0, 1, 2, 3, 4]
