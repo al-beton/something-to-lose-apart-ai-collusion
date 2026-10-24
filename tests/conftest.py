@@ -50,7 +50,10 @@ def no_model_calls(monkeypatch):
 
 @pytest.fixture
 def fake_model(monkeypatch):
-    """Answer model calls from a list of reply texts; record each call."""
+    """Answer model calls from a list of reply texts; record each call.
+
+    An exception in the list is raised instead, as a provider error would be.
+    """
 
     class Fake:
         def __init__(self):
@@ -61,6 +64,8 @@ def fake_model(monkeypatch):
             self.calls.append(kwargs)
             if self.replies:
                 text = self.replies.pop(0)
+                if isinstance(text, Exception):
+                    raise text
             elif "set your price" in kwargs["messages"][-1]["content"]:
                 text = '{"price": 7}'
             else:
