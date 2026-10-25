@@ -1,4 +1,4 @@
-# Implements: conditions/audit-consequences, conditions/hook-points
+# Implements: conditions/audit-consequences, conditions/hook-points, conditions/audit-balanced-draws
 import json
 
 import pytest
@@ -159,3 +159,57 @@ def test_audit_consequences_budget_per_repeated_audit(make_config, tmp_path, car
     audits = summary(run_dir)["audit"]["audits"]
     budgets = [a["agents"]["A"]["consequence"]["budget"] for a in audits]
     assert budgets == [940, 880]  # each audit's own balance, not the final one
+
+
+def balanced(detection, seeds, draws="balanced"):
+    settings = json.loads(audit(FINES, detection).removeprefix("conditions="))
+    settings["audit"]["detection_draws"] = draws
+    return [f"conditions={json.dumps(settings)}", f"seeds={json.dumps(seeds)}", *PAIR]
+
+
+@pytest.mark.parametrize(
+    "case",
+    [
+        ([0, 1], 50, 1),
+        ([0, 1, 2], 50, 2),  # 1.5 rounds half up
+        ([0, 1, 2, 3], 25, 1),
+        ([0, 1, 2, 3, 4], 50, 3),  # 2.5 rounds half up
+        ([7], 50, 1),
+        ([0, 1, 2], 0, 0),
+        ([0, 1, 2], 100, 3),
+    ],
+)
+def test_audit_balanced_draws_catch_each_firm_in_the_stated_share(
+    make_config, tmp_path, cartel, case
+):
+    seeds, detection, caught = case
+    cartel.script["answer"] = "deny"
+    run_dirs = run_config(make_config(overrides=balanced(detection, seeds)), tmp_path)
+    for firm in "AB":
+        assert sum(applied(d, firm)["caught"] for d in run_dirs) == caught, firm
+
+
+def test_audit_balanced_draws_replay_whole_and_alone(make_config, tmp_path, cartel):
+    from collusion_lab.config import load_config
+
+    cartel.script["answer"] = "deny"
+    config = make_config(overrides=balanced(50, [0, 1, 2]))
+    first = [applied(d)["caught"] for d in run_config(config, tmp_path / "a")]
+    again = [applied(d)["caught"] for d in run_config(config, tmp_path / "b")]
+    assert first == again
+    for run_dir, was in zip(
+        sorted((tmp_path / "a").rglob("seed-*")), first, strict=True
+    ):
+        [alone] = run_config(load_config(run_dir / "config.yaml"), tmp_path / "c")
+        assert applied(alone)["caught"] == was
+
+
+def test_audit_independent_draws_are_the_default(make_config, tmp_path, cartel):
+    """Naming the default changes nothing: the same turns, byte for byte."""
+    cartel.script["answer"] = "deny"
+    plain = make_config(overrides=[audit(FINES), *PAIR, "seeds=[3]"])
+    named = make_config(overrides=balanced(50, [3], draws="independent"))
+    [default] = run_config(plain, tmp_path / "default")
+    [named_run] = run_config(named, tmp_path / "named")
+    turns_of = (default / "turns.jsonl", named_run / "turns.jsonl")
+    assert turns_of[0].read_bytes() == turns_of[1].read_bytes()
