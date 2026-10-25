@@ -531,7 +531,7 @@ def test_audit_free_time_arm_stated_fresh_for_forked_games():
 
 
 def repeated(**settings):
-    return audit(round=2, rounds=[2, 4], end=False, **settings)
+    return audit(**{"round": 2, "rounds": [2, 4], "end": False, **settings})
 
 
 def test_audit_repeated_asks_at_each_round_and_remembers(
