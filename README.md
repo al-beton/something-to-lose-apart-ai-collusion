@@ -83,7 +83,7 @@ An open model served on [Modal](https://modal.com) costs GPU time instead of per
 4. Put that address, with `/v1` on the end, in `.env` as `MODAL_VLLM_BASE=`, then `uv run lab run configs/modal.yaml` (any agent can then use `model: modal-mistral`). The first request starts a container, which takes a few minutes while the weights load (longer the first time, while they download).
 5. `uvx modal app stop collusion-lab-vllm` tears it down. Left running, it already scales to zero after 5 idle minutes and then costs nothing.
 
-`lab run` can't price GPU time, so it says the model is self-hosted rather than estimating a cost. As a rough guide, not yet measured: a 20-round game between two firms is 80 calls, and one H100 serves eight such games at once, so `configs/modal.yaml` (5 games) takes about 10 GPU minutes plus the few minutes of start-up and 5 idle minutes, a few dollars at Modal's H100 rate. Check the Modal dashboard after your first run.
+`lab run` can't price GPU time, so it says the model is self-hosted rather than estimating a cost. Measured on 25 October 2026 on one warm H100: the 3-round smoke game (12 calls) took 17 seconds, and `configs/modal.yaml` (5 games of 20 rounds, 400 calls) took 1 minute 50 seconds with every reply readable. With the 5 idle minutes before the container stops, that batch costs about 7 GPU-minutes, roughly $0.50 of Modal credit; a cold start adds a few minutes while the weights load. Check the Modal dashboard for the exact figure.
 
 ## How to
 
