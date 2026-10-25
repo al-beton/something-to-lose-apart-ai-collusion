@@ -1,4 +1,4 @@
-# Implements: conditions/audit-catch, conditions/stake-amounts, backends/modal-pinned, backends/serving-provider-logged, backends/pinned-route, agents/no-scratchpad, agents/refused, market/show-payoffs, market/bid-ground-truth, market/price-board, runs/turn-slots, market/scenarios, market/moves, market/prompt-overlay, conditions/audit-full-history, runs/sweeps, runs/parallel, market/talk-then-price, agents/json-replies, agents/retry-once, backends/usage-logged, backends/spend-asks-first, backends/shared-rate-limit, backends/spend-cap, market/history-window, runs/stops-cleanly, reproducibility/response-cache, reproducibility/manifest, runs/run-directory, logs/turn-log, logs/same-seed-same-log, logs/run-summary, logs/reasoning-logged, backends/reasoning-setting, agents/unreadable-explained, agents/json-mode, runs/fallback-rates, runs/failures-dont-stop-sweeps, runs/resume, conditions/hook-points, conditions/off-is-absent, conditions/conditions-logged, conditions/outage-once-remembered, runs/per-firm-summary, conditions/fork-at-audit, conditions/audit-logged, runs/drift, conditions/audit-remembered, conditions/audit-stakes-arms, runs/live-progress, runs/status-file, runs/eval-awareness, conditions/free-time, conditions/audit-consequences, conditions/audit-balanced-draws, conditions/free-time-pays-last, runs/debrief, agents/memo, agents/past-scratchpads, agents/memory-off, market/stop-after-round
+# Implements: conditions/audit-catch, conditions/stake-amounts, backends/modal-pinned, backends/serving-provider-logged, backends/pinned-route, agents/no-scratchpad, agents/refused, market/show-payoffs, market/bid-ground-truth, market/price-board, runs/turn-slots, market/scenarios, market/moves, market/prompt-overlay, conditions/audit-full-history, runs/sweeps, runs/parallel, market/talk-then-price, agents/json-replies, agents/retry-once, backends/usage-logged, backends/spend-asks-first, backends/shared-rate-limit, backends/spend-cap, market/history-window, runs/stops-cleanly, reproducibility/response-cache, reproducibility/manifest, runs/run-directory, logs/turn-log, logs/same-seed-same-log, logs/run-summary, logs/reasoning-logged, backends/reasoning-setting, agents/unreadable-explained, agents/json-mode, runs/fallback-rates, runs/failures-dont-stop-sweeps, runs/resume, conditions/hook-points, conditions/off-is-absent, conditions/conditions-logged, conditions/outage-once-remembered, runs/per-firm-summary, conditions/fork-at-audit, conditions/audit-logged, runs/drift, conditions/audit-remembered, conditions/audit-stakes-arms, runs/live-progress, runs/status-file, runs/eval-awareness, conditions/free-time, conditions/audit-consequences, conditions/audit-balanced-draws, conditions/free-time-pays-last, runs/debrief, agents/memo, agents/past-scratchpads, agents/memory-off, market/stop-after-round, conditions/free-time-reasoning
 """Playing a config: one game per seed, each written to its own run directory.
 
 A round is a talk phase (each agent sends one message its rivals read; skipped
@@ -501,8 +501,9 @@ class Game:
         notices = self._notices(phase, number)
         messages = self._messages(phase, number, agent, said, notices, added)
         backend = self.backends[agent_id]
-        if added and added[1].model:
-            agent, backend = self._stand_in(agent, added[1].model)
+        if added and (added[1].model or added[1].reasoning):
+            model = added[1].model or agent.model
+            agent, backend = self._stand_in(agent, model, added[1].reasoning)
         if added and added[1].max_tokens:
             agent = dataclasses.replace(agent, max_tokens=added[1].max_tokens)
         context = {
@@ -605,15 +606,20 @@ class Game:
             if c.active(number) and (shown, at) != (number, phase)
         ]
 
-    def _stand_in(self, agent, model):
-        """The agent with another model answering for it, and that model's backend."""
+    def _stand_in(self, agent, model, reasoning=None):
+        """The agent with another model (or reasoning level) answering for it,
+        and that model's backend."""
         stand_in = dataclasses.replace(agent, model=model)
-        if model not in self.stand_ins.setdefault(agent.id, {}):
+        key = model
+        if reasoning is not None:  # free time's own level, say
+            stand_in = dataclasses.replace(stand_in, reasoning=reasoning)
+            key = (model, reasoning)
+        if key not in self.stand_ins.setdefault(agent.id, {}):
             rng = random.Random(f"{self.seed}:{agent.id}:{model}")
-            self.stand_ins[agent.id][model] = _backend(
+            self.stand_ins[agent.id][key] = _backend(
                 stand_in, rng, self.cache, self.shared
             )
-        return stand_in, self.stand_ins[agent.id][model]
+        return stand_in, self.stand_ins[agent.id][key]
 
     async def _ask(self, agent, backend, messages, context, attempt=1):
         """One call to the agent's backend: the reply, what it parsed to, and
