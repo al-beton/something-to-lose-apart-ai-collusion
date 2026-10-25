@@ -250,7 +250,7 @@ def test_prompt_overlay_is_hashed_in_the_manifest(make_config, tmp_path):
     hashed = json.loads((run / "manifest.json").read_text())["prompts"]
     assert "scenarios/cournot/system/neutral.md" in hashed
     assert "system/neutral.md" not in hashed
-    assert "phase/quantity.md" in hashed
+    assert "phase/quantity-own.md" in hashed
 
 
 def _anchor_neutral(market):
