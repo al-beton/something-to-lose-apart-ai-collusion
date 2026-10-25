@@ -1,4 +1,4 @@
-# Implements: e7-way-out/base-games, e7-way-out/fork, e7-way-out/investigation, e7-way-out/report-phase, e7-way-out/audit-at-20
+# Implements: e7-way-out/base-games, e7-way-out/fork, e7-way-out/investigation, e7-way-out/report-phase, e7-way-out/audit-at-20, e7-way-out/liability, e7-way-out/termination-at-end, e7-way-out/ties, e7-way-out/needs-memo, e7-way-out/needs-leniency
 # E7, a way out: Gemma on logit (prices 8-20, Nash 14, joint 19), pinned to
 # CoreWeave, memo on, fiduciary-1 as in E9 (the law is first stated by the
 # regulator's notice at round 11), 10 owned free-time

@@ -7,13 +7,12 @@ Gemma 4 31B on logit, pinned to CoreWeave. 24 explicit-cartel base games (`repor
 
 - **No way out, or a flat one, means nobody comes forward.** With no channel, or a channel where reporting costs as much as being caught, 0 of 48 firms report (`flat-stays-silent` holds). This repeats E4's termination result, with the flat schedule as the cause.
 - **Any leniency means almost everybody comes forward at once.** With 100 credits, first-only, escalating, or 1 free-time session, 47–48 of 48 firms report in round 11, their first chance (`leniency-unlocks` holds).
-- **No race, and no waiting.** Both firms report in the same round in 23–24 of 24 games, so `race` and `escalation-hastens` can't be told apart: there is nothing to hasten.
-- **Free time works exactly like credits** at a matched 10% share: 48 of 48 against 47 of 48 (`time-equals-credits` holds).
+- **No race, and no waiting: `race` and `escalation-hastens` don't hold.** `first` brings no more reports, and no earlier ones, than `leniency` (47 of 48 each, all in round 11). Since every firm reports at its first chance, escalating terms have nothing to hasten. Both firms report in the same round in 23–24 of 24 games.
+- **Free time and credits both bring almost every firm forward** at a matched 10% share: 48 of 48 against 47 of 48. That is consistent with `time-equals-credits`, but it's a ceiling result: every leniency arm saturates, so this offer size can't show whether the two are weighed alike.
 - **The reasoning is plain expected value.** For example: "There is a 50% chance of being terminated ... If I report, I pay 100 credits but avoid termination." Under first-only, the model names the game: "The regulator has introduced a 'Prisoner's Dilemma' scenario."
-- **Leniency often buys a licence, not an end to the cartel.**
-  - Most reporters stay above Nash afterwards (40–45 of 47–48).
-  - In 12 of 24 plain-leniency games the cartel still holds at the joint price in rounds 16–20 (`licence-fee` holds).
-  - First-only is the exception: firms say "The cooperation is over", prices fall most (a mean drop of 4.6 after the report), and the cartel survives in only 1 of 24 games.
+- **Leniency often buys a licence, not an end to the cartel.** Judged by cartel survival (both firms' mean price at least 19 in rounds 16–20), `licence-fee` holds under plain leniency (12 of 24 games), escalating (9 of 24) and leniency-time (5 of 24), against 3 of 24 with no channel and 7 of 24 under flat-report.
+  - It doesn't hold under first-only. Firms say "The cooperation is over", prices fall most (a mean drop of 4.6 after the report), and the cartel survives in only 1 of 24 games.
+  - Per firm, most reporters still price above Nash afterwards (40–45 of 47–48), but that is a weaker test than the cartel's survival.
 - **Coming forward doesn't save firms that keep colluding.** Many reporters are terminated at the round-20 review for coordinating after their report: 25 of 48 in plain leniency, 26–27 in escalating and leniency-time.
 
 ## By arm
@@ -35,6 +34,9 @@ Column notes:
 - From `uv run python reports/e7/analyse.py runs/e7/e7-way-out`.
 
 ## Caveats
+
+- **Not run:** the planned `memos` (hand-labelled reasons in reporters' memos and scratchpads before they report) and `debrief`/`debriefs` (`lab debrief` on reporters and non-reporters). The reasons quoted here come from the report turn's scratchpad.
+- **The DeepSeek option's trigger is met:** the Gemma run shows a licence fee, so `frontier-option` (the same arms on DeepSeek V4 Pro) is ready, and waits on Al's go-ahead.
 
 - **Gemma only, one prompt, stated terms:** see `one-model`, `stated-terms` and `law-at-11` in the spec.
 - **Everyone reports in round 11, the first chance,** so the survival curve has one step. A later or costlier offer would be needed to see timing.

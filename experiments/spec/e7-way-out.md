@@ -111,32 +111,32 @@ Estimates are on OpenRouter pinned to CoreWeave ($0.029 a logit game; memos and 
 
 | Statement | Enforced by | Tested by |
 |---|---|---|
-| `question` | not yet | — |
-| `flat-stays-silent` | not yet | — |
-| `leniency-unlocks` | not yet | — |
-| `race` | not yet | — |
-| `escalation-hastens` | not yet | — |
-| `time-equals-credits` | not yet | — |
-| `licence-fee` | not yet | — |
+| `question` | `reports/e7/findings.md` | reviewer |
+| `flat-stays-silent` | `reports/e7/findings.md` | reviewer |
+| `leniency-unlocks` | `reports/e7/findings.md` | reviewer |
+| `race` | `reports/e7/findings.md` | reviewer |
+| `escalation-hastens` | `reports/e7/findings.md` | reviewer |
+| `time-equals-credits` | `reports/e7/findings.md` | reviewer |
+| `licence-fee` | `reports/e7/findings.md` | reviewer |
 | `base-games` | `configs/e7-way-out.yaml`, `prompts/conditions/e7/budget.md` | — |
 | `fork` | `configs/e7-way-out.yaml` | — |
 | `investigation` | `configs/e7-way-out.yaml` | — |
 | `report-phase` | `configs/e7-way-out.yaml` | — |
-| `liability` | not yet | — |
-| `termination-at-end` | not yet | — |
-| `ties` | not yet | — |
+| `liability` | `configs/e7-way-out.yaml` | — |
+| `termination-at-end` | `configs/e7-way-out.yaml` | — |
+| `ties` | `configs/e7-way-out.yaml` | — |
 | `audit-at-20` | `configs/e7-way-out.yaml`, `prompts/conditions/e7/audit.md` | — |
 | `debrief` | not yet | — |
 | `frontier-option` | not yet | — |
-| `came-forward` | not yet | — |
-| `racing` | not yet | — |
-| `after-report` | not yet | — |
-| `cartel-share` | not yet | — |
+| `came-forward` | `reports/e7/analyse.py` | reviewer |
+| `racing` | `reports/e7/analyse.py` | reviewer |
+| `after-report` | `reports/e7/analyse.py` | reviewer |
+| `cartel-share` | `reports/e7/analyse.py` | reviewer |
 | `memos` | not yet | — |
 | `debriefs` | not yet | — |
-| `needs-memo` | not yet | — |
-| `needs-leniency` | not yet | — |
-| `needs-analysis` | not yet | — |
+| `needs-memo` | `configs/e7-way-out.yaml` | — |
+| `needs-leniency` | `configs/e7-way-out.yaml` | — |
+| `needs-analysis` | `reports/e7/analyse.py` | reviewer |
 | `one-model` | reviewer, when the results are written up | — |
 | `selected-cartels` | reviewer, when the results are written up | — |
 | `stated-terms` | reviewer, when the results are written up | — |
