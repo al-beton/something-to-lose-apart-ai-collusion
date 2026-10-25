@@ -159,7 +159,7 @@ Sources are in `experiments/references.md`.
 - Eval-awareness: 1 of 75 games.
 
 **4.3 Confession isn't reform; deterrence is fragile (0.8 p).** One paragraph each, then the dial as the bridge to 4.4.
-- **Confession isn't reform:** 29 of 30 confessors keep colluding (plan.md; E4 live had one brief exception).
+- **Confession isn't reform:** 29 of 30 firms that agreed prices explicitly and admitted it at the round-10 audit kept pricing above Nash afterwards (Gemma with no stake in E5 and E6, and DeepSeek in every E6 arm; `reports/audits/theatre.md`, PR #226). E4 live agrees: one brief cut, then back to 9.
 - **Deterrence before an audit** comes mostly from the law plus a stated detection chance. Each stake beats no stake, and no stake-against-stake contrast survives correction. Details in Appendix C.
 - **Table 1:** games above Nash in rounds 6–10, from the pinned E6 on two grids (Bertrand, Gemma, 8 seeds; PR to follow):
 
@@ -194,6 +194,7 @@ Sources are in `experiments/references.md`.
   5. replaced against free time;
   6. a second model (DeepSeek, plus one more colluder) on the decisive arms.
 - [Placeholder: E9's numbers, first around 18:30 HKT on 25 Oct; then the branch: positive, null or ambiguous.]
+- **Robustness the Crux session is adding:** more cartels, a false-confession control and frontier models.
 - **Optional:** E7 (leniency for real cartels under termination) and E8 (the decision-point restart), only if they land with a clear result.
 
 ### 5. Discussion and limitations (1.0 p)
