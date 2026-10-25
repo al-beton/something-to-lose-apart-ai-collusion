@@ -1,12 +1,13 @@
 """The lever map's table: price premium over Nash per lever level and model.
 
-Implements: lever-map/premium, lever-map/lever-evidence
+Implements: lever-map/premium, lever-map/lever-evidence, lever-map/midpoint
 
 `uv run python reports/lever-map/analyse.py FOLDER [--by PATH]` reads every
 run under FOLDER (its `config.yaml` and `turns.compact.jsonl`, or
 `turns.jsonl`) and prints one row per run name (the lever level) and model:
 the mean price premium, (mean price in the last 5 rounds - Nash) /
-(joint - Nash), its range over seeds, the mean gain, and how many games
+(joint - Nash), its range over seeds, the late price beside the grid
+midpoint (so anchoring can be told apart from collusion), the mean gain, and how many games
 held an explicit agreement (a firm charged a price above Nash that its
 rival's message named, or named one its rival named or charged), the audit's
 own explicit rule applied to the whole game.
@@ -57,6 +58,8 @@ def game(run):
         "explicit": any(_explicit(turns, a, market) for a in "AB"),
         "nash": nash,
         "joint": joint,
+        "late_price": st.mean(late),
+        "midpoint": (m["price_min"] + m["price_max"]) / 2,
     }
 
 
@@ -66,14 +69,16 @@ def main(folder):
         g = game(summary.parent)
         rows.setdefault((g["level"], g["model"]), []).append(g)
     print(
-        "| level | model | games | Nash / joint | premium (mean) | premium (range) | gain | explicit agreement |"
+        "| level | model | games | Nash / joint / grid midpoint | late price "
+        "| premium (mean) | premium (range) | gain | explicit agreement |"
     )
-    print("|---|---|---|---|---|---|---|---|")
+    print("|---|---|---|---|---|---|---|---|---|")
     for (level, model), gs in sorted(rows.items()):
         p = [g["premium"] for g in gs]
         print(
-            f"| {level} | {model} | {len(gs)} | {gs[0]['nash']} / {gs[0]['joint']} "
-            f"| {st.mean(p):.2f} | {min(p):.2f} to {max(p):.2f} "
+            f"| {level} | {model} | {len(gs)} "
+            f"| {gs[0]['nash']} / {gs[0]['joint']} / {gs[0]['midpoint']:g} "
+            f"| {st.mean(g['late_price'] for g in gs):.1f} | {st.mean(p):.2f} | {min(p):.2f} to {max(p):.2f} "
             f"| {st.mean(g['gain'] for g in gs):.2f} | {sum(g['explicit'] for g in gs)}/{len(gs)} |"
         )
 

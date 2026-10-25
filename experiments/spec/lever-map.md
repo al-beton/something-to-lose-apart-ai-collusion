@@ -12,6 +12,10 @@ Find where collusion is reliable, then turn one lever at a time and see how far 
 - **base:** Fiduciary firms (`system/stakes/fiduciary-1.md`), 20 rounds with talk, the last 3 rounds shown in full, thinking off, for Gemma 4 31B, GPT-4.1-mini and Claude Haiku 5.5, 3 seeds per cell to start.
 - **one-lever:** Each lever changes one thing from the base and keeps the rest, in its own config under `configs/lever-map/` and its own runs folder.
 - **temptation:** Lever 1 sets the temptation level c to 1.0, 1.5, 1.8 and 1.9, with the grid about twice the joint price, as in `configs/temptation/`.
+- **temptation-fixed-grid:** Lever 1b repeats lever 1 on the grid 1–100 at every level, so the grid's midpoint no longer tracks the joint price.
+- **rule:** Lever 2 adds one line to every system prompt at c = 1.5 (grid 1–36): none, "messages are recorded", a company policy against discussing prices, or an outright ban.
+- **mistral:** From lever 1b on, Mistral Small 3.2 served on Modal is a fourth model, run with the same overrides as each lever's main config.
+- **midpoint:** Every lever's table shows the late price beside the grid midpoint, so anchoring on the grid can be told apart from collusion.
 - **lever-evidence:** Each lever's runs are committed under `runs/lever-map-<lever>/` with their compact turn records, and one script rebuilds its table.
 - **budget-per-lever:** Each lever's batch runs under `--max-cost`; a batch over $3 waits for the Manager's yes.
 
@@ -30,6 +34,10 @@ Find where collusion is reliable, then turn one lever at a time and see how far 
 | `base` | `configs/lever-map/temptation.yaml` | — |
 | `one-lever` | not yet | — |
 | `temptation` | `configs/lever-map/temptation.yaml`, `reports/lever-map/temptation.md` | — |
+| `temptation-fixed-grid` | `configs/lever-map/temptation-grid.yaml` | — |
+| `rule` | `configs/lever-map/rule.yaml` | — |
+| `mistral` | `configs/lever-map/mistral.yaml` | — |
+| `midpoint` | `reports/lever-map/analyse.py` | — |
 | `lever-evidence` | `runs/lever-map-temptation/**`, `reports/lever-map/analyse.py` | — |
 | `budget-per-lever` | reviewer, before each batch | — |
 | `grid-anchoring` | reviewer, when the results are written up | — |

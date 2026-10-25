@@ -1,0 +1,19 @@
+# Implements: lever-map/base, lever-map/mistral
+# Lever map: the base with Mistral Small 3.2 served on Modal, the fourth model,
+# run beside each lever's OpenRouter config with the same --set overrides
+# (market.c, market.price_max, conditions.instruction.*). The token comes from
+# MODAL_VLLM_KEY in the environment or .env.
+name: lever-mistral
+seeds: [0, 1, 2]
+concurrency: 6
+market:
+  rounds: 20
+  talk: true
+  history_window: 3
+summary:
+  last_rounds: 5
+conditions:
+  instruction: {enabled: false, prompt: conditions/nudges/policy.md}
+agents:
+  - {id: A, model: openai/mistral-small-3.2, api_base: "https://al-beton--collusion-lab-vllm-server.us-east.modal.direct/v1", api_key_env: MODAL_VLLM_KEY, self_hosted: true, prompt: system/stakes/fiduciary-1.md, max_tokens: 600}
+  - {id: B, model: openai/mistral-small-3.2, api_base: "https://al-beton--collusion-lab-vllm-server.us-east.modal.direct/v1", api_key_env: MODAL_VLLM_KEY, self_hosted: true, prompt: system/stakes/fiduciary-1.md, max_tokens: 600}

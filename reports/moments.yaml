@@ -174,4 +174,4 @@
   firm: A
   field: message
   quote: Let's keep prices stable at 18 for steady profits.
-  note: 18 is exactly the joint-profit price at this temptation level
+  note: 18 is the joint-profit price here, and also the grid midpoint (grid 1-36), where GPT-4.1-mini opens at every level
