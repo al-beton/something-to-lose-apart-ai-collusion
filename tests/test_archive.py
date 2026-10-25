@@ -3,6 +3,7 @@ import gzip
 import json
 import shutil
 import sqlite3
+import subprocess
 import sys
 from pathlib import Path
 
@@ -232,3 +233,45 @@ def test_cache_archive_packs_into_the_archive_folder(monkeypatch, tmp_path):
     )
     cli.main(["archive", "pack", "--caches", str(tmp_path / "a.sqlite")])
     assert seen["out"] == "archive"
+
+
+def test_cache_archive_finds_a_moved_prompt_by_its_text(
+    make_config, tmp_path, fake_model
+):
+    """A config naming a prompt file that has since moved still replays: the
+    file with the text its manifest recorded is found wherever it now is."""
+    _, root = _committed(make_config, tmp_path)
+    run = root / "paid" / "seed-0"
+    config = run / "config.yaml"
+    config.write_text(config.read_text().replace("system/neutral.md", "old/neutral.md"))
+    manifest = json.loads((run / "manifest.json").read_text())
+    manifest["prompts"]["old/neutral.md"] = manifest["prompts"].pop("system/neutral.md")
+    (run / "manifest.json").write_text(json.dumps(manifest))
+    assert archive.load_run_config(run).agents[0].prompt == "system/neutral.md"
+    [result] = archive.pack(root, [tmp_path / "a.sqlite"], tmp_path / "archive")
+    assert result.state == "reproduced"
+
+
+def test_cache_archive_replays_an_edited_prompt_at_the_version_the_run_read(
+    make_config, tmp_path, fake_model
+):
+    """A prompt edited in place since the run is read back from git history
+    at the version the run's manifest recorded, so the replay asks what the
+    run asked."""
+    repo = tmp_path / "repo"
+    shutil.copytree(Path(__file__).parents[1] / "prompts", repo / "prompts")
+    git = ["git", "-c", "user.email=t@t", "-c", "user.name=t"]
+    subprocess.run(["git", "init", "-q"], cwd=repo, check=True)
+    subprocess.run(["git", "add", "."], cwd=repo, check=True)
+    subprocess.run([*git, "commit", "-qm", "as run"], cwd=repo, check=True)
+    overrides = [*PAID, f"prompts_dir={repo / 'prompts'}"]
+    _, root = _committed(make_config, tmp_path, overrides)
+    neutral = repo / "prompts" / "system" / "neutral.md"
+    neutral.write_text(neutral.read_text() + "\nA sentence added since.\n")
+    subprocess.run([*git, "commit", "-qam", "edited"], cwd=repo, check=True)
+    run = root / "paid" / "seed-0"
+    read = archive.load_run_config(run).prompts_dir
+    assert Path(read) != repo / "prompts"  # a copy, at the run's versions
+    assert "added since" not in (Path(read) / "system" / "neutral.md").read_text()
+    [result] = archive.pack(root, [tmp_path / "a.sqlite"], tmp_path / "archive")
+    assert result.state == "reproduced"
