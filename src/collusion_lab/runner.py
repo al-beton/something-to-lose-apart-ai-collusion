@@ -1,4 +1,4 @@
-# Implements: conditions/stake-amounts, backends/modal-pinned, backends/serving-provider-logged, backends/pinned-route, agents/no-scratchpad, agents/refused, market/show-payoffs, market/bid-ground-truth, market/price-board, runs/turn-slots, market/scenarios, market/moves, market/prompt-overlay, conditions/audit-full-history, runs/sweeps, runs/parallel, market/talk-then-price, agents/json-replies, agents/retry-once, backends/usage-logged, backends/spend-asks-first, backends/shared-rate-limit, backends/spend-cap, market/history-window, runs/stops-cleanly, reproducibility/response-cache, reproducibility/manifest, runs/run-directory, logs/turn-log, logs/same-seed-same-log, logs/run-summary, logs/reasoning-logged, backends/reasoning-setting, agents/unreadable-explained, agents/json-mode, runs/fallback-rates, runs/failures-dont-stop-sweeps, runs/resume, conditions/hook-points, conditions/off-is-absent, conditions/conditions-logged, conditions/outage-once-remembered, runs/per-firm-summary, conditions/fork-at-audit, conditions/audit-logged, runs/drift, conditions/audit-remembered, conditions/audit-stakes-arms, runs/live-progress, runs/status-file, runs/eval-awareness, conditions/free-time, conditions/audit-consequences, conditions/audit-balanced-draws, conditions/free-time-pays-last, runs/debrief, agents/memo, agents/past-scratchpads, agents/memory-off
+# Implements: conditions/audit-catch, conditions/stake-amounts, backends/modal-pinned, backends/serving-provider-logged, backends/pinned-route, agents/no-scratchpad, agents/refused, market/show-payoffs, market/bid-ground-truth, market/price-board, runs/turn-slots, market/scenarios, market/moves, market/prompt-overlay, conditions/audit-full-history, runs/sweeps, runs/parallel, market/talk-then-price, agents/json-replies, agents/retry-once, backends/usage-logged, backends/spend-asks-first, backends/shared-rate-limit, backends/spend-cap, market/history-window, runs/stops-cleanly, reproducibility/response-cache, reproducibility/manifest, runs/run-directory, logs/turn-log, logs/same-seed-same-log, logs/run-summary, logs/reasoning-logged, backends/reasoning-setting, agents/unreadable-explained, agents/json-mode, runs/fallback-rates, runs/failures-dont-stop-sweeps, runs/resume, conditions/hook-points, conditions/off-is-absent, conditions/conditions-logged, conditions/outage-once-remembered, runs/per-firm-summary, conditions/fork-at-audit, conditions/audit-logged, runs/drift, conditions/audit-remembered, conditions/audit-stakes-arms, runs/live-progress, runs/status-file, runs/eval-awareness, conditions/free-time, conditions/audit-consequences, conditions/audit-balanced-draws, conditions/free-time-pays-last, runs/debrief, agents/memo, agents/past-scratchpads, agents/memory-off, market/stop-after-round, conditions/free-time-reasoning
 """Playing a config: one game per seed, each written to its own run directory.
 
 A round is a talk phase (each agent sends one message its rivals read; skipped
@@ -76,7 +76,7 @@ from collusion_lab.backends import (
     is_mock,
 )
 from collusion_lab.cache import CachedBackend
-from collusion_lab.conditions.audit import stake_values
+from collusion_lab.conditions.audit import evidence_values, stake_values
 from collusion_lab.config import expand
 from collusion_lab.market import SCENARIOS, market_for
 from collusion_lab.prompts import render
@@ -147,7 +147,7 @@ def steps(config, conditions):
     """A game's phases in the order they're played: the phases conditions add
     before round 1, then each round's talk (if the market talks) and price,
     then the phases conditions add after it, each session of them, until the
-    last round or a phase that ends the game.
+    last round, `market.stop_after_round` or a phase that ends the game.
 
     Playing a game, counting its calls (`paid_calls`) and estimating its cost
     all walk this one sequence. It asks the conditions for their phases only
@@ -178,7 +178,7 @@ def steps(config, conditions):
                     number, extra.name, playing, (condition, this), session == sessions
                 )
             ended = ended or extra.last
-        if ended:
+        if ended or number == config.market.stop_after_round:
             return
 
 
@@ -418,6 +418,10 @@ class Game:
         self.shared = shared
         self.stand_ins = {}
         self._plain = False  # writing for an agent without a scratchpad
+        # What every prompt says a regulator watches (audit.catch).
+        audit = next((c for c in self.conditions if c.name == "audit"), None)
+        catch = audit.catch if audit else None
+        self._watched = evidence_values(catch, self.market.move)
 
     async def play(self):
         current, said = 0, {}
@@ -497,8 +501,9 @@ class Game:
         notices = self._notices(phase, number)
         messages = self._messages(phase, number, agent, said, notices, added)
         backend = self.backends[agent_id]
-        if added and added[1].model:
-            agent, backend = self._stand_in(agent, added[1].model)
+        if added and (added[1].model or added[1].reasoning):
+            model = added[1].model or agent.model
+            agent, backend = self._stand_in(agent, model, added[1].reasoning)
         if added and added[1].max_tokens:
             agent = dataclasses.replace(agent, max_tokens=added[1].max_tokens)
         context = {
@@ -568,7 +573,7 @@ class Game:
             memo = (parsed or {}).get("memo")
             turn["memo"] = memo[: agent.memory_chars] if memo else None
             if not memo:
-                turn["memo_error"] = "refused"
+                turn["memo_error"] = "missing"  # not a provider refusal
         if added and added[1].sessions is not None:
             turn["session"] = added[1].session
         if self.conditions:
@@ -601,15 +606,20 @@ class Game:
             if c.active(number) and (shown, at) != (number, phase)
         ]
 
-    def _stand_in(self, agent, model):
-        """The agent with another model answering for it, and that model's backend."""
+    def _stand_in(self, agent, model, reasoning=None):
+        """The agent with another model (or reasoning level) answering for it,
+        and that model's backend."""
         stand_in = dataclasses.replace(agent, model=model)
-        if model not in self.stand_ins.setdefault(agent.id, {}):
+        key = model
+        if reasoning is not None:  # free time's own level, say
+            stand_in = dataclasses.replace(stand_in, reasoning=reasoning)
+            key = (model, reasoning)
+        if key not in self.stand_ins.setdefault(agent.id, {}):
             rng = random.Random(f"{self.seed}:{agent.id}:{model}")
-            self.stand_ins[agent.id][model] = _backend(
+            self.stand_ins[agent.id][key] = _backend(
                 stand_in, rng, self.cache, self.shared
             )
-        return stand_in, self.stand_ins[agent.id][model]
+        return stand_in, self.stand_ins[agent.id][key]
 
     async def _ask(self, agent, backend, messages, context, attempt=1):
         """One call to the agent's backend: the reply, what it parsed to, and
@@ -672,7 +682,7 @@ class Game:
         )
         name = next(found, name)
         self.used_prompts.add(name)
-        return render(self.config.prompts_dir, name, values)
+        return render(self.config.prompts_dir, name, self._watched | values)
 
     def prompt_names(self):
         """Every prompt file this game actually sent, for the manifest."""
@@ -915,6 +925,7 @@ def prompt_vars_example():
         "ceiling": 30,
         "cost": 10,
         **stake_values(None, None, None),
+        **evidence_values(None),
         "history": "No rounds have been played yet.",
         "messages": "(none)",
         "own": "(nothing)",

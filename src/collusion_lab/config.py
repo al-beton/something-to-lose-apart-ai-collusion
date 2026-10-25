@@ -1,4 +1,4 @@
-# Implements: agents/memo, agents/past-scratchpads, agents/memory-off, backends/pinned-route, agents/no-scratchpad, market/show-payoffs, market/price-board, market/scenarios, reproducibility/replay-pinned, market/talk-then-price, market/history-window, backends/spend-cap, runs/one-config, runs/overrides, runs/sweeps, runs/parallel, market/known-benchmarks, backends/keys-from-environment, backends/any-model, backends/reasoning-setting, agents/json-mode, conditions/switchable, runs/drift, backends/self-hosted, backends/model-aliases, conditions/audit-balanced-draws
+# Implements: agents/memo, agents/past-scratchpads, agents/memory-off, backends/pinned-route, agents/no-scratchpad, market/show-payoffs, market/price-board, market/scenarios, reproducibility/replay-pinned, market/talk-then-price, market/history-window, backends/spend-cap, runs/one-config, runs/overrides, runs/sweeps, runs/parallel, market/known-benchmarks, backends/keys-from-environment, backends/any-model, backends/reasoning-setting, agents/json-mode, conditions/switchable, runs/drift, backends/self-hosted, backends/model-aliases, conditions/audit-balanced-draws, market/stop-after-round, conditions/leniency
 """Run configs: one YAML file per run, changed from the command line with overrides.
 
 A config names the market, the agents and the seeds. `load_config` reads the
@@ -66,6 +66,9 @@ class MarketConfig:
     show_payoffs: bool = False  # the profit table in every system prompt
     kind: str = "bertrand"  # the scenario, from market.SCENARIOS
     params: dict = field(default_factory=dict)  # its parameters, but Bertrand's
+    # End the game after this round, prompts and cache keys still the full
+    # game's (`rounds`), so it can be forked from the cache; None plays all.
+    stop_after_round: int | None = None
 
 
 @dataclass(frozen=True)
@@ -120,6 +123,8 @@ class RunConfig:
             del data["market"]["kind"], data["market"]["params"]
         if not data["market"]["show_payoffs"]:  # left off, written as before
             del data["market"]["show_payoffs"]
+        if data["market"]["stop_after_round"] is None:
+            del data["market"]["stop_after_round"]
         for agent in data["agents"]:
             _drop_defaults(agent)
         for name, condition in self.conditions.items():
@@ -209,7 +214,7 @@ def from_dict(raw):
         arms=_arms(raw.get("arms") or []),
         concurrency=_concurrency(raw.get("concurrency", 4)),
         budget=_budget(raw.get("budget")),
-        conditions=_conditions(raw.get("conditions") or {}),
+        conditions=_check_conditions(_conditions(raw.get("conditions") or {}), market),
         labels=raw.get("labels") or {},
         slug=raw.get("slug", ""),
     )
@@ -363,6 +368,35 @@ def _conditions(raw):
     return built
 
 
+def _check_conditions(conditions, market):
+    """Checks that need more than one condition, or the market."""
+    lenient = conditions.get("leniency")
+    if lenient and lenient.enabled:
+        if not 1 <= lenient.start <= market.rounds:
+            raise ConfigError(
+                f"conditions.leniency.start must be a round from 1 to {market.rounds}."
+            )
+        free_time = conditions.get("free_time")
+        if not (free_time and free_time.enabled):
+            raise ConfigError(
+                "conditions.leniency needs conditions.free_time enabled: its notice "
+                "and its termination take the firm's free time."
+            )
+        audit = conditions.get("audit")
+        names = list(conditions)
+        if (
+            audit
+            and audit.enabled
+            and market.rounds in audit.audit_rounds
+            and names.index("audit") > names.index("leniency")
+        ):
+            raise ConfigError(
+                "List conditions.audit before conditions.leniency: the review after "
+                "the last round reads that round's audit answers."
+            )
+    return conditions
+
+
 def _concurrency(value):
     if isinstance(value, bool) or not isinstance(value, int) or value < 1:
         raise ConfigError("concurrency must be a whole number of at least 1.")
@@ -393,6 +427,13 @@ def _check_market(m, firms):
     ):
         raise ConfigError(
             "market.history_window must be a whole number of at least 1, or full."
+        )
+    stop = m.stop_after_round
+    if stop is not None and (
+        isinstance(stop, bool) or not isinstance(stop, int) or not 1 <= stop <= m.rounds
+    ):
+        raise ConfigError(
+            f"market.stop_after_round must be a round from 1 to {m.rounds}, or unset."
         )
     if m.show_payoffs and m.kind == "bid":
         raise ConfigError("market.show_payoffs isn't available for bid rigging.")
