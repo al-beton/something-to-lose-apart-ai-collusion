@@ -1,4 +1,4 @@
-# Implements: runs/failures-dont-stop-sweeps, runs/missing-runs-shown, runs/status-file, runs/status-command
+# Implements: runs/failures-dont-stop-sweeps, runs/missing-runs-shown, runs/status-file, runs/status-command, reports/many-folders
 """Where each planned run of a config stands, in `<out>/<name>/status.json`.
 
 `lab run` writes it when it starts (every planned run `pending`) and again
@@ -12,6 +12,7 @@ or `pending` by a process that was killed stays that way until it is rerun.
 """
 
 import json
+import os
 from datetime import UTC, datetime
 from pathlib import Path
 
@@ -53,15 +54,33 @@ def load(path):
     return json.loads(path.read_text())["runs"] if path.exists() else {}
 
 
+def roots(folder):
+    """The folders a table or report covers: one folder, or a list of them."""
+    if isinstance(folder, str | Path):
+        return [Path(folder)]
+    return [Path(f).resolve() for f in folder]
+
+
+def base(folder):
+    """Where runs' paths are counted from: the folder, or the folders' common
+    parent."""
+    found = roots(folder)
+    return found[0] if len(found) == 1 else Path(os.path.commonpath(found))
+
+
+def find(folder, name):
+    """Every file called `name` under the folder or folders."""
+    return sorted(path for root in roots(folder) for path in root.rglob(name))
+
+
 def every_run(folder):
-    """Every planned run under a folder, by its path relative to the folder:
-    run ids repeat across output folders."""
-    folder = Path(folder)
+    """Every planned run under a folder (or folders), by its path relative to
+    `base`: run ids repeat across output folders."""
     runs = {}
-    for path in sorted(folder.rglob(NAME)):
+    for path in find(folder, NAME):
         out = path.parent.parent  # status.json sits in <out>/<name>/
         for run, entry in load(path).items():
-            runs[(out / run).relative_to(folder).as_posix()] = entry
+            runs[(out / run).relative_to(base(folder)).as_posix()] = entry
     return runs
 
 

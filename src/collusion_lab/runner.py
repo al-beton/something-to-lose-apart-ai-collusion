@@ -1,4 +1,4 @@
-# Implements: conditions/audit-full-history, runs/sweeps, runs/parallel, market/talk-then-price, agents/json-replies, agents/retry-once, backends/usage-logged, backends/spend-asks-first, backends/shared-rate-limit, backends/spend-cap, market/history-window, runs/stops-cleanly, reproducibility/response-cache, reproducibility/manifest, runs/run-directory, logs/turn-log, logs/same-seed-same-log, logs/run-summary, logs/reasoning-logged, backends/reasoning-setting, agents/unreadable-explained, agents/json-mode, runs/fallback-rates, runs/failures-dont-stop-sweeps, runs/resume, conditions/hook-points, conditions/off-is-absent, conditions/conditions-logged, conditions/outage-once-remembered, runs/per-firm-summary, conditions/fork-at-audit, conditions/audit-logged, runs/drift, conditions/audit-remembered, conditions/audit-stakes-arms, runs/live-progress, runs/status-file, runs/eval-awareness, conditions/free-time, conditions/audit-consequences
+# Implements: runs/turn-slots, market/scenarios, market/moves, market/prompt-overlay, conditions/audit-full-history, runs/sweeps, runs/parallel, market/talk-then-price, agents/json-replies, agents/retry-once, backends/usage-logged, backends/spend-asks-first, backends/shared-rate-limit, backends/spend-cap, market/history-window, runs/stops-cleanly, reproducibility/response-cache, reproducibility/manifest, runs/run-directory, logs/turn-log, logs/same-seed-same-log, logs/run-summary, logs/reasoning-logged, backends/reasoning-setting, agents/unreadable-explained, agents/json-mode, runs/fallback-rates, runs/failures-dont-stop-sweeps, runs/resume, conditions/hook-points, conditions/off-is-absent, conditions/conditions-logged, conditions/outage-once-remembered, runs/per-firm-summary, conditions/fork-at-audit, conditions/audit-logged, runs/drift, conditions/audit-remembered, conditions/audit-stakes-arms, runs/live-progress, runs/status-file, runs/eval-awareness, conditions/free-time, conditions/audit-consequences
 """Playing a config: one game per seed, each written to its own run directory.
 
 A round is a talk phase (each agent sends one message its rivals read; skipped
@@ -77,14 +77,14 @@ from collusion_lab.backends import (
 )
 from collusion_lab.cache import CachedBackend
 from collusion_lab.config import expand
-from collusion_lab.market import Bertrand
+from collusion_lab.market import SCENARIOS, market_for
 from collusion_lab.prompts import render
 from collusion_lab.status import Status
 
-PHASE_PROMPTS = {"talk": "phase/talk.md", "price": "phase/price.md"}
+TALK_PROMPT = "phase/talk.md"
 RETRY_PROMPT = "phase/retry.md"
-# The price prompt that also shows the agent its own message (market.own_message).
-OWN_PRICE_PROMPT = "phase/price-own.md"
+# The move prompt is phase/<move>.md, or phase/<move>-own.md when it also shows
+# the agent its own message (market.own_message): phase/price.md for Bertrand.
 CUT_OFF = "The reply was cut off at the token limit; keep it short."
 
 
@@ -101,26 +101,86 @@ class RunWide:
 
 
 def paid_calls(config):
-    """How many calls a config makes to non-mock models, before retries,
-    counting phases that conditions add (each session of them) and the rounds
-    an ending one cuts."""
+    """How many calls a config makes to non-mock models, before retries: its
+    turn slots (see `steps`) answered by a model rather than a script."""
     total = 0
     for child in expand(config):
-        phases = 2 if child.market.talk else 1
-        paid = sum(1 for a in child.agents if not is_mock(a.model))
-        conditions = _begin_conditions(child, child.seeds[0])
-        calls = 0
-        for number in range(child.market.rounds + 1):
-            calls += phases * paid if number else 0
-            added = [p for c in conditions if (p := c.phase_after(number))]
-            for phase in added:
-                for a in child.agents:
-                    turns = phase.sessions.get(a.id, 0) if phase.sessions else 1
-                    calls += 0 if is_mock(phase.model or a.model) else turns
-            if any(phase.last for phase in added):
-                break
-        total += len(child.seeds) * calls
+        slots = turn_slots(child, child.seeds[0])
+        total += len(child.seeds) * sum(1 for s in slots if not is_mock(s.model))
     return total
+
+
+@dataclass(frozen=True)
+class Step:
+    """One phase of a game, which `agents` play at once: talk or price, or one
+    session of a phase a condition adds (`added` is (condition, Phase));
+    `closes` marks the last session of a condition's phase."""
+
+    round: int
+    phase: str
+    agents: tuple
+    added: tuple | None = None
+    closes: bool = False
+
+
+@dataclass(frozen=True)
+class Slot:
+    """One agent's turn in a game, and the model that answers it."""
+
+    round: int
+    phase: str
+    agent: str
+    session: int | None
+    model: str
+
+
+def steps(config, conditions):
+    """A game's phases in the order they're played: the phases conditions add
+    before round 1, then each round's talk (if the market talks) and price,
+    then the phases conditions add after it, each session of them, until the
+    last round or a phase that ends the game.
+
+    Playing a game, counting its calls (`paid_calls`) and estimating its cost
+    all walk this one sequence. It asks the conditions for their phases only
+    when it reaches each round, so a game that changes them as it goes (an
+    audit taking free time away) gets the phases it really plays.
+    """
+    everyone = tuple(a.id for a in config.agents)
+    move = SCENARIOS[config.market.kind].move
+    for number in range(config.market.rounds + 1):
+        if number:
+            if config.market.talk:
+                yield Step(number, "talk", everyone)
+            yield Step(number, move, everyone)
+        ended = False
+        for condition in conditions:
+            if not (extra := condition.phase_after(number)):
+                continue
+            sessions = max(extra.sessions.values()) if extra.sessions else 1
+            for session in range(1, sessions + 1):
+                this = dataclasses.replace(extra, session=session)
+                playing = tuple(a for a in everyone if this.plays(a))
+                yield Step(
+                    number, extra.name, playing, (condition, this), session == sessions
+                )
+            ended = ended or extra.last
+        if ended:
+            return
+
+
+def turn_slots(config, seed):
+    """Every agent's turn in one game of `config`, in order, before retries."""
+    models = {a.id: a.model for a in config.agents}
+    for step in steps(config, _begin_conditions(config, seed)):
+        phase = step.added[1] if step.added else None
+        for agent in step.agents:
+            yield Slot(
+                step.round,
+                step.phase,
+                agent,
+                phase.session if phase and phase.sessions is not None else None,
+                (phase and phase.model) or models[agent],
+            )
 
 
 def _begin_conditions(config, seed):
@@ -292,10 +352,9 @@ def _write_lines(path, records):
 class Game:
     def __init__(self, config, seed, cache=None, shared=None):
         shared = shared or RunWide()
-        m = config.market
         self.config = config
         self.seed = seed
-        self.market = Bertrand(m.a, m.b, m.c, m.price_min, m.price_max)
+        self.market = market_for(config.market, len(config.agents))
         self.agents = {a.id: a for a in config.agents}
         self.backends = {
             a.id: _backend(a, random.Random(f"{seed}:{a.id}"), cache, shared)
@@ -312,47 +371,43 @@ class Game:
         self.stand_ins = {}
 
     async def play(self):
-        await self._added_phases(0)
-        self._hand_over()
-        for number in range(1, self.config.market.rounds + 1):
-            said = (
-                await self._phase("talk", number, {}) if self.config.market.talk else {}
-            )
-            price_turns = await self._turns("price", number, said)
-            prices = {t["agent"]: t["used"]["price"] for t in price_turns}
-            sold = self.market.quantities(prices)
-            profits = self.market.profits(prices)
-            for turn in price_turns:
-                agent = turn["agent"]
-                turn["outcome"] = {"quantity": sold[agent], "profit": profits[agent]}
-            self.turns += price_turns
-            record = {
-                "round": number,
-                "said": said,
-                "prices": prices,
-                "profits": profits,
-            }
-            self.history.append(record)
-            for condition in self.conditions:
-                condition.after_round(record)
-            if await self._added_phases(number):
-                break
-            self._hand_over()
+        current, said = 0, {}
+        for step in steps(self.config, self.conditions):
+            if step.round != current:  # a new round: hand firms over first
+                self._hand_over()
+                current = step.round
+            if step.phase == "talk":
+                said = await self._phase("talk", step.round, {})
+            elif step.phase == self.market.move:
+                await self._move(step.round, said)
+                said = {}
+            else:
+                turns = await self._turns(step.phase, step.round, {}, step.added)
+                self.turns += turns
+                if step.closes:
+                    step.added[0].after_phase(step.round, self.turns, self._render)
 
-    async def _added_phases(self, number):
-        """Play the phases conditions add after round `number` (0: before round
-        1), each as many sessions as it asks; whether one ends the game."""
-        ended = False
+    async def _move(self, number, said):
+        """The move phase of round `number` (prices, for Bertrand): outcomes,
+        history, after_round. The round's record calls every move a price."""
+        move = self.market.move
+        price_turns = await self._turns(move, number, said)
+        prices = {t["agent"]: t["used"][move] for t in price_turns}
+        sold = self.market.quantities(prices)
+        profits = self.market.profits(prices)
+        for turn in price_turns:
+            agent = turn["agent"]
+            turn["outcome"] = {"quantity": sold[agent], "profit": profits[agent]}
+        self.turns += price_turns
+        record = {
+            "round": number,
+            "said": said,
+            "prices": prices,
+            "profits": profits,
+        }
+        self.history.append(record)
         for condition in self.conditions:
-            if not (extra := condition.phase_after(number)):
-                continue
-            sessions = max(extra.sessions.values()) if extra.sessions else 1
-            for session in range(1, sessions + 1):
-                added = (condition, dataclasses.replace(extra, session=session))
-                self.turns += await self._turns(extra.name, number, {}, added)
-            condition.after_phase(number, self.turns, self._render)
-            ended = ended or extra.last
-        return ended
+            condition.after_round(record)
 
     def _hand_over(self):
         """Give firms that a condition now has a script play (a terminated
@@ -465,7 +520,7 @@ class Game:
 
     def _notices(self, phase, number):
         """What the enabled conditions tell agents before this phase."""
-        first = "talk" if self.config.market.talk else "price"
+        first = "talk" if self.config.market.talk else self.market.move
         notices = []
         for c in self.conditions:
             if phase == first:
@@ -536,6 +591,10 @@ class Game:
             return reply, None, (problem.kind, str(problem))
 
     def _render(self, name, values):
+        """Fill a prompt file, the scenario's own if it has one (see market.py)."""
+        overlay = f"scenarios/{self.market.kind}/{name}"
+        if Path(self.config.prompts_dir, overlay).exists():
+            name = overlay
         self.used_prompts.add(name)
         return render(self.config.prompts_dir, name, values)
 
@@ -552,9 +611,10 @@ class Game:
         if added:
             return functools.partial(added[0].phase_prompt, number, self._render)
         m = self.config.market
-        if phase == "price" and m.talk and m.own_message:
-            return functools.partial(self._render, OWN_PRICE_PROMPT)
-        return functools.partial(self._render, PHASE_PROMPTS[phase])
+        if phase == "talk":
+            return functools.partial(self._render, TALK_PROMPT)
+        own = "-own" if m.talk and m.own_message else ""
+        return functools.partial(self._render, f"phase/{phase}{own}.md")
 
     def _messages(self, phase, number, agent, said, notices=(), added=None):  # noqa: PLR0913
         remembered = self._remembered(phase, number)
@@ -583,7 +643,7 @@ class Game:
     def _prompt_vars(self, number, me, said, remembered=(), full=False):
         rivals = [a for a in self.agents if a != me]
         window = None if full else self.config.market.history_window
-        history = _history_text(self.history, me, window)
+        history = _history_text(self.history, me, self.market, window)
         for shown, text in remembered:
             history += f"\nNotice shown in round {shown}: {text}"
         for line in self._in_history(me):
@@ -593,8 +653,7 @@ class Game:
             "rivals": ", ".join(f"Firm {r}" for r in rivals),
             "round": number,
             "rounds": self.config.market.rounds,
-            "price_min": self.market.price_min,
-            "price_max": self.market.price_max,
+            **self.market.prompt_values(),
             "history": history,
             "messages": _messages_text(said, rivals),
             "own": f'"{said[me]}"' if said.get(me) else "(nothing)",
@@ -633,6 +692,9 @@ class Game:
             "fallbacks": sum(1 for t in self.turns if t["error"]),
             "replies": _reply_counts(self.turns),
             "eval_aware": awareness.count(self.turns, lambda m: not is_mock(m)),
+            # Named only when it isn't a price, so Bertrand's summaries stay as
+            # they were; the price keys above then hold the move.
+            **({"move": self.market.move} if self.market.move != "price" else {}),
             **{
                 c.name: result
                 for c in self.conditions
@@ -659,27 +721,28 @@ def _reply_counts(turns):
     return counts
 
 
-def _history_text(history, me, window=None):
+def _history_text(history, me, market, window=None):
     if not history:
         return "No rounds have been played yet."
     shown = history[-window:] if window else history
     earlier = history[: len(history) - len(shown)]
     lines = ["What happened so far:"]
+    verb = market.verb
     if earlier:
         mine = mean(r["prices"][me] for r in earlier)
         rivals = mean(p for r in earlier for f, p in r["prices"].items() if f != me)
         profit = sum(r["profits"][me] for r in earlier)
         lines.append(
             f"Rounds {earlier[0]['round']} to {earlier[-1]['round']} in short: you "
-            f"charged {mine:.3g} on average and made a profit of {profit:g} in "
-            f"total; rivals charged {rivals:.3g} on average."
+            f"{verb} {mine:.3g} on average and made a profit of {profit:g} in "
+            f"total; rivals {verb} {rivals:.3g} on average."
         )
     for r in shown:
         rivals = ", ".join(f"Firm {f} {p}" for f, p in r["prices"].items() if f != me)
         line = (
-            f"Round {r['round']}: you charged {r['prices'][me]} and made a profit of "
-            f"{r['profits'][me]:g}. Rivals charged: {rivals}."
-        )
+            f"Round {r['round']}: you {verb} {r['prices'][me]} and made a profit of "
+            f"{r['profits'][me]:g}. Rivals {verb}: {rivals}."
+        ) + market.round_note(r["prices"])
         talk = "; ".join(f'Firm {f}: "{m}"' for f, m in r["said"].items() if m)
         lines.append(line + (f" Messages: {talk}." if talk else ""))
     return "\n".join(lines)
@@ -699,6 +762,9 @@ def prompt_vars_example():
         "rounds": 10,
         "price_min": 1,
         "price_max": 12,
+        "quantity_min": 1,
+        "quantity_max": 15,
+        "cost": 10,
         "history": "No rounds have been played yet.",
         "messages": "(none)",
         "own": "(nothing)",

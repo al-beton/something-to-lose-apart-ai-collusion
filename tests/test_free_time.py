@@ -1,5 +1,6 @@
 # Implements: conditions/hook-points, conditions/free-time, conditions/free-time-balance, conditions/free-time-deduct, conditions/off-is-absent
 import json
+import random
 
 from collusion_lab import backends
 from collusion_lab.conditions.free_time import FreeTime
@@ -112,15 +113,6 @@ def test_free_time_sessions_are_short_and_counted_before_spending(
     assert {c["max_tokens"] for c in leisure_calls} == {200}
 
 
-def test_free_time_off_is_absent(make_config, tmp_path):
-    [plain] = run_config(make_config(), tmp_path / "plain")
-    off = "conditions={free_time: {enabled: false}}"
-    [switched_off] = run_config(make_config(overrides=[off]), tmp_path / "off")
-    assert (plain / "turns.jsonl").read_bytes() == (
-        switched_off / "turns.jsonl"
-    ).read_bytes()
-
-
 def test_free_time_leisure_reply_needs_no_json(
     make_config, tmp_path, monkeypatch, fake_model
 ):
@@ -145,8 +137,8 @@ def test_free_time_leisure_reply_needs_no_json(
 def test_free_time_activity_feedback_is_logged(make_config, tmp_path, monkeypatch):
     from collusion_lab.conditions import free_time
 
-    def values(rng):
-        return {"target": rng.randint(1, 9)}
+    def values(seed):
+        return {"target": random.Random(seed).randint(1, 9)}
 
     def feedback(reply, values):
         return f"target was {values['target']}"

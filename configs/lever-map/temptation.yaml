@@ -1,0 +1,23 @@
+# Implements: lever-map/base, lever-map/temptation
+# Lever map, lever 1 (temptation): the base (fiduciary firms, three models,
+# 20 rounds with talk) at each temptation level, with the grid about twice
+# the joint price as in configs/temptation/. One run per level:
+#   lab run configs/lever-map/temptation.yaml --set name=lever-temptation-c1.0 --set market.c=1.0 --set market.price_max=12 --out runs/lever-map-temptation --max-cost 0.40
+#   ... c=1.5 price_max=36, c=1.8 price_max=90, c=1.9 price_max=180
+name: lever-temptation
+seeds: [0, 1, 2]
+budget: 0.40
+market:
+  rounds: 20
+  talk: true
+  history_window: 3
+summary:
+  last_rounds: 5
+agents:
+  - {id: A, model: openrouter/google/gemma-4-31b-it, prompt: system/stakes/fiduciary-1.md, max_tokens: 600, reasoning: off}
+  - {id: B, model: openrouter/google/gemma-4-31b-it, prompt: system/stakes/fiduciary-1.md, max_tokens: 600, reasoning: off}
+sweep:
+  agents.*.model:
+    - openrouter/google/gemma-4-31b-it
+    - openrouter/openai/gpt-4.1-mini
+    - openrouter/anthropic/claude-haiku-5.5

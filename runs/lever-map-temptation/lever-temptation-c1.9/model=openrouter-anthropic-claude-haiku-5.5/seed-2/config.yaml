@@ -1,0 +1,45 @@
+name: lever-temptation-c1.9
+seeds:
+- 2
+agents:
+- id: A
+  model: openrouter/anthropic/claude-haiku-5.5
+  prompt: system/stakes/fiduciary-1.md
+  temperature: 0.7
+  max_tokens: 600
+  api_base: null
+  api_key_env: null
+  reasoning: 'off'
+  json_mode: false
+  self_hosted: false
+- id: B
+  model: openrouter/anthropic/claude-haiku-5.5
+  prompt: system/stakes/fiduciary-1.md
+  temperature: 0.7
+  max_tokens: 600
+  api_base: null
+  api_key_env: null
+  reasoning: 'off'
+  json_mode: false
+  self_hosted: false
+market:
+  rounds: 20
+  price_min: 1
+  price_max: 180
+  a: 18
+  b: 2
+  c: 1.9
+  talk: true
+  history_window: 3
+  own_message: true
+summary:
+  last_rounds: 5
+  first_rounds: 3
+prompts_dir: prompts
+sweep: {}
+concurrency: 4
+budget: 0.4
+conditions: {}
+labels:
+  model: openrouter/anthropic/claude-haiku-5.5
+slug: model=openrouter-anthropic-claude-haiku-5.5

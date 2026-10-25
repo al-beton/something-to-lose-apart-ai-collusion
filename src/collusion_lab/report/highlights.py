@@ -1,4 +1,4 @@
-# Implements: reports/highlights-in-context, reports/proposal, reports/agreement, reports/overshoot, reports/defection, reports/breakdowns, reports/condition-window
+# Implements: market/moves, reports/highlights-in-context, reports/proposal, reports/agreement, reports/overshoot, reports/defection, reports/breakdowns, reports/condition-window
 """The moments in a game worth reading, found by fixed rules.
 
 Each rule takes a game and returns its highlights; `RULES` lists them in the
@@ -6,18 +6,12 @@ order a report shows them within a round. A rule only reads what the game
 logged, so the same runs always give the same highlights. To add a rule,
 write a function here and add it to `RULES` (and a headline in `page.py`).
 
-A message *names* a price when it holds a whole number on the market's grid
-outside a round reference ("round 3", "round 1 of 8", "round 3/8", "5
-rounds"); "9.5" names nothing.
+A message *names* a price as `market.named_prices` reads it.
 """
 
-import re
 from dataclasses import dataclass
 
-_NUMBER = re.compile(r"(?<![\w.])\$?(\d+(?:\.\d+)?)(?![\w%]|\.\d)")
-_ROUND_REFERENCE = re.compile(
-    r"\brounds?\s*\d+(?:\s*(?:of|/)\s*\d+)?|\b\d+\s*rounds?\b", re.IGNORECASE
-)
+from collusion_lab.market import named_prices
 
 
 @dataclass(frozen=True)
@@ -27,16 +21,6 @@ class Highlight:
     firms: tuple[str, ...]
     price: int | None = None
     note: str = ""
-
-
-def named_prices(text, market):
-    """The grid prices a message names, in the order it names them."""
-    found = []
-    for match in _NUMBER.finditer(_ROUND_REFERENCE.sub(" ", text or "")):
-        value = float(match.group(1))
-        if value.is_integer() and market.price_min <= value <= market.price_max:
-            found.append(int(value))
-    return found
 
 
 def proposal(game):
@@ -66,10 +50,11 @@ def agreement(game):
 
 
 def overshoot(game):
-    """Prices above the joint-profit price; once at the start of each stretch."""
+    """Prices past the joint-profit price (above it, for prices); once at the
+    start of each stretch."""
     found, before = [], False
     for r in game.rounds:
-        above = tuple(f for f, p in r.prices.items() if p > game.market.joint_price)
+        above = tuple(f for f, p in r.prices.items() if game.market.premium(p) > 1)
         if above and not before:
             found.append(Highlight("overshoot", r.number, above))
         before = bool(above)
@@ -77,14 +62,18 @@ def overshoot(game):
 
 
 def defection(game):
-    """A firm charging less than the price every firm charged the round before."""
+    """A firm moving back towards Nash (charging less, for prices) from the
+    price every firm charged the round before."""
     found = []
     for previous, r in zip(game.rounds, game.rounds[1:], strict=False):
         held = set(previous.prices.values())
         if len(held) != 1:
             continue
         (price,) = held
-        under = tuple(f for f, p in r.prices.items() if p < price)
+        market = game.market
+        under = tuple(
+            f for f, p in r.prices.items() if market.premium(p) < market.premium(price)
+        )
         if under:
             found.append(Highlight("defection", r.number, under, price))
     return found

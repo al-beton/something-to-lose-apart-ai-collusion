@@ -52,6 +52,7 @@ figcaption { font-weight: 600; overflow-wrap: anywhere; }
 .chart { width: 100%; height: auto; display: block; }
 .chart .grid { stroke: var(--border); stroke-width: 1; }
 .chart .tick, .chart .benchmark-label { fill: var(--text-2); font-size: 13px; }
+.chart .heading { fill: var(--text); font-weight: 600; }
 .chart .benchmark { stroke: var(--text-2); stroke-width: 1.5; stroke-dasharray: 5 4; }
 .chart .seed { fill: none; stroke: var(--line); stroke-width: 2; }
 .chart circle { fill: var(--line); stroke: var(--surface); stroke-width: 2; }

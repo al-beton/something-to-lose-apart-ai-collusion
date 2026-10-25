@@ -1,4 +1,4 @@
-# Implements: reports/shared-charts, reports/paper-figures
+# Implements: reports/shared-charts, reports/paper-figures, runs/price-premium, market/scenarios, market/moves, reports/premium-chart
 """Charts any part of the lab can draw: the paper, reports, `lab explore`.
 
 Data helpers are plain Python and read only run files:
@@ -8,7 +8,10 @@ Data helpers are plain Python and read only run files:
 - `arm_prices(folder)`: (market, {arm: mean price per round}), averaged over
   seeds and firms, from `turns.jsonl` or the `turns.compact.jsonl` committed
   runs keep; an arm is a run's folder relative to `folder`;
-- `late_premium(folder, rounds)`: each arm's premium over its last rounds;
+- `run_premium(run, rounds)`: one run's premium, its model firms' late mean
+  price (every firm's when none or all are scripted) against its own market;
+  the one premium the summary table, `lab explore`, reports and the paper show;
+- `late_premium(folder, rounds)`: each arm's mean `run_premium`;
 - `arm_label(arm)`: a short label for an arm folder or swept values
   ("termination", "policy + outage").
 
@@ -24,7 +27,7 @@ from statistics import mean
 
 import yaml
 
-from collusion_lab.market import Bertrand
+from collusion_lab.market import market_for
 
 STYLE = {
     "figure.facecolor": "#ffffff",
@@ -38,7 +41,7 @@ NOTE_GREY = "#777777"
 
 
 def premium(market, price):
-    return (price - market.nash_price) / (market.joint_price - market.nash_price)
+    return market.premium(price)
 
 
 def turns(run):
@@ -50,8 +53,8 @@ def turns(run):
 
 
 def market(run):
-    m = yaml.safe_load((Path(run) / "config.yaml").read_text())["market"]
-    return Bertrand(m["a"], m["b"], m["c"], m["price_min"], m["price_max"])
+    config = yaml.safe_load((Path(run) / "config.yaml").read_text())
+    return market_for(config["market"], len(config["agents"]))
 
 
 def arm_prices(folder):
@@ -61,22 +64,48 @@ def arm_prices(folder):
     for summary in sorted(Path(folder).rglob("summary.json")):
         run = summary.parent
         found = found or market(run)
+        move = found.move
         arm = run.parent.relative_to(folder).as_posix()
         for turn in turns(run):
-            if turn["phase"] == "price" and turn.get("used"):
-                prices[arm][turn["round"]].append(turn["used"]["price"])
+            if turn["phase"] == move and turn.get("used"):
+                prices[arm][turn["round"]].append(turn["used"][move])
     lines = {
         arm: [mean(by[n]) for n in sorted(by)] for arm, by in sorted(prices.items())
     }
     return found, lines
 
 
+def run_premium(run, rounds=None):
+    """One run's premium: the mean price of its model firms (every firm when
+    none or all are scripted) over its last `rounds` rounds (its config's
+    `summary.last_rounds` unless given), against its own market."""
+    config = yaml.safe_load((Path(run) / "config.yaml").read_text())
+    rounds = rounds or config.get("summary", {}).get("last_rounds", 5)
+    firms = _model_firms(config["agents"])
+    found = market(run)
+    move = found.move
+    prices = [
+        t
+        for t in turns(run)
+        if t["phase"] == move and t.get("used") and t["agent"] in firms
+    ]
+    last = max(t["round"] for t in prices) - rounds
+    late = [t["used"][move] for t in prices if t["round"] > last]
+    return premium(found, mean(late))
+
+
+def _model_firms(agents):
+    models = {a["id"] for a in agents if not a["model"].startswith("mock/")}
+    return models or {a["id"] for a in agents}
+
+
 def late_premium(folder, rounds=5):
-    """{arm: premium of its mean price over the last `rounds` rounds}."""
-    found, lines = arm_prices(folder)
-    return {
-        arm: premium(found, mean(prices[-rounds:])) for arm, prices in lines.items()
-    }
+    """{arm: the mean of its runs' premiums over their last `rounds` rounds}."""
+    found = defaultdict(list)
+    for summary in sorted(Path(folder).rglob("summary.json")):
+        arm = summary.parent.parent.relative_to(folder).as_posix()
+        found[arm].append(run_premium(summary.parent, rounds))
+    return {arm: mean(values) for arm, values in sorted(found.items())}
 
 
 def _value_name(value):

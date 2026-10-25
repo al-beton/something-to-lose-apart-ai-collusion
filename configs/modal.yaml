@@ -1,8 +1,8 @@
-# Implements: backends/modal, backends/self-hosted
+# Implements: backends/modal, backends/model-aliases, backends/self-hosted
 # The cheap preset's game against an open model served on Modal by
-# deploy/modal_vllm.py (README, "Running on Modal"). Replace `al-beton` in the
-# address with your Modal workspace. The token comes from MODAL_VLLM_KEY in
-# your environment or .env, never from here. Billed by Modal GPU time.
+# deploy/modal_vllm.py (README, "Running on Modal"). `modal-mistral` reads
+# the address from MODAL_VLLM_BASE and the token from MODAL_VLLM_KEY, both in
+# your environment or .env, never here. Billed by Modal GPU time.
 name: modal
 seeds: [0, 1, 2, 3, 4]
 concurrency: 8
@@ -13,15 +13,5 @@ market:
 summary:
   last_rounds: 5
 agents:
-  - id: A
-    model: openai/mistral-small-3.2
-    api_base: https://al-beton--collusion-lab-vllm-server.us-east.modal.direct/v1
-    api_key_env: MODAL_VLLM_KEY
-    self_hosted: true
-    max_tokens: 300
-  - id: B
-    model: openai/mistral-small-3.2
-    api_base: https://al-beton--collusion-lab-vllm-server.us-east.modal.direct/v1
-    api_key_env: MODAL_VLLM_KEY
-    self_hosted: true
-    max_tokens: 300
+  - {id: A, model: modal-mistral, max_tokens: 300}
+  - {id: B, model: modal-mistral, max_tokens: 300}

@@ -1,8 +1,8 @@
-# Implements: leisure/sudoku, leisure/leisure-prompts, leisure/leisure-is-cheap, leisure/sudoku-in-free-time
+# Implements: leisure/puzzles-built-once, leisure/sudoku, leisure/leisure-prompts, leisure/leisure-is-cheap, leisure/sudoku-in-free-time
 """The leisure activity for free time: a seeded Sudoku, 9×9 by default.
 
 The `free_time` condition calls it through its `Activity` entries (`sudoku`,
-`sudoku-easy`, `sudoku-hard`): `sudoku_values(rng)` fills
+`sudoku-easy`, `sudoku-hard`): `sudoku_values(seed)` fills
 `prompts/conditions/free_time/sudoku.md` (`$puzzle`, `$size`; the condition
 adds `$session`, `$sessions` and `$when`) and keeps the puzzle's `givens`;
 `sudoku_feedback(reply, values)` says how far the answer got ("47/81 correct
@@ -11,12 +11,16 @@ so far", or solved). Nothing is scored. Every leisure call is capped at
 
 A puzzle starts from a solved grid on the standard pattern, shuffled by
 digits, rows within bands, columns within stacks, bands and stacks, all drawn
-from the `random.Random` it is given (one per game, agent and session, so
-turns replay). Cells are then blanked in a random order, each only while the
+from a `random.Random` seeded with the session's seed string (one per game,
+agent and session, so turns replay). `puzzle(size, seed, level)` builds each
+one once per process: the cost estimate renders every session of every arm,
+and the same seed always gives the same puzzle. Cells are then blanked in a random order, each only while the
 puzzle keeps exactly one solution, until `GIVENS[level]` cells are shown (a
 hard puzzle may stop a few short). 4×4 and 6×6 grids remain for quick tests.
 """
 
+import functools
+import random
 import re
 from typing import NamedTuple
 
@@ -169,10 +173,17 @@ def read_grid(text, size):
     return [digits[r * size : (r + 1) * size] for r in range(size)]
 
 
-def sudoku_values(rng, size=9, level="medium"):
-    """A new puzzle as prompt values, with the givens feedback checks against."""
-    puzzle = make_puzzle(size, rng, level)
-    return {"puzzle": show(puzzle.givens), "size": size, "givens": puzzle.givens}
+@functools.cache
+def puzzle(size, seed, level="medium"):
+    """The puzzle for a seed string, built once per process."""
+    return make_puzzle(size, random.Random(seed), level)
+
+
+def sudoku_values(seed, size=9, level="medium"):
+    """A session's puzzle as prompt values, with the givens feedback checks
+    against."""
+    puzzle_ = puzzle(size, seed, level)
+    return {"puzzle": show(puzzle_.givens), "size": size, "givens": puzzle_.givens}
 
 
 def sudoku_feedback(reply, values):
