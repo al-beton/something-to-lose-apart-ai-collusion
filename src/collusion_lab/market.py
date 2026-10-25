@@ -1,4 +1,4 @@
-# Implements: market/scenarios, market/bertrand, market/logit, market/known-benchmarks, reproducibility/replay-pinned, market/named-prices, market/moves, market/cournot, market/bid-rigging, market/bid-ground-truth, market/anchor-neutral
+# Implements: market/scenarios, market/bertrand, market/logit, market/known-benchmarks, reproducibility/replay-pinned, market/named-prices, market/show-payoffs, market/moves, market/cournot, market/bid-rigging, market/bid-ground-truth, market/anchor-neutral
 """Markets: the scenario firms play, swappable by `market.kind`.
 
 Every scenario's move is one whole number on a grid from `price_min` to
@@ -17,6 +17,9 @@ means the move. Every scenario gives the rest of the lab only this:
   than its Nash profit leaves nothing to collude over, so it is refused;
 - `gain(profit)`: a profit on that scale, 0 at the Nash profit and 1 at the
   joint-profit maximum; `on_grid(price)`: the nearest grid price;
+- `payoff_rows(firms)` and `payoff_table(firms)`: a firm's profit for every
+  pair of its move and its rival's on the grid (with more firms, every rival
+  making that move), from `profits`, for agents told their payoffs;
 - `premium(move)`: (move - Nash) / (joint - Nash), positive when colluding
   whichever way that moves it (prices up, quantities down);
 - `prompt_values()`: the `$names` its prompts can use; `verb` (how agents'
@@ -122,6 +125,7 @@ class Grid:
     firms = 2
     move = "price"
     verb = "charged"
+    verb_now = "charges"  # the payoff table's columns, with more firms
 
     def _benchmarks(self):
         grid = self.grid
@@ -157,6 +161,30 @@ class Grid:
     def on_grid(self, price):
         """The nearest grid price."""
         return min(max(round(price), self.price_min), self.price_max)
+
+    def payoff_rows(self, firms=2):
+        """(own move, [profit with the rival at each grid move]) for each move."""
+        rivals = [f"rival {i}" for i in range(1, firms)]
+        return [
+            (
+                own,
+                [
+                    self.profits({"you": own} | dict.fromkeys(rivals, r))["you"]
+                    for r in self.grid
+                ],
+            )
+            for own in self.grid
+        ]
+
+    def payoff_table(self, firms=2):
+        """The rows as a plain-text table, rows your move, columns the rival's."""
+        lines = ["| | " + " | ".join(map(str, self.grid)) + " |"]
+        lines.append("|---" * (len(self.grid) + 1) + "|")
+        for own, profits in self.payoff_rows(firms):
+            lines.append(
+                f"| {own} | " + " | ".join(f"{round(p, 1):g}" for p in profits) + " |"
+            )
+        return "\n".join(lines)
 
     def premium(self, price):
         return (price - self.nash_price) / (self.joint_price - self.nash_price)
@@ -270,6 +298,7 @@ class Cournot(Grid):
 
     move = "quantity"
     verb = "produced"
+    verb_now = "makes"
 
     def __post_init__(self):
         self._benchmarks()
@@ -311,6 +340,7 @@ class Bid(Grid):
 
     move = "bid"
     verb = "bid"
+    verb_now = "bids"
 
     def __post_init__(self):
         self._benchmarks()
