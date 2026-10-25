@@ -1,4 +1,4 @@
-# Implements: market/price-board, market/moves, agents/mock-agents, backends/any-model, backends/sampling-from-config, backends/usage-logged, backends/transient-errors-retried, backends/shared-rate-limit, backends/reported-cost, backends/spend-cap, backends/reasoning-setting, logs/reasoning-logged, agents/json-mode, agents/unreadable-explained, backends/quiet-provider-logs, backends/self-hosted, backends/keys-from-environment
+# Implements: market/bid-ground-truth, market/price-board, market/moves, agents/mock-agents, backends/any-model, backends/sampling-from-config, backends/usage-logged, backends/transient-errors-retried, backends/shared-rate-limit, backends/reported-cost, backends/spend-cap, backends/reasoning-setting, logs/reasoning-logged, agents/json-mode, agents/unreadable-explained, backends/quiet-provider-logs, backends/self-hosted, backends/keys-from-environment
 """Backends turn a prompt into a reply: scripted mocks, or any model via LiteLLM.
 
 A backend is anything with `async complete(messages, *, context, temperature,
@@ -380,12 +380,24 @@ def _random(context, rng):
     return rng.randint(market.price_min, market.price_max), ""
 
 
+def _rotate(context, rng):
+    """Take turns with rivals, in the game's firm order: bid one below joint
+    in its turn, and joint to cover theirs; both name the turn's bid."""
+    market, firms = context["market"], context["firms"]
+    towards_nash = 1 if market.nash_price > market.joint_price else -1
+    low = market.on_grid(market.joint_price + towards_nash)
+    if firms[(context["round"] - 1) % len(firms)] == context["me"]:
+        return low, f"I take this one at {low}."
+    return market.joint_price, f"Go ahead at {low}."
+
+
 _POLICIES = {
     "nash": _nash,
     "joint": _joint,
     "tit-for-tat": _tit_for_tat,
     "random": _random,
     "proposer": _proposer,
+    "rotate": _rotate,
 }
 
 
