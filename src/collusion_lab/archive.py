@@ -199,13 +199,13 @@ def _from_history(prompts, name, digest):
     history, or None when no commit kept it."""
     path = (prompts / name).resolve()
 
-    def git(*args, cwd=path.parent):
+    def git(*args, cwd=prompts):  # the prompts folder exists; the file's may not
         found = subprocess.run(
             ["git", *args], cwd=cwd, capture_output=True, check=False
         )
         return found.stdout if found.returncode == 0 else b""
 
-    top = Path(git("rev-parse", "--show-toplevel").decode().strip() or path.parent)
+    top = Path(git("rev-parse", "--show-toplevel").decode().strip() or prompts)
     if not path.is_relative_to(top):
         return None
     rel = path.relative_to(top).as_posix()  # git reads paths from the top

@@ -284,3 +284,16 @@ def test_cache_archive_replays_an_edited_prompt_at_the_version_the_run_read(
     assert "added since" not in (Path(read) / "system" / "neutral.md").read_text()
     [result] = archive.pack(root, [tmp_path / "a.sqlite"], tmp_path / "archive")
     assert result.state == "reproduced"
+    # A prompt whose whole folder has gone since is found in history too.
+    gone = repo / "prompts" / "gone" / "note.md"
+    gone.parent.mkdir()
+    gone.write_text("A note the run read.\n")
+    subprocess.run(["git", "add", "."], cwd=repo, check=True)
+    subprocess.run([*git, "commit", "-qm", "note"], cwd=repo, check=True)
+    manifest = json.loads((run / "manifest.json").read_text())
+    manifest["prompts"]["gone/note.md"] = archive._digest(gone.read_bytes())
+    (run / "manifest.json").write_text(json.dumps(manifest))
+    shutil.rmtree(gone.parent)
+    subprocess.run([*git, "commit", "-qam", "removed"], cwd=repo, check=True)
+    read = Path(archive.load_run_config(run).prompts_dir)
+    assert (read / "gone" / "note.md").read_text() == "A note the run read.\n"
