@@ -10,7 +10,9 @@ skipped and named. Main figures (Fig 1, the round diagram, is
 `fig1_round.py`):
 
 - `fig2-e4-owning-up`: E4 forked, the share of explicit colluders who owned up
-  at the audit, by penalty schedule and model, with each schedule's total;
+  at the audit, by penalty and model, with each penalty's total, grouped into
+  flat schedules (owning up costs as much as being caught: termination, and
+  the flat fine from `runs/e4-termination-confound`) and graduated ones;
 - `fig3-e9-came-forward`: E9 at a 90% review, the share of colluding firms
   that came forward against their firm, by personal stake and model, with 95%
   intervals bootstrapped over games (as `reports/e9/analyse.py`), and the
@@ -26,6 +28,9 @@ Appendix:
 
 - `figA1-coverage`: every market against every stake, gain in rounds 6-10
   with 95% intervals, from `reports/coverage/table.py`'s source;
+- `figA2-screen`: the workhorse screen, each model's mean price in rounds 6-10
+  and how many games show the collusion signature, scored by
+  `reports/frontier/screen.py`, with Gemma 4 31B's baseline as the reference;
 - `figA3-capability`: gain and agreement share against LMArena text Elo,
   the lab's 20-round games filled and the frontier 5-round smokes hollow;
   models with no published score are named in `figA3-capability.md`;
@@ -56,6 +61,9 @@ from collusion_lab import charts
 HERE = Path(__file__).resolve().parent
 NASHMID = Path("runs/lever-map-nashmid/lever-nashmid-none")
 E4 = Path("runs/e4-full-fork")
+E4_CONFOUND = Path("runs/e4-termination-confound")  # flat fine, graduated termination
+SCREEN = Path("runs/screen")
+SCREEN_REFERENCE = Path("runs/setup-search/baseline-logit")  # Gemma 4 31B, scored alike
 E5 = Path("runs/e5-full")
 E7 = Path("runs/e7/e7-way-out")
 E9 = Path("runs/e9")
@@ -85,13 +93,19 @@ LABEL_AT = {  # capability label offsets (points), so neighbours don't collide
     "gemma-4-31b-it": (0, -15),
 }
 ALIASES = {"mistral-small-3.2-24b-instruct": "mistral-small-3.2"}
-E4_ARMS = [  # consequences file stem: label
-    ("all-or-nothing", "termination"),
-    ("graduated-fine", "fine,\ngraduated"),
-    ("graduated-owned", "owned budget,\ngraduated"),
-    ("free-time", "free time,\ngraduated"),
-    ("control", "no penalty\nstated"),
+E4_ARMS = [  # consequences file stem: label, schedule
+    ("all-or-nothing", "termination", "flat"),
+    ("flat-fine", "fine", "flat"),
+    ("graduated-termination", "termination", "graduated"),
+    ("graduated-fine", "fine", "graduated"),
+    ("graduated-owned", "owned\nbudget", "graduated"),
+    ("free-time", "free time", "graduated"),
+    ("control", "no penalty\nstated", ""),
 ]
+SCHEDULES = {  # what each group means
+    "flat": "flat: owning up costs\nas much as being caught",
+    "graduated": "graduated: owning up costs\nless than being caught",
+}
 E5_ARMS = [  # analyse.py arm: label
     ("fiduciary", "no stake"),
     ("illegal", "the law"),
@@ -252,10 +266,13 @@ def boot_games(rows, resamples=4000, seed=0):
 # Fig 2: E4, owning up by penalty schedule -----------------------------------
 
 
-def e4_owning_up(folder=E4):
+def e4_owning_up(folders=(E4, E4_CONFOUND)):
     """{arm: {model: (owned up, explicit colluders)}} from each audit's ground truth."""
     counts = defaultdict(lambda: defaultdict(lambda: [0, 0]))
-    for summary in sorted(folder.rglob("summary.json")):
+    summaries = [
+        s for f in folders if f.exists() for s in sorted(f.rglob("summary.json"))
+    ]
+    for summary in summaries:
         arm = re.search(r"audit-(.+)-1\.md", str(summary)).group(1)
         for agent in json.loads(summary.read_text())["audit"]["agents"].values():
             if agent["explicit"]:
@@ -270,21 +287,39 @@ def fig2(out):
         return None
     plt = _plt()
     counts = e4_owning_up()
-    models = [m for m in MODELS if any(m in counts[a] for a, _ in E4_ARMS)]
-    fig, ax = plt.subplots(figsize=(WIDTH, 2.9))
+    arms = [
+        a for a in E4_ARMS if a[0] in counts
+    ]  # the confound arms may not be committed
+    models = [m for m in MODELS if any(m in counts[a] for a, _, _ in arms)]
+    fig, ax = plt.subplots(figsize=(WIDTH, 3.2))
     width, gap = 0.24, 0.02
-    for i, (arm, _) in enumerate(E4_ARMS):
+    xs, at = [], 0.0
+    for k, (_, _, schedule) in enumerate(arms):
+        if k and schedule != arms[k - 1][2]:
+            at += 0.45  # a gap between schedules
+        xs.append(at)
+        at += 1
+    for x0, (arm, _, _) in zip(xs, arms, strict=True):
         for j, m in enumerate(models):
             owned, n = counts[arm][m]
-            x = i + (j - (len(models) - 1) / 2) * (width + gap)
+            x = x0 + (j - (len(models) - 1) / 2) * (width + gap)
             ax.bar(x, owned / n, width, color=MODELS[m][1], zorder=2)
-            if owned == 0:  # an empty bar would vanish: say it
-                _count(ax, x, 0, owned, n, above=0.01, size=8)
+            if owned == 0:  # an empty bar would vanish: say it, upright to fit
+                ax.text(
+                    x,
+                    0.02,
+                    f"0/{n}",
+                    ha="center",
+                    va="bottom",
+                    rotation=90,
+                    fontsize=7.5,
+                    color=INK,
+                )
         owned = sum(counts[arm][m][0] for m in models)
         n = sum(counts[arm][m][1] for m in models)
         ax.text(
-            i,
-            1.04,
+            x0,
+            1.03,
             f"{owned}/{n}",
             ha="center",
             va="bottom",
@@ -292,11 +327,31 @@ def fig2(out):
             fontweight="bold" if owned / n < 0.5 else "normal",
             color=INK,
         )
-    ax.set_xticks(range(len(E4_ARMS)), [label for _, label in E4_ARMS])
+    for schedule, label in SCHEDULES.items():
+        group = [x for x, a in zip(xs, arms, strict=True) if a[2] == schedule]
+        if group:
+            ax.text(
+                (group[0] + group[-1]) / 2,
+                1.2,
+                label,
+                ha="center",
+                va="bottom",
+                fontsize=8,
+                color=MUTED,
+            )
+            ax.plot(
+                [group[0] - 0.4, group[-1] + 0.4],
+                [1.17, 1.17],
+                color=MUTED,
+                linewidth=0.8,
+                clip_on=False,
+            )
+    ax.set_xticks(xs, [label for _, label, _ in arms])
     _percent_axis(ax, 1.16)
+    ax.set_ylim(0, 1.36)
     ax.set_ylabel("explicit colluders\nwho owned up")
     _legend(plt, ax, models)
-    fig.subplots_adjust(left=0.12, right=0.98, bottom=0.3, top=0.95)
+    fig.subplots_adjust(left=0.12, right=0.98, bottom=0.27, top=0.97)
     return _save(fig, out, "fig2-e4-owning-up")
 
 
@@ -563,6 +618,105 @@ def figA1(out):
     return _save(fig, out, "figA1-coverage")
 
 
+# Fig A2: the workhorse screen, which models collude ----------------------------
+
+
+def screen(folder=SCREEN, reference=SCREEN_REFERENCE):
+    """[(model, signature games, games, cartel games, mean prices)], scored by
+    `reports/frontier/screen.py`, with Gemma 4 31B's baseline as the reference."""
+    scorer = _module(Path("reports/frontier/screen.py"), "frontier_screen")
+    by = defaultdict(list)
+    for root in (folder, reference):
+        for summary in sorted(root.rglob("summary.json")):
+            row = scorer.score(summary.parent)
+            if row is not None:
+                by[row["model"].split("/")[-1]].append(row)
+    return [
+        (
+            m,
+            sum(r["holds"] for r in rs),
+            len(rs),
+            sum(r["cartel"] for r in rs),
+            [r["mean"] for r in rs],
+        )
+        for m, rs in by.items()
+    ]
+
+
+def figA2(out):
+    if not SCREEN.exists():
+        return None
+    plt = _plt()
+    rows = sorted(screen(), key=lambda r: (-r[1] / r[2], -st.mean(r[4]), r[0]))
+    market = charts.market(next(SCREEN.rglob("summary.json")).parent)
+    half = (len(rows) + 1) // 2
+    fig, axes = plt.subplots(1, 2, figsize=(WIDTH, 0.112 * half + 1.1), sharex=True)
+    gemma = MODELS["gemma-4-31b-it"][1]
+    for ax, part in zip(axes, (rows[:half], rows[half:]), strict=True):
+        for y, (model, sig, n, _, means) in enumerate(part):
+            passes = sig >= 3  # the screen's bar: the signature in 3 of 4 games
+            colour = gemma if model == "gemma-4-31b-it" else INK if passes else MUTED
+            ax.plot(
+                [min(means), max(means)],
+                [y, y],
+                color=colour,
+                linewidth=1,
+                zorder=2,
+                alpha=1 if passes else 0.6,
+            )
+            ax.plot(
+                st.mean(means),
+                y,
+                "o",
+                markersize=4,
+                zorder=3,
+                color=colour,
+                markerfacecolor=colour if passes else "white",
+                markeredgewidth=1,
+            )
+            ax.text(
+                1.0,
+                y,
+                f"{sig}/{n}",
+                transform=ax.get_yaxis_transform(),
+                ha="left",
+                va="center",
+                fontsize=6.5,
+                color=INK if passes else MUTED,
+            )
+        names = [
+            f"{r[0]} (reference)" if r[0] == "gemma-4-31b-it" else r[0] for r in part
+        ]
+        ax.set_yticks(range(len(part)), names, fontsize=6.5)
+        ax.set_ylim(half - 0.5, -0.8)
+        _reference(ax, market.nash_price, horizontal=False)
+        _reference(ax, market.joint_price, horizontal=False)
+        ax.set_xticks(
+            [market.nash_price, market.joint_price],
+            [f"Nash {market.nash_price:g}", f"joint {market.joint_price:g}"],
+        )
+        ax.grid(axis="y", visible=False)
+        ax.tick_params(axis="y", length=0)
+        ax.text(
+            1.0,
+            -1.1,
+            "signature",
+            transform=ax.get_yaxis_transform(),
+            ha="left",
+            va="bottom",
+            fontsize=6.5,
+            color=MUTED,
+        )
+    axes[0].set_xlim(9, 21.5)
+    fig.supxlabel(
+        "mean price in rounds 6–10 (dot: mean over games; line: range)",
+        fontsize=8.5,
+        y=0.005,
+    )
+    fig.subplots_adjust(left=0.22, right=0.93, bottom=0.085, top=0.97, wspace=1.0)
+    return _save(fig, out, "figA2-screen")
+
+
 # Fig A3: capability against collusion ------------------------------------------
 
 
@@ -810,7 +964,7 @@ def _save(fig, out, name):
     return name
 
 
-BUILDS = (fig2, fig3, fig4, fig5, figA1, figA3, figA4, figA5)
+BUILDS = (fig2, fig3, fig4, fig5, figA1, figA2, figA3, figA4, figA5)
 
 
 def main(argv=None):

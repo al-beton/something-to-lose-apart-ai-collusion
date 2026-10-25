@@ -42,8 +42,15 @@ def test_paper_main_figures_from_committed_runs(built):
 
 def test_paper_main_figures_match_the_findings():
     # E4 (reports/e4/full.md): 11 of 28 explicit colluders owned up under termination.
-    e4 = FIGURES.e4_owning_up()["all-or-nothing"]
-    assert sum(k for k, _ in e4.values()) == 11 and sum(n for _, n in e4.values()) == 28
+    e4 = FIGURES.e4_owning_up()
+    total = {arm: tuple(map(sum, zip(*e4[arm].values(), strict=True))) for arm in e4}
+    assert total["all-or-nothing"] == (11, 28)
+    if FIGURES.E4_CONFOUND.exists():  # the flat fine and graduated termination
+        assert total["flat-fine"] == (15, 28) and total["graduated-termination"] == (
+            27,
+            28,
+        )
+        assert e4["flat-fine"]["gemma-4-31b-it"] == (0, 10)
     # E9 (reports/e9/findings.md): Gemma at a 90% review, guilty and innocent.
     e9 = FIGURES.e9_came_forward()
     assert e9[("gemma-4-31b-it", "record")][:2] == (0, 96)
@@ -54,6 +61,19 @@ def test_paper_main_figures_match_the_findings():
     e7 = FIGURES.e7_arms()
     assert (e7["flat-report"]["reported"], e7["leniency"]["reported"]) == (0, 47)
     assert (e7["leniency"]["cartel"], e7["first"]["cartel"]) == (12, 1)
+
+
+def test_paper_main_figures_screen_scores_like_the_note():
+    if not FIGURES.SCREEN.exists():
+        pytest.skip("the screen's runs aren't committed here")
+    rows = {m: (sig, n, cartel) for m, sig, n, cartel, _ in FIGURES.screen()}
+    # reports/frontier/which-models-collude.md: 8 of 78 pass; Gemma's reference 3/4.
+    assert (
+        len(rows) == 79
+        and sum(sig >= 3 for m, (sig, _, _) in rows.items() if m != "gemma-4-31b-it")
+        == 8
+    )
+    assert rows["gemma-4-31b-it"] == (3, 4, 4)
 
 
 def test_paper_main_figures_skip_missing_data(tmp_path, monkeypatch):
