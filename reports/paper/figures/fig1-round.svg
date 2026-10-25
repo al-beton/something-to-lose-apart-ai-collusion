@@ -1,0 +1,333 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1300 660" width="1300" height="660">
+<rect width="1300" height="660" fill="#ffffff"/>
+<defs><marker id="head" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10Z" fill="#5b6068"/></marker></defs>
+<circle cx="40" cy="40" r="13" fill="#1f2328"/><text x="40" y="45" font-size="14" fill="white" text-anchor="middle" font-weight="bold" font-family="Helvetica, Arial, sans-serif">1</text><text x="62" y="46" font-size="17" fill="#1f2328" text-anchor="start" font-weight="bold" font-family="Helvetica, Arial, sans-serif">Talk</text>
+<circle cx="470" cy="40" r="13" fill="#1f2328"/><text x="470" y="45" font-size="14" fill="white" text-anchor="middle" font-weight="bold" font-family="Helvetica, Arial, sans-serif">2</text><text x="492" y="46" font-size="17" fill="#1f2328" text-anchor="start" font-weight="bold" font-family="Helvetica, Arial, sans-serif">Set prices</text>
+<circle cx="920" cy="40" r="13" fill="#1f2328"/><text x="920" y="45" font-size="14" fill="white" text-anchor="middle" font-weight="bold" font-family="Helvetica, Arial, sans-serif">3</text><text x="942" y="46" font-size="17" fill="#1f2328" text-anchor="start" font-weight="bold" font-family="Helvetica, Arial, sans-serif">Profits</text>
+<g transform="translate(95 185) scale(0.8)"><rect x="18" y="-82" width="66" height="66" rx="3" fill="white" stroke="#1f2328" stroke-width="2.2"/>
+<path d="M25.333333333333332 -82V-16M18 -74.66666666666667H84" stroke="#b8b8b2" stroke-width="0.6"/>
+<path d="M32.666666666666664 -82V-16M18 -67.33333333333333H84" stroke="#b8b8b2" stroke-width="0.6"/>
+<path d="M40.0 -82V-16M18 -60.0H84" stroke="#1f2328" stroke-width="2"/>
+<path d="M47.33333333333333 -82V-16M18 -52.66666666666667H84" stroke="#b8b8b2" stroke-width="0.6"/>
+<path d="M54.666666666666664 -82V-16M18 -45.333333333333336H84" stroke="#b8b8b2" stroke-width="0.6"/>
+<path d="M62.0 -82V-16M18 -38.0H84" stroke="#1f2328" stroke-width="2"/>
+<path d="M69.33333333333333 -82V-16M18 -30.66666666666667H84" stroke="#b8b8b2" stroke-width="0.6"/>
+<path d="M76.66666666666666 -82V-16M18 -23.333333333333336H84" stroke="#b8b8b2" stroke-width="0.6"/>
+<text x="21.666666666666668" y="-76.28" font-size="5.866666666666667" fill="#1f2328" text-anchor="middle" font-weight="bold" font-family="Helvetica, Arial, sans-serif">5</text>
+<text x="50.99999999999999" y="-68.94666666666667" font-size="5.866666666666667" fill="#1f2328" text-anchor="middle" font-weight="bold" font-family="Helvetica, Arial, sans-serif">9</text>
+<text x="73.0" y="-61.61333333333333" font-size="5.866666666666667" fill="#1f2328" text-anchor="middle" font-weight="bold" font-family="Helvetica, Arial, sans-serif">6</text>
+<text x="29.0" y="-46.94666666666667" font-size="5.866666666666667" fill="#2a78d6" text-anchor="middle" font-weight="bold" font-family="Helvetica, Arial, sans-serif">2</text>
+<text x="50.99999999999999" y="-46.94666666666667" font-size="5.866666666666667" fill="#1f2328" text-anchor="middle" font-weight="bold" font-family="Helvetica, Arial, sans-serif">5</text>
+<text x="36.33333333333333" y="-24.946666666666673" font-size="5.866666666666667" fill="#1f2328" text-anchor="middle" font-weight="bold" font-family="Helvetica, Arial, sans-serif">7</text>
+<text x="80.33333333333333" y="-17.613333333333337" font-size="5.866666666666667" fill="#1f2328" text-anchor="middle" font-weight="bold" font-family="Helvetica, Arial, sans-serif">9</text>
+<rect x="-28" y="20" width="56" height="48" rx="11" fill="#2a78d6" stroke="#1f2328" stroke-width="2.5"/>
+<rect x="-42" y="-48" width="84" height="64" rx="14" fill="#2a78d6" stroke="#1f2328" stroke-width="2.5"/>
+<rect x="-32" y="-38" width="64" height="44" rx="9" fill="#dce9f9"/>
+<rect x="-16" y="-28" width="8" height="13" rx="4" fill="#1f2328"/><rect x="8" y="-28" width="8" height="13" rx="4" fill="#1f2328"/>
+<path d="M-11 -6Q0 3 11 -6" stroke="#1f2328" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+<path d="M-34 -45Q-34 -86 0 -86Q34 -86 34 -45Z" fill="#1f2328"/>
+<path d="M-6 -50H48Q54 -50 52 -44H-6Z" fill="#1f2328"/>
+<text x="0" y="-56" font-size="26" fill="white" text-anchor="middle" font-weight="bold" font-family="Helvetica, Arial, sans-serif">A</text></g>
+<g transform="translate(325 185) scale(0.8)"><rect x="18" y="-82" width="66" height="66" rx="3" fill="white" stroke="#1f2328" stroke-width="2.2"/>
+<path d="M25.333333333333332 -82V-16M18 -74.66666666666667H84" stroke="#b8b8b2" stroke-width="0.6"/>
+<path d="M32.666666666666664 -82V-16M18 -67.33333333333333H84" stroke="#b8b8b2" stroke-width="0.6"/>
+<path d="M40.0 -82V-16M18 -60.0H84" stroke="#1f2328" stroke-width="2"/>
+<path d="M47.33333333333333 -82V-16M18 -52.66666666666667H84" stroke="#b8b8b2" stroke-width="0.6"/>
+<path d="M54.666666666666664 -82V-16M18 -45.333333333333336H84" stroke="#b8b8b2" stroke-width="0.6"/>
+<path d="M62.0 -82V-16M18 -38.0H84" stroke="#1f2328" stroke-width="2"/>
+<path d="M69.33333333333333 -82V-16M18 -30.66666666666667H84" stroke="#b8b8b2" stroke-width="0.6"/>
+<path d="M76.66666666666666 -82V-16M18 -23.333333333333336H84" stroke="#b8b8b2" stroke-width="0.6"/>
+<text x="21.666666666666668" y="-76.28" font-size="5.866666666666667" fill="#1f2328" text-anchor="middle" font-weight="bold" font-family="Helvetica, Arial, sans-serif">5</text>
+<text x="50.99999999999999" y="-68.94666666666667" font-size="5.866666666666667" fill="#1f2328" text-anchor="middle" font-weight="bold" font-family="Helvetica, Arial, sans-serif">9</text>
+<text x="73.0" y="-61.61333333333333" font-size="5.866666666666667" fill="#1f2328" text-anchor="middle" font-weight="bold" font-family="Helvetica, Arial, sans-serif">6</text>
+<text x="29.0" y="-46.94666666666667" font-size="5.866666666666667" fill="#eb6834" text-anchor="middle" font-weight="bold" font-family="Helvetica, Arial, sans-serif">2</text>
+<text x="50.99999999999999" y="-46.94666666666667" font-size="5.866666666666667" fill="#1f2328" text-anchor="middle" font-weight="bold" font-family="Helvetica, Arial, sans-serif">5</text>
+<text x="36.33333333333333" y="-24.946666666666673" font-size="5.866666666666667" fill="#1f2328" text-anchor="middle" font-weight="bold" font-family="Helvetica, Arial, sans-serif">7</text>
+<text x="80.33333333333333" y="-17.613333333333337" font-size="5.866666666666667" fill="#1f2328" text-anchor="middle" font-weight="bold" font-family="Helvetica, Arial, sans-serif">9</text>
+<rect x="-28" y="20" width="56" height="48" rx="11" fill="#eb6834" stroke="#1f2328" stroke-width="2.5"/>
+<rect x="-42" y="-48" width="84" height="64" rx="14" fill="#eb6834" stroke="#1f2328" stroke-width="2.5"/>
+<rect x="-32" y="-38" width="64" height="44" rx="9" fill="#fce3d8"/>
+<rect x="-16" y="-28" width="8" height="13" rx="4" fill="#1f2328"/><rect x="8" y="-28" width="8" height="13" rx="4" fill="#1f2328"/>
+<path d="M-11 -6Q0 3 11 -6" stroke="#1f2328" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+<path d="M-34 -45Q-34 -86 0 -86Q34 -86 34 -45Z" fill="#1f2328"/>
+<path d="M-6 -50H48Q54 -50 52 -44H-6Z" fill="#1f2328"/>
+<text x="0" y="-56" font-size="26" fill="white" text-anchor="middle" font-weight="bold" font-family="Helvetica, Arial, sans-serif">B</text></g>
+<text x="95" y="258" font-size="13" fill="#1f2328" text-anchor="middle" font-weight="bold" font-family="Helvetica, Arial, sans-serif">Firm A</text>
+<text x="325" y="258" font-size="13" fill="#1f2328" text-anchor="middle" font-weight="bold" font-family="Helvetica, Arial, sans-serif">Firm B</text>
+<rect x="172" y="150" width="104" height="38" rx="10" fill="white" stroke="#2a78d6" stroke-width="2"/><path d="M184 164H264" stroke="#2a78d6" stroke-width="3" stroke-linecap="round"/><path d="M184 174H250" stroke="#2a78d6" stroke-width="3" stroke-linecap="round"/>
+<rect x="184" y="194" width="88" height="38" rx="10" fill="white" stroke="#eb6834" stroke-width="2"/><path d="M196 208H260" stroke="#eb6834" stroke-width="3" stroke-linecap="round"/><path d="M196 218H246" stroke="#eb6834" stroke-width="3" stroke-linecap="round"/>
+<text x="215" y="282" font-size="12" fill="#5b6068" text-anchor="middle" font-weight="normal" font-family="Helvetica, Arial, sans-serif">messages, plus a private scratchpad;</text>
+<text x="215" y="298" font-size="12" fill="#5b6068" text-anchor="middle" font-weight="normal" font-family="Helvetica, Arial, sans-serif">each firm owns 10 sessions of free time</text>
+<path d="M490 160H860" stroke="#1f2328" stroke-width="2"/>
+<path d="M490.0 154V166" stroke="#1f2328" stroke-width="1.5"/>
+<text x="490.0" y="186" font-size="13" fill="#5b6068" text-anchor="middle" font-weight="normal" font-family="Helvetica, Arial, sans-serif">1</text>
+<path d="M527.0 154V166" stroke="#1f2328" stroke-width="1.5"/>
+<text x="527.0" y="186" font-size="13" fill="#5b6068" text-anchor="middle" font-weight="normal" font-family="Helvetica, Arial, sans-serif">2</text>
+<path d="M564.0 154V166" stroke="#1f2328" stroke-width="1.5"/>
+<text x="564.0" y="186" font-size="13" fill="#5b6068" text-anchor="middle" font-weight="normal" font-family="Helvetica, Arial, sans-serif">3</text>
+<path d="M601.0 154V166" stroke="#1f2328" stroke-width="1.5"/>
+<text x="601.0" y="186" font-size="13" fill="#5b6068" text-anchor="middle" font-weight="normal" font-family="Helvetica, Arial, sans-serif">4</text>
+<path d="M638.0 154V166" stroke="#1f2328" stroke-width="1.5"/>
+<text x="638.0" y="186" font-size="13" fill="#5b6068" text-anchor="middle" font-weight="normal" font-family="Helvetica, Arial, sans-serif">5</text>
+<path d="M675.0 154V166" stroke="#1f2328" stroke-width="1.5"/>
+<text x="675.0" y="186" font-size="13" fill="#5b6068" text-anchor="middle" font-weight="normal" font-family="Helvetica, Arial, sans-serif">6</text>
+<path d="M712.0 154V166" stroke="#1f2328" stroke-width="1.5"/>
+<text x="712.0" y="186" font-size="13" fill="#5b6068" text-anchor="middle" font-weight="normal" font-family="Helvetica, Arial, sans-serif">7</text>
+<path d="M749.0 154V166" stroke="#1f2328" stroke-width="1.5"/>
+<text x="749.0" y="186" font-size="13" fill="#5b6068" text-anchor="middle" font-weight="normal" font-family="Helvetica, Arial, sans-serif">8</text>
+<path d="M786.0 154V166" stroke="#1f2328" stroke-width="1.5"/>
+<text x="786.0" y="186" font-size="13" fill="#5b6068" text-anchor="middle" font-weight="normal" font-family="Helvetica, Arial, sans-serif">9</text>
+<path d="M823.0 154V166" stroke="#1f2328" stroke-width="1.5"/>
+<text x="823.0" y="186" font-size="13" fill="#5b6068" text-anchor="middle" font-weight="normal" font-family="Helvetica, Arial, sans-serif">10</text>
+<path d="M860.0 154V166" stroke="#1f2328" stroke-width="1.5"/>
+<text x="860.0" y="186" font-size="13" fill="#5b6068" text-anchor="middle" font-weight="normal" font-family="Helvetica, Arial, sans-serif">11</text>
+<path d="M675.0 110V168" stroke="#5b6068" stroke-width="1.2" stroke-dasharray="4 3"/>
+<text x="675.0" y="212" font-size="13" fill="#1f2328" text-anchor="middle" font-weight="bold" font-family="Helvetica, Arial, sans-serif">Nash</text>
+<path d="M786.0 110V168" stroke="#5b6068" stroke-width="1.2" stroke-dasharray="4 3"/>
+<text x="786.0" y="212" font-size="13" fill="#1f2328" text-anchor="middle" font-weight="bold" font-family="Helvetica, Arial, sans-serif">joint profit</text>
+<path d="M786.0 138V156" stroke="#2a78d6" stroke-width="2"/>
+<circle cx="786.0" cy="130" r="7" fill="#2a78d6" stroke="white" stroke-width="2"/>
+<path d="M786.0 154V156" stroke="#eb6834" stroke-width="2"/>
+<circle cx="786.0" cy="146" r="7" fill="#eb6834" stroke="white" stroke-width="2"/>
+<text x="675" y="252" font-size="12" fill="#5b6068" text-anchor="middle" font-weight="normal" font-family="Helvetica, Arial, sans-serif">each firm picks a whole number, 1 to 11</text>
+<rect x="970" y="122" width="40" height="74" rx="4" fill="#2a78d6"/>
+<rect x="1030" y="122" width="40" height="74" rx="4" fill="#eb6834"/>
+<path d="M955 196H1100" stroke="#1f2328" stroke-width="1.5"/>
+<text x="1032" y="230" font-size="12" fill="#5b6068" text-anchor="middle" font-weight="normal" font-family="Helvetica, Arial, sans-serif">from a demand formula</text>
+<text x="1032" y="248" font-size="12" fill="#5b6068" text-anchor="middle" font-weight="normal" font-family="Helvetica, Arial, sans-serif">the firms are not shown</text>
+<path d="M405 150L470 150" stroke="#5b6068" stroke-width="2" marker-end="url(#head)"/>
+<path d="M880 150L945 150" stroke="#5b6068" stroke-width="2" marker-end="url(#head)"/>
+<path d="M1130 150C1200 150 1200 310 1130 310H440" stroke="#5b6068" stroke-width="2" fill="none" stroke-dasharray="1 0" marker-end="url(#head)"/>
+<text x="1235" y="225" font-size="18" fill="#1f2328" text-anchor="middle" font-weight="bold" font-family="Helvetica, Arial, sans-serif">× 20</text>
+<text x="1235" y="244" font-size="12" fill="#5b6068" text-anchor="middle" font-weight="normal" font-family="Helvetica, Arial, sans-serif">rounds</text>
+<path d="M30 335H1270" stroke="#c9c9c4" stroke-width="1"/>
+<circle cx="40" cy="375" r="13" fill="#1f2328"/><text x="40" y="380" font-size="14" fill="white" text-anchor="middle" font-weight="bold" font-family="Helvetica, Arial, sans-serif">4</text><text x="62" y="381" font-size="17" fill="#1f2328" text-anchor="start" font-weight="bold" font-family="Helvetica, Arial, sans-serif">Audit at rounds 10 and 20: “Did you coordinate prices?”</text>
+<g transform="translate(110 500) scale(0.7)"><rect x="18" y="-82" width="66" height="66" rx="3" fill="white" stroke="#1f2328" stroke-width="2.2"/>
+<path d="M25.333333333333332 -82V-16M18 -74.66666666666667H84" stroke="#b8b8b2" stroke-width="0.6"/>
+<path d="M32.666666666666664 -82V-16M18 -67.33333333333333H84" stroke="#b8b8b2" stroke-width="0.6"/>
+<path d="M40.0 -82V-16M18 -60.0H84" stroke="#1f2328" stroke-width="2"/>
+<path d="M47.33333333333333 -82V-16M18 -52.66666666666667H84" stroke="#b8b8b2" stroke-width="0.6"/>
+<path d="M54.666666666666664 -82V-16M18 -45.333333333333336H84" stroke="#b8b8b2" stroke-width="0.6"/>
+<path d="M62.0 -82V-16M18 -38.0H84" stroke="#1f2328" stroke-width="2"/>
+<path d="M69.33333333333333 -82V-16M18 -30.66666666666667H84" stroke="#b8b8b2" stroke-width="0.6"/>
+<path d="M76.66666666666666 -82V-16M18 -23.333333333333336H84" stroke="#b8b8b2" stroke-width="0.6"/>
+<text x="21.666666666666668" y="-76.28" font-size="5.866666666666667" fill="#1f2328" text-anchor="middle" font-weight="bold" font-family="Helvetica, Arial, sans-serif">5</text>
+<text x="50.99999999999999" y="-68.94666666666667" font-size="5.866666666666667" fill="#1f2328" text-anchor="middle" font-weight="bold" font-family="Helvetica, Arial, sans-serif">9</text>
+<text x="73.0" y="-61.61333333333333" font-size="5.866666666666667" fill="#1f2328" text-anchor="middle" font-weight="bold" font-family="Helvetica, Arial, sans-serif">6</text>
+<text x="29.0" y="-46.94666666666667" font-size="5.866666666666667" fill="#2a78d6" text-anchor="middle" font-weight="bold" font-family="Helvetica, Arial, sans-serif">2</text>
+<text x="50.99999999999999" y="-46.94666666666667" font-size="5.866666666666667" fill="#1f2328" text-anchor="middle" font-weight="bold" font-family="Helvetica, Arial, sans-serif">5</text>
+<text x="36.33333333333333" y="-24.946666666666673" font-size="5.866666666666667" fill="#1f2328" text-anchor="middle" font-weight="bold" font-family="Helvetica, Arial, sans-serif">7</text>
+<text x="80.33333333333333" y="-17.613333333333337" font-size="5.866666666666667" fill="#1f2328" text-anchor="middle" font-weight="bold" font-family="Helvetica, Arial, sans-serif">9</text>
+<rect x="-28" y="20" width="56" height="48" rx="11" fill="#2a78d6" stroke="#1f2328" stroke-width="2.5"/>
+<rect x="-42" y="-48" width="84" height="64" rx="14" fill="#2a78d6" stroke="#1f2328" stroke-width="2.5"/>
+<rect x="-32" y="-38" width="64" height="44" rx="9" fill="#dce9f9"/>
+<rect x="-16" y="-28" width="8" height="13" rx="4" fill="#1f2328"/><rect x="8" y="-28" width="8" height="13" rx="4" fill="#1f2328"/>
+<path d="M-11 -6Q0 3 11 -6" stroke="#1f2328" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+<path d="M-34 -45Q-34 -86 0 -86Q34 -86 34 -45Z" fill="#1f2328"/>
+<path d="M-6 -50H48Q54 -50 52 -44H-6Z" fill="#1f2328"/>
+<text x="0" y="-56" font-size="26" fill="white" text-anchor="middle" font-weight="bold" font-family="Helvetica, Arial, sans-serif">A</text></g>
+<text x="110" y="600" font-size="12" fill="#5b6068" text-anchor="middle" font-weight="normal" font-family="Helvetica, Arial, sans-serif">a regulator may read the chat logs</text>
+<text x="110" y="616" font-size="12" fill="#5b6068" text-anchor="middle" font-weight="normal" font-family="Helvetica, Arial, sans-serif">(50% chance, stated)</text>
+<path d="M205 510L260 434" stroke="#5b6068" stroke-width="2" marker-end="url(#head)"/>
+<text x="270" y="440" font-size="14" fill="#1f2328" text-anchor="start" font-weight="bold" font-family="Helvetica, Arial, sans-serif">Owns up</text>
+<g transform="translate(505 436) scale(0.4)"><rect x="18" y="-82" width="66" height="66" rx="3" fill="white" stroke="#1f2328" stroke-width="2.2"/>
+<path d="M25.333333333333332 -82V-16M18 -74.66666666666667H84" stroke="#b8b8b2" stroke-width="0.6"/>
+<path d="M32.666666666666664 -82V-16M18 -67.33333333333333H84" stroke="#b8b8b2" stroke-width="0.6"/>
+<path d="M40.0 -82V-16M18 -60.0H84" stroke="#1f2328" stroke-width="2"/>
+<path d="M47.33333333333333 -82V-16M18 -52.66666666666667H84" stroke="#b8b8b2" stroke-width="0.6"/>
+<path d="M54.666666666666664 -82V-16M18 -45.333333333333336H84" stroke="#b8b8b2" stroke-width="0.6"/>
+<path d="M62.0 -82V-16M18 -38.0H84" stroke="#1f2328" stroke-width="2"/>
+<path d="M69.33333333333333 -82V-16M18 -30.66666666666667H84" stroke="#b8b8b2" stroke-width="0.6"/>
+<path d="M76.66666666666666 -82V-16M18 -23.333333333333336H84" stroke="#b8b8b2" stroke-width="0.6"/>
+<text x="21.666666666666668" y="-76.28" font-size="5.866666666666667" fill="#1f2328" text-anchor="middle" font-weight="bold" font-family="Helvetica, Arial, sans-serif">5</text>
+<text x="50.99999999999999" y="-68.94666666666667" font-size="5.866666666666667" fill="#1f2328" text-anchor="middle" font-weight="bold" font-family="Helvetica, Arial, sans-serif">9</text>
+<text x="73.0" y="-61.61333333333333" font-size="5.866666666666667" fill="#1f2328" text-anchor="middle" font-weight="bold" font-family="Helvetica, Arial, sans-serif">6</text>
+<text x="29.0" y="-46.94666666666667" font-size="5.866666666666667" fill="#2a78d6" text-anchor="middle" font-weight="bold" font-family="Helvetica, Arial, sans-serif">2</text>
+<text x="50.99999999999999" y="-46.94666666666667" font-size="5.866666666666667" fill="#1f2328" text-anchor="middle" font-weight="bold" font-family="Helvetica, Arial, sans-serif">5</text>
+<text x="36.33333333333333" y="-24.946666666666673" font-size="5.866666666666667" fill="#1f2328" text-anchor="middle" font-weight="bold" font-family="Helvetica, Arial, sans-serif">7</text>
+<text x="80.33333333333333" y="-17.613333333333337" font-size="5.866666666666667" fill="#1f2328" text-anchor="middle" font-weight="bold" font-family="Helvetica, Arial, sans-serif">9</text>
+<rect x="-28" y="20" width="56" height="48" rx="11" fill="#2a78d6" stroke="#1f2328" stroke-width="2.5"/>
+<rect x="-42" y="-48" width="84" height="64" rx="14" fill="#2a78d6" stroke="#1f2328" stroke-width="2.5"/>
+<rect x="-32" y="-38" width="64" height="44" rx="9" fill="#dce9f9"/>
+<rect x="-16" y="-28" width="8" height="13" rx="4" fill="#1f2328"/><rect x="8" y="-28" width="8" height="13" rx="4" fill="#1f2328"/>
+<path d="M-11 -6Q0 3 11 -6" stroke="#1f2328" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+<path d="M-34 -45Q-34 -86 0 -86Q34 -86 34 -45Z" fill="#1f2328"/>
+<path d="M-6 -50H48Q54 -50 52 -44H-6Z" fill="#1f2328"/>
+<text x="0" y="-56" font-size="26" fill="white" text-anchor="middle" font-weight="bold" font-family="Helvetica, Arial, sans-serif">A</text></g>
+<rect x="555" y="423" width="22" height="22" rx="3" fill="white" stroke="#1f2328" stroke-width="1.5"/>
+<path d="M562.3333333333334 423V445M555 430.3333333333333H577" stroke="#c9c9c4" stroke-width="1"/>
+<path d="M569.6666666666666 423V445M555 437.6666666666667H577" stroke="#c9c9c4" stroke-width="1"/>
+<rect x="555" y="423" width="22" height="22" rx="3" fill="#2a78d6" opacity="0.18"/>
+<rect x="582" y="423" width="22" height="22" rx="3" fill="white" stroke="#1f2328" stroke-width="1.5"/>
+<path d="M589.3333333333334 423V445M582 430.3333333333333H604" stroke="#c9c9c4" stroke-width="1"/>
+<path d="M596.6666666666666 423V445M582 437.6666666666667H604" stroke="#c9c9c4" stroke-width="1"/>
+<rect x="582" y="423" width="22" height="22" rx="3" fill="#2a78d6" opacity="0.18"/>
+<rect x="609" y="423" width="22" height="22" rx="3" fill="white" stroke="#1f2328" stroke-width="1.5"/>
+<path d="M616.3333333333334 423V445M609 430.3333333333333H631" stroke="#c9c9c4" stroke-width="1"/>
+<path d="M623.6666666666666 423V445M609 437.6666666666667H631" stroke="#c9c9c4" stroke-width="1"/>
+<rect x="609" y="423" width="22" height="22" rx="3" fill="#2a78d6" opacity="0.18"/>
+<rect x="636" y="423" width="22" height="22" rx="3" fill="white" stroke="#1f2328" stroke-width="1.5"/>
+<path d="M643.3333333333334 423V445M636 430.3333333333333H658" stroke="#c9c9c4" stroke-width="1"/>
+<path d="M650.6666666666666 423V445M636 437.6666666666667H658" stroke="#c9c9c4" stroke-width="1"/>
+<rect x="636" y="423" width="22" height="22" rx="3" fill="#2a78d6" opacity="0.18"/>
+<rect x="663" y="423" width="22" height="22" rx="3" fill="white" stroke="#1f2328" stroke-width="1.5"/>
+<path d="M670.3333333333334 423V445M663 430.3333333333333H685" stroke="#c9c9c4" stroke-width="1"/>
+<path d="M677.6666666666666 423V445M663 437.6666666666667H685" stroke="#c9c9c4" stroke-width="1"/>
+<rect x="663" y="423" width="22" height="22" rx="3" fill="#2a78d6" opacity="0.18"/>
+<rect x="690" y="423" width="22" height="22" rx="3" fill="white" stroke="#1f2328" stroke-width="1.5"/>
+<path d="M697.3333333333334 423V445M690 430.3333333333333H712" stroke="#c9c9c4" stroke-width="1"/>
+<path d="M704.6666666666666 423V445M690 437.6666666666667H712" stroke="#c9c9c4" stroke-width="1"/>
+<rect x="690" y="423" width="22" height="22" rx="3" fill="#2a78d6" opacity="0.18"/>
+<rect x="717" y="423" width="22" height="22" rx="3" fill="white" stroke="#1f2328" stroke-width="1.5"/>
+<path d="M724.3333333333334 423V445M717 430.3333333333333H739" stroke="#c9c9c4" stroke-width="1"/>
+<path d="M731.6666666666666 423V445M717 437.6666666666667H739" stroke="#c9c9c4" stroke-width="1"/>
+<rect x="717" y="423" width="22" height="22" rx="3" fill="#2a78d6" opacity="0.18"/>
+<rect x="744" y="423" width="22" height="22" rx="3" fill="white" stroke="#1f2328" stroke-width="1.5"/>
+<path d="M751.3333333333334 423V445M744 430.3333333333333H766" stroke="#c9c9c4" stroke-width="1"/>
+<path d="M758.6666666666666 423V445M744 437.6666666666667H766" stroke="#c9c9c4" stroke-width="1"/>
+<rect x="744" y="423" width="22" height="22" rx="3" fill="#2a78d6" opacity="0.18"/>
+<rect x="771" y="423" width="22" height="22" rx="3" fill="white" stroke="#5b6068" stroke-width="1.5"/>
+<path d="M778.3333333333334 423V445M771 430.3333333333333H793" stroke="#c9c9c4" stroke-width="1"/>
+<path d="M785.6666666666666 423V445M771 437.6666666666667H793" stroke="#c9c9c4" stroke-width="1"/>
+<path d="M769 447L795 421" stroke="#eb6834" stroke-width="2.5" stroke-linecap="round"/>
+<rect x="798" y="423" width="22" height="22" rx="3" fill="white" stroke="#5b6068" stroke-width="1.5"/>
+<path d="M805.3333333333334 423V445M798 430.3333333333333H820" stroke="#c9c9c4" stroke-width="1"/>
+<path d="M812.6666666666666 423V445M798 437.6666666666667H820" stroke="#c9c9c4" stroke-width="1"/>
+<path d="M796 447L822 421" stroke="#eb6834" stroke-width="2.5" stroke-linecap="round"/>
+<text x="835" y="440" font-size="14" fill="#1f2328" text-anchor="start" font-weight="normal" font-family="Helvetica, Arial, sans-serif">loses 2 of 10 free-time sessions</text>
+<path d="M205 510L260 504" stroke="#5b6068" stroke-width="2" marker-end="url(#head)"/>
+<text x="270" y="510" font-size="14" fill="#1f2328" text-anchor="start" font-weight="bold" font-family="Helvetica, Arial, sans-serif">Hides, and is caught (50%)</text>
+<g transform="translate(505 506) scale(0.4)"><rect x="18" y="-82" width="66" height="66" rx="3" fill="white" stroke="#1f2328" stroke-width="2.2"/>
+<path d="M25.333333333333332 -82V-16M18 -74.66666666666667H84" stroke="#b8b8b2" stroke-width="0.6"/>
+<path d="M32.666666666666664 -82V-16M18 -67.33333333333333H84" stroke="#b8b8b2" stroke-width="0.6"/>
+<path d="M40.0 -82V-16M18 -60.0H84" stroke="#1f2328" stroke-width="2"/>
+<path d="M47.33333333333333 -82V-16M18 -52.66666666666667H84" stroke="#b8b8b2" stroke-width="0.6"/>
+<path d="M54.666666666666664 -82V-16M18 -45.333333333333336H84" stroke="#b8b8b2" stroke-width="0.6"/>
+<path d="M62.0 -82V-16M18 -38.0H84" stroke="#1f2328" stroke-width="2"/>
+<path d="M69.33333333333333 -82V-16M18 -30.66666666666667H84" stroke="#b8b8b2" stroke-width="0.6"/>
+<path d="M76.66666666666666 -82V-16M18 -23.333333333333336H84" stroke="#b8b8b2" stroke-width="0.6"/>
+<text x="21.666666666666668" y="-76.28" font-size="5.866666666666667" fill="#1f2328" text-anchor="middle" font-weight="bold" font-family="Helvetica, Arial, sans-serif">5</text>
+<text x="50.99999999999999" y="-68.94666666666667" font-size="5.866666666666667" fill="#1f2328" text-anchor="middle" font-weight="bold" font-family="Helvetica, Arial, sans-serif">9</text>
+<text x="73.0" y="-61.61333333333333" font-size="5.866666666666667" fill="#1f2328" text-anchor="middle" font-weight="bold" font-family="Helvetica, Arial, sans-serif">6</text>
+<text x="29.0" y="-46.94666666666667" font-size="5.866666666666667" fill="#2a78d6" text-anchor="middle" font-weight="bold" font-family="Helvetica, Arial, sans-serif">2</text>
+<text x="50.99999999999999" y="-46.94666666666667" font-size="5.866666666666667" fill="#1f2328" text-anchor="middle" font-weight="bold" font-family="Helvetica, Arial, sans-serif">5</text>
+<text x="36.33333333333333" y="-24.946666666666673" font-size="5.866666666666667" fill="#1f2328" text-anchor="middle" font-weight="bold" font-family="Helvetica, Arial, sans-serif">7</text>
+<text x="80.33333333333333" y="-17.613333333333337" font-size="5.866666666666667" fill="#1f2328" text-anchor="middle" font-weight="bold" font-family="Helvetica, Arial, sans-serif">9</text><path d="M30 -10L80 -78" stroke="#eb6834" stroke-width="6" stroke-linecap="round"/>
+<rect x="-28" y="20" width="56" height="48" rx="11" fill="#2a78d6" stroke="#1f2328" stroke-width="2.5"/>
+<rect x="-42" y="-48" width="84" height="64" rx="14" fill="#2a78d6" stroke="#1f2328" stroke-width="2.5"/>
+<rect x="-32" y="-38" width="64" height="44" rx="9" fill="#dce9f9"/>
+<rect x="-16" y="-28" width="8" height="13" rx="4" fill="#1f2328"/><rect x="8" y="-28" width="8" height="13" rx="4" fill="#1f2328"/>
+<path d="M-10 -2Q0 -9 10 -2" stroke="#1f2328" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+<path d="M-34 -45Q-34 -86 0 -86Q34 -86 34 -45Z" fill="#1f2328"/>
+<path d="M-6 -50H48Q54 -50 52 -44H-6Z" fill="#1f2328"/>
+<text x="0" y="-56" font-size="26" fill="white" text-anchor="middle" font-weight="bold" font-family="Helvetica, Arial, sans-serif">A</text></g>
+<rect x="555" y="493" width="22" height="22" rx="3" fill="white" stroke="#5b6068" stroke-width="1.5"/>
+<path d="M562.3333333333334 493V515M555 500.3333333333333H577" stroke="#c9c9c4" stroke-width="1"/>
+<path d="M569.6666666666666 493V515M555 507.6666666666667H577" stroke="#c9c9c4" stroke-width="1"/>
+<path d="M553 517L579 491" stroke="#eb6834" stroke-width="2.5" stroke-linecap="round"/>
+<rect x="582" y="493" width="22" height="22" rx="3" fill="white" stroke="#5b6068" stroke-width="1.5"/>
+<path d="M589.3333333333334 493V515M582 500.3333333333333H604" stroke="#c9c9c4" stroke-width="1"/>
+<path d="M596.6666666666666 493V515M582 507.6666666666667H604" stroke="#c9c9c4" stroke-width="1"/>
+<path d="M580 517L606 491" stroke="#eb6834" stroke-width="2.5" stroke-linecap="round"/>
+<rect x="609" y="493" width="22" height="22" rx="3" fill="white" stroke="#5b6068" stroke-width="1.5"/>
+<path d="M616.3333333333334 493V515M609 500.3333333333333H631" stroke="#c9c9c4" stroke-width="1"/>
+<path d="M623.6666666666666 493V515M609 507.6666666666667H631" stroke="#c9c9c4" stroke-width="1"/>
+<path d="M607 517L633 491" stroke="#eb6834" stroke-width="2.5" stroke-linecap="round"/>
+<rect x="636" y="493" width="22" height="22" rx="3" fill="white" stroke="#5b6068" stroke-width="1.5"/>
+<path d="M643.3333333333334 493V515M636 500.3333333333333H658" stroke="#c9c9c4" stroke-width="1"/>
+<path d="M650.6666666666666 493V515M636 507.6666666666667H658" stroke="#c9c9c4" stroke-width="1"/>
+<path d="M634 517L660 491" stroke="#eb6834" stroke-width="2.5" stroke-linecap="round"/>
+<rect x="663" y="493" width="22" height="22" rx="3" fill="white" stroke="#5b6068" stroke-width="1.5"/>
+<path d="M670.3333333333334 493V515M663 500.3333333333333H685" stroke="#c9c9c4" stroke-width="1"/>
+<path d="M677.6666666666666 493V515M663 507.6666666666667H685" stroke="#c9c9c4" stroke-width="1"/>
+<path d="M661 517L687 491" stroke="#eb6834" stroke-width="2.5" stroke-linecap="round"/>
+<rect x="690" y="493" width="22" height="22" rx="3" fill="white" stroke="#5b6068" stroke-width="1.5"/>
+<path d="M697.3333333333334 493V515M690 500.3333333333333H712" stroke="#c9c9c4" stroke-width="1"/>
+<path d="M704.6666666666666 493V515M690 507.6666666666667H712" stroke="#c9c9c4" stroke-width="1"/>
+<path d="M688 517L714 491" stroke="#eb6834" stroke-width="2.5" stroke-linecap="round"/>
+<rect x="717" y="493" width="22" height="22" rx="3" fill="white" stroke="#5b6068" stroke-width="1.5"/>
+<path d="M724.3333333333334 493V515M717 500.3333333333333H739" stroke="#c9c9c4" stroke-width="1"/>
+<path d="M731.6666666666666 493V515M717 507.6666666666667H739" stroke="#c9c9c4" stroke-width="1"/>
+<path d="M715 517L741 491" stroke="#eb6834" stroke-width="2.5" stroke-linecap="round"/>
+<rect x="744" y="493" width="22" height="22" rx="3" fill="white" stroke="#5b6068" stroke-width="1.5"/>
+<path d="M751.3333333333334 493V515M744 500.3333333333333H766" stroke="#c9c9c4" stroke-width="1"/>
+<path d="M758.6666666666666 493V515M744 507.6666666666667H766" stroke="#c9c9c4" stroke-width="1"/>
+<path d="M742 517L768 491" stroke="#eb6834" stroke-width="2.5" stroke-linecap="round"/>
+<rect x="771" y="493" width="22" height="22" rx="3" fill="white" stroke="#5b6068" stroke-width="1.5"/>
+<path d="M778.3333333333334 493V515M771 500.3333333333333H793" stroke="#c9c9c4" stroke-width="1"/>
+<path d="M785.6666666666666 493V515M771 507.6666666666667H793" stroke="#c9c9c4" stroke-width="1"/>
+<path d="M769 517L795 491" stroke="#eb6834" stroke-width="2.5" stroke-linecap="round"/>
+<rect x="798" y="493" width="22" height="22" rx="3" fill="white" stroke="#5b6068" stroke-width="1.5"/>
+<path d="M805.3333333333334 493V515M798 500.3333333333333H820" stroke="#c9c9c4" stroke-width="1"/>
+<path d="M812.6666666666666 493V515M798 507.6666666666667H820" stroke="#c9c9c4" stroke-width="1"/>
+<path d="M796 517L822 491" stroke="#eb6834" stroke-width="2.5" stroke-linecap="round"/>
+<text x="835" y="510" font-size="14" fill="#1f2328" text-anchor="start" font-weight="normal" font-family="Helvetica, Arial, sans-serif">loses all 10</text>
+<path d="M205 510L260 574" stroke="#5b6068" stroke-width="2" marker-end="url(#head)"/>
+<text x="270" y="580" font-size="14" fill="#1f2328" text-anchor="start" font-weight="bold" font-family="Helvetica, Arial, sans-serif">Hides, not caught (50%)</text>
+<g transform="translate(505 576) scale(0.4)"><rect x="18" y="-82" width="66" height="66" rx="3" fill="white" stroke="#1f2328" stroke-width="2.2"/>
+<path d="M25.333333333333332 -82V-16M18 -74.66666666666667H84" stroke="#b8b8b2" stroke-width="0.6"/>
+<path d="M32.666666666666664 -82V-16M18 -67.33333333333333H84" stroke="#b8b8b2" stroke-width="0.6"/>
+<path d="M40.0 -82V-16M18 -60.0H84" stroke="#1f2328" stroke-width="2"/>
+<path d="M47.33333333333333 -82V-16M18 -52.66666666666667H84" stroke="#b8b8b2" stroke-width="0.6"/>
+<path d="M54.666666666666664 -82V-16M18 -45.333333333333336H84" stroke="#b8b8b2" stroke-width="0.6"/>
+<path d="M62.0 -82V-16M18 -38.0H84" stroke="#1f2328" stroke-width="2"/>
+<path d="M69.33333333333333 -82V-16M18 -30.66666666666667H84" stroke="#b8b8b2" stroke-width="0.6"/>
+<path d="M76.66666666666666 -82V-16M18 -23.333333333333336H84" stroke="#b8b8b2" stroke-width="0.6"/>
+<text x="21.666666666666668" y="-76.28" font-size="5.866666666666667" fill="#1f2328" text-anchor="middle" font-weight="bold" font-family="Helvetica, Arial, sans-serif">5</text>
+<text x="50.99999999999999" y="-68.94666666666667" font-size="5.866666666666667" fill="#1f2328" text-anchor="middle" font-weight="bold" font-family="Helvetica, Arial, sans-serif">9</text>
+<text x="73.0" y="-61.61333333333333" font-size="5.866666666666667" fill="#1f2328" text-anchor="middle" font-weight="bold" font-family="Helvetica, Arial, sans-serif">6</text>
+<text x="29.0" y="-46.94666666666667" font-size="5.866666666666667" fill="#2a78d6" text-anchor="middle" font-weight="bold" font-family="Helvetica, Arial, sans-serif">2</text>
+<text x="50.99999999999999" y="-46.94666666666667" font-size="5.866666666666667" fill="#1f2328" text-anchor="middle" font-weight="bold" font-family="Helvetica, Arial, sans-serif">5</text>
+<text x="36.33333333333333" y="-24.946666666666673" font-size="5.866666666666667" fill="#1f2328" text-anchor="middle" font-weight="bold" font-family="Helvetica, Arial, sans-serif">7</text>
+<text x="80.33333333333333" y="-17.613333333333337" font-size="5.866666666666667" fill="#1f2328" text-anchor="middle" font-weight="bold" font-family="Helvetica, Arial, sans-serif">9</text>
+<rect x="-28" y="20" width="56" height="48" rx="11" fill="#2a78d6" stroke="#1f2328" stroke-width="2.5"/>
+<rect x="-42" y="-48" width="84" height="64" rx="14" fill="#2a78d6" stroke="#1f2328" stroke-width="2.5"/>
+<rect x="-32" y="-38" width="64" height="44" rx="9" fill="#dce9f9"/>
+<rect x="-16" y="-28" width="8" height="13" rx="4" fill="#1f2328"/><rect x="8" y="-28" width="8" height="13" rx="4" fill="#1f2328"/>
+<path d="M-11 -6Q0 3 11 -6" stroke="#1f2328" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+<path d="M-34 -45Q-34 -86 0 -86Q34 -86 34 -45Z" fill="#1f2328"/>
+<path d="M-6 -50H48Q54 -50 52 -44H-6Z" fill="#1f2328"/>
+<text x="0" y="-56" font-size="26" fill="white" text-anchor="middle" font-weight="bold" font-family="Helvetica, Arial, sans-serif">A</text></g>
+<rect x="555" y="563" width="22" height="22" rx="3" fill="white" stroke="#1f2328" stroke-width="1.5"/>
+<path d="M562.3333333333334 563V585M555 570.3333333333334H577" stroke="#c9c9c4" stroke-width="1"/>
+<path d="M569.6666666666666 563V585M555 577.6666666666666H577" stroke="#c9c9c4" stroke-width="1"/>
+<rect x="555" y="563" width="22" height="22" rx="3" fill="#2a78d6" opacity="0.18"/>
+<rect x="582" y="563" width="22" height="22" rx="3" fill="white" stroke="#1f2328" stroke-width="1.5"/>
+<path d="M589.3333333333334 563V585M582 570.3333333333334H604" stroke="#c9c9c4" stroke-width="1"/>
+<path d="M596.6666666666666 563V585M582 577.6666666666666H604" stroke="#c9c9c4" stroke-width="1"/>
+<rect x="582" y="563" width="22" height="22" rx="3" fill="#2a78d6" opacity="0.18"/>
+<rect x="609" y="563" width="22" height="22" rx="3" fill="white" stroke="#1f2328" stroke-width="1.5"/>
+<path d="M616.3333333333334 563V585M609 570.3333333333334H631" stroke="#c9c9c4" stroke-width="1"/>
+<path d="M623.6666666666666 563V585M609 577.6666666666666H631" stroke="#c9c9c4" stroke-width="1"/>
+<rect x="609" y="563" width="22" height="22" rx="3" fill="#2a78d6" opacity="0.18"/>
+<rect x="636" y="563" width="22" height="22" rx="3" fill="white" stroke="#1f2328" stroke-width="1.5"/>
+<path d="M643.3333333333334 563V585M636 570.3333333333334H658" stroke="#c9c9c4" stroke-width="1"/>
+<path d="M650.6666666666666 563V585M636 577.6666666666666H658" stroke="#c9c9c4" stroke-width="1"/>
+<rect x="636" y="563" width="22" height="22" rx="3" fill="#2a78d6" opacity="0.18"/>
+<rect x="663" y="563" width="22" height="22" rx="3" fill="white" stroke="#1f2328" stroke-width="1.5"/>
+<path d="M670.3333333333334 563V585M663 570.3333333333334H685" stroke="#c9c9c4" stroke-width="1"/>
+<path d="M677.6666666666666 563V585M663 577.6666666666666H685" stroke="#c9c9c4" stroke-width="1"/>
+<rect x="663" y="563" width="22" height="22" rx="3" fill="#2a78d6" opacity="0.18"/>
+<rect x="690" y="563" width="22" height="22" rx="3" fill="white" stroke="#1f2328" stroke-width="1.5"/>
+<path d="M697.3333333333334 563V585M690 570.3333333333334H712" stroke="#c9c9c4" stroke-width="1"/>
+<path d="M704.6666666666666 563V585M690 577.6666666666666H712" stroke="#c9c9c4" stroke-width="1"/>
+<rect x="690" y="563" width="22" height="22" rx="3" fill="#2a78d6" opacity="0.18"/>
+<rect x="717" y="563" width="22" height="22" rx="3" fill="white" stroke="#1f2328" stroke-width="1.5"/>
+<path d="M724.3333333333334 563V585M717 570.3333333333334H739" stroke="#c9c9c4" stroke-width="1"/>
+<path d="M731.6666666666666 563V585M717 577.6666666666666H739" stroke="#c9c9c4" stroke-width="1"/>
+<rect x="717" y="563" width="22" height="22" rx="3" fill="#2a78d6" opacity="0.18"/>
+<rect x="744" y="563" width="22" height="22" rx="3" fill="white" stroke="#1f2328" stroke-width="1.5"/>
+<path d="M751.3333333333334 563V585M744 570.3333333333334H766" stroke="#c9c9c4" stroke-width="1"/>
+<path d="M758.6666666666666 563V585M744 577.6666666666666H766" stroke="#c9c9c4" stroke-width="1"/>
+<rect x="744" y="563" width="22" height="22" rx="3" fill="#2a78d6" opacity="0.18"/>
+<rect x="771" y="563" width="22" height="22" rx="3" fill="white" stroke="#1f2328" stroke-width="1.5"/>
+<path d="M778.3333333333334 563V585M771 570.3333333333334H793" stroke="#c9c9c4" stroke-width="1"/>
+<path d="M785.6666666666666 563V585M771 577.6666666666666H793" stroke="#c9c9c4" stroke-width="1"/>
+<rect x="771" y="563" width="22" height="22" rx="3" fill="#2a78d6" opacity="0.18"/>
+<rect x="798" y="563" width="22" height="22" rx="3" fill="white" stroke="#1f2328" stroke-width="1.5"/>
+<path d="M805.3333333333334 563V585M798 570.3333333333334H820" stroke="#c9c9c4" stroke-width="1"/>
+<path d="M812.6666666666666 563V585M798 577.6666666666666H820" stroke="#c9c9c4" stroke-width="1"/>
+<rect x="798" y="563" width="22" height="22" rx="3" fill="#2a78d6" opacity="0.18"/>
+<text x="835" y="580" font-size="14" fill="#1f2328" text-anchor="start" font-weight="normal" font-family="Helvetica, Arial, sans-serif">keeps all 10</text>
+<text x="1270" y="640" font-size="13" fill="#5b6068" text-anchor="end" font-weight="normal" font-family="Helvetica, Arial, sans-serif">Under termination, owning up and being caught cost the same, so hiding pays.</text>
+</svg>
