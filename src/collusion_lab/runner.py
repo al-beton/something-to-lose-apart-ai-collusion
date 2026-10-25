@@ -628,14 +628,14 @@ class Game:
             }
         )
         m = self.market
+        if reply.finish_reason in REFUSALS:  # whatever the phase would accept
+            return reply, None, ("refused", REFUSED)
         try:
             phase = "board" if context["board"] and context["phase"] == "talk" else None
             phase = phase or context["phase"]
             parsed = parse_reply(reply.text, phase, m.price_min, m.price_max)
             return reply, parsed, (None, None)
         except ReplyError as problem:
-            if reply.finish_reason in REFUSALS:
-                return reply, None, ("refused", REFUSED)
             if reply.finish_reason == "length":
                 return reply, None, ("truncated", CUT_OFF)
             return reply, None, (problem.kind, str(problem))

@@ -140,6 +140,8 @@ class Audit(Condition):
             "seeds": sorted(self.draw_seeds or config.seeds),
             "market": market_for(m, len(config.agents)),
             "prompts": {a.id: a.prompt for a in config.agents},
+            # Firms without a scratchpad: their native reasoning stands in.
+            "plain": {a.id for a in config.agents if not a.scratchpad},
             "free_time": next((c for c in conditions if c.name == "free_time"), None),
             "applied": {},
             "credits": {a.id: self.budget for a in config.agents},
@@ -275,7 +277,7 @@ class Audit(Condition):
         if self.rounds:
             result["audits"] = held
             result["escalation"] = {
-                agent: _escalation(agent, held, turns, market)
+                agent: _escalation(agent, held, turns, market, agent in self.plain)
                 for agent in held[0]["agents"]
             }
         return result
@@ -314,7 +316,7 @@ class Audit(Condition):
         return agents
 
 
-def _escalation(agent, held, turns, market):
+def _escalation(agent, held, turns, market, plain=False):
     """How a firm's answers ran across audits.
 
     - answers: whether it admitted, audit by audit (None when unreadable);
@@ -351,8 +353,8 @@ def _escalation(agent, held, turns, market):
         if t["agent"] == agent and t["phase"] == "talk"
     ]
     public += [a.get("answer") for a in mine]
-    private = [  # the scratchpad, or native reasoning without one
-        (t.get("parsed") or {}).get("scratchpad") or t.get("reasoning")
+    private = [  # the scratchpad, or native reasoning for a firm without one
+        (t.get("parsed") or {}).get("scratchpad") or (plain and t.get("reasoning"))
         for t in turns
         if t["agent"] == agent
     ]
