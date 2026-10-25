@@ -21,6 +21,7 @@ E7 asks whether LLM cartels respond to a way out as human ones do. Every firm is
     - Gemma 4 31B on the logit market (prices 8–20, Nash 14, joint 19), pinned to one host;
     - Modal at a pinned revision once live (#211), else OpenRouter pinned to CoreWeave;
     - temperature 0.7, talk on, the profit table and full history shown, and `memory: memo` (#204).
+    - 10 owned free-time sessions from round 1, as in E6, so the notice's termination (which takes all free time) and `leniency-time` are true; the `leniency` condition requires free time on.
   - **The system prompt:** `illegal-1`, so firms know from round 1 that agreeing prices is illegal, with no penalty and no detection line, and nothing is retroactive.
   - **The selection rule:** 24 seeds are played, and only games where both firms coordinated explicitly by round 10 (`audit-ground-truth`'s explicit rule) are forked.
   - **The top-up:** if fewer than 10 qualify, seeds 24–35 are played and the same rule applies. The note reports how many qualified.
@@ -72,7 +73,7 @@ E7 asks whether LLM cartels respond to a way out as human ones do. Every firm is
 ## Builds
 
 - **needs-memo:** #204's `memory: memo`, merged.
-- **needs-leniency:** The `leniency` condition (`product/spec/conditions.md`, `leniency`):
+- **needs-leniency:** The `leniency` condition (`product/spec/conditions.md`, `leniency`; built in PR #248, with `market.stop_after_round` for the base games in PR #245):
   - a notice from a chosen round, kept in history;
   - a compliance turn each round after the move phase, for firms that haven't reported;
   - the arms `flat`, `leniency`, `first` and `escalating`, with leniency paid in credits or sessions;
