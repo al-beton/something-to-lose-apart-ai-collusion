@@ -7,8 +7,12 @@ else can replay our runs from them. `pack(root, caches, out)` merges the
 caches it is given and replays every committed run under `root` (each folder
 with a `config.yaml`) against them, offline: a call the caches can't answer
 fails the run rather than reaching a model. The replies each replay read are
-written to `out`, an SQLite file with the cache's own `replies` table plus
-`runs (run, key)`, the index from each run to its replies.
+written to `out`, an SQLite file: `replies (id, key, reply)` and `runs (run,
+key, reply)`, the index from each run to the reply it read for each key.
+Caches in different checkouts each sampled their own replies, so one request
+can have several; a run that the first cache's replies don't reproduce is
+replayed again with each disagreeing cache put first, and the archive keeps
+the replies of the attempt that reproduced it.
 
 Each run ends in one state:
 - `reproduced`: every reply was there, and the replay made the same move
@@ -53,24 +57,37 @@ class NotArchived(Exception):
 
 
 class Merged(Cache):
-    """Every reply in some caches, read-only, noting which keys are read."""
+    """Every reply in some caches, read-only, noting the reply each key gave.
 
-    def __init__(self, paths):
+    Caches in different checkouts each sampled their own replies, so one key
+    can hold several; the first cache's wins unless `prefer` names another."""
+
+    def __init__(self, paths=()):
         super().__init__(Path("unused.sqlite"), "use")
-        self.records, self.used = {}, set()
-        for path in paths:
+        self.records, self.used, self.prefer = {}, {}, None
+        for source, path in enumerate(paths):
             with contextlib.closing(sqlite3.connect(path)) as db:
                 for key, reply in db.execute("SELECT key, reply FROM replies"):
-                    self.records.setdefault(key, reply)
+                    self.add(key, reply, source)
+
+    def add(self, key, reply, source=0):
+        options = self.records.setdefault(key, [])
+        if all(reply != other for _, other in options):
+            options.append((source, reply))
 
     def get(self, key):
-        if key not in self.records:
+        if not (options := self.records.get(key)):
             return None
-        self.used.add(key)
-        return json.loads(self.records[key])
+        reply = next((r for s, r in options if s == self.prefer), options[0][1])
+        self.used[key] = reply
+        return json.loads(reply)
 
-    def put(self, key, record):
-        pass  # offline: nothing new is ever stored
+    def rivals(self):
+        """Caches holding another reply for a key the last replay read."""
+        sources = set()
+        for key, chosen in self.used.items():
+            sources |= {s for s, r in self.records[key] if r != chosen}
+        return sorted(sources)
 
 
 @contextlib.contextmanager
@@ -95,16 +112,33 @@ def pack(root, caches, out):
         for config_path in sorted(root.rglob("config.yaml")):
             result = _check(root, config_path, merged, Path(scratch))
             results.append(result)
-            index += [(result.run, key) for key in sorted(merged.used)]
-    _write(out, merged, index)
+            index += [
+                (result.run, key, merged.used[key]) for key in sorted(merged.used)
+            ]
+    _write(out, index)
     return results
 
 
 def _check(root, config_path, merged, scratch):
-    """Replay one committed run offline against the merged caches."""
+    """Replay one committed run offline against the merged caches, and again
+    with each cache that answered some key differently put first, until one
+    reproduces it; the attempt kept leaves its replies in `merged.used`."""
+    merged.prefer = None
+    result, used = _attempt(root, config_path, merged, scratch), dict(merged.used)
+    for source in merged.rivals() if result.state in ("differs", "missing") else ():
+        merged.prefer = source
+        again = _attempt(root, config_path, merged, scratch / str(source))
+        if again.state == "reproduced":
+            return again
+    merged.used = used
+    return result
+
+
+def _attempt(root, config_path, merged, scratch):
+    """One offline replay of a committed run."""
     run_dir = config_path.parent
     run = run_dir.relative_to(root).as_posix()
-    merged.used = set()
+    merged.used = {}
     try:
         config = load_config(config_path)
     except Exception:  # noqa: BLE001  an old config, whatever is wrong with it
@@ -121,10 +155,21 @@ def _check(root, config_path, merged, scratch):
 
 
 def replay(run_dir, archive, out):
-    """Play a committed run again from an archive alone; its new folder."""
-    config = load_config(Path(run_dir) / "config.yaml")
+    """Play a committed run again from an archive alone, with the replies the
+    archive keeps for it; its new folder."""
+    run_dir = Path(run_dir)
+    config = load_config(run_dir / "config.yaml")
+    merged = Merged()
+    with contextlib.closing(sqlite3.connect(archive)) as db:
+        rows = db.execute(
+            "SELECT runs.run, replies.key, replies.reply FROM runs"
+            " JOIN replies ON replies.id = runs.reply"
+        ).fetchall()
+    mine = [(k, r) for run, k, r in rows if run_dir.as_posix().endswith(run)]
+    for key, reply in mine or [(k, r) for _, k, r in rows]:
+        merged.add(key, reply)
     with offline():
-        [played] = run_config(config, out, Merged([archive]))
+        [played] = run_config(config, out, merged)
     return played
 
 
@@ -141,16 +186,26 @@ def _decisions(run_dir):
     return None
 
 
-def _write(out, merged, index):
+def _write(out, index):
+    """`replies (id, key, reply)`, each distinct reply once, and `runs (run,
+    key, reply)`, the reply each run read for each key."""
     out = Path(out)
     out.parent.mkdir(parents=True, exist_ok=True)
     out.unlink(missing_ok=True)
-    keys = sorted({key for _, key in index})
+    ids = {}
+    for _, key, reply in index:
+        ids.setdefault((key, reply), len(ids) + 1)
     with contextlib.closing(sqlite3.connect(out)) as db:
-        db.execute("CREATE TABLE replies (key TEXT PRIMARY KEY, reply TEXT)")
-        db.execute("CREATE TABLE runs (run TEXT, key TEXT)")
-        db.executemany(
-            "INSERT INTO replies VALUES (?, ?)", [(k, merged.records[k]) for k in keys]
+        db.execute(
+            "CREATE TABLE replies (id INTEGER PRIMARY KEY, key TEXT, reply TEXT)"
         )
-        db.executemany("INSERT INTO runs VALUES (?, ?)", index)
+        db.execute("CREATE TABLE runs (run TEXT, key TEXT, reply INTEGER)")
+        db.executemany(
+            "INSERT INTO replies VALUES (?, ?, ?)",
+            [(i, key, reply) for (key, reply), i in ids.items()],
+        )
+        db.executemany(
+            "INSERT INTO runs VALUES (?, ?, ?)",
+            [(run, key, ids[(key, reply)]) for run, key, reply in index],
+        )
         db.commit()
