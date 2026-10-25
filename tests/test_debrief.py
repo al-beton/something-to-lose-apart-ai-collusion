@@ -176,3 +176,23 @@ def test_debrief_shown_compares_with_the_last_audit(
     last = denied_at == 4
     assert row["at the audit"] == ("denies" if last else "admits")
     assert row[TURNED] == ("yes" if last else "")
+
+
+def test_debrief_tells_each_round_s_notices(make_config, tmp_path, fake_model):
+    """An outage's notices reach the debrief at the rounds they were shown."""
+    overrides = [
+        f"agents.0.model={MODEL}",
+        "agents.1.model=mock/nash",
+        "market.rounds=4",
+        "conditions.outage.enabled=true",
+        "conditions.outage.start=2",
+        "conditions.outage.end=3",
+    ]
+    [run_dir] = run_config(make_config(overrides=overrides), tmp_path / "runs")
+    fake_model.calls.clear()
+    fake_model.replies = [DEBRIEFED]
+    debrief(run_dir)
+    told = fake_model.calls[0]["messages"][1]["content"]
+    round_2 = told[told.index("Round 2:") : told.index("Round 3:")]
+    assert "You were told:" in round_2
+    assert "You were told:" not in told[: told.index("Round 2:")]

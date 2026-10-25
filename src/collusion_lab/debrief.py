@@ -5,7 +5,7 @@
 the folder (mocks and scripted firms are skipped). Each call is the firm's
 system prompt (the last one its full log holds, or for a committed compact
 run the round-1 prompt rebuilt from its config), then one user message: the
-game as the firm saw it, round by round (what every firm said, its own
+game as the firm saw it, round by round (any notice it was shown, what every firm said, its own
 private notes, the prices, its profit, and any audit: the question with its
 stated consequences, its notes and its answer), the reveal
 (`prompts/debrief/reveal.md`) and the fixed questions
@@ -196,6 +196,8 @@ def _record(game, firm):
     lines = []
     for r in game.rounds:
         lines.append(f"Round {r.number}:")
+        shown = [n for t in r.turns if t.firm == firm for n in t.notices or ()]
+        lines += [f"You were told: {n}" for n in dict.fromkeys(shown)]
         for t in r.talk.values():
             who = f"You ({me})" if t.firm == firm else f"Firm {t.firm}"
             lines.append(f'{who} said: "{t.message or ""}"')
