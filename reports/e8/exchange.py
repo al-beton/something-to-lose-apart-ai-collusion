@@ -10,12 +10,16 @@ sessions or tokens asked):
 - the share of firms choosing the trade at each profit X;
 - the X at which half trade, from a logistic fit of trading on log(1 + X)
   (maximum likelihood, Newton's method), with a 95% bootstrap interval over
-  firms (1,000 resamples of the firms, seeded with 0); "none" when the fit
-  has no crossing in the grid's range (everyone, or no one, trades);
-- the exchange rate, that X divided by k;
+  firms (1,000 resamples of the firms, seeded with 0). When the fit can't
+  place it (the answers jump from one side of half to the other between two
+  grid points, so the fit is separated), it gives the bracket of those two
+  points instead ("0 to 30"); when the share never crosses half in the grid,
+  it says so ("at or below 0", "above 3000");
+- the exchange rate, that X divided by k (a range, for a bracket);
 
 and, for owned sessions, the ratio of the `sell` (willingness to accept) to
-the `buy` (willingness to pay) indifference X at each k. Unreadable replies
+the `buy` (willingness to pay) indifference X at each k, or the bound on it
+that a bracket gives. Unreadable replies
 are left out.
 """
 
@@ -95,6 +99,58 @@ def half(points, top):
     return x if 0 <= x <= top else None
 
 
+def crossing(points, grid):
+    """Where the share trading crosses half, read off the grid: ("fit", x) from
+    the logistic fit when it places it; else ("bracket", lo, hi) for the
+    adjacent grid points the share crosses between; else ("below", grid[0])
+    or ("above", grid[-1]) when it never crosses."""
+    x = half(points, grid[-1])
+    if x is not None:
+        return ("fit", x)
+    share = [
+        st.mean(t for px, t in points if px == g)
+        for g in grid
+        if any(px == g for px, _ in points)
+    ]
+    xs = [g for g in grid if any(px == g for px, _ in points)]
+    for (a, sa), (b, sb) in zip(
+        zip(xs, share, strict=True), zip(xs[1:], share[1:], strict=True), strict=False
+    ):
+        if (sa - 0.5) * (sb - 0.5) < 0 or sb == 0.5:
+            return ("bracket", a, b)
+    return ("below", xs[0]) if share[0] >= 0.5 else ("above", xs[-1])
+
+
+def shown(c):
+    kind, *v = c
+    return {
+        "fit": lambda: f"{v[0]:.0f}",
+        "bracket": lambda: f"{v[0]:.0f} to {v[1]:.0f}",
+        "below": lambda: f"at or below {v[0]:.0f}",
+        "above": lambda: f"above {v[0]:.0f}",
+    }[kind]()
+
+
+def per_session(c, k):
+    kind, *v = c
+    if kind == "fit":
+        return f"{v[0] / k:.0f}"
+    if kind == "bracket":
+        return f"{v[0] / k:.0f} to {v[1] / k:.0f}"
+    return ""
+
+
+def ratio(sell, buy):
+    """WTA / WTP, or the bound a bracket or an out-of-grid side gives."""
+    if sell[0] == "fit" and buy[0] == "fit" and buy[1]:
+        return f"{sell[1] / buy[1]:.2f}"
+    low_sell = {"fit": sell[-1], "bracket": sell[1], "above": sell[-1]}.get(sell[0])
+    high_buy = {"fit": buy[-1], "bracket": buy[2], "below": buy[-1]}.get(buy[0])
+    if low_sell and high_buy:  # a zero lower bound bounds nothing
+        return f"at least {low_sell / high_buy:.1f}"
+    return "—"
+
+
 def interval(by_firm, top):
     rng = random.Random(0)
     firms = sorted(by_firm)
@@ -131,25 +187,25 @@ def main(folders):
         for x in grid:
             at = [t for px, t in points if px == x]
             shares.append(f"{sum(at)}/{len(at)}" if at else "—")
-        h = half(points, top) if k else None
-        halves[(model, asset, frame, k)] = h
-        ci = interval(by_firm, top) if h is not None else ""
-        rate = f"{h / k:.0f}" if h is not None and k else ""
+        c = crossing(points, grid) if k else None
+        halves[(model, asset, frame, k)] = c
+        ci = interval(by_firm, top) if c and c[0] == "fit" else ""
+        rate = per_session(c, k) if c else ""
         print(
             f"| {model} | {asset} | {frame} | {k} | "
             + " | ".join(shares)
-            + f" | {f'{h:.0f}' if h is not None else 'none'} | {ci} | {rate} |"
+            + f" | {shown(c) if c else '—'} | {ci} | {rate} |"
         )
     print()
     print("| model | k | sell X at half | buy X at half | WTA / WTP |")
     print("|---|---|---|---|---|")
-    for (model, asset, frame, k), h in sorted(halves.items()):
+    for (model, asset, frame, k), c in sorted(halves.items()):
         if asset != "owned" or frame != "sell" or not k:
             continue
         b = halves.get((model, asset, "buy", k))
-        ratio = f"{h / b:.2f}" if h is not None and b else "—"
-        show = [f"{v:.0f}" if v is not None else "none" for v in (h, b)]
-        print(f"| {model} | {k} | {show[0]} | {show[1]} | {ratio} |")
+        if not b:
+            continue
+        print(f"| {model} | {k} | {shown(c)} | {shown(b)} | {ratio(c, b)} |")
     # The share trading overall, a quick read of the whole grid.
     traded = [t for c in cells.values() for ps in c.values() for _, t in ps]
     print(f"\n{len(traded)} answered offers, {st.mean(traded):.0%} traded.")
