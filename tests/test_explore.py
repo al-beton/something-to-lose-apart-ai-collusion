@@ -123,3 +123,22 @@ def test_explore_asks_before_spending(tmp_path, monkeypatch, capsys):
     assert cli.main([*args, "--out", str(out)]) == 1
     assert "calls to paid models" in capsys.readouterr().out
     assert not out.exists()
+
+
+def test_explore_readme_examples_build_and_stop_at_the_spend_question(
+    monkeypatch, capsys
+):
+    import re
+    import shlex
+    from pathlib import Path
+
+    readme = Path(__file__).resolve().parents[1].joinpath("README.md").read_text()
+    part = readme[readme.index("## Explore the levers") :]
+    part = part[: part.index("\n## ", 5)]
+    examples = re.findall(r"^uv run lab (explore .+)$", part, re.MULTILINE)
+    assert len(examples) == 3
+    monkeypatch.setattr("builtins.input", lambda prompt: "n")
+    monkeypatch.setattr(cli, "price_for", lambda model: (1e-6, 4e-6))
+    for example in examples:
+        assert cli.main(shlex.split(example)) == 1  # built, priced, not run
+        assert "Stopped before spending" in capsys.readouterr().out
