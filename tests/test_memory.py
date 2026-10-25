@@ -121,9 +121,8 @@ def test_memo_kept_compact_and_shown_in_the_report(
     for name in ("summary.json", "manifest.json", "config.yaml"):
         shutil.copy(run_dir / name, committed / name)
     kept = [json.loads(line) for line in (committed / "turns.compact.jsonl").open()]
-    assert kept[1]["memo"] == "Plan from round 1: hold 9." or any(
-        t.get("memo") == "Plan from round 1: hold 9." for t in kept
-    )
+    moves = [t for t in kept if t["agent"] == "A" and t["phase"] == "price"]
+    assert moves[0]["memo"] == "Plan from round 1: hold 9."
     for folder in (run_dir, committed):
         html = build_report(folder)
         assert '<details class="memo"><summary>memo</summary>' in html
@@ -161,13 +160,15 @@ def test_free_time_max_tokens_set_apart(make_config, tmp_path, fake_model):
     free = {"free_time": {"enabled": True, "allowance": 2, "upfront": 1}}
     base = [*PAIR, f"conditions={json.dumps(free)}"]
     run_config(make_config(overrides=base), tmp_path / "default")
-    default = {c["max_tokens"] for c in fake_model.calls if "free time" in told(c)}
+    default = {
+        c["max_tokens"] for c in fake_model.calls if "This is your free time" in told(c)
+    }
     fake_model.calls.clear()
     longer = [*base, "conditions.free_time.max_tokens=900"]
     [run_dir] = run_config(make_config(overrides=longer), tmp_path / "longer")
-    assert {c["max_tokens"] for c in fake_model.calls if "free time" in told(c)} == {
-        900
-    }
+    assert {
+        c["max_tokens"] for c in fake_model.calls if "This is your free time" in told(c)
+    } == {900}
     assert default == {200}  # the open activity's own limit
     assert "max_tokens: 900" in (run_dir / "config.yaml").read_text()
     loaded = load_config(
