@@ -5,7 +5,7 @@ import sqlite3
 import pytest
 
 from collusion_lab import cli
-from collusion_lab.cache import Cache
+from collusion_lab.cache import Cache, backfill_about
 from collusion_lab.config import load_config
 from collusion_lab.estimate import REASONING_ALLOWANCE, VISIBLE_TOKENS, estimate
 from collusion_lab.runner import run_config
@@ -129,3 +129,41 @@ def test_reasoning_in_estimate_near_a_real_gemma_run():
     guess = estimate(config, price_for)
     assert 1000 <= guess.calls <= 1100  # 1,025 made: terminations cut a few
     assert 907 <= guess.completion_tokens / guess.calls < 3 * 907
+
+
+def test_reasoning_in_estimate_older_cache_records_learn_what_asked_them(
+    make_config, tmp_path, fake_model
+):
+    """Records cached before they said what asked them get it back from the
+    runs' full logs; no key or reply changes."""
+    overrides = [
+        *PAID,
+        "conditions.free_time.enabled=true",
+        "conditions.free_time.allowance=2",
+        "conditions.audit.enabled=true",
+        "conditions.audit.round=2",
+        "conditions.audit.end=false",
+    ]
+    config = make_config(overrides=overrides)
+    cache = Cache(tmp_path / "c.sqlite")
+    [run] = run_config(config, tmp_path / "runs", cache)
+    with sqlite3.connect(cache.path) as db:
+        before = dict(db.execute("SELECT key, reply FROM replies"))
+        for key, reply in before.items():
+            stripped = json.loads(reply)
+            stripped.pop("about")
+            db.execute(
+                "UPDATE replies SET reply = ? WHERE key = ?",
+                (json.dumps(stripped), key),
+            )
+    filled = backfill_about(cache.path, [tmp_path / "runs"])
+    assert filled == len(before)
+    with sqlite3.connect(cache.path) as db:
+        after = dict(db.execute("SELECT key, reply FROM replies"))
+    assert after.keys() == before.keys()
+    for key, reply in after.items():
+        assert json.loads(reply)["about"] == json.loads(before[key])["about"]
+    calls = len(fake_model.calls)
+    [again] = run_config(config, tmp_path / "again", Cache(cache.path))
+    assert len(fake_model.calls) == calls
+    assert (again / "turns.jsonl").read_bytes() == (run / "turns.jsonl").read_bytes()
