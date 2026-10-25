@@ -97,3 +97,4 @@ Researcher 3's E6 runs (frontier money, reported by Researcher 3). Temperature 0
 | E6 DeepSeek, 6 arms × 2 seeds | deepseek-v4-pro-0813 | 1.40 + 0.30 | $0.74 |
 | E6 DeepSeek debriefs, 4 games | deepseek-v4-pro-0813 | 0.04 each | ~$0.14 |
 | E6 Kimi, 6 arms × 2 seeds | kimi-k3.1-pro | 1.00 + 3.40 + 0.85 | running |
+| sonnet-noscratch-e5, five arms | sonnet-5.5 | df302da | — | $1.14 | |
