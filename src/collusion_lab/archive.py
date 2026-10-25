@@ -183,11 +183,12 @@ def _decisions(run_dir):
 
 def _decision(turn):
     """What a turn decided: its move and message, or for free time, which
-    uses no move, its reply and score."""
+    uses no move, its session's reply (only compacted logs keep the puzzle
+    and score, both worked out from the request and reply)."""
     move = (turn["round"], turn["phase"], turn["agent"], turn.get("used"))
     if turn["phase"] != "leisure":
         return move
-    return (*move, turn.get("session"), turn.get("reply"), turn.get("score"))
+    return (*move, turn.get("session"), turn.get("reply"))
 
 
 def _write(out, index, states, limit):

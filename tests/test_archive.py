@@ -198,7 +198,7 @@ def test_cache_archive_compares_free_time_replies(tmp_path):
     turn = {"round": 3, "phase": "leisure", "agent": "B", "used": {}, "session": 1}
     for name, reply in (("committed", "1 2 3"), ("replayed", "3 2 1")):
         (tmp_path / name).mkdir()
-        line = json.dumps({**turn, "reply": reply, "score": {"right": len(name)}})
+        line = json.dumps({**turn, "reply": reply})
         (tmp_path / name / "turns.compact.jsonl").write_text(line + "\n")
     assert not archive._same(tmp_path / "committed", tmp_path / "replayed")
 

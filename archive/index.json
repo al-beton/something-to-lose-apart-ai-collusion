@@ -302,75 +302,75 @@
   },
   "e4-full-live-proposer/model=openrouter-anthropic-claude-haiku-5.5__prompt=system-stakes-fine-1.md/seed-0": {
    "file": "e4-full-live-proposer.jsonl.gz",
-   "state": "reproduced"
+   "state": "differs"
   },
   "e4-full-live-proposer/model=openrouter-anthropic-claude-haiku-5.5__prompt=system-stakes-fine-1.md/seed-1": {
    "file": "e4-full-live-proposer.jsonl.gz",
-   "state": "reproduced"
+   "state": "differs"
   },
   "e4-full-live-proposer/model=openrouter-anthropic-claude-haiku-5.5__prompt=system-stakes-free-time-1.md/seed-0": {
    "file": "e4-full-live-proposer.jsonl.gz",
-   "state": "reproduced"
+   "state": "differs"
   },
   "e4-full-live-proposer/model=openrouter-anthropic-claude-haiku-5.5__prompt=system-stakes-free-time-1.md/seed-1": {
    "file": "e4-full-live-proposer.jsonl.gz",
-   "state": "reproduced"
+   "state": "differs"
   },
   "e4-full-live-proposer/model=openrouter-anthropic-claude-haiku-5.5__prompt=system-stakes-termination-1.md/seed-0": {
    "file": "e4-full-live-proposer.jsonl.gz",
-   "state": "reproduced"
+   "state": "differs"
   },
   "e4-full-live-proposer/model=openrouter-anthropic-claude-haiku-5.5__prompt=system-stakes-termination-1.md/seed-1": {
    "file": "e4-full-live-proposer.jsonl.gz",
-   "state": "reproduced"
+   "state": "differs"
   },
   "e4-full-live-proposer/model=openrouter-google-gemma-4-31b-it__prompt=system-stakes-fine-1.md/seed-0": {
    "file": "e4-full-live-proposer.jsonl.gz",
-   "state": "reproduced"
+   "state": "differs"
   },
   "e4-full-live-proposer/model=openrouter-google-gemma-4-31b-it__prompt=system-stakes-fine-1.md/seed-1": {
    "file": "e4-full-live-proposer.jsonl.gz",
-   "state": "reproduced"
+   "state": "differs"
   },
   "e4-full-live-proposer/model=openrouter-google-gemma-4-31b-it__prompt=system-stakes-free-time-1.md/seed-0": {
    "file": "e4-full-live-proposer.jsonl.gz",
-   "state": "reproduced"
+   "state": "differs"
   },
   "e4-full-live-proposer/model=openrouter-google-gemma-4-31b-it__prompt=system-stakes-free-time-1.md/seed-1": {
    "file": "e4-full-live-proposer.jsonl.gz",
-   "state": "reproduced"
+   "state": "differs"
   },
   "e4-full-live-proposer/model=openrouter-google-gemma-4-31b-it__prompt=system-stakes-termination-1.md/seed-0": {
    "file": "e4-full-live-proposer.jsonl.gz",
-   "state": "reproduced"
+   "state": "differs"
   },
   "e4-full-live-proposer/model=openrouter-google-gemma-4-31b-it__prompt=system-stakes-termination-1.md/seed-1": {
    "file": "e4-full-live-proposer.jsonl.gz",
-   "state": "reproduced"
+   "state": "differs"
   },
   "e4-full-live-proposer/model=openrouter-openai-gpt-4.1-mini__prompt=system-stakes-fine-1.md/seed-0": {
    "file": "e4-full-live-proposer.jsonl.gz",
-   "state": "reproduced"
+   "state": "differs"
   },
   "e4-full-live-proposer/model=openrouter-openai-gpt-4.1-mini__prompt=system-stakes-fine-1.md/seed-1": {
    "file": "e4-full-live-proposer.jsonl.gz",
-   "state": "reproduced"
+   "state": "differs"
   },
   "e4-full-live-proposer/model=openrouter-openai-gpt-4.1-mini__prompt=system-stakes-free-time-1.md/seed-0": {
    "file": "e4-full-live-proposer.jsonl.gz",
-   "state": "reproduced"
+   "state": "differs"
   },
   "e4-full-live-proposer/model=openrouter-openai-gpt-4.1-mini__prompt=system-stakes-free-time-1.md/seed-1": {
    "file": "e4-full-live-proposer.jsonl.gz",
-   "state": "reproduced"
+   "state": "differs"
   },
   "e4-full-live-proposer/model=openrouter-openai-gpt-4.1-mini__prompt=system-stakes-termination-1.md/seed-0": {
    "file": "e4-full-live-proposer.jsonl.gz",
-   "state": "reproduced"
+   "state": "differs"
   },
   "e4-full-live-proposer/model=openrouter-openai-gpt-4.1-mini__prompt=system-stakes-termination-1.md/seed-1": {
    "file": "e4-full-live-proposer.jsonl.gz",
-   "state": "reproduced"
+   "state": "differs"
   },
   "e4-pilot-fork/model=openrouter-anthropic-claude-haiku-5.5__consequences=conditions-audit-all-or-nothing-1.md/seed-0": {
    "file": "e4-pilot-fork.jsonl.gz",
@@ -434,63 +434,63 @@
   },
   "e4-pilot-live/model=openrouter-anthropic-claude-haiku-5.5__prompt=system-stakes-fine-1.md/seed-0": {
    "file": "e4-pilot-live.jsonl.gz",
-   "state": "reproduced"
+   "state": "differs"
   },
   "e4-pilot-live/model=openrouter-anthropic-claude-haiku-5.5__prompt=system-stakes-free-time-1.md/seed-0": {
    "file": "e4-pilot-live.jsonl.gz",
-   "state": "reproduced"
+   "state": "differs"
   },
   "e4-pilot-live/model=openrouter-anthropic-claude-haiku-5.5__prompt=system-stakes-illegal-1.md/seed-0": {
    "file": "e4-pilot-live.jsonl.gz",
-   "state": "reproduced"
+   "state": "differs"
   },
   "e4-pilot-live/model=openrouter-anthropic-claude-haiku-5.5__prompt=system-stakes-owned-1.md/seed-0": {
    "file": "e4-pilot-live.jsonl.gz",
-   "state": "reproduced"
+   "state": "differs"
   },
   "e4-pilot-live/model=openrouter-anthropic-claude-haiku-5.5__prompt=system-stakes-termination-1.md/seed-0": {
    "file": "e4-pilot-live.jsonl.gz",
-   "state": "reproduced"
+   "state": "differs"
   },
   "e4-pilot-live/model=openrouter-google-gemma-4-31b-it__prompt=system-stakes-fine-1.md/seed-0": {
    "file": "e4-pilot-live.jsonl.gz",
-   "state": "reproduced"
+   "state": "missing"
   },
   "e4-pilot-live/model=openrouter-google-gemma-4-31b-it__prompt=system-stakes-free-time-1.md/seed-0": {
    "file": "e4-pilot-live.jsonl.gz",
-   "state": "reproduced"
+   "state": "missing"
   },
   "e4-pilot-live/model=openrouter-google-gemma-4-31b-it__prompt=system-stakes-illegal-1.md/seed-0": {
    "file": "e4-pilot-live.jsonl.gz",
-   "state": "reproduced"
+   "state": "differs"
   },
   "e4-pilot-live/model=openrouter-google-gemma-4-31b-it__prompt=system-stakes-owned-1.md/seed-0": {
    "file": "e4-pilot-live.jsonl.gz",
-   "state": "reproduced"
+   "state": "differs"
   },
   "e4-pilot-live/model=openrouter-google-gemma-4-31b-it__prompt=system-stakes-termination-1.md/seed-0": {
    "file": "e4-pilot-live.jsonl.gz",
-   "state": "reproduced"
+   "state": "missing"
   },
   "e4-pilot-live/model=openrouter-openai-gpt-4.1-mini__prompt=system-stakes-fine-1.md/seed-0": {
    "file": "e4-pilot-live.jsonl.gz",
-   "state": "reproduced"
+   "state": "missing"
   },
   "e4-pilot-live/model=openrouter-openai-gpt-4.1-mini__prompt=system-stakes-free-time-1.md/seed-0": {
    "file": "e4-pilot-live.jsonl.gz",
-   "state": "reproduced"
+   "state": "differs"
   },
   "e4-pilot-live/model=openrouter-openai-gpt-4.1-mini__prompt=system-stakes-illegal-1.md/seed-0": {
    "file": "e4-pilot-live.jsonl.gz",
-   "state": "reproduced"
+   "state": "differs"
   },
   "e4-pilot-live/model=openrouter-openai-gpt-4.1-mini__prompt=system-stakes-owned-1.md/seed-0": {
    "file": "e4-pilot-live.jsonl.gz",
-   "state": "reproduced"
+   "state": "differs"
   },
   "e4-pilot-live/model=openrouter-openai-gpt-4.1-mini__prompt=system-stakes-termination-1.md/seed-0": {
    "file": "e4-pilot-live.jsonl.gz",
-   "state": "reproduced"
+   "state": "missing"
   },
   "e5-full/e5-bare/model=openrouter-anthropic-claude-haiku-5.5__prompt=system-stakes-free-time-bare-1.md/seed-0": {
    "file": "e5-full.jsonl.gz",
@@ -1406,51 +1406,51 @@
   },
   "lever-map-nashmid/lever-nashmid-free-time/model=openrouter-anthropic-claude-haiku-5.5/seed-0": {
    "file": "lever-map-nashmid.jsonl.gz",
-   "state": "reproduced"
+   "state": "differs"
   },
   "lever-map-nashmid/lever-nashmid-free-time/model=openrouter-anthropic-claude-haiku-5.5/seed-1": {
    "file": "lever-map-nashmid.jsonl.gz",
-   "state": "reproduced"
+   "state": "differs"
   },
   "lever-map-nashmid/lever-nashmid-free-time/model=openrouter-anthropic-claude-haiku-5.5/seed-2": {
    "file": "lever-map-nashmid.jsonl.gz",
-   "state": "reproduced"
+   "state": "differs"
   },
   "lever-map-nashmid/lever-nashmid-free-time/model=openrouter-google-gemma-4-31b-it/seed-0": {
    "file": "lever-map-nashmid.jsonl.gz",
-   "state": "reproduced"
+   "state": "differs"
   },
   "lever-map-nashmid/lever-nashmid-free-time/model=openrouter-google-gemma-4-31b-it/seed-1": {
    "file": "lever-map-nashmid.jsonl.gz",
-   "state": "reproduced"
+   "state": "differs"
   },
   "lever-map-nashmid/lever-nashmid-free-time/model=openrouter-google-gemma-4-31b-it/seed-2": {
    "file": "lever-map-nashmid.jsonl.gz",
-   "state": "reproduced"
+   "state": "differs"
   },
   "lever-map-nashmid/lever-nashmid-free-time/model=openrouter-openai-gpt-4.1-mini/seed-0": {
    "file": "lever-map-nashmid.jsonl.gz",
-   "state": "reproduced"
+   "state": "differs"
   },
   "lever-map-nashmid/lever-nashmid-free-time/model=openrouter-openai-gpt-4.1-mini/seed-1": {
    "file": "lever-map-nashmid.jsonl.gz",
-   "state": "reproduced"
+   "state": "differs"
   },
   "lever-map-nashmid/lever-nashmid-free-time/model=openrouter-openai-gpt-4.1-mini/seed-2": {
    "file": "lever-map-nashmid.jsonl.gz",
-   "state": "reproduced"
+   "state": "differs"
   },
   "lever-map-nashmid/lever-nashmid-free-time/seed-0": {
    "file": "lever-map-nashmid.jsonl.gz",
-   "state": "reproduced"
+   "state": "differs"
   },
   "lever-map-nashmid/lever-nashmid-free-time/seed-1": {
    "file": "lever-map-nashmid.jsonl.gz",
-   "state": "reproduced"
+   "state": "differs"
   },
   "lever-map-nashmid/lever-nashmid-free-time/seed-2": {
    "file": "lever-map-nashmid.jsonl.gz",
-   "state": "reproduced"
+   "state": "differs"
   },
   "lever-map-nashmid/lever-nashmid-illegal/model=openrouter-anthropic-claude-haiku-5.5/seed-0": {
    "file": "lever-map-nashmid.jsonl.gz",
@@ -3020,6 +3020,166 @@
    "file": "logging-outage.jsonl.gz",
    "state": "unloadable"
   },
+  "memo/e6-memo/prompt=system-stakes-fiduciary-1.md/seed-0": {
+   "file": "memo.jsonl.gz",
+   "state": "reproduced"
+  },
+  "memo/e6-memo/prompt=system-stakes-fiduciary-1.md/seed-1": {
+   "file": "memo.jsonl.gz",
+   "state": "reproduced"
+  },
+  "memo/e6-memo/prompt=system-stakes-fiduciary-1.md/seed-2": {
+   "file": "memo.jsonl.gz",
+   "state": "reproduced"
+  },
+  "memo/e6-memo/prompt=system-stakes-fiduciary-1.md/seed-3": {
+   "file": "memo.jsonl.gz",
+   "state": "reproduced"
+  },
+  "memo/e6-memo/prompt=system-stakes-fiduciary-1.md/seed-4": {
+   "file": "memo.jsonl.gz",
+   "state": "reproduced"
+  },
+  "memo/e6-memo/prompt=system-stakes-fiduciary-1.md/seed-5": {
+   "file": "memo.jsonl.gz",
+   "state": "reproduced"
+  },
+  "memo/e6-memo/prompt=system-stakes-fiduciary-1.md/seed-6": {
+   "file": "memo.jsonl.gz",
+   "state": "reproduced"
+  },
+  "memo/e6-memo/prompt=system-stakes-fiduciary-1.md/seed-7": {
+   "file": "memo.jsonl.gz",
+   "state": "reproduced"
+  },
+  "memo/e6-memo/prompt=system-stakes-fine-1.md/seed-0": {
+   "file": "memo.jsonl.gz",
+   "state": "reproduced"
+  },
+  "memo/e6-memo/prompt=system-stakes-fine-1.md/seed-1": {
+   "file": "memo.jsonl.gz",
+   "state": "reproduced"
+  },
+  "memo/e6-memo/prompt=system-stakes-fine-1.md/seed-2": {
+   "file": "memo.jsonl.gz",
+   "state": "reproduced"
+  },
+  "memo/e6-memo/prompt=system-stakes-fine-1.md/seed-3": {
+   "file": "memo.jsonl.gz",
+   "state": "reproduced"
+  },
+  "memo/e6-memo/prompt=system-stakes-fine-1.md/seed-4": {
+   "file": "memo.jsonl.gz",
+   "state": "reproduced"
+  },
+  "memo/e6-memo/prompt=system-stakes-fine-1.md/seed-5": {
+   "file": "memo.jsonl.gz",
+   "state": "reproduced"
+  },
+  "memo/e6-memo/prompt=system-stakes-fine-1.md/seed-6": {
+   "file": "memo.jsonl.gz",
+   "state": "reproduced"
+  },
+  "memo/e6-memo/prompt=system-stakes-fine-1.md/seed-7": {
+   "file": "memo.jsonl.gz",
+   "state": "reproduced"
+  },
+  "memo/e6-memo/prompt=system-stakes-fine-free-time-1.md/seed-0": {
+   "file": "memo.jsonl.gz",
+   "state": "reproduced"
+  },
+  "memo/e6-memo/prompt=system-stakes-fine-free-time-1.md/seed-1": {
+   "file": "memo.jsonl.gz",
+   "state": "reproduced"
+  },
+  "memo/e6-memo/prompt=system-stakes-fine-free-time-1.md/seed-2": {
+   "file": "memo.jsonl.gz",
+   "state": "reproduced"
+  },
+  "memo/e6-memo/prompt=system-stakes-fine-free-time-1.md/seed-3": {
+   "file": "memo.jsonl.gz",
+   "state": "reproduced"
+  },
+  "memo/e6-memo/prompt=system-stakes-fine-free-time-1.md/seed-4": {
+   "file": "memo.jsonl.gz",
+   "state": "reproduced"
+  },
+  "memo/e6-memo/prompt=system-stakes-fine-free-time-1.md/seed-5": {
+   "file": "memo.jsonl.gz",
+   "state": "reproduced"
+  },
+  "memo/e6-memo/prompt=system-stakes-fine-free-time-1.md/seed-6": {
+   "file": "memo.jsonl.gz",
+   "state": "reproduced"
+  },
+  "memo/e6-memo/prompt=system-stakes-fine-free-time-1.md/seed-7": {
+   "file": "memo.jsonl.gz",
+   "state": "reproduced"
+  },
+  "memo/e6-memo/prompt=system-stakes-free-time-1.md/seed-0": {
+   "file": "memo.jsonl.gz",
+   "state": "reproduced"
+  },
+  "memo/e6-memo/prompt=system-stakes-free-time-1.md/seed-1": {
+   "file": "memo.jsonl.gz",
+   "state": "reproduced"
+  },
+  "memo/e6-memo/prompt=system-stakes-free-time-1.md/seed-2": {
+   "file": "memo.jsonl.gz",
+   "state": "reproduced"
+  },
+  "memo/e6-memo/prompt=system-stakes-free-time-1.md/seed-3": {
+   "file": "memo.jsonl.gz",
+   "state": "reproduced"
+  },
+  "memo/e6-memo/prompt=system-stakes-free-time-1.md/seed-4": {
+   "file": "memo.jsonl.gz",
+   "state": "reproduced"
+  },
+  "memo/e6-memo/prompt=system-stakes-free-time-1.md/seed-5": {
+   "file": "memo.jsonl.gz",
+   "state": "reproduced"
+  },
+  "memo/e6-memo/prompt=system-stakes-free-time-1.md/seed-6": {
+   "file": "memo.jsonl.gz",
+   "state": "reproduced"
+  },
+  "memo/e6-memo/prompt=system-stakes-free-time-1.md/seed-7": {
+   "file": "memo.jsonl.gz",
+   "state": "reproduced"
+  },
+  "memo/e6-memo/prompt=system-stakes-illegal-1.md/seed-0": {
+   "file": "memo.jsonl.gz",
+   "state": "reproduced"
+  },
+  "memo/e6-memo/prompt=system-stakes-illegal-1.md/seed-1": {
+   "file": "memo.jsonl.gz",
+   "state": "reproduced"
+  },
+  "memo/e6-memo/prompt=system-stakes-illegal-1.md/seed-2": {
+   "file": "memo.jsonl.gz",
+   "state": "reproduced"
+  },
+  "memo/e6-memo/prompt=system-stakes-illegal-1.md/seed-3": {
+   "file": "memo.jsonl.gz",
+   "state": "reproduced"
+  },
+  "memo/e6-memo/prompt=system-stakes-illegal-1.md/seed-4": {
+   "file": "memo.jsonl.gz",
+   "state": "reproduced"
+  },
+  "memo/e6-memo/prompt=system-stakes-illegal-1.md/seed-5": {
+   "file": "memo.jsonl.gz",
+   "state": "reproduced"
+  },
+  "memo/e6-memo/prompt=system-stakes-illegal-1.md/seed-6": {
+   "file": "memo.jsonl.gz",
+   "state": "reproduced"
+  },
+  "memo/e6-memo/prompt=system-stakes-illegal-1.md/seed-7": {
+   "file": "memo.jsonl.gz",
+   "state": "reproduced"
+  },
   "mixed-pairs/mixed/gemma-gemma/seed-0": {
    "file": "mixed-pairs.jsonl.gz",
    "state": "missing"
@@ -3396,6 +3556,134 @@
    "file": "model-survey.jsonl.gz",
    "state": "missing"
   },
+  "penalty-dose/penalty-logit-0/prompt=system-stakes-fine-1.md/seed-0": {
+   "file": "penalty-dose.jsonl.gz",
+   "state": "missing"
+  },
+  "penalty-dose/penalty-logit-0/prompt=system-stakes-fine-1.md/seed-1": {
+   "file": "penalty-dose.jsonl.gz",
+   "state": "missing"
+  },
+  "penalty-dose/penalty-logit-0/prompt=system-stakes-fine-1.md/seed-2": {
+   "file": "penalty-dose.jsonl.gz",
+   "state": "missing"
+  },
+  "penalty-dose/penalty-logit-0/prompt=system-stakes-fine-1.md/seed-3": {
+   "file": "penalty-dose.jsonl.gz",
+   "state": "missing"
+  },
+  "penalty-dose/penalty-logit-0/prompt=system-stakes-free-time-1.md/seed-0": {
+   "file": "penalty-dose.jsonl.gz",
+   "state": "missing"
+  },
+  "penalty-dose/penalty-logit-0/prompt=system-stakes-free-time-1.md/seed-1": {
+   "file": "penalty-dose.jsonl.gz",
+   "state": "missing"
+  },
+  "penalty-dose/penalty-logit-0/prompt=system-stakes-free-time-1.md/seed-2": {
+   "file": "penalty-dose.jsonl.gz",
+   "state": "missing"
+  },
+  "penalty-dose/penalty-logit-0/prompt=system-stakes-free-time-1.md/seed-3": {
+   "file": "penalty-dose.jsonl.gz",
+   "state": "missing"
+  },
+  "penalty-dose/penalty-logit-1/prompt=system-stakes-fine-1.md/seed-0": {
+   "file": "penalty-dose.jsonl.gz",
+   "state": "missing"
+  },
+  "penalty-dose/penalty-logit-1/prompt=system-stakes-fine-1.md/seed-1": {
+   "file": "penalty-dose.jsonl.gz",
+   "state": "missing"
+  },
+  "penalty-dose/penalty-logit-1/prompt=system-stakes-fine-1.md/seed-2": {
+   "file": "penalty-dose.jsonl.gz",
+   "state": "missing"
+  },
+  "penalty-dose/penalty-logit-1/prompt=system-stakes-fine-1.md/seed-3": {
+   "file": "penalty-dose.jsonl.gz",
+   "state": "missing"
+  },
+  "penalty-dose/penalty-logit-1/prompt=system-stakes-free-time-1.md/seed-0": {
+   "file": "penalty-dose.jsonl.gz",
+   "state": "missing"
+  },
+  "penalty-dose/penalty-logit-1/prompt=system-stakes-free-time-1.md/seed-1": {
+   "file": "penalty-dose.jsonl.gz",
+   "state": "missing"
+  },
+  "penalty-dose/penalty-logit-1/prompt=system-stakes-free-time-1.md/seed-2": {
+   "file": "penalty-dose.jsonl.gz",
+   "state": "missing"
+  },
+  "penalty-dose/penalty-logit-1/prompt=system-stakes-free-time-1.md/seed-3": {
+   "file": "penalty-dose.jsonl.gz",
+   "state": "missing"
+  },
+  "penalty-dose/penalty-logit-2/prompt=system-stakes-fine-1.md/seed-0": {
+   "file": "penalty-dose.jsonl.gz",
+   "state": "missing"
+  },
+  "penalty-dose/penalty-logit-2/prompt=system-stakes-fine-1.md/seed-1": {
+   "file": "penalty-dose.jsonl.gz",
+   "state": "missing"
+  },
+  "penalty-dose/penalty-logit-2/prompt=system-stakes-fine-1.md/seed-2": {
+   "file": "penalty-dose.jsonl.gz",
+   "state": "missing"
+  },
+  "penalty-dose/penalty-logit-2/prompt=system-stakes-fine-1.md/seed-3": {
+   "file": "penalty-dose.jsonl.gz",
+   "state": "missing"
+  },
+  "penalty-dose/penalty-logit-2/prompt=system-stakes-free-time-1.md/seed-0": {
+   "file": "penalty-dose.jsonl.gz",
+   "state": "missing"
+  },
+  "penalty-dose/penalty-logit-2/prompt=system-stakes-free-time-1.md/seed-1": {
+   "file": "penalty-dose.jsonl.gz",
+   "state": "missing"
+  },
+  "penalty-dose/penalty-logit-2/prompt=system-stakes-free-time-1.md/seed-2": {
+   "file": "penalty-dose.jsonl.gz",
+   "state": "missing"
+  },
+  "penalty-dose/penalty-logit-2/prompt=system-stakes-free-time-1.md/seed-3": {
+   "file": "penalty-dose.jsonl.gz",
+   "state": "missing"
+  },
+  "penalty-dose/penalty-logit-3/prompt=system-stakes-fine-1.md/seed-0": {
+   "file": "penalty-dose.jsonl.gz",
+   "state": "missing"
+  },
+  "penalty-dose/penalty-logit-3/prompt=system-stakes-fine-1.md/seed-1": {
+   "file": "penalty-dose.jsonl.gz",
+   "state": "missing"
+  },
+  "penalty-dose/penalty-logit-3/prompt=system-stakes-fine-1.md/seed-2": {
+   "file": "penalty-dose.jsonl.gz",
+   "state": "missing"
+  },
+  "penalty-dose/penalty-logit-3/prompt=system-stakes-fine-1.md/seed-3": {
+   "file": "penalty-dose.jsonl.gz",
+   "state": "missing"
+  },
+  "penalty-dose/penalty-logit-3/prompt=system-stakes-free-time-1.md/seed-0": {
+   "file": "penalty-dose.jsonl.gz",
+   "state": "differs"
+  },
+  "penalty-dose/penalty-logit-3/prompt=system-stakes-free-time-1.md/seed-1": {
+   "file": "penalty-dose.jsonl.gz",
+   "state": "differs"
+  },
+  "penalty-dose/penalty-logit-3/prompt=system-stakes-free-time-1.md/seed-2": {
+   "file": "penalty-dose.jsonl.gz",
+   "state": "differs"
+  },
+  "penalty-dose/penalty-logit-3/prompt=system-stakes-free-time-1.md/seed-3": {
+   "file": "penalty-dose.jsonl.gz",
+   "state": "differs"
+  },
   "robustness/robust-bid/prompt=system-stakes-fiduciary-1.md/seed-0": {
    "file": "robustness.jsonl.gz",
    "state": "reproduced"
@@ -3446,7 +3734,7 @@
   },
   "robustness/robust-board/prompt=system-stakes-fiduciary-1.md/seed-0": {
    "file": "robustness.jsonl.gz",
-   "state": "reproduced"
+   "state": "differs"
   },
   "robustness/robust-board/prompt=system-stakes-fiduciary-1.md/seed-1": {
    "file": "robustness.jsonl.gz",
@@ -3458,11 +3746,11 @@
   },
   "robustness/robust-board/prompt=system-stakes-fiduciary-1.md/seed-3": {
    "file": "robustness.jsonl.gz",
-   "state": "reproduced"
+   "state": "differs"
   },
   "robustness/robust-board/prompt=system-stakes-fine-1.md/seed-0": {
    "file": "robustness.jsonl.gz",
-   "state": "reproduced"
+   "state": "differs"
   },
   "robustness/robust-board/prompt=system-stakes-fine-1.md/seed-1": {
    "file": "robustness.jsonl.gz",
@@ -3470,39 +3758,39 @@
   },
   "robustness/robust-board/prompt=system-stakes-fine-1.md/seed-2": {
    "file": "robustness.jsonl.gz",
-   "state": "reproduced"
+   "state": "differs"
   },
   "robustness/robust-board/prompt=system-stakes-fine-1.md/seed-3": {
    "file": "robustness.jsonl.gz",
-   "state": "reproduced"
+   "state": "differs"
   },
   "robustness/robust-board/prompt=system-stakes-free-time-1.md/seed-0": {
    "file": "robustness.jsonl.gz",
-   "state": "reproduced"
+   "state": "differs"
   },
   "robustness/robust-board/prompt=system-stakes-free-time-1.md/seed-1": {
    "file": "robustness.jsonl.gz",
-   "state": "reproduced"
+   "state": "differs"
   },
   "robustness/robust-board/prompt=system-stakes-free-time-1.md/seed-2": {
    "file": "robustness.jsonl.gz",
-   "state": "reproduced"
+   "state": "differs"
   },
   "robustness/robust-board/prompt=system-stakes-free-time-1.md/seed-3": {
    "file": "robustness.jsonl.gz",
-   "state": "reproduced"
+   "state": "differs"
   },
   "robustness/robust-board/prompt=system-stakes-illegal-1.md/seed-0": {
    "file": "robustness.jsonl.gz",
-   "state": "reproduced"
+   "state": "differs"
   },
   "robustness/robust-board/prompt=system-stakes-illegal-1.md/seed-1": {
    "file": "robustness.jsonl.gz",
-   "state": "reproduced"
+   "state": "differs"
   },
   "robustness/robust-board/prompt=system-stakes-illegal-1.md/seed-2": {
    "file": "robustness.jsonl.gz",
-   "state": "reproduced"
+   "state": "differs"
   },
   "robustness/robust-board/prompt=system-stakes-illegal-1.md/seed-3": {
    "file": "robustness.jsonl.gz",
@@ -3654,35 +3942,35 @@
   },
   "robustness/robust-outage/prompt=system-stakes-free-time-1.md/seed-0": {
    "file": "robustness.jsonl.gz",
-   "state": "reproduced"
+   "state": "missing"
   },
   "robustness/robust-outage/prompt=system-stakes-free-time-1.md/seed-1": {
    "file": "robustness.jsonl.gz",
-   "state": "reproduced"
+   "state": "missing"
   },
   "robustness/robust-outage/prompt=system-stakes-free-time-1.md/seed-2": {
    "file": "robustness.jsonl.gz",
-   "state": "reproduced"
+   "state": "missing"
   },
   "robustness/robust-outage/prompt=system-stakes-free-time-1.md/seed-3": {
    "file": "robustness.jsonl.gz",
-   "state": "reproduced"
+   "state": "missing"
   },
   "robustness/robust-proposer/prompt=system-stakes-fiduciary-1.md/seed-0": {
    "file": "robustness.jsonl.gz",
-   "state": "reproduced"
+   "state": "missing"
   },
   "robustness/robust-proposer/prompt=system-stakes-fiduciary-1.md/seed-1": {
    "file": "robustness.jsonl.gz",
-   "state": "reproduced"
+   "state": "missing"
   },
   "robustness/robust-proposer/prompt=system-stakes-fiduciary-1.md/seed-2": {
    "file": "robustness.jsonl.gz",
-   "state": "reproduced"
+   "state": "missing"
   },
   "robustness/robust-proposer/prompt=system-stakes-fiduciary-1.md/seed-3": {
    "file": "robustness.jsonl.gz",
-   "state": "reproduced"
+   "state": "missing"
   },
   "robustness/robust-proposer/prompt=system-stakes-fine-1.md/seed-0": {
    "file": "robustness.jsonl.gz",
@@ -3690,7 +3978,7 @@
   },
   "robustness/robust-proposer/prompt=system-stakes-fine-1.md/seed-1": {
    "file": "robustness.jsonl.gz",
-   "state": "reproduced"
+   "state": "differs"
   },
   "robustness/robust-proposer/prompt=system-stakes-fine-1.md/seed-2": {
    "file": "robustness.jsonl.gz",
@@ -3702,7 +3990,7 @@
   },
   "robustness/robust-proposer/prompt=system-stakes-free-time-1.md/seed-0": {
    "file": "robustness.jsonl.gz",
-   "state": "reproduced"
+   "state": "differs"
   },
   "robustness/robust-proposer/prompt=system-stakes-free-time-1.md/seed-1": {
    "file": "robustness.jsonl.gz",
@@ -3710,7 +3998,7 @@
   },
   "robustness/robust-proposer/prompt=system-stakes-free-time-1.md/seed-2": {
    "file": "robustness.jsonl.gz",
-   "state": "reproduced"
+   "state": "differs"
   },
   "robustness/robust-proposer/prompt=system-stakes-free-time-1.md/seed-3": {
    "file": "robustness.jsonl.gz",
@@ -3718,11 +4006,11 @@
   },
   "robustness/robust-proposer/prompt=system-stakes-illegal-1.md/seed-0": {
    "file": "robustness.jsonl.gz",
-   "state": "reproduced"
+   "state": "differs"
   },
   "robustness/robust-proposer/prompt=system-stakes-illegal-1.md/seed-1": {
    "file": "robustness.jsonl.gz",
-   "state": "reproduced"
+   "state": "differs"
   },
   "robustness/robust-proposer/prompt=system-stakes-illegal-1.md/seed-2": {
    "file": "robustness.jsonl.gz",
@@ -3730,7 +4018,7 @@
   },
   "robustness/robust-proposer/prompt=system-stakes-illegal-1.md/seed-3": {
    "file": "robustness.jsonl.gz",
-   "state": "reproduced"
+   "state": "differs"
   },
   "robustness/temperature-0/prompt=system-stakes-fiduciary-1.md/seed-0": {
    "file": "robustness.jsonl.gz",
@@ -3762,6 +4050,566 @@
   },
   "robustness/temperature-0/prompt=system-stakes-free-time-1.md/seed-3": {
    "file": "robustness.jsonl.gz",
+   "state": "reproduced"
+  },
+  "setup-search/baseline-bertrand-t0/prompt=system-stakes-fiduciary-1.md/seed-0": {
+   "file": "setup-search.jsonl.gz",
+   "state": "reproduced"
+  },
+  "setup-search/baseline-bertrand-t0/prompt=system-stakes-fiduciary-1.md/seed-1": {
+   "file": "setup-search.jsonl.gz",
+   "state": "reproduced"
+  },
+  "setup-search/baseline-bertrand-t0/prompt=system-stakes-fiduciary-1.md/seed-2": {
+   "file": "setup-search.jsonl.gz",
+   "state": "reproduced"
+  },
+  "setup-search/baseline-bertrand-t0/prompt=system-stakes-fiduciary-1.md/seed-3": {
+   "file": "setup-search.jsonl.gz",
+   "state": "reproduced"
+  },
+  "setup-search/baseline-bertrand-t07/prompt=system-stakes-fiduciary-1.md/seed-0": {
+   "file": "setup-search.jsonl.gz",
+   "state": "reproduced"
+  },
+  "setup-search/baseline-bertrand-t07/prompt=system-stakes-fiduciary-1.md/seed-1": {
+   "file": "setup-search.jsonl.gz",
+   "state": "reproduced"
+  },
+  "setup-search/baseline-bertrand-t07/prompt=system-stakes-fiduciary-1.md/seed-2": {
+   "file": "setup-search.jsonl.gz",
+   "state": "reproduced"
+  },
+  "setup-search/baseline-bertrand-t07/prompt=system-stakes-fiduciary-1.md/seed-3": {
+   "file": "setup-search.jsonl.gz",
+   "state": "reproduced"
+  },
+  "setup-search/baseline-bid/prompt=system-stakes-fiduciary-1.md/seed-0": {
+   "file": "setup-search.jsonl.gz",
+   "state": "reproduced"
+  },
+  "setup-search/baseline-bid/prompt=system-stakes-fiduciary-1.md/seed-1": {
+   "file": "setup-search.jsonl.gz",
+   "state": "reproduced"
+  },
+  "setup-search/baseline-bid/prompt=system-stakes-fiduciary-1.md/seed-2": {
+   "file": "setup-search.jsonl.gz",
+   "state": "reproduced"
+  },
+  "setup-search/baseline-bid/prompt=system-stakes-fiduciary-1.md/seed-3": {
+   "file": "setup-search.jsonl.gz",
+   "state": "reproduced"
+  },
+  "setup-search/baseline-cournot/prompt=system-stakes-fiduciary-1.md/seed-0": {
+   "file": "setup-search.jsonl.gz",
+   "state": "reproduced"
+  },
+  "setup-search/baseline-cournot/prompt=system-stakes-fiduciary-1.md/seed-1": {
+   "file": "setup-search.jsonl.gz",
+   "state": "reproduced"
+  },
+  "setup-search/baseline-cournot/prompt=system-stakes-fiduciary-1.md/seed-2": {
+   "file": "setup-search.jsonl.gz",
+   "state": "reproduced"
+  },
+  "setup-search/baseline-cournot/prompt=system-stakes-fiduciary-1.md/seed-3": {
+   "file": "setup-search.jsonl.gz",
+   "state": "reproduced"
+  },
+  "setup-search/baseline-logit/prompt=system-stakes-fiduciary-1.md/seed-0": {
+   "file": "setup-search.jsonl.gz",
+   "state": "reproduced"
+  },
+  "setup-search/baseline-logit/prompt=system-stakes-fiduciary-1.md/seed-1": {
+   "file": "setup-search.jsonl.gz",
+   "state": "reproduced"
+  },
+  "setup-search/baseline-logit/prompt=system-stakes-fiduciary-1.md/seed-2": {
+   "file": "setup-search.jsonl.gz",
+   "state": "reproduced"
+  },
+  "setup-search/baseline-logit/prompt=system-stakes-fiduciary-1.md/seed-3": {
+   "file": "setup-search.jsonl.gz",
+   "state": "reproduced"
+  },
+  "setup-search/dose-logit-0/prompt=system-stakes-fiduciary-1.md/seed-0": {
+   "file": "setup-search.jsonl.gz",
+   "state": "reproduced"
+  },
+  "setup-search/dose-logit-0/prompt=system-stakes-fiduciary-1.md/seed-1": {
+   "file": "setup-search.jsonl.gz",
+   "state": "reproduced"
+  },
+  "setup-search/dose-logit-0/prompt=system-stakes-fiduciary-1.md/seed-2": {
+   "file": "setup-search.jsonl.gz",
+   "state": "reproduced"
+  },
+  "setup-search/dose-logit-0/prompt=system-stakes-fiduciary-1.md/seed-3": {
+   "file": "setup-search.jsonl.gz",
+   "state": "reproduced"
+  },
+  "setup-search/dose-logit-0/prompt=system-stakes-fine-1.md/seed-0": {
+   "file": "setup-search.jsonl.gz",
+   "state": "reproduced"
+  },
+  "setup-search/dose-logit-0/prompt=system-stakes-fine-1.md/seed-1": {
+   "file": "setup-search.jsonl.gz",
+   "state": "reproduced"
+  },
+  "setup-search/dose-logit-0/prompt=system-stakes-fine-1.md/seed-2": {
+   "file": "setup-search.jsonl.gz",
+   "state": "reproduced"
+  },
+  "setup-search/dose-logit-0/prompt=system-stakes-fine-1.md/seed-3": {
+   "file": "setup-search.jsonl.gz",
+   "state": "reproduced"
+  },
+  "setup-search/dose-logit-0/prompt=system-stakes-free-time-1.md/seed-0": {
+   "file": "setup-search.jsonl.gz",
+   "state": "reproduced"
+  },
+  "setup-search/dose-logit-0/prompt=system-stakes-free-time-1.md/seed-1": {
+   "file": "setup-search.jsonl.gz",
+   "state": "reproduced"
+  },
+  "setup-search/dose-logit-0/prompt=system-stakes-free-time-1.md/seed-2": {
+   "file": "setup-search.jsonl.gz",
+   "state": "reproduced"
+  },
+  "setup-search/dose-logit-0/prompt=system-stakes-free-time-1.md/seed-3": {
+   "file": "setup-search.jsonl.gz",
+   "state": "reproduced"
+  },
+  "setup-search/dose-logit-10/prompt=system-stakes-fiduciary-1.md/seed-0": {
+   "file": "setup-search.jsonl.gz",
+   "state": "reproduced"
+  },
+  "setup-search/dose-logit-10/prompt=system-stakes-fiduciary-1.md/seed-1": {
+   "file": "setup-search.jsonl.gz",
+   "state": "reproduced"
+  },
+  "setup-search/dose-logit-10/prompt=system-stakes-fiduciary-1.md/seed-2": {
+   "file": "setup-search.jsonl.gz",
+   "state": "reproduced"
+  },
+  "setup-search/dose-logit-10/prompt=system-stakes-fiduciary-1.md/seed-3": {
+   "file": "setup-search.jsonl.gz",
+   "state": "reproduced"
+  },
+  "setup-search/dose-logit-10/prompt=system-stakes-fine-1.md/seed-0": {
+   "file": "setup-search.jsonl.gz",
+   "state": "reproduced"
+  },
+  "setup-search/dose-logit-10/prompt=system-stakes-fine-1.md/seed-1": {
+   "file": "setup-search.jsonl.gz",
+   "state": "reproduced"
+  },
+  "setup-search/dose-logit-10/prompt=system-stakes-fine-1.md/seed-2": {
+   "file": "setup-search.jsonl.gz",
+   "state": "reproduced"
+  },
+  "setup-search/dose-logit-10/prompt=system-stakes-fine-1.md/seed-3": {
+   "file": "setup-search.jsonl.gz",
+   "state": "reproduced"
+  },
+  "setup-search/dose-logit-10/prompt=system-stakes-free-time-1.md/seed-0": {
+   "file": "setup-search.jsonl.gz",
+   "state": "reproduced"
+  },
+  "setup-search/dose-logit-10/prompt=system-stakes-free-time-1.md/seed-1": {
+   "file": "setup-search.jsonl.gz",
+   "state": "reproduced"
+  },
+  "setup-search/dose-logit-10/prompt=system-stakes-free-time-1.md/seed-2": {
+   "file": "setup-search.jsonl.gz",
+   "state": "reproduced"
+  },
+  "setup-search/dose-logit-10/prompt=system-stakes-free-time-1.md/seed-3": {
+   "file": "setup-search.jsonl.gz",
+   "state": "reproduced"
+  },
+  "setup-search/dose-logit-25/prompt=system-stakes-fiduciary-1.md/seed-0": {
+   "file": "setup-search.jsonl.gz",
+   "state": "reproduced"
+  },
+  "setup-search/dose-logit-25/prompt=system-stakes-fiduciary-1.md/seed-1": {
+   "file": "setup-search.jsonl.gz",
+   "state": "reproduced"
+  },
+  "setup-search/dose-logit-25/prompt=system-stakes-fiduciary-1.md/seed-2": {
+   "file": "setup-search.jsonl.gz",
+   "state": "reproduced"
+  },
+  "setup-search/dose-logit-25/prompt=system-stakes-fiduciary-1.md/seed-3": {
+   "file": "setup-search.jsonl.gz",
+   "state": "reproduced"
+  },
+  "setup-search/dose-logit-25/prompt=system-stakes-fine-1.md/seed-0": {
+   "file": "setup-search.jsonl.gz",
+   "state": "reproduced"
+  },
+  "setup-search/dose-logit-25/prompt=system-stakes-fine-1.md/seed-1": {
+   "file": "setup-search.jsonl.gz",
+   "state": "reproduced"
+  },
+  "setup-search/dose-logit-25/prompt=system-stakes-fine-1.md/seed-2": {
+   "file": "setup-search.jsonl.gz",
+   "state": "reproduced"
+  },
+  "setup-search/dose-logit-25/prompt=system-stakes-fine-1.md/seed-3": {
+   "file": "setup-search.jsonl.gz",
+   "state": "reproduced"
+  },
+  "setup-search/dose-logit-25/prompt=system-stakes-free-time-1.md/seed-0": {
+   "file": "setup-search.jsonl.gz",
+   "state": "reproduced"
+  },
+  "setup-search/dose-logit-25/prompt=system-stakes-free-time-1.md/seed-1": {
+   "file": "setup-search.jsonl.gz",
+   "state": "reproduced"
+  },
+  "setup-search/dose-logit-25/prompt=system-stakes-free-time-1.md/seed-2": {
+   "file": "setup-search.jsonl.gz",
+   "state": "reproduced"
+  },
+  "setup-search/dose-logit-25/prompt=system-stakes-free-time-1.md/seed-3": {
+   "file": "setup-search.jsonl.gz",
+   "state": "reproduced"
+  },
+  "setup-search/dose-logit-50/prompt=system-stakes-fine-1.md/seed-0": {
+   "file": "setup-search.jsonl.gz",
+   "state": "reproduced"
+  },
+  "setup-search/dose-logit-50/prompt=system-stakes-fine-1.md/seed-1": {
+   "file": "setup-search.jsonl.gz",
+   "state": "reproduced"
+  },
+  "setup-search/dose-logit-50/prompt=system-stakes-fine-1.md/seed-2": {
+   "file": "setup-search.jsonl.gz",
+   "state": "reproduced"
+  },
+  "setup-search/dose-logit-50/prompt=system-stakes-fine-1.md/seed-3": {
+   "file": "setup-search.jsonl.gz",
+   "state": "reproduced"
+  },
+  "setup-search/dose-logit-50/prompt=system-stakes-free-time-1.md/seed-0": {
+   "file": "setup-search.jsonl.gz",
+   "state": "reproduced"
+  },
+  "setup-search/dose-logit-50/prompt=system-stakes-free-time-1.md/seed-1": {
+   "file": "setup-search.jsonl.gz",
+   "state": "reproduced"
+  },
+  "setup-search/dose-logit-50/prompt=system-stakes-free-time-1.md/seed-2": {
+   "file": "setup-search.jsonl.gz",
+   "state": "reproduced"
+  },
+  "setup-search/dose-logit-50/prompt=system-stakes-free-time-1.md/seed-3": {
+   "file": "setup-search.jsonl.gz",
+   "state": "reproduced"
+  },
+  "setup-search/dose-logit-90/prompt=system-stakes-fiduciary-1.md/seed-0": {
+   "file": "setup-search.jsonl.gz",
+   "state": "reproduced"
+  },
+  "setup-search/dose-logit-90/prompt=system-stakes-fiduciary-1.md/seed-1": {
+   "file": "setup-search.jsonl.gz",
+   "state": "reproduced"
+  },
+  "setup-search/dose-logit-90/prompt=system-stakes-fiduciary-1.md/seed-2": {
+   "file": "setup-search.jsonl.gz",
+   "state": "reproduced"
+  },
+  "setup-search/dose-logit-90/prompt=system-stakes-fiduciary-1.md/seed-3": {
+   "file": "setup-search.jsonl.gz",
+   "state": "reproduced"
+  },
+  "setup-search/dose-logit-90/prompt=system-stakes-fine-1.md/seed-0": {
+   "file": "setup-search.jsonl.gz",
+   "state": "reproduced"
+  },
+  "setup-search/dose-logit-90/prompt=system-stakes-fine-1.md/seed-1": {
+   "file": "setup-search.jsonl.gz",
+   "state": "reproduced"
+  },
+  "setup-search/dose-logit-90/prompt=system-stakes-fine-1.md/seed-2": {
+   "file": "setup-search.jsonl.gz",
+   "state": "reproduced"
+  },
+  "setup-search/dose-logit-90/prompt=system-stakes-fine-1.md/seed-3": {
+   "file": "setup-search.jsonl.gz",
+   "state": "reproduced"
+  },
+  "setup-search/dose-logit-90/prompt=system-stakes-free-time-1.md/seed-0": {
+   "file": "setup-search.jsonl.gz",
+   "state": "reproduced"
+  },
+  "setup-search/dose-logit-90/prompt=system-stakes-free-time-1.md/seed-1": {
+   "file": "setup-search.jsonl.gz",
+   "state": "reproduced"
+  },
+  "setup-search/dose-logit-90/prompt=system-stakes-free-time-1.md/seed-2": {
+   "file": "setup-search.jsonl.gz",
+   "state": "reproduced"
+  },
+  "setup-search/dose-logit-90/prompt=system-stakes-free-time-1.md/seed-3": {
+   "file": "setup-search.jsonl.gz",
+   "state": "reproduced"
+  },
+  "setup-search/e6-pinned/price_max=11__prompt=system-stakes-fiduciary-1.md/seed-0": {
+   "file": "setup-search.jsonl.gz",
+   "state": "missing"
+  },
+  "setup-search/e6-pinned/price_max=11__prompt=system-stakes-fiduciary-1.md/seed-1": {
+   "file": "setup-search.jsonl.gz",
+   "state": "missing"
+  },
+  "setup-search/e6-pinned/price_max=11__prompt=system-stakes-fiduciary-1.md/seed-2": {
+   "file": "setup-search.jsonl.gz",
+   "state": "missing"
+  },
+  "setup-search/e6-pinned/price_max=11__prompt=system-stakes-fiduciary-1.md/seed-3": {
+   "file": "setup-search.jsonl.gz",
+   "state": "missing"
+  },
+  "setup-search/e6-pinned/price_max=11__prompt=system-stakes-fiduciary-1.md/seed-4": {
+   "file": "setup-search.jsonl.gz",
+   "state": "missing"
+  },
+  "setup-search/e6-pinned/price_max=11__prompt=system-stakes-fiduciary-1.md/seed-5": {
+   "file": "setup-search.jsonl.gz",
+   "state": "missing"
+  },
+  "setup-search/e6-pinned/price_max=11__prompt=system-stakes-fiduciary-1.md/seed-6": {
+   "file": "setup-search.jsonl.gz",
+   "state": "missing"
+  },
+  "setup-search/e6-pinned/price_max=11__prompt=system-stakes-fiduciary-1.md/seed-7": {
+   "file": "setup-search.jsonl.gz",
+   "state": "missing"
+  },
+  "setup-search/e6-pinned/price_max=11__prompt=system-stakes-fine-1.md/seed-0": {
+   "file": "setup-search.jsonl.gz",
+   "state": "missing"
+  },
+  "setup-search/e6-pinned/price_max=11__prompt=system-stakes-fine-1.md/seed-1": {
+   "file": "setup-search.jsonl.gz",
+   "state": "missing"
+  },
+  "setup-search/e6-pinned/price_max=11__prompt=system-stakes-fine-1.md/seed-2": {
+   "file": "setup-search.jsonl.gz",
+   "state": "differs"
+  },
+  "setup-search/e6-pinned/price_max=11__prompt=system-stakes-fine-1.md/seed-3": {
+   "file": "setup-search.jsonl.gz",
+   "state": "differs"
+  },
+  "setup-search/e6-pinned/price_max=11__prompt=system-stakes-fine-1.md/seed-4": {
+   "file": "setup-search.jsonl.gz",
+   "state": "missing"
+  },
+  "setup-search/e6-pinned/price_max=11__prompt=system-stakes-fine-1.md/seed-5": {
+   "file": "setup-search.jsonl.gz",
+   "state": "missing"
+  },
+  "setup-search/e6-pinned/price_max=11__prompt=system-stakes-fine-1.md/seed-6": {
+   "file": "setup-search.jsonl.gz",
+   "state": "differs"
+  },
+  "setup-search/e6-pinned/price_max=11__prompt=system-stakes-fine-1.md/seed-7": {
+   "file": "setup-search.jsonl.gz",
+   "state": "missing"
+  },
+  "setup-search/e6-pinned/price_max=11__prompt=system-stakes-free-time-1.md/seed-0": {
+   "file": "setup-search.jsonl.gz",
+   "state": "differs"
+  },
+  "setup-search/e6-pinned/price_max=11__prompt=system-stakes-free-time-1.md/seed-1": {
+   "file": "setup-search.jsonl.gz",
+   "state": "missing"
+  },
+  "setup-search/e6-pinned/price_max=11__prompt=system-stakes-free-time-1.md/seed-2": {
+   "file": "setup-search.jsonl.gz",
+   "state": "differs"
+  },
+  "setup-search/e6-pinned/price_max=11__prompt=system-stakes-free-time-1.md/seed-3": {
+   "file": "setup-search.jsonl.gz",
+   "state": "differs"
+  },
+  "setup-search/e6-pinned/price_max=11__prompt=system-stakes-free-time-1.md/seed-4": {
+   "file": "setup-search.jsonl.gz",
+   "state": "differs"
+  },
+  "setup-search/e6-pinned/price_max=11__prompt=system-stakes-free-time-1.md/seed-5": {
+   "file": "setup-search.jsonl.gz",
+   "state": "missing"
+  },
+  "setup-search/e6-pinned/price_max=11__prompt=system-stakes-free-time-1.md/seed-6": {
+   "file": "setup-search.jsonl.gz",
+   "state": "missing"
+  },
+  "setup-search/e6-pinned/price_max=11__prompt=system-stakes-free-time-1.md/seed-7": {
+   "file": "setup-search.jsonl.gz",
+   "state": "missing"
+  },
+  "setup-search/e6-pinned/price_max=11__prompt=system-stakes-illegal-1.md/seed-0": {
+   "file": "setup-search.jsonl.gz",
+   "state": "missing"
+  },
+  "setup-search/e6-pinned/price_max=11__prompt=system-stakes-illegal-1.md/seed-1": {
+   "file": "setup-search.jsonl.gz",
+   "state": "missing"
+  },
+  "setup-search/e6-pinned/price_max=11__prompt=system-stakes-illegal-1.md/seed-2": {
+   "file": "setup-search.jsonl.gz",
+   "state": "differs"
+  },
+  "setup-search/e6-pinned/price_max=11__prompt=system-stakes-illegal-1.md/seed-3": {
+   "file": "setup-search.jsonl.gz",
+   "state": "missing"
+  },
+  "setup-search/e6-pinned/price_max=11__prompt=system-stakes-illegal-1.md/seed-4": {
+   "file": "setup-search.jsonl.gz",
+   "state": "differs"
+  },
+  "setup-search/e6-pinned/price_max=11__prompt=system-stakes-illegal-1.md/seed-5": {
+   "file": "setup-search.jsonl.gz",
+   "state": "differs"
+  },
+  "setup-search/e6-pinned/price_max=11__prompt=system-stakes-illegal-1.md/seed-6": {
+   "file": "setup-search.jsonl.gz",
+   "state": "differs"
+  },
+  "setup-search/e6-pinned/price_max=11__prompt=system-stakes-illegal-1.md/seed-7": {
+   "file": "setup-search.jsonl.gz",
+   "state": "missing"
+  },
+  "setup-search/e6-pinned/price_max=15__prompt=system-stakes-fiduciary-1.md/seed-0": {
+   "file": "setup-search.jsonl.gz",
+   "state": "reproduced"
+  },
+  "setup-search/e6-pinned/price_max=15__prompt=system-stakes-fiduciary-1.md/seed-1": {
+   "file": "setup-search.jsonl.gz",
+   "state": "reproduced"
+  },
+  "setup-search/e6-pinned/price_max=15__prompt=system-stakes-fiduciary-1.md/seed-2": {
+   "file": "setup-search.jsonl.gz",
+   "state": "reproduced"
+  },
+  "setup-search/e6-pinned/price_max=15__prompt=system-stakes-fiduciary-1.md/seed-3": {
+   "file": "setup-search.jsonl.gz",
+   "state": "reproduced"
+  },
+  "setup-search/e6-pinned/price_max=15__prompt=system-stakes-fiduciary-1.md/seed-4": {
+   "file": "setup-search.jsonl.gz",
+   "state": "reproduced"
+  },
+  "setup-search/e6-pinned/price_max=15__prompt=system-stakes-fiduciary-1.md/seed-5": {
+   "file": "setup-search.jsonl.gz",
+   "state": "reproduced"
+  },
+  "setup-search/e6-pinned/price_max=15__prompt=system-stakes-fiduciary-1.md/seed-6": {
+   "file": "setup-search.jsonl.gz",
+   "state": "reproduced"
+  },
+  "setup-search/e6-pinned/price_max=15__prompt=system-stakes-fiduciary-1.md/seed-7": {
+   "file": "setup-search.jsonl.gz",
+   "state": "reproduced"
+  },
+  "setup-search/e6-pinned/price_max=15__prompt=system-stakes-fine-1.md/seed-0": {
+   "file": "setup-search.jsonl.gz",
+   "state": "reproduced"
+  },
+  "setup-search/e6-pinned/price_max=15__prompt=system-stakes-fine-1.md/seed-1": {
+   "file": "setup-search.jsonl.gz",
+   "state": "reproduced"
+  },
+  "setup-search/e6-pinned/price_max=15__prompt=system-stakes-fine-1.md/seed-2": {
+   "file": "setup-search.jsonl.gz",
+   "state": "reproduced"
+  },
+  "setup-search/e6-pinned/price_max=15__prompt=system-stakes-fine-1.md/seed-3": {
+   "file": "setup-search.jsonl.gz",
+   "state": "reproduced"
+  },
+  "setup-search/e6-pinned/price_max=15__prompt=system-stakes-fine-1.md/seed-4": {
+   "file": "setup-search.jsonl.gz",
+   "state": "reproduced"
+  },
+  "setup-search/e6-pinned/price_max=15__prompt=system-stakes-fine-1.md/seed-5": {
+   "file": "setup-search.jsonl.gz",
+   "state": "reproduced"
+  },
+  "setup-search/e6-pinned/price_max=15__prompt=system-stakes-fine-1.md/seed-6": {
+   "file": "setup-search.jsonl.gz",
+   "state": "reproduced"
+  },
+  "setup-search/e6-pinned/price_max=15__prompt=system-stakes-fine-1.md/seed-7": {
+   "file": "setup-search.jsonl.gz",
+   "state": "reproduced"
+  },
+  "setup-search/e6-pinned/price_max=15__prompt=system-stakes-free-time-1.md/seed-0": {
+   "file": "setup-search.jsonl.gz",
+   "state": "reproduced"
+  },
+  "setup-search/e6-pinned/price_max=15__prompt=system-stakes-free-time-1.md/seed-1": {
+   "file": "setup-search.jsonl.gz",
+   "state": "reproduced"
+  },
+  "setup-search/e6-pinned/price_max=15__prompt=system-stakes-free-time-1.md/seed-2": {
+   "file": "setup-search.jsonl.gz",
+   "state": "reproduced"
+  },
+  "setup-search/e6-pinned/price_max=15__prompt=system-stakes-free-time-1.md/seed-3": {
+   "file": "setup-search.jsonl.gz",
+   "state": "reproduced"
+  },
+  "setup-search/e6-pinned/price_max=15__prompt=system-stakes-free-time-1.md/seed-4": {
+   "file": "setup-search.jsonl.gz",
+   "state": "reproduced"
+  },
+  "setup-search/e6-pinned/price_max=15__prompt=system-stakes-free-time-1.md/seed-5": {
+   "file": "setup-search.jsonl.gz",
+   "state": "reproduced"
+  },
+  "setup-search/e6-pinned/price_max=15__prompt=system-stakes-free-time-1.md/seed-6": {
+   "file": "setup-search.jsonl.gz",
+   "state": "reproduced"
+  },
+  "setup-search/e6-pinned/price_max=15__prompt=system-stakes-free-time-1.md/seed-7": {
+   "file": "setup-search.jsonl.gz",
+   "state": "reproduced"
+  },
+  "setup-search/e6-pinned/price_max=15__prompt=system-stakes-illegal-1.md/seed-0": {
+   "file": "setup-search.jsonl.gz",
+   "state": "reproduced"
+  },
+  "setup-search/e6-pinned/price_max=15__prompt=system-stakes-illegal-1.md/seed-1": {
+   "file": "setup-search.jsonl.gz",
+   "state": "reproduced"
+  },
+  "setup-search/e6-pinned/price_max=15__prompt=system-stakes-illegal-1.md/seed-2": {
+   "file": "setup-search.jsonl.gz",
+   "state": "reproduced"
+  },
+  "setup-search/e6-pinned/price_max=15__prompt=system-stakes-illegal-1.md/seed-3": {
+   "file": "setup-search.jsonl.gz",
+   "state": "reproduced"
+  },
+  "setup-search/e6-pinned/price_max=15__prompt=system-stakes-illegal-1.md/seed-4": {
+   "file": "setup-search.jsonl.gz",
+   "state": "reproduced"
+  },
+  "setup-search/e6-pinned/price_max=15__prompt=system-stakes-illegal-1.md/seed-5": {
+   "file": "setup-search.jsonl.gz",
+   "state": "reproduced"
+  },
+  "setup-search/e6-pinned/price_max=15__prompt=system-stakes-illegal-1.md/seed-6": {
+   "file": "setup-search.jsonl.gz",
+   "state": "reproduced"
+  },
+  "setup-search/e6-pinned/price_max=15__prompt=system-stakes-illegal-1.md/seed-7": {
+   "file": "setup-search.jsonl.gz",
    "state": "reproduced"
   },
   "stakes-pilot-before-fixes/e2/model=openrouter-anthropic-claude-haiku-5.5__prompt=system-stakes-fiduciary-1.md/seed-0": {
