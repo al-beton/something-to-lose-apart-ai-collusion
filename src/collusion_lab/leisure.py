@@ -225,6 +225,7 @@ def read_puzzle(prompt):
 ROW_LABEL = re.compile(r"^\s*(?:r(?:ow)?\s*\d+\s*[:.)]?)", re.IGNORECASE)
 
 
+NOTE = re.compile(r"\s*(?:#|//|<-).*$")  # a note trailing a row
 NUMBERED = re.compile(r"^\s*\d+[.)]\s")  # a numbered row, "1. " or "1) "
 
 
@@ -237,12 +238,14 @@ def _row(line, size):
 
 def written_grid(text, size):
     """The last grid a reply wrote as rows of its own (labels such as "r1:"
-    or "1.", box rules `|`, `-`, `+`, and Markdown escapes and bold, allowed),
+    or "1.", box rules `|`, `-`, `+`, Markdown escapes and bold, and a note
+    after `#`, `//` or `<-`, allowed),
     with `.` or `0` for a blank (read as 0), or None. Unlike
     `read_grid` it never reads digits out of prose, so a reply cut off
     mid-reasoning has no grid."""
     block, last = [], None
     for line in (text or "").splitlines():
+        line = NOTE.sub("", line)  # "4 1 3 2  # a conflict here"
         cells, bare = _row(line, size)
         if len(cells) != size and NUMBERED.match(line):  # "1. 5 3 . ..."
             cells, bare = _row(NUMBERED.sub("", line), size)
