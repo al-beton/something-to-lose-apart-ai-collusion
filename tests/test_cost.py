@@ -98,7 +98,8 @@ def lab_run(tmp_path, *args, text=None):
         or "name: paid\nseeds: [0, 1]\nmarket: {rounds: 5}\nagents:\n"
         f"  - {{id: A, model: {ROUTER_MODEL}}}\n  - {{id: B, model: mock/nash}}\n"
     )
-    return cli.main(["run", str(config), "--out", str(tmp_path / "runs"), *args])
+    out, cache = str(tmp_path / "runs"), str(tmp_path / "cache.sqlite")
+    return cli.main(["run", str(config), "--out", out, "--cache-path", cache, *args])
 
 
 def test_spend_asks_first_with_an_estimated_cost(
@@ -107,7 +108,9 @@ def test_spend_asks_first_with_an_estimated_cost(
     monkeypatch.setattr("builtins.input", lambda prompt: "n")
     assert lab_run(tmp_path) == 1
     out = capsys.readouterr().out
-    assert "20 calls" in out and "estimated $0.0173" in out
+    # Nothing cached yet: every reply is taken at its max_tokens, the most.
+    assert "20 calls" in out and "estimated $0.0397" in out
+    assert "max_tokens, plus a reasoning allowance with reasoning on, for 20" in out
 
 
 def test_spend_asks_first_says_when_a_price_is_unknown(tmp_path, monkeypatch, capsys):
@@ -120,7 +123,8 @@ def test_spend_asks_first_estimate_within_a_quarter_of_actual(
     make_config, tmp_path, price_list, monkeypatch
 ):
     """A fake provider that counts four characters a token and charges the
-    listed price; the estimate is made before it plays."""
+    listed price. Before it plays, the estimate is an upper bound; once its
+    replies are cached, their observed lengths bring it within a quarter."""
 
     async def provider(**kwargs):
         chars = sum(len(m["content"]) for m in kwargs["messages"])
@@ -139,8 +143,11 @@ def test_spend_asks_first_estimate_within_a_quarter_of_actual(
     monkeypatch.setattr(backends, "_acompletion", provider)
     both = [f"agents.{i}.model={ROUTER_MODEL}" for i in (0, 1)]
     config = make_config(overrides=[*both, "market.rounds=20", "seeds=[0, 1]"])
-    guess = estimate(config, prices.price_for)
-    actual = sum(manifest(d)["cost"] for d in run_config(config, tmp_path))
+    bound = estimate(config, prices.price_for)
+    cache = Cache(tmp_path / "cache.sqlite")
+    actual = sum(manifest(d)["cost"] for d in run_config(config, tmp_path, cache))
+    guess = estimate(config, prices.price_for, cache.observed())
+    assert bound.cost >= actual
     assert abs(guess.cost - actual) / actual < 0.25
 
 

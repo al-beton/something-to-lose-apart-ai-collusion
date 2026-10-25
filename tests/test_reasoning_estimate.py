@@ -6,7 +6,7 @@ import pytest
 
 from collusion_lab import cli
 from collusion_lab.cache import Cache
-from collusion_lab.estimate import estimate
+from collusion_lab.estimate import REASONING_ALLOWANCE, estimate
 from collusion_lab.runner import run_config
 
 MODEL = "openrouter/example/reasoner"
@@ -18,10 +18,19 @@ def price_for(model):
     return PER_TOKEN
 
 
-def test_reasoning_in_estimate_bounds_unseen_calls_by_max_tokens(make_config):
-    guess = estimate(make_config(overrides=PAID), price_for)
-    assert guess.completion_tokens == guess.calls * 500
+def test_reasoning_in_estimate_bounds_unseen_calls_by_max_tokens_and_an_allowance(
+    make_config,
+):
+    guess = estimate(make_config(overrides=PAID), price_for)  # reasoning low
+    assert guess.completion_tokens == guess.calls * (500 + REASONING_ALLOWANCE["low"])
     assert guess.basis == {"observed": 0, "max_tokens": guess.calls}
+    off = estimate(make_config(overrides=[*PAID, "agents.0.reasoning=off"]), price_for)
+    assert off.completion_tokens == off.calls * 500
+    levels = [
+        estimate(make_config(overrides=[*PAID, f"agents.0.reasoning={x}"]), price_for)
+        for x in ("low", "medium", "high")
+    ]
+    assert [g.cost for g in levels] == sorted(g.cost for g in levels)
 
 
 def test_reasoning_in_estimate_uses_the_caches_observed_means(
@@ -52,7 +61,7 @@ def test_reasoning_in_estimate_matches_a_cached_runs_known_cost(
         json.loads((d / "manifest.json").read_text())["tokens"]["completion"]
         for d in dirs
     )
-    out_only = lambda model: (0.0, PER_TOKEN[1])  # noqa: E731
+    out_only = lambda model: (0.0, PER_TOKEN[1])
     guess = estimate(config, out_only, cache.observed())
     assert guess.completion_tokens == billed
     assert guess.cost == pytest.approx(billed * PER_TOKEN[1])
@@ -69,7 +78,8 @@ def test_reasoning_in_estimate_says_which_basis(tmp_path, capsys, monkeypatch):
     cache = str(tmp_path / "c.sqlite")
     assert cli.main(["run", str(config), "--cache-path", cache]) == 1
     out = capsys.readouterr().out
-    assert "completion tokens: max_tokens (the most a call can bill) for 2 calls" in out
+    assert "completion tokens: max_tokens, plus a reasoning allowance" in out
+    assert "for 2 calls" in out
 
 
 def test_reasoning_in_estimate_cache_records_leave_replay_alone(
