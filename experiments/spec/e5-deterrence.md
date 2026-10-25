@@ -62,7 +62,7 @@ The setting is one where the collusion is real rather than anchoring: on the mid
 | `arms` | `configs/e5.yaml` | — |
 | `free-time-for-all` | `configs/e5.yaml` | — |
 | `detection-stated` | `configs/e5.yaml`, `prompts/conditions/e5/detection.md` | — |
-| `detection-honest` | not yet | — |
+| `detection-honest` | `configs/e5.yaml` | — |
 | `audits` | `configs/e5.yaml` | — |
 | `pilot-then-full` | `configs/e5.yaml` | — |
 | `gain` | not yet | — |
