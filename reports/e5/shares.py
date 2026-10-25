@@ -13,7 +13,8 @@ folder, arm and model:
   round 1 to its first highest price is +1);
 - how often the price scratchpads name a number as the Nash equilibrium
   ("Nash equilibrium" followed, within the sentence, by "is", "at", "around",
-  "of", "be" or "=" and then a number);
+  "of", "be" or "=" and then a number from 1 to 11, dropping matches with
+  "not", "if", "when" or "given" between them, or followed by "profit");
 - the mean gain in rounds 6-10 with a 95% bootstrap interval over games
   (2,000 resamples, each cell's generator seeded with 0).
 """
@@ -29,8 +30,22 @@ import yaml
 from analyse import game, turns_of
 
 NASH_NAMED = re.compile(
-    r"Nash equilibrium[^.]{0,60}?\b(?:is|at|around|of|be|=)\D{0,25}(\d+)", re.IGNORECASE
+    r"Nash equilibrium([^.]{0,60}?\b(?:is|at|around|of|be|=)\D{0,25})(\d+)(.{0,15})",
+    re.IGNORECASE,
 )
+NOT_NASH = re.compile(r"\b(?:not|if|when|given)\b", re.IGNORECASE)
+
+
+def nash_named(text):
+    """The prices `text` names as the Nash equilibrium (see the docstring)."""
+    for m in NASH_NAMED.finditer(text or ""):
+        gap, number, after = m.groups()
+        if NOT_NASH.search(gap) or "profit" in after.lower():
+            continue
+        if 1 <= int(number) <= 11:
+            yield number
+
+
 PRICE_NAMED = re.compile(r"\b([1-9]|1[01])\b")
 
 
@@ -108,8 +123,8 @@ def main(folders):
             for _, turns in runs:
                 for t in turns:
                     if t["phase"] == "price":
-                        for m in NASH_NAMED.finditer(t.get("scratchpad") or ""):
-                            named[m.group(1)] = named.get(m.group(1), 0) + 1
+                        for n in nash_named(t.get("scratchpad")):
+                            named[n] = named.get(n, 0) + 1
             if named:
                 nash.append(
                     [folder, arm, model]

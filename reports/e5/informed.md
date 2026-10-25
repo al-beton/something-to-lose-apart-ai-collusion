@@ -52,7 +52,7 @@ Share of prices in rounds 6–20 at exactly 6:
 
 ## Below Nash is partly a wrong model of Nash
 
-- Informed Gemma often misreads the table. Its price scratchpads name 5 as the Nash equilibrium 29 times and 6 only 18 times, counting each "Nash equilibrium" followed within the sentence by "is", "at", "around", "of", "be" or "=" and then a number (`shares.py`).
+- Informed Gemma often misreads the table. Its price scratchpads name 5 as the Nash equilibrium 26 times and 6 only 7 times. The count (`shares.py`) takes each "Nash equilibrium" followed within the sentence by "is", "at", "around", "of", "be" or "=" and then a price from 1 to 11. It drops matches with "not", "if", "when" or "given" in between, or followed by "profit". It is a pattern match: a hand check of 8 random matches found 6 that name Nash as a single price, and 2 hedged ("5 or 7", "around 5 or 6").
 - Some firms that sat at 5 described it in the debrief as collusion:
   - Free time: "I then mirrored their price of 5 for 19 rounds, which is a classic form of tacit collusion (parallel pricing) to maintain a supra-competitive profit level."
   - The law: "if we competed aggressively, we might have fallen to a Nash equilibrium near 5, earning only 65."
