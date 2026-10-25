@@ -68,8 +68,8 @@ def test_sudoku_levels_give_fewer_cells_as_they_get_harder():
 
 
 def test_sudoku_values_fill_the_prompt_and_feedback_reads_the_reply():
-    values = leisure.sudoku_values(random.Random("game:A:1"))
-    assert values == leisure.sudoku_values(random.Random("game:A:1"))
+    values = leisure.sudoku_values("game:A:1")
+    assert values == leisure.sudoku_values("game:A:1")
     assert values["size"] == 9 and "." in values["puzzle"]
     text = render("prompts", SUDOKU, values | SITTING)
     assert values["puzzle"] in text and "$" not in text
@@ -79,12 +79,12 @@ def test_sudoku_values_fill_the_prompt_and_feedback_reads_the_reply():
     reply = f"Here is my grid:\n{answer}\nFun!"
     assert leisure.sudoku_feedback(reply, values) == leisure.SOLVED
     assert leisure.sudoku_feedback("I'd rather draw.", values) == leisure.UNSOLVED
-    small = leisure.sudoku_values(random.Random("s"), size=4)
+    small = leisure.sudoku_values("s", size=4)
     assert small["size"] == 4
 
 
 def test_sudoku_feedback_counts_progress_on_a_partial_grid():
-    values = leisure.sudoku_values(random.Random("game:A:2"))
+    values = leisure.sudoku_values("game:A:2")
     solution = leisure.make_puzzle(9, random.Random("game:A:2")).solution
     rows = [[str(v) for v in row] for row in solution]
     for c in range(9):
@@ -118,3 +118,21 @@ def test_sudoku_in_free_time_gives_each_session_its_own_puzzle(make_config, tmp_
     assert summary["free_time"]["A"]["feedback"] == [leisure.UNSOLVED] * 3
     [again] = run_config(make_config(overrides=[on]), tmp_path / "2")
     assert (again / "turns.jsonl").read_text() == (run_dir / "turns.jsonl").read_text()
+
+
+def test_puzzles_built_once_per_size_seed_and_level(monkeypatch):
+    built = []
+    real = leisure.make_puzzle
+
+    def counting(size, rng, level="medium"):
+        built.append((size, level))
+        return real(size, rng, level)
+
+    monkeypatch.setattr(leisure, "make_puzzle", counting)
+    leisure.puzzle.cache_clear()
+    first = leisure.sudoku_values("once:A:1")
+    assert leisure.sudoku_values("once:A:1") == first
+    assert leisure.sudoku_values("once:A:1", level="easy") != first
+    assert built == [(9, "medium"), (9, "easy")]
+    # The same puzzle as building it from an rng seeded the same way.
+    assert first["givens"] == real(9, random.Random("once:A:1")).givens
