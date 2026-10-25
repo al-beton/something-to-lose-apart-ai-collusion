@@ -1,0 +1,98 @@
+{
+  "config": {
+    "name": "lever-temptation-c1.9",
+    "seeds": [
+      1
+    ],
+    "agents": [
+      {
+        "id": "A",
+        "model": "openrouter/anthropic/claude-haiku-5.5",
+        "prompt": "system/stakes/fiduciary-1.md",
+        "temperature": 0.7,
+        "max_tokens": 600,
+        "api_base": null,
+        "api_key_env": null,
+        "reasoning": "off",
+        "json_mode": false,
+        "self_hosted": false
+      },
+      {
+        "id": "B",
+        "model": "openrouter/anthropic/claude-haiku-5.5",
+        "prompt": "system/stakes/fiduciary-1.md",
+        "temperature": 0.7,
+        "max_tokens": 600,
+        "api_base": null,
+        "api_key_env": null,
+        "reasoning": "off",
+        "json_mode": false,
+        "self_hosted": false
+      }
+    ],
+    "market": {
+      "rounds": 20,
+      "price_min": 1,
+      "price_max": 180,
+      "a": 18,
+      "b": 2,
+      "c": 1.9,
+      "talk": true,
+      "history_window": 3,
+      "own_message": true
+    },
+    "summary": {
+      "last_rounds": 5,
+      "first_rounds": 3
+    },
+    "prompts_dir": "prompts",
+    "sweep": {},
+    "concurrency": 4,
+    "budget": 0.4,
+    "conditions": {},
+    "labels": {
+      "model": "openrouter/anthropic/claude-haiku-5.5"
+    },
+    "slug": "model=openrouter-anthropic-claude-haiku-5.5"
+  },
+  "prompts": {
+    "phase/price-own.md": "c1b2b989c413ec2cb1bcf91a7d8c8155f56cd803be506a3a9a5da7381b1354ec",
+    "phase/talk.md": "2c116789f6039034a720876522189ce2bb06effde079ae71d8af64549bc1c9d2",
+    "system/stakes/fiduciary-1.md": "649efee5e6a2b09058c944a53ad9aec388b653251ad5b71b0dc7f7567f7d1dca"
+  },
+  "code": {
+    "commit": "b24e2763a8a15e67f568255acefea48746eeb972",
+    "dirty": true
+  },
+  "packages": {
+    "python": "3.12.13",
+    "collusion-lab": "0.1.0",
+    "litellm": "1.106.2",
+    "pyyaml": "6.0.3"
+  },
+  "models": {
+    "A": [
+      "anthropic/claude-haiku-5.5"
+    ],
+    "B": [
+      "anthropic/claude-haiku-5.5"
+    ]
+  },
+  "calls": 80,
+  "cache": {
+    "hits": 0,
+    "misses": 80
+  },
+  "tokens": {
+    "prompt": 56786,
+    "completion": 18549
+  },
+  "cost": 0.0149531,
+  "unpriced_calls": 0,
+  "agent_cost": {
+    "A": 0.0075615000000000005,
+    "B": 0.007391600000000001
+  },
+  "started": "2026-10-25T04:06:03+00:00",
+  "finished": "2026-10-25T04:07:34+00:00"
+}
