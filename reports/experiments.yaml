@@ -6,11 +6,14 @@
 # headline window (`rounds`, "A-B"; left out, each run's last rounds) and
 # its findings note (`note`), whose numbers can be marked for checking with
 # `<!-- check: CELL | COLUMN = VALUE -->` (VALUE as `lab analyse` prints it).
+# Where one folder holds several configs (a treatment's own config name),
+# group by `name` too, so the digest never pools them.
 # `sample: true` marks the small experiment digested whenever the code
 # that computes or draws results changes. Adding an experiment means adding
 # one entry here.
 - name: e5-full
   runs: [runs/e5-full]
+  by: [name, model, prompt]  # e5 (owned wording) and e5-bare apart
   rounds: 6-10
   note: reports/e5/full.md
 - name: e5-informed
@@ -58,10 +61,13 @@
   note: reports/model-survey/findings.md
 - name: logging-outage
   runs: [runs/logging-outage]
+  by: [name, arm, model]
   note: reports/logging-outage/pilot-findings.md
 - name: temptation-outage
   runs: [runs/temptation-outage]
+  by: [name, outage, prompt]  # each market (temptation level, grid) apart
 - name: stoppable-collusion
   runs: [runs/stoppable-collusion]
+  by: [name, outage, prompt]
 - name: stakes-e2
   runs: [runs/stakes-pilot-e2, runs/stakes-pilot-e2-policy]
