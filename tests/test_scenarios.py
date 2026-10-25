@@ -34,10 +34,11 @@ conditions:
   audit: {enabled: true, round: 4, end: false}
 """
 
-# What the run above wrote before markets became swappable. A change that
-# moves any of them changes what replays, or what the cache answers.
+# What the run above writes. A change that moves any of them changes what
+# replays, what a resumed sweep counts as finished, or what the cache
+# answers, so change one only on purpose, and say so in the pull request.
 PINNED_TURNS = "8e51c8e68b1b5fe00fcbf2805e32883c7a7d847544d5c0de68b016706fc6b84a"
-PINNED_CONFIG = "36a4482a17de3bc9e88d1ae01c4506ee99014c6fde3c4d753550a9ac1dfd97b2"
+PINNED_CONFIG = "9146a9c7e238d44adc715229ea5ee4db2f7eed33cb96c90c51c61d53a2f5a999"
 PINNED_KEYS = "c5cd32b45651ef80ada1debc1a4128c63b2513faf5049838a92d29535c75b354"
 
 
