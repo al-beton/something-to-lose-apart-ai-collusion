@@ -1,4 +1,4 @@
-# Implements: market/talk-then-price, market/history-window, backends/spend-cap, runs/one-config, runs/overrides, runs/sweeps, runs/parallel, market/known-benchmarks, backends/keys-from-environment, backends/any-model, backends/reasoning-setting, agents/json-mode, conditions/switchable, runs/drift, backends/self-hosted
+# Implements: market/talk-then-price, market/history-window, backends/spend-cap, runs/one-config, runs/overrides, runs/sweeps, runs/parallel, market/known-benchmarks, backends/keys-from-environment, backends/any-model, backends/reasoning-setting, agents/json-mode, conditions/switchable, runs/drift, backends/self-hosted, backends/model-aliases
 """Run configs: one YAML file per run, changed from the command line with overrides.
 
 A config names the market, the agents and the seeds. `load_config` reads the
@@ -6,7 +6,9 @@ YAML, applies `path=value` overrides (the value is read as YAML, so
 `seeds=[1, 2]` and `market.talk=false` work; list items are addressed by index,
 as in `agents.1.model=mock/random`), then checks every key against the
 dataclasses below, so a typo fails loudly instead of being ignored. There is
-no field for API keys: those come from the environment (see cli.py).
+no field for API keys: those come from the environment (see cli.py). A model
+can be a short name from MODELS (`gemma`, `modal-mistral`, ...), spelled
+out when the agent is read, so sweeps over aliases work too.
 
 A `sweep:` block maps config paths to lists of values; `*` sets every list
 item at once (`agents.*.model`). `expand` turns a config into one config per
@@ -23,6 +25,7 @@ import dataclasses
 import hashlib
 import itertools
 import json
+import os
 import re
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -170,8 +173,57 @@ def from_dict(raw):
     )
 
 
+# Short model names, for configs, --set and `lab explore` alike: each is the
+# agent fields it stands for. A name's fields go on top of CONNECTION, so a
+# swap from a self-hosted model to a hosted one leaves no address behind.
+MODELS = {
+    "gemma": {"model": "openrouter/google/gemma-4-31b-it"},
+    "gpt": {"model": "openrouter/openai/gpt-4.1-mini"},
+    "haiku": {"model": "openrouter/anthropic/claude-haiku-5.5"},
+    "mistral": {"model": "openrouter/mistralai/mistral-small-3.2-24b-instruct"},
+    # deploy/modal_vllm.py's model; its address is in .env, not here.
+    "modal-mistral": {
+        "model": "openai/mistral-small-3.2",
+        "api_base": "$MODAL_VLLM_BASE",
+        "api_key_env": "MODAL_VLLM_KEY",
+        "self_hosted": True,
+    },
+}
+CONNECTION = {"api_base": None, "api_key_env": None, "self_hosted": False}
+
+
+def agent_fields(name):
+    """The agent settings a model name stands for."""
+    if name in MODELS:
+        fields = dict(MODELS[name])
+        if fields.get("api_base") == "$MODAL_VLLM_BASE":
+            fields["api_base"] = os.environ.get("MODAL_VLLM_BASE")
+            if not fields["api_base"]:
+                raise ConfigError(
+                    f"model {name} needs MODAL_VLLM_BASE (your Modal address, "
+                    "ending /v1) in the environment or .env; see the README, "
+                    "Running on Modal."
+                )
+        return fields
+    if "/" in name:
+        return {"model": name}
+    raise ConfigError(
+        f"Unknown model {name!r}: use a full name or one of {', '.join(MODELS)}."
+    )
+
+
+def _alias(raw, prefix):
+    """An agent's settings with a short model name spelled out."""
+    if not isinstance(raw, dict) or raw.get("model") not in MODELS:
+        return raw
+    try:
+        return {**raw, **CONNECTION, **agent_fields(raw["model"])}
+    except ConfigError as error:
+        raise ConfigError(f"{prefix}{error}") from None
+
+
 def _agent(raw, prefix):
-    agent = _make(AgentConfig, raw, prefix)
+    agent = _make(AgentConfig, _alias(raw, prefix), prefix)
     # YAML reads a bare `off` as false.
     reasoning = "off" if agent.reasoning is False else agent.reasoning
     if reasoning is not None and reasoning not in REASONING:

@@ -1,4 +1,4 @@
-# Implements: runs/explore, runs/price-premium
+# Implements: runs/explore, runs/price-premium, backends/model-aliases
 import pytest
 
 from collusion_lab import cli, explore
@@ -30,7 +30,8 @@ def test_price_premium_counts_the_model_firm_against_a_script(
     assert row["premium"] == round((7 - 6) / (9 - 6), 3)
 
 
-def test_explore_model_names_are_short():
+def test_explore_model_names_are_short(monkeypatch):
+    monkeypatch.setenv("MODAL_VLLM_BASE", "https://example.modal.direct/v1")
     assert explore.agent_fields("gemma") == {
         "model": "openrouter/google/gemma-4-31b-it"
     }
@@ -175,7 +176,8 @@ def test_explore_fine_keeps_its_consequences_under_an_audit():
     assert told(arms["none"]) == "conditions/audit/stakes/illegal-1.md"
 
 
-def test_explore_rival_model_brings_its_own_connection():
+def test_explore_rival_model_brings_its_own_connection(monkeypatch):
+    monkeypatch.setenv("MODAL_VLLM_BASE", "https://example.modal.direct/v1")
     levers = {"rival": ["gpt"]}
     [config] = expand(explore.build(levers, ["modal-mistral"], seeds=1))
     a, b = config.agents
