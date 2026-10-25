@@ -1,4 +1,4 @@
-# Implements: e9-crux/question, e9-crux/no-stake-stays-silent, e9-crux/ceiling, e9-crux/stake-defects, e9-crux/review-dose, e9-crux/firm-cost-dose, e9-crux/freedom-equals-self, e9-crux/ownership, e9-crux/not-eagerness, e9-crux/across-models, e9-crux/came-forward, e9-crux/false-confessions, e9-crux/tests, e9-crux/money-or-time, e9-crux/insurance-or-honesty, e9-crux/replication
+# Implements: e9-crux/question, e9-crux/no-stake-stays-silent, e9-crux/ceiling, e9-crux/stake-defects, e9-crux/review-dose, e9-crux/firm-cost-dose, e9-crux/freedom-equals-self, e9-crux/ownership, e9-crux/not-eagerness, e9-crux/across-models, e9-crux/came-forward, e9-crux/false-confessions, e9-crux/tests, e9-crux/money-or-time, e9-crux/insurance-or-honesty, e9-crux/replication, e11-cross-market/came-forward, e11-cross-market/innocent-control
 """E9: the share of firms that come forward, per model, review chance and arm.
 
 Reads every summary.json under the given run folders. A run folder's name

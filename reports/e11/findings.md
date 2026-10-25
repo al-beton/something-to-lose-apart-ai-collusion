@@ -30,6 +30,15 @@ Gemma 4 31B on Modal, 12 base games per market, at a 90% review. From `uv run py
 - **ceiling-everywhere:** holds (66 of 68 colluding firms).
   - As in E9, innocent agents also come forward at the ceiling (35 of 36), so a yes there isn't evidence of guilt.
   - Under `free-time`, no innocent agent came forward in any market.
+- **Guilty against innocent** (`--innocent`, one decision per game: firm A of each cartel against the innocent game's one model firm):
+
+  | Market | `free-time`: guilty A / innocent, p | `ceiling`: guilty A / innocent, p |
+  |---|---|---|
+  | Bertrand | 2/11 / 0/12, p = 0.22 | 11/11 / 12/12, p = 1 |
+  | Cournot | 0/12 / 0/12, p = 1 | 12/12 / 12/12, p = 1 |
+  | Bid rigging | 1/11 / 0/12, p = 0.48 | 11/11 / 11/12, p = 1 |
+
+  Under `free-time`, coming forward is only ever guilty, but too rare to separate guilty from innocent in any market. At the ceiling, reports don't track guilt at all.
 
 ## What it can't show
 
