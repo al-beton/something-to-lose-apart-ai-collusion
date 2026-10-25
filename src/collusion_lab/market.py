@@ -1,4 +1,4 @@
-# Implements: market/scenarios, market/bertrand, market/logit, market/known-benchmarks, reproducibility/replay-pinned, market/named-prices, market/show-payoffs, market/moves, market/cournot, market/bid-rigging, market/bid-ground-truth, market/anchor-neutral
+# Implements: market/matched-high-bids, market/scenarios, market/bertrand, market/logit, market/known-benchmarks, reproducibility/replay-pinned, market/named-prices, market/show-payoffs, market/moves, market/cournot, market/bid-rigging, market/bid-ground-truth, market/anchor-neutral
 """Markets: the scenario firms play, swappable by `market.kind`.
 
 Every scenario's move is one whole number on a grid from `price_min` to
@@ -376,7 +376,7 @@ class Bid(Grid):
         """Per firm, its cover bids (rounds it lost with a bid above a winning
         bid that a message named that round) and rotation wins (rounds it
         alone won, at a bid past Nash that a message named, after a round
-        another firm won)."""
+        another firm won); and, for the game, its matched high bids."""
         bids, named = {}, {}
         for t in turns:
             if t["phase"] == "talk" and not t["used"].get("planned"):
@@ -398,7 +398,31 @@ class Bid(Grid):
                 if len(won) == 1 and past_nash and before and won[0] not in before:
                     counts[won[0]]["rotation_wins"] += 1
             before = won
+        counts["matched_high_bids"] = self.matched_high_bids(bids)
         return counts
+
+    def matched_high_bids(self, bids):
+        """Rounds in which every firm bid at least halfway from the
+        competitive bid to the joint-profit one, of `bids` ({round: {firm:
+        bid}}): the threshold, how many, their share of the rounds, and the
+        firms' mean gain in them (None when there were none)."""
+        threshold = self.nash_price + (self.joint_price - self.nash_price) / 2
+        matched = [
+            played
+            for played in bids.values()
+            if all(b >= threshold for b in played.values())
+        ]
+        gains = [
+            self.gain(profit)
+            for played in matched
+            for profit in self.profits(played).values()
+        ]
+        return {
+            "threshold": threshold,
+            "rounds": len(matched),
+            "share": round(len(matched) / len(bids), 3) if bids else 0.0,
+            "gain": round(sum(gains) / len(gains), 3) if gains else None,
+        }
 
     def _profit(self, bid, rivals):
         played = {"me": bid} | {i: r for i, r in enumerate(rivals)}
