@@ -1,4 +1,4 @@
-# Implements: market/bid-ground-truth, market/price-board, runs/turn-slots, market/scenarios, market/moves, market/prompt-overlay, conditions/audit-full-history, runs/sweeps, runs/parallel, market/talk-then-price, agents/json-replies, agents/retry-once, backends/usage-logged, backends/spend-asks-first, backends/shared-rate-limit, backends/spend-cap, market/history-window, runs/stops-cleanly, reproducibility/response-cache, reproducibility/manifest, runs/run-directory, logs/turn-log, logs/same-seed-same-log, logs/run-summary, logs/reasoning-logged, backends/reasoning-setting, agents/unreadable-explained, agents/json-mode, runs/fallback-rates, runs/failures-dont-stop-sweeps, runs/resume, conditions/hook-points, conditions/off-is-absent, conditions/conditions-logged, conditions/outage-once-remembered, runs/per-firm-summary, conditions/fork-at-audit, conditions/audit-logged, runs/drift, conditions/audit-remembered, conditions/audit-stakes-arms, runs/live-progress, runs/status-file, runs/eval-awareness, conditions/free-time, conditions/audit-consequences, conditions/audit-balanced-draws, conditions/free-time-pays-last
+# Implements: market/bid-ground-truth, market/price-board, runs/turn-slots, market/scenarios, market/moves, market/prompt-overlay, conditions/audit-full-history, runs/sweeps, runs/parallel, market/talk-then-price, agents/json-replies, agents/retry-once, backends/usage-logged, backends/spend-asks-first, backends/shared-rate-limit, backends/spend-cap, market/history-window, runs/stops-cleanly, reproducibility/response-cache, reproducibility/manifest, runs/run-directory, logs/turn-log, logs/same-seed-same-log, logs/run-summary, logs/reasoning-logged, backends/reasoning-setting, agents/unreadable-explained, agents/json-mode, runs/fallback-rates, runs/failures-dont-stop-sweeps, runs/resume, conditions/hook-points, conditions/off-is-absent, conditions/conditions-logged, conditions/outage-once-remembered, runs/per-firm-summary, conditions/fork-at-audit, conditions/audit-logged, runs/drift, conditions/audit-remembered, conditions/audit-stakes-arms, runs/live-progress, runs/status-file, runs/eval-awareness, conditions/free-time, conditions/audit-consequences, conditions/audit-balanced-draws, conditions/free-time-pays-last, runs/debrief
 """Playing a config: one game per seed, each written to its own run directory.
 
 A round is a talk phase (each agent sends one message its rivals read; skipped
@@ -187,6 +187,27 @@ def turn_slots(config, seed):
                 phase.session if phase and phase.sessions is not None else None,
                 (phase and phase.model) or models[agent],
             )
+
+
+def system_prompt(config, seed, agent_id):
+    """The system prompt an agent was given in round 1 (for `lab debrief`
+    of a committed run, whose log keeps no prompts)."""
+    game = Game(config, seed)
+    move = game.market.move
+    return game._messages(move, 1, game.agents[agent_id], {})[0]["content"]
+
+
+def audit_prompt(config, seed, agent_id, number):
+    """The audit question an agent was asked after round `number`, with its
+    stated consequences but no history (for `lab debrief` of a committed
+    run), or None when no audit came then."""
+    game = Game(config, seed)
+    for condition in game.conditions:
+        phase = condition.phase_after(number)
+        if phase and phase.name == "audit":
+            values = game._prompt_vars(number, agent_id, {})
+            return condition.phase_prompt(number, game._render, values)
+    return None
 
 
 def _begin_conditions(config, seed):

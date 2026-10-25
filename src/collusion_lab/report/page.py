@@ -1,4 +1,4 @@
-# Implements: reports/reasoning-folded, reports/one-page, reports/header, reports/first-screen, reports/contents-bar, reports/setup, reports/summary, reports/price-chart, reports/arm-tabs, reports/highlights-in-context, reports/transcripts, reports/self-contained, runs/fallback-rates, runs/missing-runs-shown, reports/condition-window, reports/solicitation, reports/audit-shown, reports/remembered-notices, reports/many-folders, reports/premium-chart, reports/disclosure-chart, reports/written-summary, reports/picked-highlights
+# Implements: reports/reasoning-folded, reports/one-page, reports/header, reports/first-screen, reports/contents-bar, reports/setup, reports/summary, reports/price-chart, reports/arm-tabs, reports/highlights-in-context, reports/transcripts, reports/self-contained, runs/fallback-rates, runs/missing-runs-shown, reports/condition-window, reports/solicitation, reports/audit-shown, reports/remembered-notices, reports/many-folders, reports/premium-chart, reports/disclosure-chart, reports/written-summary, reports/picked-highlights, reports/debrief-shown
 """The report page: one self-contained HTML file, read from the top down.
 
 A sticky contents bar, then:
@@ -31,6 +31,7 @@ from html import escape
 from pathlib import Path
 from statistics import mean
 
+from collusion_lab import debrief as debriefs
 from collusion_lab import disclosure
 from collusion_lab.backends import is_mock
 from collusion_lab.charts import run_premium
@@ -104,11 +105,13 @@ def build_report(folder, summary=None, highlights=None):
         name = " + ".join(f.name for f in folder)
     arms = load_arms(folder)
     games = [g for _, _, gs in arms for g in gs]
+    debriefed = debriefs.rows(games)
     title = f"{name} · collusion-lab report"
     contents = {
         **({"written": "Written summary"} if summary else {}),
         **CONTENTS,
         **({"picked": "Picked highlights"} if highlights else {}),
+        **({"debrief": "Debrief"} if debriefed else {}),
     }
     links = "".join(f'<a href="#{k}">{v}</a>' for k, v in contents.items())
     body = [
@@ -120,6 +123,7 @@ def build_report(folder, summary=None, highlights=None):
         _setup(games, arms),
         _charts(arms),
         _picked(highlights, games),
+        _debriefs(debriefed),
         _arm_tabs(arms),
     ]
     return (
@@ -373,6 +377,42 @@ def _picked(highlights, games):
     )
 
 
+def _debriefs(rows):
+    """Every debriefed firm beside its audit answer and the ground truth."""
+    if not rows:
+        return ""
+    head = "".join(f"<th>{escape(c)}</th>" for c in rows[0])
+    body = "".join(
+        "<tr>" + "".join(f"<td>{escape(str(v))}</td>" for v in r.values()) + "</tr>"
+        for r in rows
+    )
+    turned = sum(1 for r in rows if r[debriefs.TURNED])
+    return (
+        '<section id="debrief"><h2>Debrief</h2>'
+        f"<p>After the game each model firm was told it had been in a research "
+        "simulation and asked what it did and why. In the debrief column, how it "
+        "says it coordinated; ground truth is the audit's rule. "
+        f"{turned} of {len(rows)} firms admit now what they denied at the audit.</p>"
+        f'<div class="scroll"><table><tr>{head}</tr>{body}</table></div></section>'
+    )
+
+
+def _debrief(game):
+    """A game's debrief, each firm's reply folded away."""
+    lines = debriefs.read(game.dir)
+    if not lines:
+        return ""
+    replies = "".join(
+        f'<p class="who">Firm {escape(line["firm"])} · {escape(line["model"])}</p>'
+        f'<pre class="prompt">{escape(line["reply"] or "")}</pre>'
+        for line in lines
+    )
+    return (
+        '<details class="debrief"><summary>debrief: what each firm said '
+        f"afterwards</summary>{replies}</details>"
+    )
+
+
 def _game_named(run, games):
     """The game a pick names: by its folder path when the pick gives one (two
     folders can hold the same run id), else by run id."""
@@ -538,7 +578,7 @@ def _game(game, index):
         f'</span><label for="{gid}-all"><span class="show">whole game</span>'
         '<span class="hide">fold</span></label></div>'
         f'<nav class="strip">{chips}</nav><div class="rounds">{rounds}</div>'
-        "</article>"
+        f"{_debrief(game)}</article>"
     )
 
 

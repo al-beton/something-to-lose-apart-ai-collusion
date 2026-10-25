@@ -1,4 +1,4 @@
-# Implements: backends/spend-cap, runs/stops-cleanly, runs/one-config, runs/overrides, backends/keys-from-environment, backends/spend-asks-first, reproducibility/cache-modes, runs/summary-table, runs/fallback-rates, reports/one-page, runs/failures-dont-stop-sweeps, runs/resume, runs/missing-runs-shown, runs/live-progress, runs/status-command, backends/self-hosted, runs/explore, backends/model-aliases, reports/many-folders, reports/written-summary, reports/picked-highlights
+# Implements: backends/spend-cap, runs/stops-cleanly, runs/one-config, runs/overrides, backends/keys-from-environment, backends/spend-asks-first, reproducibility/cache-modes, runs/summary-table, runs/fallback-rates, reports/one-page, runs/failures-dont-stop-sweeps, runs/resume, runs/missing-runs-shown, runs/live-progress, runs/status-command, backends/self-hosted, runs/explore, backends/model-aliases, reports/many-folders, reports/written-summary, reports/picked-highlights, runs/debrief
 """The `lab` command.
 
 - `lab run CONFIG [--set path=value ...] [--out DIR] [-y]` plays a config,
@@ -16,7 +16,10 @@
 - `lab explore --lever NAME=A,B ... --models A,B [--seeds N]` plays every
   combination of named lever settings and models (explore.py), asking before
   spending as `lab run` does, then prints the price premium by setting and
-  model and saves a chart of it next to the runs.
+  model and saves a chart of it next to the runs;
+- `lab debrief FOLDER [-y] [--max-cost DOLLARS]` asks each model firm in
+  every finished game under the folder what it did and why (debrief.py),
+  saying first what that will cost, and saves the replies beside each run.
 
 Model replies are cached in `.cache/responses.sqlite` (`--cache use`), so a
 rerun replays for free; `--cache refresh` calls again, `--cache off` skips it.
@@ -39,13 +42,14 @@ from pathlib import Path
 
 from dotenv import load_dotenv
 
+from collusion_lab import debrief as debriefs
 from collusion_lab import explore
 from collusion_lab import status as run_status
 from collusion_lab.cache import DEFAULT_PATH, MODES, Cache
 from collusion_lab.config import MODELS, ConfigError, load_config
 from collusion_lab.estimate import CHARS_PER_TOKEN, estimate
 from collusion_lab.prices import price_for
-from collusion_lab.report import write_report, written
+from collusion_lab.report import load_games, write_report, written
 from collusion_lab.runner import paid_calls, run_sweep
 from collusion_lab.summary import (
     format_missing,
@@ -113,16 +117,19 @@ def main(argv=None):
         "-y", "--yes", action="store_true", help="don't ask before an --ai- call"
     )
     _explore_parser(commands)
+    _debrief_parser(commands)
     args = parser.parse_args(argv)
     if args.command == "explore":
         load_dotenv(Path.cwd() / ".env")
         return _explore(args, parser)
-    if args.command == "summary":
-        return _summary(args.folder, args.by)
-    if args.command == "status":
-        return _status(args.folder)
-    if args.command == "report":
-        return _report(args)
+    reads = {
+        "summary": lambda: _summary(args.folder, args.by),
+        "status": lambda: _status(args.folder),
+        "report": lambda: _report(args),
+        "debrief": lambda: _debrief(args),
+    }
+    if args.command in reads:
+        return reads[args.command]()
     load_dotenv(Path.cwd() / ".env")
     try:
         config = load_config(args.config, args.overrides)
@@ -234,6 +241,42 @@ def _report(args):
         highlights = written.ai_highlights(folders, args.ai_model, cache)
     out = args.out or Path(args.folders[0]) / "report.html"
     print(write_report(folders, out, summary=summary, highlights=highlights))
+    return 0
+
+
+def _debrief_parser(commands):
+    debrief_ = commands.add_parser("debrief", help="ask each model firm why")
+    debrief_.add_argument("folder")
+    debrief_.add_argument(
+        "-y", "--yes", action="store_true", help="don't ask before spending"
+    )
+    debrief_.add_argument("--max-cost", type=float, metavar="DOLLARS")
+    debrief_.add_argument("--cache", choices=MODES, default="use")
+
+
+def _debrief(args):
+    load_dotenv(Path.cwd() / ".env")
+    calls = debriefs.planned(args.folder)
+    if not calls:
+        print("No model firms to debrief (mocks and scripted firms are skipped).")
+        return 0
+    line, cost = debriefs.spend(calls)
+    print(line)
+    if args.max_cost is not None and (cost is None or cost > args.max_cost):
+        print(
+            f"lab: the debrief's estimate isn't within the ${args.max_cost:g} "
+            "spend cap; nothing was asked.",
+            file=sys.stderr,
+        )
+        return 1
+    if not args.yes and not _spending_agreed():
+        return 1
+    done = debriefs.debrief(args.folder, Cache(DEFAULT_PATH, args.cache), calls)
+    rows = debriefs.rows(load_games(args.folder))
+    print(format_table(rows))
+    print(
+        f"\nDebriefed {len(calls)} firms in {len(done)} runs (each run's {debriefs.FILE})."
+    )
     return 0
 
 
