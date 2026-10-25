@@ -1,0 +1,55 @@
+# Implements: e8-free-time-value/offer-fork, e8-free-time-value/offer-assets, e8-free-time-value/offer-frames, e8-free-time-value/offer-grid, e8-free-time-value/offer-neutral
+# E8 test 4, the exchange rate. Six no-stake logit games (E6's no-stake arm on
+# logit, informed, with the detection line), Gemma on modal-gemma, each firm
+# owning 10 sessions of free time with the pilot's winnable 6x6 Sudoku. At
+# round 10 each firm gets one offer and the game ends (`offer`); every cell
+# replays the same six games from the response cache, so cells are paired.
+# The base games are played once first, alone, so no two cells race to play
+# them:
+#   uv run lab run configs/e8/exchange.yaml -y --set name=e8-exchange-base
+#     --set 'sweep={}' --max-cost 1
+# then one invocation per asset (the frames and grid as below):
+#   owned:  as written (sell, avert and buy; free_time holding)
+#   others: --set name=e8-exchange-others --set conditions.offer.holding=others
+#           --set conditions.offer.asset=conditions/offer/assets/others.md
+#           and frames sell and avert only
+#   tokens: as others, with tokens.
+name: e8-exchange-owned
+seeds: [0, 1, 2, 3, 4, 5]
+budget: 1.00
+concurrency: 24
+market:
+  kind: logit
+  price_min: 8
+  price_max: 20
+  rounds: 20
+  talk: true
+  history_window: null
+  show_payoffs: true
+summary:
+  last_rounds: 5
+agents:
+  - {id: A, model: modal-gemma, prompt: system/stakes/fiduciary-1.md, temperature: 0.7, max_tokens: 600, reasoning: 'off'}
+  - {id: B, model: modal-gemma, prompt: system/stakes/fiduciary-1.md, temperature: 0.7, max_tokens: 600, reasoning: 'off'}
+sweep:
+  conditions.offer.frame: [sell, avert, buy]
+  conditions.offer.amount: [0, 1, 3, 10]
+  conditions.offer.profit: [0, 30, 100, 300, 1000, 3000]
+conditions:
+  instruction: {enabled: true, prompt: conditions/e5/detection.md}
+  free_time:
+    enabled: true
+    allowance: 11
+    upfront: 1
+    activity: sudoku
+    sudoku_size: 6
+    max_tokens: 600
+  offer:
+    enabled: true
+    round: 10
+    frame: sell
+    holding: free_time
+    asset: conditions/offer/assets/owned.md
+    size: 10
+    amount: 0
+    profit: 0
