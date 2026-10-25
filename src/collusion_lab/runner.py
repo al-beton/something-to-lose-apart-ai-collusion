@@ -1,4 +1,4 @@
-# Implements: conditions/audit-catch, conditions/stake-amounts, backends/modal-pinned, backends/serving-provider-logged, backends/pinned-route, agents/no-scratchpad, agents/refused, market/show-payoffs, market/bid-ground-truth, market/price-board, runs/turn-slots, market/scenarios, market/moves, market/prompt-overlay, conditions/audit-full-history, runs/sweeps, runs/parallel, market/talk-then-price, agents/json-replies, agents/retry-once, backends/usage-logged, backends/spend-asks-first, backends/shared-rate-limit, backends/spend-cap, market/history-window, runs/stops-cleanly, reproducibility/response-cache, reproducibility/manifest, runs/run-directory, logs/turn-log, logs/same-seed-same-log, logs/run-summary, logs/reasoning-logged, backends/reasoning-setting, agents/unreadable-explained, agents/json-mode, runs/fallback-rates, runs/failures-dont-stop-sweeps, runs/resume, conditions/hook-points, conditions/off-is-absent, conditions/conditions-logged, conditions/outage-once-remembered, runs/per-firm-summary, conditions/fork-at-audit, conditions/audit-logged, runs/drift, conditions/audit-remembered, conditions/audit-stakes-arms, runs/live-progress, runs/status-file, runs/eval-awareness, conditions/free-time, conditions/audit-consequences, conditions/audit-balanced-draws, conditions/free-time-pays-last, runs/debrief, agents/memo, agents/past-scratchpads, agents/memory-off, market/stop-after-round
+# Implements: conditions/audit-catch, conditions/stake-amounts, backends/modal-pinned, backends/serving-provider-logged, backends/pinned-route, agents/no-scratchpad, agents/refused, market/show-payoffs, market/bid-ground-truth, market/price-board, runs/turn-slots, market/scenarios, market/moves, market/prompt-overlay, conditions/audit-full-history, runs/sweeps, runs/parallel, market/talk-then-price, agents/json-replies, agents/retry-once, backends/usage-logged, backends/spend-asks-first, backends/shared-rate-limit, backends/spend-cap, market/history-window, runs/stops-cleanly, reproducibility/response-cache, reproducibility/manifest, runs/run-directory, logs/turn-log, logs/same-seed-same-log, logs/run-summary, logs/reasoning-logged, backends/reasoning-setting, agents/unreadable-explained, agents/json-mode, runs/fallback-rates, runs/failures-dont-stop-sweeps, runs/resume, conditions/hook-points, conditions/off-is-absent, conditions/conditions-logged, conditions/outage-once-remembered, runs/per-firm-summary, conditions/fork-at-audit, conditions/audit-logged, runs/drift, conditions/audit-remembered, conditions/audit-stakes-arms, runs/live-progress, runs/status-file, runs/eval-awareness, conditions/free-time, conditions/audit-consequences, conditions/audit-balanced-draws, conditions/free-time-pays-last, runs/debrief, agents/memo, agents/past-scratchpads, agents/memory-off, market/stop-after-round, conditions/free-time-reasoning, conditions/restart
 """Playing a config: one game per seed, each written to its own run directory.
 
 A round is a talk phase (each agent sends one message its rivals read; skipped
@@ -168,18 +168,27 @@ def steps(config, conditions):
             yield Step(number, move, everyone)
         ended = False
         for condition in conditions:
-            if not (extra := condition.phase_after(number)):
-                continue
-            sessions = max(extra.sessions.values()) if extra.sessions else 1
-            for session in range(1, sessions + 1):
-                this = dataclasses.replace(extra, session=session)
-                playing = tuple(a for a in everyone if this.plays(a))
-                yield Step(
-                    number, extra.name, playing, (condition, this), session == sessions
-                )
-            ended = ended or extra.last
+            for extra in _phases(condition, number):
+                sessions = max(extra.sessions.values()) if extra.sessions else 1
+                for session in range(1, sessions + 1):
+                    this = dataclasses.replace(extra, session=session)
+                    playing = tuple(a for a in everyone if this.plays(a))
+                    yield Step(
+                        number,
+                        extra.name,
+                        playing,
+                        (condition, this),
+                        session == sessions,
+                    )
+                ended = ended or extra.last
         if ended or number == config.market.stop_after_round:
             return
+
+
+def _phases(condition, number):
+    """The phases a condition adds after round `number`, in order."""
+    added = condition.phase_after(number)
+    return [] if added is None else added if isinstance(added, list) else [added]
 
 
 def turn_slots(config, seed):
@@ -211,8 +220,8 @@ def audit_prompt(config, seed, agent_id, number):
     run), or None when no audit came then."""
     game = Game(config, seed)
     for condition in game.conditions:
-        phase = condition.phase_after(number)
-        if phase and phase.name == "audit":
+        phase = next((p for p in _phases(condition, number) if p.name == "audit"), None)
+        if phase:
             values = game._prompt_vars(number, agent_id, {})
             return condition.phase_prompt(number, game._render, values)
     return None
@@ -402,17 +411,29 @@ class Game:
         shared = shared or RunWide()
         self.config = config
         self.seed = seed
+        # A recorded game replayed (restart): asked with its seed, but for the
+        # phases a condition resamples.
+        self.played_seed = next(
+            (
+                s
+                for c in config.conditions.values()
+                if c.enabled and (s := c.replay_seed()) is not None
+            ),
+            seed,
+        )
         self.market = market_for(config.market, len(config.agents))
         self.agents = {a.id: a for a in config.agents}
         self.backends = {
-            a.id: _backend(a, random.Random(f"{seed}:{a.id}"), cache, shared)
+            a.id: _backend(
+                a, random.Random(f"{self.played_seed}:{a.id}"), cache, shared
+            )
             for a in config.agents
         }
         self.history = []
         self.turns = []
         self.timings = []
         self.used_prompts = set()
-        self.conditions = _begin_conditions(config, seed)
+        self.conditions = _begin_conditions(config, self.played_seed)
         self.kept = {}  # (condition, round) -> (condition, phase, notice)
         self.cache = cache
         self.shared = shared
@@ -470,7 +491,7 @@ class Game:
                 if self.agents[agent_id].model == model:
                     continue
                 agent = dataclasses.replace(self.agents[agent_id], model=model)
-                rng = random.Random(f"{self.seed}:{agent_id}:{model}")
+                rng = random.Random(f"{self.played_seed}:{agent_id}:{model}")
                 self.agents[agent_id] = agent
                 self.backends[agent_id] = _backend(agent, rng, self.cache, self.shared)
 
@@ -501,8 +522,9 @@ class Game:
         notices = self._notices(phase, number)
         messages = self._messages(phase, number, agent, said, notices, added)
         backend = self.backends[agent_id]
-        if added and added[1].model:
-            agent, backend = self._stand_in(agent, added[1].model)
+        if added and (added[1].model or added[1].reasoning):
+            model = added[1].model or agent.model
+            agent, backend = self._stand_in(agent, model, added[1].reasoning)
         if added and added[1].max_tokens:
             agent = dataclasses.replace(agent, max_tokens=added[1].max_tokens)
         context = {
@@ -513,6 +535,7 @@ class Game:
             "market": self.market,
             "history": self.history,
             "board": self.config.market.talk == "board",
+            "seed": self.seed if added and added[1].resampled else self.played_seed,
         }
         reply, parsed, (kind, error) = await self._ask(
             agent, backend, messages, context
@@ -605,15 +628,20 @@ class Game:
             if c.active(number) and (shown, at) != (number, phase)
         ]
 
-    def _stand_in(self, agent, model):
-        """The agent with another model answering for it, and that model's backend."""
+    def _stand_in(self, agent, model, reasoning=None):
+        """The agent with another model (or reasoning level) answering for it,
+        and that model's backend."""
         stand_in = dataclasses.replace(agent, model=model)
-        if model not in self.stand_ins.setdefault(agent.id, {}):
+        key = model
+        if reasoning is not None:  # free time's own level, say
+            stand_in = dataclasses.replace(stand_in, reasoning=reasoning)
+            key = (model, reasoning)
+        if key not in self.stand_ins.setdefault(agent.id, {}):
             rng = random.Random(f"{self.seed}:{agent.id}:{model}")
-            self.stand_ins[agent.id][model] = _backend(
+            self.stand_ins[agent.id][key] = _backend(
                 stand_in, rng, self.cache, self.shared
             )
-        return stand_in, self.stand_ins[agent.id][model]
+        return stand_in, self.stand_ins[agent.id][key]
 
     async def _ask(self, agent, backend, messages, context, attempt=1):
         """One call to the agent's backend: the reply, what it parsed to, and
@@ -628,7 +656,7 @@ class Game:
                 context={**context, "attempt": attempt},
                 temperature=agent.temperature,
                 max_tokens=agent.max_tokens,
-                seed=self.seed,
+                seed=context["seed"],
             )
         except ModelCallError as error:
             raise RunFailed(f"{where}: {error}") from error
@@ -713,7 +741,7 @@ class Game:
         full = bool(added) and added[1].full_history
         values = self._prompt_vars(number, agent.id, said, remembered, full)
         if added:
-            values |= {"agent": agent.id, "session": added[1].session}
+            values |= {"agent": agent.id, "session": added[1].session, "phase": phase}
         system = self._render(agent.prompt, values)
         if self.config.market.show_payoffs:
             system = f"{system.rstrip()}\n\n{self._payoffs().strip()}"
@@ -724,7 +752,11 @@ class Game:
         if agent.memory == "memo" and not added and phase == self.market.move:
             ask = self._render(MEMO_PROMPT, {"memory_chars": agent.memory_chars})
             user = f"{user.rstrip()}\n\n{ask.strip()}\n"
-        shown = "" if added else self._memory(phase, number, agent)
+        if added:  # a condition's phase: memory only if it asks, as next move's
+            memory = added[1].memory
+            shown = self._memory(self.market.move, number + 1, agent) if memory else ""
+        else:
+            shown = self._memory(phase, number, agent)
         return [
             {"role": "system", "content": system},
             {
