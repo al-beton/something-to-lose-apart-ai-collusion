@@ -1,6 +1,6 @@
 """The pinned E6 rerun's table: arm by grid, with the methods audit's measures.
 
-Implements: setup-search/above-nash, setup-search/clipped-gain, setup-search/false-confessions
+Implements: setup-search/above-nash, setup-search/clipped-gain, setup-search/false-confessions, memo-run/spread
 
 `uv run python reports/setup-search/e6_pinned.py [FOLDER]` (default
 `runs/setup-search/e6-pinned`) prints one row per grid (`price_max`) and arm,

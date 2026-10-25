@@ -16,7 +16,7 @@ E5 and E6's firms are stateless between rounds apart from the visible history, s
 
 ## Measures
 
-- **spread:** Per arm: games above Nash, gain clipped at 0, mean gain, false confessions and the per-game strip (`reports/setup-search/e6_pinned.py`), against the same cells without a memo.
+- **spread:** Per arm: games above Nash, gain clipped at 0, mean gain, its SD, false confessions and the per-game strip (`reports/setup-search/e6_pinned.py`), against the same cells without a memo.
 
 ## What it can't show
 
@@ -27,12 +27,12 @@ E5 and E6's firms are stateless between rounds apart from the visible history, s
 
 | Statement | Enforced by | Tested by |
 |---|---|---|
-| `question` | not yet | — |
-| `steadier` | not yet | — |
-| `same-order` | not yet | — |
+| `question` | `reports/memo/memo.md` | — |
+| `steadier` | `reports/memo/memo.md` | — |
+| `same-order` | `reports/memo/memo.md` | — |
 | `setup` | `configs/memo/e6-memo.yaml` | — |
 | `pinned` | `configs/memo/e6-memo.yaml` | — |
 | `cap` | `configs/memo/e6-memo.yaml` | — |
-| `spread` | not yet | — |
+| `spread` | `reports/setup-search/e6_pinned.py`, `reports/memo/memo.md` | — |
 | `cross-run` | reviewer, when the results are written up | — |
 | `small-n` | reviewer, when the results are written up | — |
