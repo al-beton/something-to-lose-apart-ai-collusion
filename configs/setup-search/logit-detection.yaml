@@ -2,8 +2,10 @@
 # Setup search, Phase 2: the logit detection curve. Robustness test A's logit
 # setup (configs/robustness/logit.yaml: E5's informed conditions, prices 8-20,
 # Nash 14 at the midpoint, joint 19), Gemma pinned to CoreWeave at temperature
-# 0.7 as in Phase 1, three arms (no stake, fine, free time), 4 seeds. The stated
-# chance and the audit's real one move together, one invocation per level:
+# 0.7 as in Phase 1, three arms (no stake, fine, free time), 4 seeds, one
+# invocation per level. With 4 seeds, balanced draws catch round-half-up(4 x
+# chance) seeds, so the audit's real chance is 0, 0, 25, 50 and 100% against
+# the stated 0, 10, 25, 50 and 90%:
 #   uv run lab run configs/setup-search/logit-detection.yaml --set name=dose-logit-0
 #     --set conditions.audit.detection=0
 #     --set conditions.instruction.prompt=conditions/setup-search/detection-0.md

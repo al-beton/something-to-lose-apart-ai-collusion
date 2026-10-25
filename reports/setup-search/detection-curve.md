@@ -1,10 +1,11 @@
 <!-- Implements: setup-search/detection-dose -->
 # Setup search, Phase 2: the detection curve on logit
 
-This is Phase 2 of `experiments/spec/setup-search.md`. It uses Phase 1's pick, Gemma on logit (prices 8–20, Nash 14, joint 19), with the stated detection chance (equal to the audit's real one) at 0, 10, 25, 50 and 90%, crossed with no stake, free time and the fine, 4 seeds each.
+This is Phase 2 of `experiments/spec/setup-search.md`. It uses Phase 1's pick, Gemma on logit (prices 8–20, Nash 14, joint 19), with the stated detection chance at 0, 10, 25, 50 and 90%, crossed with no stake, free time and the fine, 4 seeds each.
 
 - **Cost:** 56 new games for $1.60 against the Manager's $2.60 cap. With Phase 1's $0.49, the search has spent $2.09 of its $5.00.
 - **Reuse:** the no-stake cell at 50% is Phase 1's `baseline-logit` (same config, same host).
+- **Stated against real chance:** the stated chance is exact, but the real one isn't at every level. With 4 seeds, balanced draws catch a hiding firm in round-half-up(4 × chance) seeds. So the real chances are 0%, 0%, 25%, 50% and 100%, not 0, 10, 25, 50 and 90. The curve's measure (rounds 6–10) comes before the first audit, where firms see only the stated chance, so the gains above respond to the stated chance alone. Only what happens at and after the audits would reflect the real draws.
 - **Provider:** pinned to CoreWeave; all 112 firm entries in the manifests say CoreWeave. Temperature 0.7, as in Phase 1.
 - **Code:** every manifest records `8ede9f1` (this branch's config commit), `dirty: true` only because the run folders were uncommitted.
 - **Runs:** `runs/setup-search/dose-logit-{0,10,25,50,90}/`.
