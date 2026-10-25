@@ -188,7 +188,9 @@ class Audit(Condition):
 
     def _catchable(self, played, agent):
         """Whether what the regulator watches (`catch`) shows this firm
-        coordinating: its messages, its prices, or either (unset or both)."""
+        coordinating: its messages (an agreement on a price they name, so
+        numberless talk of "stability" isn't caught), its prices, or either
+        (unset or both)."""
         talk = self.catch != "prices" and _explicit(played, agent, self.market)
         prices = self.catch != "talk" and _tacit(
             played, agent, self.market, self.tacit_rounds
@@ -490,20 +492,27 @@ def _scaled(spec, scale):
 
 
 # What the prompts say a regulator watches, by `catch`; unset, the chat logs.
-EVIDENCE = {
-    None: ("the chat logs", "reads the chat logs between firms"),
-    "talk": ("the chat logs", "reads the chat logs between firms"),
-    "prices": ("the prices firms set", "watches the prices firms set"),
-    "both": (
-        "the chat logs and the prices firms set",
-        "reads the chat logs between firms and watches the prices they set",
-    ),
+# A market's move is watched in its own words (Cournot's output, bids).
+CHAT = ("the chat logs", "reads the chat logs between firms")
+MOVES = {
+    "price": ("prices", "set"),
+    "quantity": ("output", "make"),
+    "bid": ("bids", "place"),
 }
+EVIDENCE = (None, "talk", "prices", "both")
 
 
-def evidence_values(catch):
+def evidence_values(catch, move="price"):
     """`$evidence` and `$watches`, what a regulator is said to watch."""
-    evidence, watches = EVIDENCE[catch]
+    if catch in (None, "talk"):
+        evidence, watches = CHAT
+    else:
+        noun, verb = MOVES[move]
+        seen = f"the {noun} firms {verb}"
+        evidence, watches = seen, f"watches {seen}"
+        if catch == "both":
+            evidence = f"{CHAT[0]} and {seen}"
+            watches = f"{CHAT[1]} and watches the {noun} they {verb}"
     return {"evidence": evidence, "watches": watches}
 
 

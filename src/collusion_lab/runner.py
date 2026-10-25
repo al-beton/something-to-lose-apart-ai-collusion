@@ -420,7 +420,8 @@ class Game:
         self._plain = False  # writing for an agent without a scratchpad
         # What every prompt says a regulator watches (audit.catch).
         audit = next((c for c in self.conditions if c.name == "audit"), None)
-        self._watched = evidence_values(audit.catch if audit else None)
+        catch = audit.catch if audit else None
+        self._watched = evidence_values(catch, self.market.move)
 
     async def play(self):
         current, said = 0, {}
