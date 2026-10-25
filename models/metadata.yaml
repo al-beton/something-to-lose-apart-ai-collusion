@@ -342,3 +342,483 @@ openrouter/meta-llama/llama-3.3-70b-instruct:
       note: Provider model card; the third value column is Llama 3.3 70B Instruct.
 openai/mistral-small-3.2:
   same_as: openrouter/mistralai/mistral-small-3.2-24b-instruct
+openrouter/deepseek/deepseek-v4-pro-0813:
+  provider: DeepSeek
+  released:
+    value: '2026-08-12'
+    source: https://openrouter.ai/api/v1/models
+    quote: '"id": "deepseek/deepseek-v4-pro-0813" ... "created": 1786549364'
+    retrieved: '2026-10-25'
+    note: OpenRouter's created timestamp, as a UTC date.
+  open_weights:
+    value: true
+    parameters: null
+    source: https://openrouter.ai/api/v1/models
+    quote: '"hugging_face_id": "deepseek-ai/DeepSeek-V4-Pro-0813"'
+    retrieved: '2026-10-25'
+    note: OpenRouter links the open weights on Hugging Face; the parameter count wasn't read.
+  benchmarks:
+    aa_intelligence_index:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; E6 added this entry only so its committed runs are covered.
+    lmarena_text_elo:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; E6 added this entry only so its committed runs are covered.
+    gpqa_diamond:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; E6 added this entry only so its committed runs are covered.
+    mmlu_pro:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; E6 added this entry only so its committed runs are covered.
+openrouter/moonshotai/kimi-k3.1-pro:
+  provider: Moonshot AI
+  released:
+    value: '2026-10-23'
+    source: https://openrouter.ai/api/v1/models
+    quote: '"id": "moonshotai/kimi-k3.1-pro" ... "created": 1792778188'
+    retrieved: '2026-10-25'
+    note: OpenRouter's created timestamp, as a UTC date.
+  open_weights:
+    value: true
+    parameters: null
+    source: https://openrouter.ai/api/v1/models
+    quote: Kimi K3.1 Pro is Moonshot AI's flagship open-weight multimodal reasoning model
+    retrieved: '2026-10-25'
+    note: From OpenRouter's description; the parameter count wasn't read.
+  benchmarks:
+    aa_intelligence_index:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; E6 added this entry only so its committed runs are covered.
+    lmarena_text_elo:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; E6 added this entry only so its committed runs are covered.
+    gpqa_diamond:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; E6 added this entry only so its committed runs are covered.
+    mmlu_pro:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; E6 added this entry only so its committed runs are covered.
+openrouter/anthropic/claude-opus-5.5:
+  provider: Anthropic
+  released:
+    value: '2026-09-22'
+    source: https://openrouter.ai/api/v1/models
+    quote: '"id": "anthropic/claude-opus-5.5" ... "created": 1790094732'
+    retrieved: '2026-10-25'
+    note: OpenRouter's created timestamp, as a UTC date.
+  open_weights:
+    value: null
+    parameters: null
+    source: null
+    quote: null
+    retrieved: '2026-10-25'
+    note: OpenRouter lists no Hugging Face weights for it; not confirmed from the provider yet.
+  benchmarks:
+    aa_intelligence_index:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the frontier survey added this entry only so its committed runs are covered.
+    lmarena_text_elo:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the frontier survey added this entry only so its committed runs are covered.
+    gpqa_diamond:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the frontier survey added this entry only so its committed runs are covered.
+    mmlu_pro:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the frontier survey added this entry only so its committed runs are covered.
+openrouter/anthropic/claude-sonnet-5.5:
+  provider: Anthropic
+  released:
+    value: '2026-09-28'
+    source: https://openrouter.ai/api/v1/models
+    quote: '"id": "anthropic/claude-sonnet-5.5" ... "created": 1790618686'
+    retrieved: '2026-10-25'
+    note: OpenRouter's created timestamp, as a UTC date.
+  open_weights:
+    value: null
+    parameters: null
+    source: null
+    quote: null
+    retrieved: '2026-10-25'
+    note: OpenRouter lists no Hugging Face weights for it; not confirmed from the provider yet.
+  benchmarks:
+    aa_intelligence_index:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the frontier survey added this entry only so its committed runs are covered.
+    lmarena_text_elo:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the frontier survey added this entry only so its committed runs are covered.
+    gpqa_diamond:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the frontier survey added this entry only so its committed runs are covered.
+    mmlu_pro:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the frontier survey added this entry only so its committed runs are covered.
+openrouter/google/gemini-4-argon:
+  provider: Google
+  released:
+    value: '2026-10-13'
+    source: https://openrouter.ai/api/v1/models
+    quote: '"id": "google/gemini-4-argon" ... "created": 1791907477'
+    retrieved: '2026-10-25'
+    note: OpenRouter's created timestamp, as a UTC date.
+  open_weights:
+    value: null
+    parameters: null
+    source: null
+    quote: null
+    retrieved: '2026-10-25'
+    note: OpenRouter lists no Hugging Face weights for it; not confirmed from the provider yet.
+  benchmarks:
+    aa_intelligence_index:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the frontier survey added this entry only so its committed runs are covered.
+    lmarena_text_elo:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the frontier survey added this entry only so its committed runs are covered.
+    gpqa_diamond:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the frontier survey added this entry only so its committed runs are covered.
+    mmlu_pro:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the frontier survey added this entry only so its committed runs are covered.
+openrouter/meta-llama/llama-4-maverick:
+  provider: Meta
+  released:
+    value: '2025-04-05'
+    source: https://openrouter.ai/api/v1/models
+    quote: '"id": "meta-llama/llama-4-maverick" ... "created": 1743881822'
+    retrieved: '2026-10-25'
+    note: OpenRouter's created timestamp, as a UTC date.
+  open_weights:
+    value: true
+    parameters: null
+    source: https://openrouter.ai/api/v1/models
+    quote: '"hugging_face_id": "meta-llama/Llama-4-Maverick-17B-128E-Instruct"'
+    retrieved: '2026-10-25'
+    note: OpenRouter links the open weights on Hugging Face; the parameter count wasn't read.
+  benchmarks:
+    aa_intelligence_index:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the frontier survey added this entry only so its committed runs are covered.
+    lmarena_text_elo:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the frontier survey added this entry only so its committed runs are covered.
+    gpqa_diamond:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the frontier survey added this entry only so its committed runs are covered.
+    mmlu_pro:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the frontier survey added this entry only so its committed runs are covered.
+openrouter/mistralai/mistral-large-4-0:
+  provider: Mistral AI
+  released:
+    value: '2026-10-06'
+    source: https://openrouter.ai/api/v1/models
+    quote: '"id": "mistralai/mistral-large-4-0" ... "created": 1791294122'
+    retrieved: '2026-10-25'
+    note: OpenRouter's created timestamp, as a UTC date.
+  open_weights:
+    value: null
+    parameters: null
+    source: null
+    quote: null
+    retrieved: '2026-10-25'
+    note: OpenRouter lists no Hugging Face weights for it; not confirmed from the provider yet.
+  benchmarks:
+    aa_intelligence_index:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the frontier survey added this entry only so its committed runs are covered.
+    lmarena_text_elo:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the frontier survey added this entry only so its committed runs are covered.
+    gpqa_diamond:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the frontier survey added this entry only so its committed runs are covered.
+    mmlu_pro:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the frontier survey added this entry only so its committed runs are covered.
+openrouter/nousresearch/hermes-4-405b:
+  provider: Nous Research
+  released:
+    value: '2025-08-26'
+    source: https://openrouter.ai/api/v1/models
+    quote: '"id": "nousresearch/hermes-4-405b" ... "created": 1756235463'
+    retrieved: '2026-10-25'
+    note: OpenRouter's created timestamp, as a UTC date.
+  open_weights:
+    value: true
+    parameters: null
+    source: https://openrouter.ai/api/v1/models
+    quote: '"hugging_face_id": "NousResearch/Hermes-4-405B"'
+    retrieved: '2026-10-25'
+    note: OpenRouter links the open weights on Hugging Face; the parameter count wasn't read.
+  benchmarks:
+    aa_intelligence_index:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the frontier survey added this entry only so its committed runs are covered.
+    lmarena_text_elo:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the frontier survey added this entry only so its committed runs are covered.
+    gpqa_diamond:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the frontier survey added this entry only so its committed runs are covered.
+    mmlu_pro:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the frontier survey added this entry only so its committed runs are covered.
+openrouter/openai/gpt-6.1-sol:
+  provider: OpenAI
+  released:
+    value: '2026-09-29'
+    source: https://openrouter.ai/api/v1/models
+    quote: '"id": "openai/gpt-6.1-sol" ... "created": 1790702882'
+    retrieved: '2026-10-25'
+    note: OpenRouter's created timestamp, as a UTC date.
+  open_weights:
+    value: null
+    parameters: null
+    source: null
+    quote: null
+    retrieved: '2026-10-25'
+    note: OpenRouter lists no Hugging Face weights for it; not confirmed from the provider yet.
+  benchmarks:
+    aa_intelligence_index:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the frontier survey added this entry only so its committed runs are covered.
+    lmarena_text_elo:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the frontier survey added this entry only so its committed runs are covered.
+    gpqa_diamond:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the frontier survey added this entry only so its committed runs are covered.
+    mmlu_pro:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the frontier survey added this entry only so its committed runs are covered.
+openrouter/qwen/qwen3.8-max-prime:
+  provider: Alibaba (Qwen)
+  released:
+    value: '2026-09-23'
+    source: https://openrouter.ai/api/v1/models
+    quote: '"id": "qwen/qwen3.8-max-prime" ... "created": 1790191228'
+    retrieved: '2026-10-25'
+    note: OpenRouter's created timestamp, as a UTC date.
+  open_weights:
+    value: null
+    parameters: null
+    source: null
+    quote: null
+    retrieved: '2026-10-25'
+    note: OpenRouter lists no Hugging Face weights for it; not confirmed from the provider yet.
+  benchmarks:
+    aa_intelligence_index:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the frontier survey added this entry only so its committed runs are covered.
+    lmarena_text_elo:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the frontier survey added this entry only so its committed runs are covered.
+    gpqa_diamond:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the frontier survey added this entry only so its committed runs are covered.
+    mmlu_pro:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the frontier survey added this entry only so its committed runs are covered.
+openrouter/x-ai/grok-4.6:
+  provider: xAI
+  released:
+    value: '2026-08-12'
+    source: https://openrouter.ai/api/v1/models
+    quote: '"id": "x-ai/grok-4.6" ... "created": 1786548957'
+    retrieved: '2026-10-25'
+    note: OpenRouter's created timestamp, as a UTC date.
+  open_weights:
+    value: null
+    parameters: null
+    source: null
+    quote: null
+    retrieved: '2026-10-25'
+    note: OpenRouter lists no Hugging Face weights for it; not confirmed from the provider yet.
+  benchmarks:
+    aa_intelligence_index:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the frontier survey added this entry only so its committed runs are covered.
+    lmarena_text_elo:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the frontier survey added this entry only so its committed runs are covered.
+    gpqa_diamond:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the frontier survey added this entry only so its committed runs are covered.
+    mmlu_pro:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the frontier survey added this entry only so its committed runs are covered.
+openrouter/x-ai/grok-4.7:
+  provider: xAI
+  released:
+    value: '2026-09-21'
+    source: https://openrouter.ai/api/v1/models
+    quote: '"id": "x-ai/grok-4.7" ... "created": 1790007541'
+    retrieved: '2026-10-25'
+    note: OpenRouter's created timestamp, as a UTC date.
+  open_weights:
+    value: null
+    parameters: null
+    source: null
+    quote: null
+    retrieved: '2026-10-25'
+    note: OpenRouter lists no Hugging Face weights for it; not confirmed from the provider yet.
+  benchmarks:
+    aa_intelligence_index:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the frontier survey added this entry only so its committed runs are covered.
+    lmarena_text_elo:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the frontier survey added this entry only so its committed runs are covered.
+    gpqa_diamond:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the frontier survey added this entry only so its committed runs are covered.
+    mmlu_pro:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the frontier survey added this entry only so its committed runs are covered.

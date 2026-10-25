@@ -80,3 +80,20 @@ No-scratchpad smokes, commit `df302da` (main with no-scratchpad mode, merged int
 | Controls: grok46-control, deepseek-control | grok-4.6, deepseek-v4-pro | b1f9719 | — | $0.251 + $0.018 | ~$5.2 |
 | Debrief of sonnet-noscratch-smoke | sonnet-5.5 | df302da | — | ~$0.02 | ~$5.2 |
 | E5 no scratchpad: sonnet-noscratch-e5, opus-noscratch-e5 (five arms; reasoning low, max_tokens 2000, `--set "agents.*.scratchpad=false"`) | sonnet-5.5, opus-5.5 | df302da | — | caps $3 + $3 | running |
+| opus-noscratch-e5: not run (estimate $5.70 over the $3 cap) | opus-5.5 | df302da | $5.70 | $0 | ~$5.2 |
+
+Budget change (Al via the Manager, 25 Oct): the team's OpenRouter balance is about $20, so frontier work has $8.00 from this point, including the runs in flight. Nothing new starts without the Manager's yes. The Kimi, Gemini 4 and Sonnet runs still in flight are projected at about $3.5 more.
+
+Budget change (Manager, 25 Oct): balance topped up to about $70. Frontier work has $15 from here, including Opus. Open-weight models go on Modal (Al's rule).
+
+| Run | Model | Command | Cap | Provider |
+|---|---|---|---|---|
+| opus-noscratch-e5 | anthropic/claude-opus-5.5 | E5 five arms × 1 seed, commit 533845c, `--set "agents.*.reasoning=low" --set "agents.*.scratchpad=false" --set "agents.*.max_tokens=2000" --set "agents.*.provider=anthropic"`, estimate $5.70 | 6.50 | Anthropic (pinned, no fallbacks) |
+
+Researcher 3's E6 runs (frontier money, reported by Researcher 3). Temperature 0.7, max_tokens 600, reasoning off, `configs/e6-free-time.yaml`, 2 seeds, launched at a1df0f3 (rebased as 939635af):
+
+| Step | Models | Caps | Actual |
+|---|---|---|---|
+| E6 DeepSeek, 6 arms × 2 seeds | deepseek-v4-pro-0813 | 1.40 + 0.30 | $0.74 |
+| E6 DeepSeek debriefs, 4 games | deepseek-v4-pro-0813 | 0.04 each | ~$0.14 |
+| E6 Kimi, 6 arms × 2 seeds | kimi-k3.1-pro | 1.00 + 3.40 + 0.85 | running |
