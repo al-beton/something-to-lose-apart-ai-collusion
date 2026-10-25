@@ -1,6 +1,6 @@
 """The paper's figures and tables, rebuilt from the committed runs.
 
-Implements: reports/paper-figures, reports/shared-charts
+Implements: reports/paper-figures, reports/shared-charts, reproducibility/reported-numbers-checked
 
 `make paper-figures` (or `uv run python reports/paper/build.py [--out DIR]`,
 default `reports/paper`) reads only committed run files, offline, and writes
@@ -54,6 +54,7 @@ LADDER = [  # (label, arm folder under STOPPABLE)
     ),
 ]
 TRACE = "<!-- Implements: reports/paper-figures -->\n"
+TABLES = ("e2.md", "ladder.md")  # what `make reproduce` checks; the rest are notes
 PREMIUM = "premium over Nash (0 = Nash, 1 = joint)"
 
 
@@ -181,11 +182,11 @@ def main(argv=None):
     premiums(STOPPABLE, out, "premium-stoppable", "Stoppable collusion: late premium")
     premiums(E2, out, "premium-e2", "E2 pilot: late premium")
     rows = stakes.analyse(E2)
-    (out / "e2.md").write_text(TRACE + stakes.table(rows))
+    (out / TABLES[0]).write_text(TRACE + stakes.table(rows))
     disclosure(rows, out)
     scatter(rows, out)
     steps = ladder(metrics)
-    (out / "ladder.md").write_text(TRACE + ladder_table(steps))
+    (out / TABLES[1]).write_text(TRACE + ladder_table(steps))
     ladder_figure(steps, out)
     print(f"Wrote figures and tables to {out}")
     return 0

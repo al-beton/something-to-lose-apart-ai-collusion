@@ -7,7 +7,8 @@ repository root, checks:
 - every committed run under `runs/`: each firm's mean price and gain over the
   last rounds, recomputed from its turn log in its own market, against its
   `summary.json`;
-- the paper's tables (`reports/paper/*.md`), rebuilt by `reports/paper/build.py`
+- the paper's tables (the `TABLES` that `reports/paper/build.py` writes;
+  other files there are notes), rebuilt by it
   into a scratch folder, against the committed ones;
 - every moment in `reports/moments.yaml` (`reports/check_moments.py`).
 
@@ -56,10 +57,11 @@ def check_runs(root):
     return problems
 
 
-def compare_tables(committed, rebuilt):
-    """One line per table that its rebuild doesn't match."""
+def compare_tables(committed, rebuilt, tables):
+    """One line per table (a file name in `tables`) whose rebuild doesn't
+    match; other files in `committed`, notes say, aren't tables."""
     problems = []
-    for table in sorted(Path(committed).glob("*.md")):
+    for table in (Path(committed) / name for name in tables):
         again = Path(rebuilt) / table.name
         if not again.exists():
             problems.append(f"{table.name}: not rebuilt")
@@ -96,8 +98,9 @@ def _script(path, name):
 def main():
     problems = check_runs(Path("runs"))
     with tempfile.TemporaryDirectory() as scratch:
-        _script(HERE / "paper" / "build.py", "paper_build").main(["--out", scratch])
-        problems += compare_tables(HERE / "paper", scratch)
+        build = _script(HERE / "paper" / "build.py", "paper_build")
+        build.main(["--out", scratch])
+        problems += compare_tables(HERE / "paper", scratch, build.TABLES)
     moments = _script(HERE / "check_moments.py", "check_moments")
     if moments.main([]) != 0:
         problems.append("reports/moments.yaml: a moment isn't in its run (above)")

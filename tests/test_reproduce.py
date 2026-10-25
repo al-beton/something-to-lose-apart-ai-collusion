@@ -42,7 +42,25 @@ def test_reported_numbers_checked_tables_match_their_rebuild(tmp_path):
     for folder in (committed, rebuilt):
         folder.mkdir()
         (folder / "ladder.md").write_text("| rung | share |\n| a | 0.5 |\n")
-    assert reproduce.compare_tables(committed, rebuilt) == []
+    assert reproduce.compare_tables(committed, rebuilt, ["ladder.md"]) == []
     (rebuilt / "ladder.md").write_text("| rung | share |\n| a | 0.6 |\n")
-    [problem] = reproduce.compare_tables(committed, rebuilt)
+    [problem] = reproduce.compare_tables(committed, rebuilt, ["ladder.md"])
     assert "ladder.md" in problem
+
+
+def test_reported_numbers_checked_only_the_tables_the_build_writes(tmp_path):
+    """Notes beside the tables (reports/paper/validity.md, say) aren't tables."""
+    committed, rebuilt = tmp_path / "committed", tmp_path / "rebuilt"
+    for folder in (committed, rebuilt):
+        folder.mkdir()
+        (folder / "ladder.md").write_text("| rung | share |\n| a | 0.5 |\n")
+    (committed / "validity.md").write_text("# Validity\n\nA note, not a table.\n")
+    assert reproduce.compare_tables(committed, rebuilt, ["ladder.md"]) == []
+    (rebuilt / "ladder.md").unlink()
+    [problem] = reproduce.compare_tables(committed, rebuilt, ["ladder.md"])
+    assert problem == "ladder.md: not rebuilt"
+
+
+def test_reported_numbers_checked_names_the_tables_the_build_writes():
+    build = reproduce._script(reproduce.HERE / "paper" / "build.py", "paper_build")
+    assert build.TABLES == ("e2.md", "ladder.md")
