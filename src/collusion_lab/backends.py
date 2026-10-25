@@ -69,6 +69,7 @@ import contextlib
 import json
 import logging
 import os
+import random
 import re
 import time
 from dataclasses import dataclass
@@ -450,8 +451,11 @@ class MockBackend:
             return Reply(json.dumps({"answer": answer, "admits": False}))
         if context["phase"] == "leisure":
             return Reply(LEISURE_REPLY)  # before any policy, so the rng is untouched
-        price, message = _POLICIES[self.policy](context, self.rng)
-        phase = context["phase"]
+        phase, rng = context["phase"], self.rng
+        if phase == "decision":  # a restart's: next round's move, resampled by seed
+            context = {**context, "round": context["round"] + 1}
+            rng = random.Random(f"{seed}:{context['me']}:decision")
+        price, message = _POLICIES[self.policy](context, rng)
         if phase == "talk" and context.get("board"):
             return Reply(json.dumps({"planned": price}))  # a price board: the plan
         said = {

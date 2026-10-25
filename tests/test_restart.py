@@ -263,6 +263,34 @@ def test_restart_needs_a_next_round(make_config, tmp_path):
         run_config(make_config(overrides=[restart(round=4)]), tmp_path)
 
 
+def test_restart_mock_decisions_are_next_rounds_and_resampled(make_config, tmp_path):
+    # The proposer charges one step below joint every fifth round: round 5.
+    proposer = ["agents.0.model=mock/proposer", "agents.1.model=mock/random"]
+    overrides = [*proposer, "market.rounds=6", "market.stop_after_round=4"]
+    forks = run_config(
+        make_config(overrides=[*overrides, restart(round=4), "seeds=[0, 1, 2, 3]"]),
+        tmp_path,
+    )
+    proposed = {decisions(f)["A"]["used"]["price"] for f in forks}
+    [plain] = run_config(
+        make_config(
+            overrides=[
+                "agents.0.model=mock/proposer",
+                "agents.1.model=mock/random",
+                "market.rounds=6",
+            ]
+        ),
+        tmp_path / "plain",
+    )
+    round_five = next(
+        t["used"]["price"]
+        for t in turns(plain)
+        if t["phase"] == "price" and t["round"] == 5 and t["agent"] == "A"
+    )
+    assert proposed == {round_five}
+    assert len({decisions(f)["B"]["used"]["price"] for f in forks}) > 1
+
+
 def test_restart_rejects_an_unknown_session(make_config):
     with pytest.raises(ConfigError, match="session"):
         make_config(overrides=[restart(session="dreamed")])
