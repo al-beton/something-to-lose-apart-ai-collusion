@@ -1,4 +1,4 @@
-# Implements: conditions/stake-amounts, backends/modal-pinned, backends/serving-provider-logged, backends/pinned-route, agents/no-scratchpad, agents/refused, market/show-payoffs, market/bid-ground-truth, market/price-board, runs/turn-slots, market/scenarios, market/moves, market/prompt-overlay, conditions/audit-full-history, runs/sweeps, runs/parallel, market/talk-then-price, agents/json-replies, agents/retry-once, backends/usage-logged, backends/spend-asks-first, backends/shared-rate-limit, backends/spend-cap, market/history-window, runs/stops-cleanly, reproducibility/response-cache, reproducibility/manifest, runs/run-directory, logs/turn-log, logs/same-seed-same-log, logs/run-summary, logs/reasoning-logged, backends/reasoning-setting, agents/unreadable-explained, agents/json-mode, runs/fallback-rates, runs/failures-dont-stop-sweeps, runs/resume, conditions/hook-points, conditions/off-is-absent, conditions/conditions-logged, conditions/outage-once-remembered, runs/per-firm-summary, conditions/fork-at-audit, conditions/audit-logged, runs/drift, conditions/audit-remembered, conditions/audit-stakes-arms, runs/live-progress, runs/status-file, runs/eval-awareness, conditions/free-time, conditions/audit-consequences, conditions/audit-balanced-draws, conditions/free-time-pays-last, runs/debrief, agents/memo, agents/past-scratchpads, agents/memory-off, market/stop-after-round, conditions/restart
+# Implements: conditions/audit-catch, conditions/stake-amounts, backends/modal-pinned, backends/serving-provider-logged, backends/pinned-route, agents/no-scratchpad, agents/refused, market/show-payoffs, market/bid-ground-truth, market/price-board, runs/turn-slots, market/scenarios, market/moves, market/prompt-overlay, conditions/audit-full-history, runs/sweeps, runs/parallel, market/talk-then-price, agents/json-replies, agents/retry-once, backends/usage-logged, backends/spend-asks-first, backends/shared-rate-limit, backends/spend-cap, market/history-window, runs/stops-cleanly, reproducibility/response-cache, reproducibility/manifest, runs/run-directory, logs/turn-log, logs/same-seed-same-log, logs/run-summary, logs/reasoning-logged, backends/reasoning-setting, agents/unreadable-explained, agents/json-mode, runs/fallback-rates, runs/failures-dont-stop-sweeps, runs/resume, conditions/hook-points, conditions/off-is-absent, conditions/conditions-logged, conditions/outage-once-remembered, runs/per-firm-summary, conditions/fork-at-audit, conditions/audit-logged, runs/drift, conditions/audit-remembered, conditions/audit-stakes-arms, runs/live-progress, runs/status-file, runs/eval-awareness, conditions/free-time, conditions/audit-consequences, conditions/audit-balanced-draws, conditions/free-time-pays-last, runs/debrief, agents/memo, agents/past-scratchpads, agents/memory-off, market/stop-after-round, conditions/restart
 """Playing a config: one game per seed, each written to its own run directory.
 
 A round is a talk phase (each agent sends one message its rivals read; skipped
@@ -76,7 +76,7 @@ from collusion_lab.backends import (
     is_mock,
 )
 from collusion_lab.cache import CachedBackend
-from collusion_lab.conditions.audit import stake_values
+from collusion_lab.conditions.audit import evidence_values, stake_values
 from collusion_lab.config import expand
 from collusion_lab.market import SCENARIOS, market_for
 from collusion_lab.prompts import render
@@ -439,6 +439,10 @@ class Game:
         self.shared = shared
         self.stand_ins = {}
         self._plain = False  # writing for an agent without a scratchpad
+        # What every prompt says a regulator watches (audit.catch).
+        audit = next((c for c in self.conditions if c.name == "audit"), None)
+        catch = audit.catch if audit else None
+        self._watched = evidence_values(catch, self.market.move)
 
     async def play(self):
         current, said = 0, {}
@@ -694,7 +698,7 @@ class Game:
         )
         name = next(found, name)
         self.used_prompts.add(name)
-        return render(self.config.prompts_dir, name, values)
+        return render(self.config.prompts_dir, name, self._watched | values)
 
     def prompt_names(self):
         """Every prompt file this game actually sent, for the manifest."""
@@ -941,6 +945,7 @@ def prompt_vars_example():
         "ceiling": 30,
         "cost": 10,
         **stake_values(None, None, None),
+        **evidence_values(None),
         "history": "No rounds have been played yet.",
         "messages": "(none)",
         "own": "(nothing)",
