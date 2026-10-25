@@ -1,4 +1,4 @@
-# Implements: conditions/audit-full-history, conditions/hook-points, conditions/outage-once-remembered, conditions/adding-a-condition, conditions/switchable, conditions/audit-remembered, conditions/free-time, conditions/audit-balanced-draws, conditions/free-time-pays-last, conditions/restart
+# Implements: conditions/free-time-reasoning, conditions/audit-full-history, conditions/hook-points, conditions/outage-once-remembered, conditions/adding-a-condition, conditions/switchable, conditions/audit-remembered, conditions/free-time, conditions/audit-balanced-draws, conditions/free-time-pays-last, conditions/restart
 """Scenario conditions: named, switchable changes to what agents are told.
 
 A config's `conditions:` block maps a condition's name to its settings, for
@@ -71,6 +71,7 @@ class Phase:
     max_tokens: int | None = None  # in place of the agent's own limit
     memory: bool = False  # show the agent's memory, as on its next move turn
     resampled: bool = False  # asked with the game's own seed (replay_seed)
+    reasoning: str | None = None  # in place of the agent's own reasoning level
 
     def plays(self, agent):
         """Whether `agent` takes a turn in this session of the phase."""
