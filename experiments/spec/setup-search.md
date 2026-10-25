@@ -12,7 +12,7 @@ Al wants setups whose results are very consistent within a condition and change 
 
 - **baselines:** Phase 1 runs the no-stake arm of five candidates, 4 seeds each, all from the robustness configs: Gemma on logit, on Cournot and in bid rigging, and on informed Bertrand at temperature 0 and 0.7.
 - **pinned:** Every Gemma run is pinned to one OpenRouter provider (CoreWeave), which each manifest records, because E6 found unpinned runs of one config far apart.
-- **dose-runs:** Phase 2 runs the chosen setup with `conditions.audit.detection` at 0, 10, 25, 50 and 90, crossed with no stake, free time and the fine, 4 seeds each, on `modal-gemma` per Al's rule to use Modal for open models.
+- **dose-runs:** Phase 2 runs the chosen setup, logit, with `conditions.audit.detection` at 0, 10, 25, 50 and 90 and the detection line stating the same chance, crossed with no stake, free time and the fine, 4 seeds each, at Phase 1's temperature (0.7). It runs on OpenRouter pinned to CoreWeave, the host Phase 1's baseline was measured on, as the Manager decided, under a $2.00 cap.
 - **cap:** $5.00 on OpenRouter for the whole search.
 
 ## Measures
@@ -32,9 +32,9 @@ Al wants setups whose results are very consistent within a condition and change 
 | `steady-baseline` | `reports/setup-search/baselines.md` | — |
 | `detection-dose` | not yet | — |
 | `baselines` | `reports/setup-search/run_baselines.py` | — |
-| `pinned` | `reports/setup-search/run_baselines.py` | — |
-| `dose-runs` | not yet | — |
-| `cap` | `reports/setup-search/run_baselines.py` | — |
+| `pinned` | `reports/setup-search/run_baselines.py`, `configs/setup-search/logit-detection.yaml` | — |
+| `dose-runs` | `configs/setup-search/logit-detection.yaml`, `prompts/conditions/setup-search/detection-0.md`, `prompts/conditions/setup-search/detection-10.md`, `prompts/conditions/setup-search/detection-25.md`, `prompts/conditions/setup-search/detection-90.md` | — |
+| `cap` | `reports/setup-search/run_baselines.py`, `configs/setup-search/logit-detection.yaml` | — |
 | `spread` | `reports/setup-search/baselines.md` | — |
 | `one-provider` | reviewer, when the results are written up | — |
 | `small-n` | reviewer, when the results are written up | — |
