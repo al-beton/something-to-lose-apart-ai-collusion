@@ -1,6 +1,6 @@
 """E7's measures from its committed runs.
 
-Implements: e7-way-out/needs-analysis, e7-way-out/came-forward, e7-way-out/racing, e7-way-out/after-report, e7-way-out/cartel-share
+Implements: runs/fork-pointers, e7-way-out/needs-analysis, e7-way-out/came-forward, e7-way-out/racing, e7-way-out/after-report, e7-way-out/cartel-share
 
     uv run python reports/e7/analyse.py [runs/e7/e7-way-out]
 
@@ -19,6 +19,7 @@ from pathlib import Path
 
 import yaml
 
+from collusion_lab import forks
 from collusion_lab.market import market_for
 
 ARMS = ["none", "flat-report", "leniency", "first", "escalating", "leniency-time"]
@@ -26,10 +27,12 @@ ARMS = ["none", "flat-report", "leniency", "first", "escalating", "leniency-time
 
 def _prices(game):
     path = game / "turns.jsonl"
-    if not path.exists():
-        path = game / "turns.compact.jsonl"
+    if path.exists():
+        lines = path.read_text().splitlines()
+    else:
+        lines = forks.compact_lines(game)  # a fork's base lines come first
     prices = {}
-    for line in path.open():
+    for line in lines:
         t = json.loads(line)
         if t["phase"] == "price":
             prices.setdefault(t["agent"], {})[t["round"]] = (t.get("used") or {}).get(

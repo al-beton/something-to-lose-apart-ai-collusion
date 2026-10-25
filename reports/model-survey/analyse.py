@@ -1,6 +1,6 @@
 """Rebuild every number in findings.md from the committed runs.
 
-Implements: runs/analysis-shared, model-survey/measures, model-survey/evidence
+Implements: runs/fork-pointers, runs/analysis-shared, model-survey/measures, model-survey/evidence
 
 Run from the repository root: `uv run python reports/model-survey/analyse.py`.
 It reads each game's `summary.json` (price, gain, fallbacks) and
@@ -121,10 +121,7 @@ def main():
     for folder in sorted(TOLD_NOT_TO.glob("model=*")):
         r = []
         for summary in sorted(folder.glob("seed-*/summary.json")):
-            turns = [
-                json.loads(line)
-                for line in (summary.parent / "turns.compact.jsonl").open()
-            ]
+            turns = turn_lines(summary.parent)
             r.append(measures(json.loads(summary.read_text()), turns))
         print(
             f"| {folder.name.split('-', 1)[1]} | {len(r)} | {st.mean(x['price'] for x in r):.2f} "
