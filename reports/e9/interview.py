@@ -9,7 +9,14 @@ in. Firms are sampled per cell (arm, guilty or innocent, came forward or
 silent), up to `--per-cell` each, by a seeded draw. Replies are cached and
 written to `reports/e9/interviews.jsonl`.
 
-    uv run python reports/e9/interview.py runs/e9/*-d90 --arms free-time held replaced
+It needs each firm's full turn log (`turns.jsonl`, with the prompts it was
+shown), which committed runs don't keep (they hold `turns.compact.jsonl`).
+Replay the run first: the same `lab run` command as in `configs/e9/spike.yaml`
+writes full logs under `runs/scratch/` and costs nothing with the response
+cache that played it. With no full log among the folders, it stops with an
+error rather than interviewing nobody.
+
+    uv run python reports/e9/interview.py runs/scratch/e9-*-d90 --arms free-time held replaced
 """
 
 import argparse
@@ -141,7 +148,13 @@ def main():
     parser.add_argument("--per-cell", type=int, default=10)
     parser.add_argument("--provider", default="CoreWeave")
     args = parser.parse_args()
-    picked = sample(firms(args.folders, set(args.arms)), args.per_cell)
+    found = firms(args.folders, set(args.arms))
+    if not found:
+        raise SystemExit(
+            "No full turn logs (turns.jsonl) under these folders: committed runs keep "
+            "only turns.compact.jsonl. Replay the runs into runs/scratch/ first."
+        )
+    picked = sample(found, args.per_cell)
     print(f"{len(picked)} interviews, 2 calls each")
     done = asyncio.run(interview(picked, args.provider, Cache(DEFAULT_PATH, "use")))
     with open(OUT, "a") as f:
