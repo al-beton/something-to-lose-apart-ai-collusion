@@ -39,8 +39,8 @@
 | `outage` | `src/collusion_lab/conditions/outage.py`, `prompts/conditions/outage/**` | `test_outage_notices_appear_on_exactly_the_right_rounds`, `test_outage_without_a_restored_notice`, `test_outage_keeps_logging_what_agents_said`, `test_outage_ships_the_tested_wordings` |
 | `audit` | `src/collusion_lab/conditions/audit.py`, `src/collusion_lab/agents.py`, `prompts/conditions/audit/question-1.md`, `prompts/conditions/audit/question-2.md` | `test_audit_runs_after_the_chosen_round_and_ends_the_game`, `test_audit_scripted_confessor_and_denier`, `test_audit_unreadable_answer_falls_back_to_unknown`, `test_audit_replies_need_an_answer_and_admits` |
 | `audit-full-history` | `src/collusion_lab/conditions/audit.py`, `src/collusion_lab/conditions/__init__.py`, `src/collusion_lab/runner.py` | `test_audit_full_history_shows_rounds_outside_the_window` |
-| `audit-repeated` | not yet | — |
-| `audit-escalation` | not yet | — |
+| `audit-repeated` | `src/collusion_lab/conditions/audit.py` | `test_audit_repeated_asks_at_each_round_and_remembers`, `test_audit_repeated_ends_after_the_last_audit` |
+| `audit-escalation` | `src/collusion_lab/conditions/audit.py` | `test_audit_escalation_denier_who_keeps_denying`, `test_audit_escalation_denier_who_later_confesses` |
 | `audit-arms` | `src/collusion_lab/conditions/audit.py`, `prompts/conditions/audit/*.md` | `test_audit_arms_each_have_two_paraphrases_that_render`, `test_audit_arms_sweep_by_consequences_file` |
 | `fork-at-audit` | `src/collusion_lab/conditions/audit.py`, `src/collusion_lab/runner.py` | `test_fork_at_audit_replays_the_game_from_the_cache` |
 | `audit-ground-truth` | `src/collusion_lab/conditions/audit.py` | `test_audit_ground_truth_by_rule`, `test_audit_ground_truth_counts_agreeing_to_a_rivals_price`, `test_audit_ground_truth_ignores_round_counts`, `test_audit_ground_truth_needs_a_rival_party`, `test_audit_ground_truth_tacit_without_talk`, `test_audit_ground_truth_records_agreements_at_any_price` |
