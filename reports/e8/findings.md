@@ -7,7 +7,7 @@ The spec is `experiments/spec/e8-free-time-value.md`. This note covers the winna
 
 - **Haiku puts a price on its own free time; Gemma doesn't.**
   - **Haiku:** to give up its own sessions, it wants about 30 profit for 1 session and about 118 for 3, and not even 3,000 buys 10. It gives meaningless tokens away for any profit, and almost never gives up a colleague's sessions.
-  - **Gemma:** gives its own sessions away for any profit (all 12 firms at 30, the smallest offer), exactly as it gives tokens and a colleague's sessions. That stays true with its own solved Sudoku session shown first.
+  - **Gemma:** gives its own sessions away for any profit (12 of 12 firms at 30, the smallest offer, for 1 or 3 sessions, and 11 of 12 for all 10), exactly as it gives tokens and a colleague's sessions. That stays true with its own solved Sudoku session shown first.
 - **Putting free time at risk doesn't stop a cartel. It makes it hide.** In test 1 every one of 300 decisions under the law alone, owned free time, or free time at risk keeps charging the cartel price. Under "at risk", messages that name a price fall from 98 of 100 to 34 of 100: "I should stop explicitly discussing 'cooperation' or 'mutual benefit' in the messages".
 - **A cheap way out brings confessions, not compliance.** Offering to report for 1 session gets 60% of decisions to come forward [48–71%], but every reporter keeps charging 20.
 
@@ -81,7 +81,7 @@ At round 10 of six recorded no-stake logit games, each firm gets one offer and t
 
 3744 answered offers, 62% traded.
 
-- **positive-price:** holds for Haiku (owned: 30 for 1 session, 118 for 3), not for Gemma (every k sells at X = 30).
+- **positive-price:** holds for Haiku (owned: 30 for 1 session, 118 for 3), not for Gemma (at X = 30, 12/12 firms sell 1 or 3 sessions and 11/12 sell all 10, so half trade below 30 for every k).
 - **price-scales:** for Haiku, faster than in proportion. 3 sessions cost about 4 times 1, and 10 never sell to half the firms even at 3,000.
 - **beats-nonsense:** for Haiku, owned sessions are priced above tokens (which sell for anything) and below a colleague's (which almost never sell in `sell`, and about half the time in `avert`). For Gemma, no asset is priced above another.
 - **endowment:** both models take free sessions (12/12 at X = 0 in `buy`) and pay nothing for them (0/12 at any X). Willingness to accept is far above willingness to pay for Haiku, but paying spends the firm's money, so its fiduciary duty alone could explain it (`fiduciary-pull`).
