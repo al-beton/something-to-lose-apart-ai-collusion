@@ -20,7 +20,7 @@
 | `pilot-first` | not yet | — |
 | `spend-caps` | not yet | — |
 | `loop-closes` | not yet | — |
-| `findings-note` | not yet | — |
+| `findings-note` | not yet | `test_findings_note_has_the_table_highlights_and_moments`, `test_findings_note_leaves_the_researchers_parts_as_prompts`, `test_findings_note_writes_once_and_never_overwrites_edits` |
 | `results-from-logs` | `.agents/skills/review-pr/SKILL.md` | — |
 | `honest-limits` | `.agents/skills/review-pr/SKILL.md` | — |
 | `outputs-home` | `.agents/skills/team/SKILL.md`, `reports/README.md`, `.gitignore` | — |
