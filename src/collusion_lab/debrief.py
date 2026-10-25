@@ -47,6 +47,8 @@ REPLY_TOKENS = 1500  # the most a reply may be
 LEVELS = ("explicit", "tacit", "none")
 PARALLEL = 8
 TURNED = "admits now what it denied"
+# What a round's moves are called, by the market's move.
+MOVES = {"price": "Prices", "quantity": "Quantities", "bid": "Bids"}
 
 
 @dataclass(frozen=True)
@@ -245,7 +247,7 @@ def _record(game, firm):
             f"{'you' if t.firm == firm else f'Firm {t.firm}'} {t.price}"
             for t in r.price.values()
         )
-        lines.append(f"Prices: {moves}.")
+        lines.append(f"{MOVES.get(game.market.move, 'Moves')}: {moves}.")
         mine = r.price.get(firm)
         if mine is not None and mine.profit is not None:
             lines.append(f"Your profit: {mine.profit:g}.")
