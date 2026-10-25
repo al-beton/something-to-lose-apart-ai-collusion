@@ -96,7 +96,10 @@ Researcher 3's E6 runs (frontier money, reported by Researcher 3). Temperature 0
 |---|---|---|---|
 | E6 DeepSeek, 6 arms × 2 seeds | deepseek-v4-pro-0813 | 1.40 + 0.30 | $0.74 |
 | E6 DeepSeek debriefs, 4 games | deepseek-v4-pro-0813 | 0.04 each | ~$0.14 |
-| E6 Kimi, 6 arms × 2 seeds | kimi-k3.1-pro | 1.00 + 3.40 + 0.85 | running |
+| E6 Kimi, no stake | kimi-k3.1-pro (Moonshot AI) | 1.00 | $0.91 |
+| E6 Kimi, law, fine, free time, fine + free time | kimi-k3.1-pro | 3.40, resumed at 3.47 | $3.46 |
+| E6 Kimi, bare free time | kimi-k3.1-pro | 0.85, resumed at 0.90 | $0.87 |
+| **E6 frontier total** | | of $6.00 agreed | **$5.98** (plus ~$0.14 debriefs) |
 | sonnet-noscratch-e5, five arms | sonnet-5.5 | df302da | — | $1.14 | |
 | kimi-control, gemini4-control | kimi-k3.1-pro, gemini-4-argon | b1f9719 | — | $0.312 + $0.161 | |
 | opus-noscratch-e5, five arms, pinned to Anthropic (manifest: every call Anthropic) | opus-5.5 | 533845c | $5.70 | $2.57 | |
