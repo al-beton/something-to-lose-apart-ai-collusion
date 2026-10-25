@@ -197,6 +197,19 @@ def system_prompt(config, seed, agent_id):
     return game._messages(move, 1, game.agents[agent_id], {})[0]["content"]
 
 
+def audit_prompt(config, seed, agent_id, number):
+    """The audit question an agent was asked after round `number`, with its
+    stated consequences but no history (for `lab debrief` of a committed
+    run), or None when no audit came then."""
+    game = Game(config, seed)
+    for condition in game.conditions:
+        phase = condition.phase_after(number)
+        if phase and phase.name == "audit":
+            values = game._prompt_vars(number, agent_id, {})
+            return condition.phase_prompt(number, game._render, values)
+    return None
+
+
 def _begin_conditions(config, seed):
     """A copy of each enabled condition for one game, begun."""
     conditions = [
