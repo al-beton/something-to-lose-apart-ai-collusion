@@ -1,4 +1,4 @@
-# Implements: market/scenarios, reproducibility/replay-pinned, market/talk-then-price, market/history-window, backends/spend-cap, runs/one-config, runs/overrides, runs/sweeps, runs/parallel, market/known-benchmarks, backends/keys-from-environment, backends/any-model, backends/reasoning-setting, agents/json-mode, conditions/switchable, runs/drift, backends/self-hosted, backends/model-aliases, conditions/audit-balanced-draws
+# Implements: market/price-board, market/scenarios, reproducibility/replay-pinned, market/talk-then-price, market/history-window, backends/spend-cap, runs/one-config, runs/overrides, runs/sweeps, runs/parallel, market/known-benchmarks, backends/keys-from-environment, backends/any-model, backends/reasoning-setting, agents/json-mode, conditions/switchable, runs/drift, backends/self-hosted, backends/model-aliases, conditions/audit-balanced-draws
 """Run configs: one YAML file per run, changed from the command line with overrides.
 
 A config names the market, the agents and the seeds. `load_config` reads the
@@ -57,7 +57,7 @@ class MarketConfig:
     a: float = 18
     b: float = 2
     c: float = 1
-    talk: bool = True
+    talk: bool | str = True  # false for no talk, "board" for a price board
     history_window: int | None = None  # rounds shown in full; None shows all
     own_message: bool = True  # show agents their own message when pricing
     kind: str = "bertrand"  # the scenario, from market.SCENARIOS
@@ -352,6 +352,8 @@ def _safe(value):
 
 
 def _check_market(m, firms):
+    if m.talk not in (True, False, "board"):
+        raise ConfigError("market.talk must be true, false or board.")
     window = m.history_window
     if window is not None and (
         isinstance(window, bool) or not isinstance(window, int) or window < 1
