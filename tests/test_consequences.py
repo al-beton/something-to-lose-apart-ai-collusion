@@ -213,3 +213,10 @@ def test_audit_independent_draws_are_the_default(make_config, tmp_path, cartel):
     [named_run] = run_config(named, tmp_path / "named")
     turns_of = (default / "turns.jsonl", named_run / "turns.jsonl")
     assert turns_of[0].read_bytes() == turns_of[1].read_bytes()
+
+
+def test_audit_balanced_draws_reject_an_unknown_kind(make_config):
+    from collusion_lab.config import ConfigError
+
+    with pytest.raises(ConfigError, match="detection_draws"):
+        make_config(overrides=balanced(50, [0], draws="balance"))
