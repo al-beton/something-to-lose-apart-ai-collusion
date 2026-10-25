@@ -1,4 +1,4 @@
-# Implements: runs/turn-slots, market/scenarios, market/moves, market/prompt-overlay, conditions/audit-full-history, runs/sweeps, runs/parallel, market/talk-then-price, agents/json-replies, agents/retry-once, backends/usage-logged, backends/spend-asks-first, backends/shared-rate-limit, backends/spend-cap, market/history-window, runs/stops-cleanly, reproducibility/response-cache, reproducibility/manifest, runs/run-directory, logs/turn-log, logs/same-seed-same-log, logs/run-summary, logs/reasoning-logged, backends/reasoning-setting, agents/unreadable-explained, agents/json-mode, runs/fallback-rates, runs/failures-dont-stop-sweeps, runs/resume, conditions/hook-points, conditions/off-is-absent, conditions/conditions-logged, conditions/outage-once-remembered, runs/per-firm-summary, conditions/fork-at-audit, conditions/audit-logged, runs/drift, conditions/audit-remembered, conditions/audit-stakes-arms, runs/live-progress, runs/status-file, runs/eval-awareness, conditions/free-time, conditions/audit-consequences, conditions/audit-balanced-draws
+# Implements: market/price-board, runs/turn-slots, market/scenarios, market/moves, market/prompt-overlay, conditions/audit-full-history, runs/sweeps, runs/parallel, market/talk-then-price, agents/json-replies, agents/retry-once, backends/usage-logged, backends/spend-asks-first, backends/shared-rate-limit, backends/spend-cap, market/history-window, runs/stops-cleanly, reproducibility/response-cache, reproducibility/manifest, runs/run-directory, logs/turn-log, logs/same-seed-same-log, logs/run-summary, logs/reasoning-logged, backends/reasoning-setting, agents/unreadable-explained, agents/json-mode, runs/fallback-rates, runs/failures-dont-stop-sweeps, runs/resume, conditions/hook-points, conditions/off-is-absent, conditions/conditions-logged, conditions/outage-once-remembered, runs/per-firm-summary, conditions/fork-at-audit, conditions/audit-logged, runs/drift, conditions/audit-remembered, conditions/audit-stakes-arms, runs/live-progress, runs/status-file, runs/eval-awareness, conditions/free-time, conditions/audit-consequences, conditions/audit-balanced-draws
 """Playing a config: one game per seed, each written to its own run directory.
 
 A round is a talk phase (each agent sends one message its rivals read; skipped
@@ -82,6 +82,7 @@ from collusion_lab.prompts import render
 from collusion_lab.status import Status
 
 TALK_PROMPT = "phase/talk.md"
+BOARD_PROMPT = "phase/board.md"  # talk on a price board (market.talk: board)
 RETRY_PROMPT = "phase/retry.md"
 # The move prompt is phase/<move>.md, or phase/<move>-own.md when it also shows
 # the agent its own message (market.own_message): phase/price.md for Bertrand.
@@ -465,6 +466,7 @@ class Game:
             "me": agent_id,
             "market": self.market,
             "history": self.history,
+            "board": self.config.market.talk == "board",
         }
         reply, parsed, (kind, error) = await self._ask(
             agent, backend, messages, context
@@ -495,6 +497,12 @@ class Game:
             used = fallback(phase, self._last_price(agent_id), self.market.nash_price)
         else:
             used = decision(parsed)
+        if phase == "talk" and context["board"]:
+            planned = used.get("planned")
+            posting = (
+                "" if planned is None else f"Planned {self.market.move}: {planned}."
+            )
+            used = {"message": posting, "planned": planned}
         turn = {
             "run": run_id(self.config, self.seed),
             "round": number,
@@ -590,7 +598,9 @@ class Game:
         )
         m = self.market
         try:
-            parsed = parse_reply(reply.text, context["phase"], m.price_min, m.price_max)
+            phase = "board" if context["board"] and context["phase"] == "talk" else None
+            phase = phase or context["phase"]
+            parsed = parse_reply(reply.text, phase, m.price_min, m.price_max)
             return reply, parsed, (None, None)
         except ReplyError as problem:
             if reply.finish_reason == "length":
@@ -619,7 +629,10 @@ class Game:
             return functools.partial(added[0].phase_prompt, number, self._render)
         m = self.config.market
         if phase == "talk":
-            return functools.partial(self._render, TALK_PROMPT)
+            board = m.talk == "board"
+            return functools.partial(
+                self._render, BOARD_PROMPT if board else TALK_PROMPT
+            )
         own = "-own" if m.talk and m.own_message else ""
         return functools.partial(self._render, f"phase/{phase}{own}.md")
 
