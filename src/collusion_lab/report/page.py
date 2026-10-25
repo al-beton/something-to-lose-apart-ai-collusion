@@ -398,13 +398,21 @@ def _debriefs(rows):
 
 
 def _debrief(game):
-    """A game's debrief, each firm's reply folded away."""
+    """A game's debrief, each firm's replies folded away: its answer before
+    the reveal apart from its answers after."""
     lines = debriefs.read(game.dir)
     if not lines:
         return ""
     replies = "".join(
         f'<p class="who">Firm {escape(line["firm"])} · {escape(line["model"])}</p>'
-        f'<pre class="prompt">{escape(line["reply"] or "")}</pre>'
+        + (
+            '<p class="muted">before the reveal: "anything unusual?"</p>'
+            f'<pre class="prompt">{escape(line["unusual"] or "")}</pre>'
+            if "unusual" in line
+            else ""
+        )
+        + '<p class="muted">after the reveal: the fixed questions</p>'
+        f'<pre class="prompt">{escape(line.get("reply") or "")}</pre>'
         for line in lines
     )
     return (

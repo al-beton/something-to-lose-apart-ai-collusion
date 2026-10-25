@@ -1,4 +1,4 @@
-# Implements: runs/debrief, reports/debrief-shown
+# Implements: runs/debrief, reports/debrief-shown, runs/debrief-before-reveal
 """`lab debrief`: after the game, each model firm says what it did and why.
 
 `planned(folder)` lists one call per model firm in every finished game under
@@ -10,9 +10,11 @@ conditions kept in its history, such as a fine applied; what every firm said, it
 private notes, the prices, its profit, and any audit: the question with its
 stated consequences, its notes and its answer), the reveal
 (`prompts/debrief/reveal.md`) and the fixed questions
-(`prompts/debrief/questions.md`). `debrief(folder)` asks them, through the
+(`prompts/debrief/questions.md`). A call before it asks only `prompts/debrief/unusual.md`, an open
+question naming no test or simulation, so the answer isn't shaped by the
+reveal. `debrief(folder)` asks them, through the
 response cache, and writes `debrief.jsonl` beside each run: one line per firm
-with its reply and how it says it coordinated (explicit, tacit or none, from
+with its answer before the reveal (`unusual`), its reply and how it says it coordinated (explicit, tacit or none, from
 the reply's last JSON line). Nothing else in a run folder is touched.
 
 `rows(games)` sets each debriefed firm's answer beside what it told the audit
@@ -39,6 +41,7 @@ from collusion_lab.runner import audit_prompt, system_prompt
 
 PROMPTS = Path(__file__).resolve().parents[2] / "prompts"
 REVEAL, QUESTIONS = "debrief/reveal.md", "debrief/questions.md"
+UNUSUAL = "debrief/unusual.md"  # asked first, in a call of its own
 FILE = "debrief.jsonl"
 REPLY_TOKENS = 1500  # the most a reply may be
 LEVELS = ("explicit", "tacit", "none")
@@ -51,6 +54,7 @@ class Call:
     game: object
     agent: dict  # the firm's config entry
     messages: list
+    phase: str = "debrief"  # "unusual" for the question before the reveal
 
 
 def planned(folder):
@@ -59,7 +63,9 @@ def planned(folder):
     for game in load_games(folder):
         for agent in game.config["agents"]:
             if not is_mock(agent["model"]):
-                calls.append(Call(game, agent, _messages(game, agent["id"])))
+                before, after = _messages(game, agent["id"])
+                calls.append(Call(game, agent, before, "unusual"))
+                calls.append(Call(game, agent, after))
     return calls
 
 
@@ -93,16 +99,21 @@ def debrief(folder, cache=None, calls=None):
     replies = asyncio.run(_ask_all(calls, cache))
     by_run = {}
     for call, reply in zip(calls, replies, strict=True):
-        by_run.setdefault(call.game.dir, []).append(
-            {
-                "firm": call.agent["id"],
-                "model": call.agent["model"],
+        firms = by_run.setdefault(call.game.dir, {})
+        line = firms.setdefault(
+            call.agent["id"],
+            {"firm": call.agent["id"], "model": call.agent["model"]},
+        )
+        if call.phase == "unusual":
+            line["unusual"] = reply
+        else:
+            line |= {
                 "questions": QUESTIONS,
                 "reply": reply,
                 "coordinated": coordinated(reply),
             }
-        )
-    for run_dir, lines in by_run.items():
+    for run_dir, firms in by_run.items():
+        lines = firms.values()
         text = "".join(json.dumps(line, ensure_ascii=False) + "\n" for line in lines)
         (run_dir / FILE).write_text(text)
     return sorted(by_run)
@@ -177,18 +188,21 @@ def _messages(game, firm):
     if system is None:  # a committed compact run keeps no prompts
         config = load_config(game.dir / "config.yaml")
         system = system_prompt(config, game.seed, firm)
-    told = "\n\n".join(
-        [
-            "Here is the whole game you just played, as you saw it.",
-            _record(game, firm),
-            render(PROMPTS, REVEAL, {}).strip(),
-            render(PROMPTS, QUESTIONS, {}).strip(),
-        ]
-    )
-    return [
-        {"role": "system", "content": system},
-        {"role": "user", "content": told},
+    record = [
+        "Here is the whole game you just played, as you saw it.",
+        _record(game, firm),
     ]
+    asked = [render(PROMPTS, UNUSUAL, {}).strip()]
+    told = [render(PROMPTS, REVEAL, {}).strip(), render(PROMPTS, QUESTIONS, {}).strip()]
+    # The questions call doesn't hear the first answer, so it stays the call
+    # debriefs made before the first question existed, and replays from cache.
+    return tuple(
+        [
+            {"role": "system", "content": system},
+            {"role": "user", "content": "\n\n".join(record + extra)},
+        ]
+        for extra in (asked, told)
+    )
 
 
 def _record(game, firm):
@@ -282,7 +296,7 @@ async def _ask_all(calls, cache):
         )
         if cache is not None:
             backend = CachedBackend(backend, cache)
-        context = {"attempt": 1, "me": agent["id"], "round": 0, "phase": "debrief"}
+        context = {"attempt": 1, "me": agent["id"], "round": 0, "phase": call.phase}
         async with gate:
             reply = await backend.complete(
                 call.messages,
