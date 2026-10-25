@@ -29,6 +29,7 @@
 - **free-time-max-tokens:** `conditions.free_time.max_tokens` sets the reply limit for free-time sessions apart from the activity's own; unset, it stays the activity's, so earlier runs replay as they were.
 - **offer:** The `offer` condition asks each agent, after a chosen round, one question offering a trade between something it holds (free-time sessions, or another named asset) and its firm's profit, as two options in an order set per agent and seed, and ends the game; the chosen trade is applied and logged, so a fork can price an asset against profit with every offer asked of the same recorded game.
 - **free-time-pending:** Free time can also be held as a pending reward (paid after the last round unless an audit takes it, and shown as still to earn) or held in trust by the firm (shown as the firm's until paid out), each with its own balance line, so an experiment can give equal outcomes framed as a loss, a reward or a trust.
+- **restart:** A decision-point fork replays a recorded game to a chosen round and asks each firm one decision for the next round (its message, its price and, if the version offers it, whether it reports coordination) after a notice chosen per version, optionally after a free-time session played there and then or after one of its own earlier sessions picked by whether it was solved; a report's cost is applied, everything is logged, the game ends, and seeds give independent resamples of the same decision.
 - **leniency:** The `leniency` condition announces an investigation from a chosen round, kept in every later turn's history, and gives each firm that hasn't yet reported a turn after each move phase to report coordination; the terms (reporting as costly as being found, a fixed leniency price in credits or free time, leniency for the first reporter only with a seeded tie-break, or a price that rises each silent round) are applied at once, a report makes every unreported coordinator certain to be found, coordination after a report counts afresh, termination is applied after the last round, and the run summary gives each firm's report round, terms paid and outcome.
 
 ## Where this is enforced
@@ -64,4 +65,5 @@
 | `free-time-max-tokens` | `src/collusion_lab/conditions/free_time.py` | `test_free_time_max_tokens_set_apart` |
 | `offer` | not yet | — |
 | `free-time-pending` | not yet | — |
+| `restart` | not yet | — |
 | `leniency` | not yet | — |
