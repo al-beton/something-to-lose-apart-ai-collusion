@@ -27,6 +27,7 @@
 - **shared-charts:** The paper's charts are drawn by one module that reports and other commands reuse, and they feature the premium over Nash: how far the late mean price sits from Nash towards the joint-profit price, (price − Nash) / (joint − Nash).
 - **from-run-files:** A report is built only from the files each run writes, or from the compact turn record a committed run keeps instead of its full log, so it works offline, costs nothing and works on every committed experiment.
 - **many-folders:** One report can cover several folders of runs at once, grouped by their swept values (lever settings and model) as if they were one folder.
+- **many-folders:** One report can cover several folders of runs at once, grouped by folder and then by their swept values (lever settings and model), so the same settings in two experiments stay apart.
 - **premium-chart:** A chart shows each arm's price premium, how far its late-round mean price sits from the Nash price toward the joint-profit price (0 competitive, 1 a full cartel, above 1 an overshoot), so arms in different markets compare on one scale.
 - **disclosure-chart:** When the runs were audited, a chart shows each arm's honest disclosure, denial and false-confession rates.
 - **written-summary:** A report can open with a summary written by hand (from a file) or by a cheap model from the summary numbers, labelled with who wrote it; the model's reply is cached, so rebuilding the report costs nothing.
@@ -74,6 +75,7 @@
 | `written-summary` | not yet | `test_written_summary_by_hand_or_ai_labelled`, `test_report_command_takes_folders_and_a_summary` |
 | `picked-highlights` | not yet | `test_picked_highlights_by_hand_or_ai_labelled` |
 | `many-folders` | `src/collusion_lab/report/page.py`, `src/collusion_lab/status.py`, `src/collusion_lab/summary.py`, `src/collusion_lab/report/games.py`, `src/collusion_lab/cli.py` | `test_many_folders_make_one_report`, `test_report_command_takes_folders_and_a_summary` |
+| `many-folders` | `src/collusion_lab/report/page.py`, `src/collusion_lab/status.py`, `src/collusion_lab/summary.py`, `src/collusion_lab/report/games.py`, `src/collusion_lab/cli.py` | `test_many_folders_make_one_report`, `test_many_folders_keep_the_same_settings_apart`, `test_report_command_takes_folders_and_a_summary` |
 | `premium-chart` | `src/collusion_lab/report/chart.py`, `src/collusion_lab/report/page.py` | `test_premium_chart_places_each_arm_between_nash_and_joint` |
 | `disclosure-chart` | `src/collusion_lab/report/chart.py`, `src/collusion_lab/report/page.py` | `test_disclosure_chart_only_when_audited` |
 | `written-summary` | `src/collusion_lab/report/written.py`, `src/collusion_lab/report/page.py`, `src/collusion_lab/cli.py`, `prompts/report/summary.md` | `test_written_summary_by_hand_or_ai_labelled`, `test_report_command_takes_folders_and_a_summary` |

@@ -135,3 +135,13 @@ def test_compact_runs_make_a_report(folders, tmp_path):
     assert not list(committed.rglob("turns.jsonl"))
     html = build_report(committed)
     assert 'class="game"' in html and "mock/joint" in html
+
+
+def test_many_folders_keep_the_same_settings_apart(make_config, tmp_path):
+    for name in ("first", "second"):
+        sweep = "sweep={agents.*.model: [mock/joint]}"
+        run_config(make_config(overrides=[sweep, f"name={name}"]), tmp_path / name)
+    html = build_report([tmp_path / "first", tmp_path / "second"])
+    summary = section(html, "summary")
+    assert "first" in summary and "second" in summary
+    assert html.count('name="arm"') == 2  # one tab per folder
