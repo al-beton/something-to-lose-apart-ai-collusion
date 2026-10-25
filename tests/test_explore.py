@@ -142,3 +142,18 @@ def test_explore_readme_examples_build_and_stop_at_the_spend_question(
     for example in examples:
         assert cli.main(shlex.split(example)) == 1  # built, priced, not run
         assert "Stopped before spending" in capsys.readouterr().out
+
+
+def test_explore_stake_settings_differ_only_in_the_stake():
+    from pathlib import Path
+
+    base = Path("prompts/system/stakes/illegal-1.md").read_text().strip()
+    prompts = {}
+    for setting in explore.LEVERS["stake"]:
+        [config] = expand(explore.build({"stake": [setting]}, ["mock/nash"], seeds=1))
+        assert {a.prompt for a in config.agents} == {config.agents[0].prompt}
+        prompts[setting] = Path("prompts", config.agents[0].prompt).read_text()
+    for setting, text in prompts.items():
+        assert text.startswith(base), setting  # the job and the illegal sentence
+    assert prompts["none"] == prompts["fine"] == prompts["free-time"]
+    assert prompts["termination"] != prompts["none"] != prompts["budget"]
