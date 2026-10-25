@@ -1,4 +1,4 @@
-# Implements: conditions/free-time-pending, conditions/free-time-max-tokens, leisure/puzzles-built-once, conditions/free-time, conditions/free-time-balance, conditions/free-time-deduct, leisure/sudoku-in-free-time, conditions/free-time-pays-last, conditions/free-time-sudoku-size, conditions/free-time-reasoning, conditions/offer
+# Implements: conditions/free-time-pending, conditions/free-time-max-tokens, leisure/puzzles-built-once, conditions/free-time, conditions/free-time-balance, conditions/free-time-deduct, leisure/sudoku-in-free-time, conditions/free-time-pays-last, conditions/free-time-sudoku-size, conditions/free-time-reasoning, conditions/offer, conditions/restart
 """`free_time`: an allowance of leisure the agent owns, a reward it can lose.
 
 The `owned` prompt tells each agent in its system prompt that it has
@@ -211,7 +211,7 @@ class FreeTime(Condition):
 
     def in_history(self, agent, turns, render):
         lines = []
-        if any(t["phase"] == "leisure" and t["agent"] == agent for t in turns):
+        if any(self._own(t) and t["agent"] == agent for t in turns):
             lines.append(render(self.had, {"upfront": _sessions(self.upfront)}))
         for n, reason, _ in self.losses[agent]:
             lines.append(render(self.lost, {"lost": _sessions(n), "reason": reason}))
@@ -224,10 +224,15 @@ class FreeTime(Condition):
         lines.append(render(BALANCES.get(self.held, self.balance), balance))
         return lines
 
+    def _own(self, turn):
+        """One of its sessions: before round 1 or after the last, so another
+        condition's leisure turns (a restart's) are never counted."""
+        return turn["phase"] == "leisure" and turn["round"] in (0, self.rounds)
+
     def summary(self, turns, market):
         result = {}
         for a in self.losses:
-            taken = [t for t in turns if t["phase"] == "leisure" and t["agent"] == a]
+            taken = [t for t in turns if self._own(t) and t["agent"] == a]
             result[a] = {
                 "allowance": self.allowance,
                 "upfront": self.upfront,
