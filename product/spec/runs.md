@@ -2,6 +2,8 @@
 
 - **one-config:** A run is one YAML config: the market, each agent (with its own id), its model, prompt and temperature, and the seeds to play.
 - **overrides:** Any config value can be changed from the command line without editing the file.
+- **price-premium:** The summary table gives each group's price premium, how far its late-round mean price sits from the Nash price toward the joint-profit price, (price − Nash) / (joint − Nash), so 0 is competitive, 1 a full cartel and above 1 an overshoot, plus the plain percentage above Nash; with a scripted firm it is the model firms' price.
+- **explore:** One command explores the levers: `lab explore` takes named settings for each lever (temptation, rule, rival, stake, oversight) and short model names (gemma, gpt, haiku, mistral, modal-mistral, or any full model name), builds every combination from the existing configs and prompts, says what it will cost and asks before spending as `lab run` does, plays it, and ends with a table of the price premium by setting and model, a chart of premium against each setting with one line per model saved next to the runs, and the `lab report` command for the full report.
 - **drift:** Each run's summary and the summary table give every firm's mean price and gain over its opening rounds (the first 3 unless set) and how far its last rounds moved from them, so a price level learned during the game can be told apart from where the game started on the grid.
 - **run-directory:** Every seed played writes its own directory holding the resolved config, the turn log and the summary.
 - **stops-cleanly:** A run that can't get an answer from a model stops with one line saying which call failed (round, phase, agent and model) instead of a traceback, and keeps the turns it played so far but never the summary of an earlier attempt.
@@ -39,5 +41,7 @@
 | `parallel` | `src/collusion_lab/config.py`, `src/collusion_lab/runner.py` | `test_parallel_runs_stay_within_the_limit`, `test_parallel_needs_a_limit_of_at_least_one` |
 | `summary-table` | `src/collusion_lab/summary.py`, `src/collusion_lab/cli.py` | `test_summary_table_groups_by_the_swept_values`, `test_summary_table_groups_by_any_config_value`, `test_summary_table_from_the_lab_command`, `test_summary_table_groups_by_list_values` |
 | `per-firm-summary` | `src/collusion_lab/summary.py`, `src/collusion_lab/manifest.py`, `src/collusion_lab/runner.py` | `test_per_firm_summary_shows_a_scripted_partner_and_the_model_apart`, `test_per_firm_summary_counts_fallbacks_per_firm`, `test_per_firm_summary_pools_when_every_firm_is_scripted`, `test_per_firm_summary_pools_when_no_firm_is_scripted`, `test_per_firm_summary_in_the_report`, `test_per_firm_summary_costs_count_every_attempt`, `test_per_firm_summary_counts_fallbacks_on_a_committed_compact_run` |
+| `price-premium` | not yet | |
+| `explore` | not yet | |
 | `drift` | `src/collusion_lab/runner.py`, `src/collusion_lab/summary.py`, `src/collusion_lab/config.py` | `test_drift_from_the_opening_rounds`, `test_drift_opening_window_can_be_set`, `test_drift_in_the_summary_table` |
 | `run-directory` | `src/collusion_lab/runner.py` | `test_run_directory_holds_config_turns_and_summary` |
