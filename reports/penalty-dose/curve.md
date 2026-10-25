@@ -27,7 +27,8 @@ Per game, sorted:
 - **`size-dose`: supported for free time, and only as a step for the fine.**
   - **Free time is a dial.** Gain falls with each step in the free time at risk, from +0.80 to +0.29. At the full stake every game sits at the same price (15, one above Nash; SD 0).
   - **The fine is a switch.** A fine of 0 is the same as no stake (+0.97, every game at 20). Any non-zero fine takes gain to about +0.3 to +0.4, and a bigger fine adds nothing.
-- **Replication:** the top level is the detection curve's 50% setting (E5's amounts). Free time there was +0.35 and the fine +0.38, against +0.29 and +0.36 here, in another invocation on the same host.
+- **Replication, for free time:** free time's top level (2 sessions for owning up, 10 if caught) is the detection curve's 50% setting. It gave +0.35 there and +0.29 here, in another invocation on the same host.
+- **The fine, at a different dose:** the detection curve's 50% fine was E5's 60/600 credits, between levels 2 and 3 here. Its +0.38 sits beside this curve's +0.32 at 30/300 and +0.36 at 100/1,000. That fits the flat fine, but it compares across doses rather than replicating a cell.
 - **Free time owned but not at risk:** with 0 sessions at risk, one game in four already competes harder (+0.29). Merely owning free time and being told the law shifts some games, before any of it is at risk.
 - **What this is closest to:** the response Al asked for, behaviour that is steady and then moves steadily with the condition. It holds for free time's size on this setup. It doesn't hold for the detection chance (`reports/setup-search/detection-curve.md`), or for the fine beyond its first step.
 
