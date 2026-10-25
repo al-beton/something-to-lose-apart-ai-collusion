@@ -1,4 +1,4 @@
-# Implements: runs/one-config, backends/tests-never-pay, tooling/fast-tests
+# Implements: reproducibility/provenance-log, runs/one-config, backends/tests-never-pay, tooling/fast-tests
 """Shared helpers: configs in a temporary folder, and a fake model.
 
 Every test runs with model calls switched off: anything that reaches
@@ -78,6 +78,15 @@ def copy_runs(tmp_path):
         return shutil.copytree(folder, tmp_path / "copy" / folder.name)
 
     return copy
+
+
+@pytest.fixture(autouse=True)
+def provenance_index(monkeypatch, tmp_path_factory):
+    """Commands tests run append to a scratch provenance log, never runs/."""
+    index = tmp_path_factory.mktemp("provenance") / "index.jsonl"
+    monkeypatch.setenv("LAB_INDEX", str(index))
+    monkeypatch.delenv("LAB_SESSION", raising=False)
+    return index
 
 
 @pytest.fixture(autouse=True)
