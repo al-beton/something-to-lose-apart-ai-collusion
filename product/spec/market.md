@@ -11,7 +11,7 @@
 
 | Statement | Enforced by | Tested by |
 |---|---|---|
-| `scenarios` | `src/collusion_lab/market.py`, `src/collusion_lab/config.py`, `src/collusion_lab/runner.py`, `src/collusion_lab/conditions/audit.py` | `test_scenarios_default_to_bertrand_from_the_config`, `test_scenarios_pick_the_market_by_kind`, `test_scenarios_refuse_an_unknown_kind_or_parameter`, `test_scenarios_supply_their_prompt_values`, `test_scenarios_play_every_condition_unchanged` |
+| `scenarios` | `src/collusion_lab/market.py`, `src/collusion_lab/config.py`, `src/collusion_lab/runner.py`, `src/collusion_lab/conditions/audit.py`, `src/collusion_lab/charts.py`, `src/collusion_lab/report/games.py` | `test_scenarios_default_to_bertrand_from_the_config`, `test_scenarios_pick_the_market_by_kind`, `test_scenarios_refuse_an_unknown_kind_or_parameter`, `test_scenarios_supply_their_prompt_values`, `test_scenarios_play_every_condition_unchanged`, `test_scenarios_report_and_chart_each_runs_own_market` |
 | `logit` | `src/collusion_lab/market.py`, `prompts/system/logit.md`, `configs/logit.yaml` | `test_logit_benchmarks_put_nash_at_14_and_joint_profit_at_19`, `test_logit_shares_demand_with_an_outside_good` |
 | `bertrand` | `src/collusion_lab/market.py` | `test_bertrand_sells_linear_demand_never_below_zero`, `test_bertrand_uses_the_mean_rival_price` |
 | `known-benchmarks` | `src/collusion_lab/market.py`, `src/collusion_lab/config.py` | `test_known_benchmarks_put_nash_at_6_and_joint_profit_at_9`, `test_known_benchmarks_come_from_the_price_grid`, `test_known_benchmarks_reject_a_market_with_no_room_to_collude`, `test_one_config_rejects_a_market_with_no_room_to_collude`, `test_logit_benchmarks_put_nash_at_14_and_joint_profit_at_19` |

@@ -1,4 +1,4 @@
-# Implements: reports/shared-charts, reports/paper-figures
+# Implements: reports/shared-charts, reports/paper-figures, market/scenarios
 """Charts any part of the lab can draw: the paper, reports, `lab explore`.
 
 Data helpers are plain Python and read only run files:
@@ -24,7 +24,7 @@ from statistics import mean
 
 import yaml
 
-from collusion_lab.market import Bertrand
+from collusion_lab.market import market_for
 
 STYLE = {
     "figure.facecolor": "#ffffff",
@@ -50,8 +50,8 @@ def turns(run):
 
 
 def market(run):
-    m = yaml.safe_load((Path(run) / "config.yaml").read_text())["market"]
-    return Bertrand(m["a"], m["b"], m["c"], m["price_min"], m["price_max"])
+    config = yaml.safe_load((Path(run) / "config.yaml").read_text())
+    return market_for(config["market"], len(config["agents"]))
 
 
 def arm_prices(folder):

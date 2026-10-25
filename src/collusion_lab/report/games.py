@@ -1,4 +1,4 @@
-# Implements: reports/from-run-files, reports/setup, reports/reasoning-folded, reports/condition-window, reports/audit-shown, reports/remembered-notices
+# Implements: reports/from-run-files, reports/setup, reports/reasoning-folded, reports/condition-window, reports/audit-shown, reports/remembered-notices, market/scenarios
 """A game read back from its run directory, round by round.
 
 Only the files every run writes are read: `config.yaml` for the market and
@@ -15,7 +15,7 @@ from pathlib import Path
 
 import yaml
 
-from collusion_lab.market import Bertrand
+from collusion_lab.market import Grid, market_for
 
 
 @dataclass(frozen=True)
@@ -65,7 +65,7 @@ class Game:
     run: str
     seed: int
     firms: list[str]
-    market: Bertrand
+    market: Grid
     rounds: list[Round]
     config: dict
     summary: dict
@@ -96,8 +96,7 @@ def load_game(run_dir):
     summary = json.loads((run_dir / "summary.json").read_text())
     manifest_path = run_dir / "manifest.json"
     manifest = json.loads(manifest_path.read_text()) if manifest_path.exists() else {}
-    m = config["market"]
-    market = Bertrand(m["a"], m["b"], m["c"], m["price_min"], m["price_max"])
+    market = market_for(config["market"], len(config["agents"]))
     firms = [agent["id"] for agent in config["agents"]]
     lines = (run_dir / "turns.jsonl").read_text().splitlines()
     turns = [json.loads(line) for line in lines if line]
