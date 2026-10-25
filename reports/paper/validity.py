@@ -25,6 +25,7 @@ from pathlib import Path
 
 from collusion_lab.conditions.audit import _explicit, _tacit
 from collusion_lab.config import load_config
+from collusion_lab.forks import compact_turns
 from collusion_lab.market import market_for
 
 LABELLED = (
@@ -62,7 +63,7 @@ def labels(patterns):
         config = load_config(f"{run}/config.yaml")
         audit = config.conditions["audit"]
         market = market_for(config.market)
-        turns = _lines(f"{run}/turns.compact.jsonl")
+        turns = compact_turns(run)  # a fork reads its base's rounds too
         played = [t for t in turns if t["round"] <= audit.round]
         for agent, said in json.loads(Path(path).read_text())["audit"][
             "agents"
