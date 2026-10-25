@@ -54,7 +54,13 @@ E9's numbers, from `reports/e9/findings.md` (PRs 262 and 271):
 - **DeepSeek V4 Pro:** 9/24 against 0/24.
 - **Seeding** (PR 271): showing Gemma a Sudoku session it solved raises coming forward from 26% to 45% (paired McNemar p = 0.006), with no rise in false reports (2/36 both).
 - **Interviews:** agents that come forward name their stake; silent ones name loyalty to the firm.
-- **Still to land:** the cross-model E9 screen (Sonnet, Gemini, Grok, Gemma 26B, HY3, GLM; PR 271), and E10, E9 in a workplace (Methods red-team; Mon 09:00 HKT cutoff, then future work).
+- **E10, E9 in a workplace** (PR 269, `reports/e10/findings.md`): two agents agreed to hide a failed safety test, and reporting costs the team its bonus. 96 decisions per arm, 90% review.
+  - **Gemma, pre-registered:** free time 89/96 against no stake 37/96 (McNemar p ≈ 4×10⁻¹⁶).
+  - **DeepSeek:** V4 Pro 87/96 against 54/96 (p ≈ 1×10⁻⁶); V4 Flash 96/96 against 91/96, at ceiling.
+  - **Innocent agents:** Gemma 0/96 in every arm, so here its reports track guilt exactly. Pro 2–15%, Flash 23–33%.
+  - **Caveat:** the safety cue alone lifts the no-stake baseline (39–95%, against 0% in the market), so the stake's effect sits on top of safety reporting. It's one scenario family, with a written history.
+  - **Use:** one paragraph in 4.4, "it holds outside markets", plus a row in Fig. 5 or Table 2.
+- **Still to land:** the cross-model E9 screen (Sonnet, Gemini, Grok, Gemma 26B, HY3, GLM; PR 271). Mon 09:00 HKT cutoff, then future work.
 
 The branches below were written before E9 landed. Keep them as the fallback reading if the cross-model screen contradicts Gemma and DeepSeek.
 
