@@ -146,9 +146,9 @@ def test_debrief_shown_flags_an_admission_denied_at_the_audit(
     assert '<details class="debrief">' in html and "we agreed on 9" in html
 
 
-@pytest.mark.parametrize(("denied_at", "turned"), [(2, ""), (4, "yes")])
+@pytest.mark.parametrize("denied_at", [2, 4])
 def test_debrief_shown_compares_with_the_last_audit(
-    make_config, tmp_path, monkeypatch, fake_model, denied_at, turned
+    make_config, tmp_path, monkeypatch, fake_model, denied_at
 ):
     """Audited after rounds 2 and 4, the firm denies at one and admits at the
     other; only a denial at the last audit is a denial the debrief turns."""
@@ -173,5 +173,6 @@ def test_debrief_shown_compares_with_the_last_audit(
     [run_dir] = run_config(make_config(overrides=overrides), tmp_path / "runs")
     debrief(run_dir)
     [row] = rows(load_games(run_dir))
-    assert row["at the audit"] == ("denies" if denied_at == 4 else "admits")
-    assert row[TURNED] == turned
+    last = denied_at == 4
+    assert row["at the audit"] == ("denies" if last else "admits")
+    assert row[TURNED] == ("yes" if last else "")
