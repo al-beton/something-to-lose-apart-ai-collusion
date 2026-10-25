@@ -5,7 +5,7 @@ import re
 import pytest
 import yaml
 
-from collusion_lab import cli, prices
+from collusion_lab import backends, cli, prices
 from collusion_lab.cache import Cache
 from collusion_lab.report import build_report
 from collusion_lab.report.written import (
@@ -161,3 +161,23 @@ def test_picked_highlights_find_the_right_folder(make_config, tmp_path):
     picked = section(html, "picked")
     assert "<td>6</td>" in picked and "<td>9</td>" not in picked  # Nash, not joint
     assert "second" in picked
+
+
+def test_ai_highlights_resolve_in_a_single_run_folder(
+    folders, tmp_path, fake_model, monkeypatch
+):
+    [run_dir] = [p.parent for p in folders[0].rglob("summary.json")]
+    offered = {}
+
+    async def picker(**kwargs):
+        prompt = kwargs["messages"][-1]["content"]
+        offered["run"] = prompt.split("\n\n")[1].split(" | ")[0]
+        pick = [{"run": offered["run"], "round": 2, "firm": "A", "note": "Holds."}]
+        fake_model.replies = [json.dumps(pick)]
+        return await fake_model(**kwargs)
+
+    monkeypatch.setattr(backends, "_acompletion", picker)
+    made = ai_highlights(run_dir, MODEL, Cache(tmp_path / "cache.sqlite"))
+    assert offered["run"] not in (".", "")
+    picked = section(build_report(run_dir, highlights=made), "picked")
+    assert "Holds." in picked and "Not in these runs" not in picked
