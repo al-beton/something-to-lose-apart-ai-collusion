@@ -31,15 +31,15 @@ A control for E5. The frontier models can't turn reasoning off, so a difference 
 
 | Statement | Enforced by | Tested by |
 |---|---|---|
-| `question` | not yet | — |
-| `same-patterns` | not yet | — |
-| `thinks-to-collude` | not yet | — |
+| `question` | `reports/e5/reasoning.md` | — |
+| `same-patterns` | `reports/e5/reasoning.md` | — |
+| `thinks-to-collude` | `reports/e5/reasoning.md` | — |
 | `reasoning-low` | `configs/e5-reasoning.yaml` | — |
 | `arms` | `configs/e5-reasoning.yaml` | — |
 | `models` | `configs/e5-reasoning.yaml` | — |
 | `seeds-to-cap` | `configs/e5-reasoning.yaml` | — |
-| `gain` | not yet | — |
-| `fallbacks` | not yet | — |
+| `gain` | `reports/e5/analyse.py`, `reports/e5/shares.py` | — |
+| `fallbacks` | `reports/e5/reasoning.md` | — |
 | `one-effort` | reviewer, when the results are written up | — |
 | `reasoning-hidden` | reviewer, when the results are written up | — |
 | `arms-differ` | reviewer, when the results are written up | — |

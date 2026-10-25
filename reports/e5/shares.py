@@ -1,6 +1,6 @@
 """E5's price-level tables: exact prices, ladders, Nash as named, intervals.
 
-Implements: e5-informed/exact-share, e5-informed/top-share, e5-informed/ladder, e5-informed/nash-named, e5-informed/intervals, e5-deterrence/gain
+Implements: e5-informed/exact-share, e5-informed/top-share, e5-informed/ladder, e5-informed/nash-named, e5-informed/intervals, e5-deterrence/gain, e5-reasoning/gain
 
 `uv run python reports/e5/shares.py FOLDER...` prints four tables, per
 folder, arm and model:

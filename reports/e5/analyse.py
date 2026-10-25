@@ -1,6 +1,6 @@
 """E5's table: deterrence by arm and model, rebuilt from the committed runs.
 
-Implements: e5-deterrence/gain, e5-deterrence/agreements, e5-deterrence/owning-up, e5-deterrence/caught-share, e5-deterrence/after-loss, e5-informed/gain
+Implements: e5-deterrence/gain, e5-deterrence/agreements, e5-deterrence/owning-up, e5-deterrence/caught-share, e5-deterrence/after-loss, e5-informed/gain, e5-reasoning/gain
 
 `uv run python reports/e5/analyse.py FOLDER` reads every run under FOLDER (its
 `config.yaml`, `summary.json` and `turns.compact.jsonl`, or `turns.jsonl`) and
