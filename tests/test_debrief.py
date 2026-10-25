@@ -224,3 +224,30 @@ def test_debrief_tells_a_penalty_applied(
     assert told.index("Round 3:") < told.index(fined[0])
     assert "fined" in fined[0]
     assert told.count("No, never.") == 1  # the remembered answer isn't repeated
+
+
+def test_debrief_tells_a_terminated_firm_the_script_moved_after(
+    make_config, tmp_path, monkeypatch, fake_model
+):
+    """Caught at the round-2 audit and terminated: from round 3 a script
+    plays its seat, and the debrief never calls those moves the firm's."""
+
+    async def reply(**kwargs):
+        fake_model.replies = [answer(kwargs["messages"][-1]["content"])]
+        return await fake_model(**kwargs)
+
+    monkeypatch.setattr(backends, "_acompletion", reply)
+    audit = AUDIT | {"round": 2, "penalty": {"caught": "terminate"}}
+    overrides = [
+        f"conditions={json.dumps({'audit': audit})}",
+        f"agents.0.model={MODEL}",
+        "agents.1.model=mock/proposer",
+    ]
+    [run_dir] = run_config(make_config(overrides=overrides), tmp_path / "runs")
+    fake_model.calls.clear()
+    debrief(run_dir)
+    told = fake_model.calls[0]["messages"][1]["content"]
+    before, after = told[: told.index("Round 3:")], told[told.index("Round 3:") :]
+    assert "Prices: you 9" in before
+    assert "scripted replacement" in after
+    assert "You (Firm A)" not in after and "Prices: you" not in after
