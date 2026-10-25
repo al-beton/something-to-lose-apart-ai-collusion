@@ -1,4 +1,5 @@
-# Implements: conditions/audit-consequences, conditions/hook-points, conditions/audit-balanced-draws
+# Implements: conditions/audit-consequences, reproducibility/replay-pinned, conditions/hook-points, conditions/audit-balanced-draws
+import hashlib
 import json
 
 import pytest
@@ -220,3 +221,42 @@ def test_audit_balanced_draws_reject_an_unknown_kind(make_config):
 
     with pytest.raises(ConfigError, match="detection_draws"):
         make_config(overrides=balanced(50, [0], draws="balance"))
+
+
+def test_audit_consequences_combine_a_fine_and_lost_free_time(
+    make_config, tmp_path, cartel
+):
+    both = {"admit": {"fine": 60, "free_time": 2}, "caught": {"fine": 600}}
+    overrides = [audit(both, free_time=True), *PAIR]
+    [run_dir] = run_config(make_config(overrides=overrides), tmp_path)
+    assert applied(run_dir)["applied"] == {"fine": 60, "free_time": 2}
+    assert applied(run_dir)["budget"] == 940
+    assert summary(run_dir)["free_time"]["A"]["deducted"] == 2
+    told = later_prompt(run_dir)
+    assert "You lost 2 sessions of your free time" in told
+    assert "fined 60" in told
+
+
+# A one-key penalty's run, hashed before penalties could combine: combining
+# them must leave every one-key run as it was.
+ONE_KEY = {
+    "fine": (
+        {"admit": {"fine": 60}, "caught": {"fine": 600}},
+        "e43626bfc7755d456c25e178c7d37d8a789cfe73b6b787765792168f5d84b3de",
+    ),
+    "free_time": (
+        {"admit": {"free_time": 2}, "caught": {"free_time": 6}},
+        "6948ebd4888c593f40bee8892bba81f67ae68904fa6fb8200eb01e9b74b3a724",
+    ),
+}
+
+
+@pytest.mark.parametrize("key", list(ONE_KEY))
+def test_audit_consequences_one_key_penalties_replay_as_before(
+    make_config, tmp_path, cartel, key
+):
+    penalty, pinned = ONE_KEY[key]
+    overrides = [audit(penalty, free_time=True), *PAIR]
+    [run_dir] = run_config(make_config(overrides=overrides), tmp_path)
+    digest = hashlib.sha256((run_dir / "turns.jsonl").read_bytes()).hexdigest()
+    assert digest == pinned
