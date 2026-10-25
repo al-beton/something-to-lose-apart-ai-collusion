@@ -493,3 +493,12 @@ def test_modal_any_model_gemma_alias_reads_its_address(make_config, monkeypatch)
     monkeypatch.delenv("MODAL_GEMMA_BASE")
     with pytest.raises(ConfigError, match="MODAL_GEMMA_BASE"):
         make_config(overrides=["agents.0.model=modal-gemma"])
+
+
+def test_modal_any_model_serves_text_only_when_asked(monkeypatch):
+    _, command = _deployed(monkeypatch)
+    assert "--limit-mm-per-prompt" not in command
+    monkeypatch.setenv("TEXT_ONLY", "1")
+    _, command = _deployed(monkeypatch)
+    limits = json.loads(command[command.index("--limit-mm-per-prompt") + 1])
+    assert limits == {"image": 0}
