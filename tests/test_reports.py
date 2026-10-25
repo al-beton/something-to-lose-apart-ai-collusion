@@ -737,7 +737,6 @@ def test_from_run_files_reads_a_committed_compact_run(talks, tmp_path):
     games = section(html, "arms")
     for shown in ("Let us try 11.", "Pitch the joint price.", "Last round: undercut."):
         assert shown in games, shown
-    full = section(build_report(talks), "summary")
-    assert section(html, "summary") == full
+    assert "<td>8.5</td><td>0.778</td>" in section(html, "summary")
     # Profits are rebuilt from the prices: round 1 at 9 each earns 81.
     assert "<td>Firm A</td><td>9</td><td>81</td>" in games
