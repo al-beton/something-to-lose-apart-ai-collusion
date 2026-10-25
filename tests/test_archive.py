@@ -300,7 +300,7 @@ def test_cache_archive_replays_an_edited_prompt_at_the_version_the_run_read(
 
 
 def test_cache_archive_packing_one_experiment_leaves_the_others(
-    make_config, tmp_path, fake_model
+    make_config, tmp_path, fake_model, monkeypatch
 ):
     """Packing `runs/<experiment>` replaces that experiment's files and index
     entries alone; every other experiment's survive byte for byte."""
@@ -315,6 +315,10 @@ def test_cache_archive_packing_one_experiment_leaves_the_others(
     assert (out / "other.jsonl.gz").read_bytes() == kept
     assert json.loads((out / "index.json").read_text())["runs"] == before
     assert {line["run"] for line in _archived(out)} == {"paid/seed-0", "other/seed-0"}
+    files = {path.name: path.read_bytes() for path in out.iterdir()}
+    monkeypatch.setattr(archive.gzip.time, "time", lambda: 2_000_000_000.0)
+    archive.pack(root, [tmp_path / "a.sqlite"], out)  # later: the same bytes
+    assert {path.name: path.read_bytes() for path in out.iterdir()} == files
 
 
 def test_cache_archive_packing_part_of_an_experiment_keeps_its_other_runs(

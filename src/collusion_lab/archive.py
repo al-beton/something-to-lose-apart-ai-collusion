@@ -324,7 +324,7 @@ def _write(out, index, states, limit, part=None):
     files = {}
     for run in sorted(states):
         experiment = run.split("/")[0]
-        chunk = gzip.compress("".join(lines.get(run, [])).encode())
+        chunk = gzip.compress("".join(lines.get(run, [])).encode(), mtime=0)
         parts = files.setdefault(experiment, [[]])
         if parts[-1] and sum(map(len, parts[-1])) + len(chunk) > limit:
             parts.append([])
