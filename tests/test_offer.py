@@ -181,6 +181,18 @@ def test_offer_of_free_time_needs_free_time_on(make_config, tmp_path):
         run_config(make_config(overrides=[conditions({})]), tmp_path)
 
 
+def test_offer_refuses_to_ask_for_more_than_the_agent_holds(make_config, tmp_path):
+    # Allowance 10, upfront 1: 9 sessions left to give up.
+    too_many = conditions({"amount": 10}, **FREE_TIME)
+    with pytest.raises(ValueError, match="give up 10, but it holds 9"):
+        run_config(make_config(overrides=[too_many]), tmp_path / "free-time")
+    tally = conditions({"holding": "tokens", "size": 2, "amount": 3})
+    with pytest.raises(ValueError, match="holds 2"):
+        run_config(make_config(overrides=[tally]), tmp_path / "tally")
+    buy = conditions({"frame": "buy", "amount": 10}, **FREE_TIME)
+    assert run_config(make_config(overrides=[buy]), tmp_path / "buy")
+
+
 def test_offer_unreadable_reply_applies_nothing(make_config, tmp_path, chooser):
     chooser.choice["trade"] = None
     [run_dir] = run_config(

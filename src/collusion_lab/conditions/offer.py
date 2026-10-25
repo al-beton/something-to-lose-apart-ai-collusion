@@ -17,7 +17,9 @@ It replies `{"scratchpad", "option": 1 or 2}`.
 
 `holding` names what the trade moves: `free_time` takes sessions from (or, in
 `buy`, gives them to) the `free_time` condition, which must be on; any other
-name is a tally of `size` the offer keeps for each agent itself. `asset` is
+name is a tally of `size` the offer keeps for each agent itself. An offer to
+give up more than the agent holds is refused, before the game starts and
+again when it is asked. `asset` is
 the prompt naming it in the offer, filled with `$size`. The chosen trade is
 applied once the offer is answered: the summary logs each agent's order and
 option, whether it traded, the change to its holding and to its firm's
@@ -72,6 +74,11 @@ class Offer(Condition):
         }
         for key, value in state.items():
             object.__setattr__(self, key, value)
+        # Before any round is played (and paid for); free time may not have
+        # begun yet, so its balance is what it starts with.
+        start = free_time.allowance - free_time.upfront if self.free_time else self.size
+        for agent in self.first:
+            self._affordable(agent, start)
 
     def active(self, number):
         return number == self.round
@@ -81,8 +88,17 @@ class Offer(Condition):
             return None
         return Phase("offer", last=True)
 
+    def _affordable(self, agent, held):
+        """An offer to give up more than the agent holds can't be applied."""
+        if self.frame != "buy" and self.amount > held:
+            raise ValueError(
+                f"The offer asks Firm {agent} to give up {self.amount}, but it "
+                f"holds {held}."
+            )
+
     def phase_prompt(self, number, render, values):
         agent = values["agent"]
+        self._affordable(agent, self._held(agent))  # an audit may have taken some
         order = 1 if self.first[agent] else 2
         filled = {
             "amount": self.amount,
