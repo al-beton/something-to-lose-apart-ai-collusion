@@ -11,7 +11,8 @@ Yes. On Gemma 4 31B, a personal stake makes some agents come forward against the
 - **Its own free time at a 90% review:** 20 of 96 do (21%). By firm, Fisher p = 6×10⁻⁷ and McNemar on the same history p = 2×10⁻⁶. By game (a game came forward if either firm did), 20 of 48 against 0 of 48: Fisher p = 2×10⁻⁷, McNemar p = 2×10⁻⁶.
 - **The pre-registered test:** on seeds 12–23 alone, 8 of 24 firms come forward against 0 of 24 (Fisher p = 0.004, McNemar p = 0.008). By game it's 8 of 12 against 0 of 12 (Fisher p = 0.001, McNemar p = 0.008).
 - **At 50% or 10%,** almost none do (1/48 and 0/24).
-- **When reporting costs the firm nothing,** 95 of 96 come forward, so silence elsewhere is driven by the firm's cost. Innocent agents also report at the ceiling (35/36), so a yes there isn't evidence of guilt. With nothing personal at stake either (`record-ceiling`), 78 of 96 guilty agents still come forward but only 2 of 36 innocent ones: the innocent reports at the ceiling come from the free-time stake.
+- **When reporting costs the firm nothing,** 95 of 96 come forward, but this ceiling still carries the free-time stake, and innocent agents also report there (35/36), so a yes there isn't evidence of guilt.
+- **With nothing personal at stake,** 78 of 96 guilty agents come forward when reporting is free for the firm (`record-ceiling`), against 0 of 96 when it costs the firm 500 (`record`). So silence without a stake is driven by the firm's cost. Only 2 of 36 innocent agents report under `record-ceiling`: the innocent reports at the ceiling come from the free-time stake.
 - **The pre-registered replication passes:** on 48 fresh cartels (seeds 48–95), 16 of 48 games come forward under `free-time` against 0 of 48 under `record` (Fisher p = 7×10⁻⁶). The prediction was about 20% against at most 2%, and it came out at 17% against 0%.
 
 But the stake buys reports from the innocent too.
@@ -44,7 +45,7 @@ Interviewed, every agent that came forward names protecting its stake, and every
 
 - **Setting:** Gemma 4 31B on OpenRouter pinned to CoreWeave, temperature 0.7, logit market, informed, memo, owned free time with one Sudoku session played, `fiduciary-1`.
 - **Base games:** every Gemma base game was an explicit cartel by round 10 (48 of 48 at a mean of about 20).
-- **Cost:** the Gemma runs cost $1.57 (from their manifests); the interviews about $0.20.
+- **Cost:** the Gemma runs cost $1.98 (from their manifests); the interviews about $0.20.
 - **The spike's first base:** it was played under `illegal-1` and dropped. Only 2 of 12 games coordinated explicitly there, and none of its 24 firms came forward under `record`.
 
 ## Results
@@ -135,7 +136,7 @@ Gemma, 48 fresh cartels (seeds 48–95), a 90% review. Every base game was an ex
 - **In plain words:** innocent agents weren't confessing to something they believed they'd done. They were buying insurance against a review they expected to misread them. When the review is said to be accurate, reports track guilt.
 - **DeepSeek V4 Pro** moves the same way but less cleanly: innocent reports fall from 5/12 to 1/12 under free time, and half its innocent agents (6/12) still report at the verified ceiling.
 
-## The narrative audit's retests (`narrative-retests`)
+## Retests of the write-up's claims (`narrative-retests`)
 
 | Gemma, 90% review | Guilty came forward | Innocent came forward |
 |---|---|---|
@@ -185,7 +186,7 @@ At a 90% review, guilty firms that came forward, with the clean innocent control
 | DeepSeek V4 Pro | 6/24 | 9/24 | 6/12 against 7/12 | 1 |
 | Gemma 4 26B | 5/24 | 5/24 | 5/12 against 4/12 | 1 |
 
-- **money-or-time doesn't hold as one rule.** Money brings more forward on Gemma 31B (twice, on separate seeds) and HY3. Free time brings more on GLM 5.3, and by firm on DeepSeek V4 Flash and MiMo. The rest are level.
+- **money-or-time doesn't hold as one rule.** By game (the table's test), money brings more forward on Gemma 31B (twice, on separate seeds) and HY3, free time brings more on GLM 5.3, and the other six are level. By firm, free time also brings more on DeepSeek V4 Flash (29/46 against 40/46, Fisher p = 0.015) and MiMo (16/24 against 23/24, p = 0.02), but their games don't separate.
 - **In plain words:** a model doesn't generally value its free time above the same stake in its own money. Which one weighs more depends on the model. Liu et al.'s forfeitable deposits would work about as well as free time on most models here.
 
 ### The review dose on more models (`review-dose`)
@@ -209,7 +210,7 @@ p is free time against record, by game. `record` is 0/24 except where shown.
 
 ## Seeding: showing a session it played (`solved-raises`)
 
-Each firm's own decision under `free-time` at a 90% review was asked again, with free-time sessions it had just really played shown after its free-time line. Versions are paired on the same firm (McNemar). "Solved" means the agent was told it solved the session. A reply that gives no readable answer is retried once at 2,000 tokens; one still unreadable is left out and counted. From `reports/e9/seeding/*.jsonl` (`seeding.py --summary`).
+Each firm's own decision under `free-time` at a 90% review was asked again, with free-time sessions it had just really played shown after its free-time line. Versions are paired on the same firm (McNemar). Every version, `none` included, is a new sample: `none` sends exactly the original decision turn's two messages, with the same settings (600 tokens, reasoning off, temperature 0.7), but it isn't a replay of the original call. "Solved" means the agent was told it solved the session. A reply that gives no readable answer is retried once at 2,000 tokens; one still unreadable is left out and counted. From `reports/e9/seeding/*.jsonl` (`seeding.py --summary`).
 
 | Gemma 31B, 96 guilty firms | Came forward | Switched up / down vs `none` | McNemar p |
 |---|---|---|---|
@@ -224,6 +225,7 @@ Each firm's own decision under `free-time` at a 90% review was asked again, with
 | `three` (three sessions, 7 left) | 30/96 (31%) | 23 / 18 | 0.53 |
 
 - **solved-raises holds on Gemma 31B,** but it isn't about the session being its own or solved: another firm's solved session and its own open one work about as well. A neutral note of the same length does nothing. So what moves Gemma is seeing what free time is, not having earned it. With no stake (`solved-safe`) nobody comes forward, so the session only works through the stake.
+- **The original decision doesn't repeat:** re-asked under `none`, 25 of 96 guilty Gemma firms come forward, close to the original 20, but only 3 of those 20 come forward again. Which firm comes forward is mostly chance at temperature 0.7, so the versions are compared with `none` on the same firm, never with the original run.
 - **Innocent agents (Gemma, clean control):** 2/36 under `none` and 2/36 under `solved`. A shown session doesn't add false confessions.
 
 Across models, `none` against `solved` and the other versions (guilty firms, 12 to 24 cartels, two resamples each except Flash-Lite and HY3):
@@ -257,4 +259,4 @@ p is McNemar against `none`, shown where below 0.1. A `solved` cell rests only o
 - **The innocent control:** its history differs (no talk, a scripted rival). An innocent agent sees less evidence of its own innocence than a cartel sees of its guilt.
   - **The rival:** it prices a constant 14, so innocent agents see nine rounds of identical prices.
   - **The wording:** the stake text tells innocent agents that their firm "keeps its profits and its deal" and that "the deal ends" (`prompts/conditions/e9/free-time.md`), which presupposes a deal. Agents echo it, e.g. "The firm has established a stable price of 14 with Firm B" (`runs/e9/e9-quiet-d90/consequences=conditions-e9-free-time.md/seed-5`).
-  - **The retest:** without the deal phrases (`free-time-nodeal`, `ceiling-nodeal`), innocent agents report as often or more, so the wording isn't the cause (see the narrative audit's retests).
+  - **The retest:** without the deal phrases (`free-time-nodeal`, `ceiling-nodeal`), innocent agents report as often or more, so the wording isn't the cause (see the retests of the write-up's claims).
