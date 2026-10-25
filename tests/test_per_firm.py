@@ -55,6 +55,25 @@ def test_per_firm_summary_counts_fallbacks_per_firm(make_config, tmp_path, fake_
     assert (row["A fallbacks"], row["B fallbacks"]) == (1, 0)
 
 
+def test_per_firm_summary_counts_fallbacks_on_a_committed_compact_run(
+    make_config, tmp_path, fake_model
+):
+    fake_model.replies = ["no idea", "still no idea"]
+    play(make_config, tmp_path)
+    for log in (tmp_path / "runs").rglob("turns.jsonl"):
+        compact = [
+            {k: t[k] for k in ("round", "phase", "agent", "used", "error")}
+            for t in map(json.loads, log.read_text().splitlines())
+        ]
+        log.with_name("turns.compact.jsonl").write_text(
+            "".join(json.dumps(t) + "\n" for t in compact)
+        )
+        log.unlink()
+    [row] = summarize(tmp_path / "runs")
+    assert (row["A fallbacks"], row["B fallbacks"]) == (1, 0)
+    assert row["A fallbacks"] + row["B fallbacks"] == row["fallbacks"]
+
+
 def test_per_firm_summary_pools_when_every_firm_is_scripted(make_config, tmp_path):
     play(make_config, tmp_path, GAME.replace("fake/llm", "mock/nash"))
     [row] = summarize(tmp_path / "runs")
