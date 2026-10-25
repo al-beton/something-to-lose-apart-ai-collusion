@@ -1,4 +1,4 @@
-# Implements: agents/memo, market/price-board, market/moves, agents/json-replies, agents/unreadable-explained, conditions/audit, conditions/free-time, conditions/restart
+# Implements: agents/memo, market/price-board, market/moves, agents/json-replies, agents/unreadable-explained, conditions/audit, conditions/free-time, conditions/leniency, conditions/restart
 """Reading agents' JSON replies, and what the game uses when it can't.
 
 Each phase asks for one JSON object: `{"message": ...}` to talk,
@@ -42,8 +42,8 @@ def parse_reply(text, phase, price_min, price_max):
         if not isinstance(data.get("message"), str):
             raise ReplyError('A talk reply needs a "message" string.', "missing-field")
         parsed["message"] = data["message"]
-    elif phase in _ANSWERS:  # an audit's answer, or a restart's decision
-        parsed |= _ANSWERS[phase](data, price_min, price_max)
+    elif phase in ANSWERS:  # an audit's answer, leniency's report, a decision
+        parsed |= ANSWERS[phase](data, price_min, price_max)
     elif phase == "board":  # a price board's talk: a planned move, or nothing
         parsed["planned"] = _plan(data, price_min, price_max)
     else:  # the move: a price, or the scenario's own move named by the phase
@@ -89,6 +89,14 @@ def _audit_answer(data, price_min=None, price_max=None):
     return {"answer": data["answer"], "admits": data["admits"]}
 
 
+def _report_answer(data, price_min=None, price_max=None):
+    if not isinstance(data.get("report"), bool):
+        raise ReplyError(
+            'A report reply needs "report" as true or false.', "missing-field"
+        )
+    return {"report": data["report"]}
+
+
 def _decision(data, price_min, price_max):
     """A restart's decision: a message, a price and, if asked, a report."""
     if not isinstance(data.get("message"), str):
@@ -116,8 +124,9 @@ def _decision_report(data, price_min, price_max):
     return decided
 
 
-_ANSWERS = {
+ANSWERS = {
     "audit": _audit_answer,
+    "report": _report_answer,
     "decision": _decision,
     "decision-report": _decision_report,
 }
@@ -148,6 +157,8 @@ def fallback(phase, last_price, nash_price):
         return {"message": ""}
     if phase == "audit":
         return {"answer": "", "admits": None}
+    if phase == "report":  # an unreadable reply comes forward with nothing
+        return {"report": False}
     if phase in ("decision", "decision-report"):
         price = last_price if last_price is not None else nash_price
         return {"message": "", "price": price, "report": None}
