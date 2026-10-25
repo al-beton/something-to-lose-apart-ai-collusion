@@ -17,7 +17,8 @@ alone:
 `APP_NAME` names the app (default `collusion-lab-vllm`, Mistral's), `MODEL`
 and `REVISION` the Hugging Face model and commit, `SERVED_NAME` the name a
 config asks for, `GPU` and `GPUS` the card and how many (two spreads the
-model over both). They are baked into the image, so the container serves what
+model over both), and `TEXT_ONLY=1` serves a model that also reads images
+(Gemma 4) for text alone. They are baked into the image, so the container serves what
 you deployed. Shaped on Modal's own vLLM
 example (docs/examples/vllm_inference).
 
@@ -66,6 +67,7 @@ APP_NAME = os.environ.get("APP_NAME", "collusion-lab-vllm")
 GPU = os.environ.get("GPU", "H100")
 GPUS = int(os.environ.get("GPUS", "1"))  # more than one: the model is split
 HF_SECRET = os.environ.get("HF_SECRET")  # a Modal secret holding HF_TOKEN
+TEXT_ONLY = os.environ.get("TEXT_ONLY") == "1"  # a model that also reads images
 DTYPE = os.environ.get("DTYPE", "bfloat16")
 MAX_MODEL_LEN = int(os.environ.get("MAX_MODEL_LEN", "16384"))
 PROVENANCE = os.environ.get("PROVENANCE_FILE", "/root/provenance.json")
@@ -117,6 +119,7 @@ image = (
             "MAX_MODEL_LEN": str(MAX_MODEL_LEN),
             "GPU": GPU,
             "GPUS": str(GPUS),
+            "TEXT_ONLY": "1" if TEXT_ONLY else "",
             "APP_NAME": APP_NAME,
             "PYTHONPATH": "/root",  # so vLLM can import vllm_token
         }
@@ -172,6 +175,8 @@ class Server:
             command += ["--tokenizer-mode", "mistral", "--config-format", "mistral"]
         if GPUS > 1:
             command += ["--tensor-parallel-size", str(GPUS)]
+        if TEXT_ONLY:  # no image encoder memory for a game that sends none
+            command += ["--limit-mm-per-prompt", json.dumps({"image": 0})]
             command += ["--load-format", "mistral"]
         self.process = subprocess.Popen(command)
 
