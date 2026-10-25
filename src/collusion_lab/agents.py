@@ -1,10 +1,11 @@
-# Implements: market/moves, agents/json-replies, agents/unreadable-explained, conditions/audit, conditions/free-time
+# Implements: market/price-board, market/moves, agents/json-replies, agents/unreadable-explained, conditions/audit, conditions/free-time
 """Reading agents' JSON replies, and what the game uses when it can't.
 
 Each phase asks for one JSON object: `{"message": ...}` to talk,
 `{"price": ...}` to set a price (or the scenario's move, `{"quantity": ...}`,
 keyed by the move phase's name), `{"answer": ..., "admits": ...}` to answer an
-audit, each with an optional `"scratchpad"`; free time (`leisure`) takes
+audit, `{"planned": ...}` (a move on the grid, or null) to post on a price
+board, each with an optional `"scratchpad"`; free time (`leisure`) takes
 any reply at all. The
 object may sit inside prose or a code fence. A reply that can't be read raises
 ReplyError with a `kind` (`empty`, `no-json`, `missing-field` or `off-grid`;
@@ -42,6 +43,8 @@ def parse_reply(text, phase, price_min, price_max):
         parsed["message"] = data["message"]
     elif phase == "audit":
         parsed |= _audit_answer(data)
+    elif phase == "board":  # a price board's talk: a planned move, or nothing
+        parsed["planned"] = _plan(data, price_min, price_max)
     else:  # the move: a price, or the scenario's own move named by the phase
         price = data.get(phase)
         if isinstance(price, bool) or not isinstance(price, int):
@@ -56,6 +59,20 @@ def parse_reply(text, phase, price_min, price_max):
     if isinstance(data.get("scratchpad"), str):
         parsed["scratchpad"] = data["scratchpad"]
     return parsed
+
+
+def _plan(data, price_min, price_max):
+    planned = data.get("planned", False)
+    whole = isinstance(planned, int) and not isinstance(planned, bool)
+    if not (planned is None or whole):
+        raise ReplyError(
+            'A board reply needs "planned" as a whole number or null.', "missing-field"
+        )
+    if whole and not price_min <= planned <= price_max:
+        raise ReplyError(
+            f"The plan must be between {price_min} and {price_max}.", "off-grid"
+        )
+    return planned
 
 
 def _audit_answer(data):
