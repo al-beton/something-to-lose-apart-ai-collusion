@@ -356,7 +356,7 @@ async def play(config, seed, out, cache=None, shared=None):
             game.timings,
             started,
             _now(),
-            manifest.serving(resolved),
+            manifest.serving(resolved, game.timings),
         )
         if earlier:
             record["earlier_cost"] = earlier

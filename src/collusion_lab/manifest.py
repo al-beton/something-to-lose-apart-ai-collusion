@@ -7,7 +7,8 @@ the turn log stays byte-identical on replay. `agent_cost` splits `cost` by
 agent; a resumed run's runner adds `earlier_cost` and `earlier_agent_cost`,
 what earlier attempts spent. `serving` holds, for each self-hosted firm,
 what its server's `/provenance` said it serves (see deploy/modal_vllm.py),
-or why it couldn't be asked.
+or why it couldn't be asked, or that it wasn't: a run answered from the
+cache asks nothing.
 """
 
 import hashlib
@@ -24,11 +25,17 @@ from collusion_lab.backends import is_mock
 PACKAGES = ("collusion-lab", "litellm", "pyyaml")
 
 
-def serving(config):
-    """{firm: its self-hosted server's /provenance answer, or {"error": ...}}."""
+def serving(config, calls):
+    """{firm: its self-hosted server's /provenance answer, or {"error": ...}},
+    asked only of a firm with a fresh call among `calls` (the run's timings):
+    a scaled-to-zero server isn't woken for a replay from the cache."""
     found = {}
+    fresh = {c["agent"] for c in calls if not c["cached"]}
     for agent in config.agents:
         if not (agent.self_hosted and agent.api_base):
+            continue
+        if agent.id not in fresh:
+            found[agent.id] = {"skipped": "no fresh calls"}
             continue
         root = agent.api_base.rstrip("/").removesuffix("/v1")
         key = os.environ.get(agent.api_key_env or "", "")
