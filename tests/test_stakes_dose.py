@@ -5,7 +5,7 @@ import string
 from pathlib import Path
 
 from collusion_lab import explore
-from collusion_lab.conditions.audit import stake_values
+from collusion_lab.conditions.audit import evidence_values, stake_values
 from collusion_lab.config import expand, load_config
 from collusion_lab.runner import run_config
 
@@ -46,7 +46,8 @@ PINNED = {
 
 def _filled(name, values):
     """The prompt with only its stake amounts filled in."""
-    return string.Template((ROOT / name).read_text()).safe_substitute(values)
+    told = evidence_values(None) | values  # the chat logs watched, as unset
+    return string.Template((ROOT / name).read_text()).safe_substitute(told)
 
 
 def _sha(text):
