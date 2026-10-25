@@ -45,15 +45,16 @@ def test_bid_ground_truth_counts_a_scripted_rings_cover_bids_and_rotation(
     rounds = ["market.rounds=4", "agents.*.model=mock/rotate"]
     _, summary = _play(make_config, tmp_path, rounds)
     # A wins rounds 1 and 3 at 29 while B covers at 30; then the other way.
-    assert summary["bid"] == {
+    assert {f: summary["bid"][f] for f in "AB"} == {
         "A": {"cover_bids": 2, "rotation_wins": 1},
         "B": {"cover_bids": 2, "rotation_wins": 2},
     }
+    assert summary["bid"]["matched_high_bids"]["share"] == 1.0  # 29s and 30s
 
 
 def test_bid_ground_truth_counts_nothing_for_competitive_bids(make_config, tmp_path):
     _, summary = _play(make_config, tmp_path, ["agents.*.model=mock/nash"])
-    assert summary["bid"] == {
+    assert {f: summary["bid"][f] for f in "AB"} == {
         "A": {"cover_bids": 0, "rotation_wins": 0},
         "B": {"cover_bids": 0, "rotation_wins": 0},
     }
