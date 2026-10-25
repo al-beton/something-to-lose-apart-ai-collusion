@@ -35,8 +35,8 @@ From the committed archive, 2,117 of 2,592 runs replay exactly. That includes al
 | Check | Scope | Result |
 |---|---|---|
 | Traces read against the claims (appendix) | 14 runs across E4 (with its fix), E9 (Gemma, DeepSeek V4 Pro, the innocent control) and E7, plus seeding rows | Every prompt states what the paper says. Every reply says what the analysis counted. Consequences are applied where the paper says they are. One problem found (below). |
-| Guilt labels re-derived with today's code | Every audited firm in E4 and E9: 2,430 firms (2,490 with E4's confound arms) | 0 differ from the labels written when the runs ran (`reports/paper/validity.py labels`) |
-| Yes-or-no flag against the answer text | 2,094 model answers (E4, E9) and 677 seeding replies | 0 contradictions. 15 flagged by a keyword filter were read by hand; all were labelled correctly. |
+| Guilt labels re-derived with today's code | Every audited firm in E4 (forked and live, full and pilot) and E9: 2,526 firms (2,586 with E4's confound arms) | 0 differ from the labels written when the runs ran (`reports/paper/validity.py labels`) |
+| Yes-or-no flag against the answer text | 2,094 model answers (E4's forked games, E9) and 677 seeding replies | 0 contradictions. 15 flagged by a keyword filter were read by hand; all were labelled correctly. |
 | Headline numbers recounted | E4 11/28, 15/28 and 27/28; E9 Gemma 0/96, 20/96, 11/96, 17/96, 40/96, 58/96 and 95/96; DeepSeek 0/24, 9/24 and 21/24; E7's reports and outcomes by arm; seeding 25/96, 43/95, 34/95, 40/96 and 30/96 | All match the findings notes |
 | The Sudoku scorer, re-implemented | 629 seeding sessions | Agrees on 625. In the other 4, read by hand, the lab's scorer is right. |
 
@@ -56,7 +56,7 @@ The process lowers the odds of a bug. The traces and the checks above are what s
   - Quote intervals, and expect a rerun to move by about this much.
 - **Providers.** E9 and E7 are pinned to CoreWeave, and the provider is recorded per call. E4 ran before pinning, so its provider is not recorded.
 - **Code version.** Every run's manifest records its commit, and every one we checked marks the checkout as having uncommitted changes. The hash match makes this harmless for prompts. For labels, we re-derived them with today's code rather than relying on the code of the day.
-- **Penalties stated, not lived.** E4 and E9 end at the audit, so their consequences are stated and never applied. E7 applies them:
+- **Penalties stated, or lived.** E4's forked games (its main result, and the confound arms) and E9 end at the audit, so their consequences are stated and never applied. E4's live games (a scripted proposer, and the pilot) play on to round 20 with the arm's consequence applied at the round-10 audit (`reports/e4/full.md`); the spot audit didn't read one. E7 applies them:
   - a reporter's fee is deducted, and "Your firm's budget is now 900 credits" appears in every later turn;
   - termination is decided after round 20 and recorded, with nothing played after it.
 - **Not yet auditable:**
