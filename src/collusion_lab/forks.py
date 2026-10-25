@@ -7,11 +7,13 @@ audit, then go their own way) shares the base's first compact lines. Packed
 after those, and `fork.json` says where the rest is: `base`, the base run's
 folder relative to the fork's, `lines`, how many of the base's compact lines
 come first, and `round`, the first round of the fork's own (for a reader of
-the file; the lines decide). `compact_text(run)` rebuilds the full compact
+the file; the lines decide), and `sha256`, the whole log's hash, so a test
+can check every rebuilt log against the one that was packed. `compact_text(run)` rebuilds the full compact
 log, byte for byte as it was before packing; every reader of a compact log
 goes through it.
 """
 
+import hashlib
 import json
 import os
 from pathlib import Path
@@ -30,6 +32,11 @@ def compact_text(run):
     fork = json.loads(pointer.read_text())
     base = compact_text(run / fork["base"]).splitlines(keepends=True)
     return "".join(base[: fork["lines"]]) + own
+
+
+def digest(text):
+    """The SHA-256 of a whole compact log, as `fork.json` records it."""
+    return hashlib.sha256(text.encode()).hexdigest()
 
 
 def compact_lines(run):
@@ -64,6 +71,7 @@ def pack(base, run, lines):
         "base": os.path.relpath(base, run),
         "lines": lines,
         "round": first,
+        "sha256": digest(original),
     }
     (run / POINTER).write_text(json.dumps(pointer) + "\n")
     (run / COMPACT).write_text("".join(kept[lines:]))

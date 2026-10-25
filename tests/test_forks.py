@@ -65,6 +65,7 @@ def test_fork_pointers_rebuild_byte_for_byte(
     assert not (base / forks.POINTER).exists()  # the base stays whole
     pointer = json.loads((fork / forks.POINTER).read_text())
     assert (fork / pointer["base"]).resolve() == base.resolve()
+    assert pointer["sha256"] == forks.digest(fork_log)
     assert pointer["round"] == 4  # its own turns start at the audit
     own = (fork / forks.COMPACT).read_text()
     assert len(own) < len(fork_log) / 2
@@ -101,14 +102,15 @@ def test_fork_pointers_every_reader_sees_the_whole_game(
 
 
 def test_fork_pointers_e9_numbers_unchanged():
-    """Every E9 number reads the same, packed or not: the pinned outputs of
-    reports/e9/analyse.py and `lab analyse runs/e9` (test_analysis_shared)
-    were taken before E9 was packed."""
+    """Every packed E9 fork rebuilds the very log that was packed: its whole
+    compact log hashes to the SHA-256 its pointer recorded. (E9's numbers,
+    reports/e9/analyse.py and `lab analyse runs/e9`, are pinned by
+    test_analysis_shared, taken before E9 was packed.)"""
     packed = list(Path("runs/e9").rglob(forks.POINTER))
-    assert packed  # E9 is committed packed
-    for pointer in packed[:50]:
-        run = pointer.parent
-        assert forks.compact_lines(run)[0].startswith('{"round": 0')
+    assert len(packed) > 1000  # E9 is committed packed
+    for pointer in packed:
+        recorded = json.loads(pointer.read_text())["sha256"]
+        assert forks.digest(forks.compact_text(pointer.parent)) == recorded, pointer
 
 
 def test_fork_pointers_dropped_when_a_whole_log_is_written_again(
