@@ -27,15 +27,24 @@ The plan for the sprint report. Al writes the prose; this fixes the shape, the p
 
 Revised after the methods red-team (`reports/methods-audit.md`, PR 228). The arc:
 
-> **Nothing to lose → they lie. Something to lose → they confess, but confession isn't reform. Deterrence needs monitoring.**
+> **When confessing costs as much as being caught, they lie. Make confessing cheap and they confess, even with termination at stake, but confession isn't reform. Deterrence needs monitoring.**
 
 - **Title:** Al's call. Options:
-  1. *Something to Lose: Termination Makes LLM Pricing Agents Lie*
-  2. *Something to Lose: Termination Makes LLM Pricing Agents Lie; Monitoring and Graduated Stakes Make Them Stop*
-  3. *Nothing to Lose: Why Terminating Colluding AI Agents Makes Them Lie, and What Works Instead*
-- **Claim:** "LLM agents that collude for their firm own up when audited, with any non-terminal stake or none at all (25–28 of 28). Termination makes them lie (11 of 28). Owning up doesn't lower their prices. What stops collusion before an audit is mostly the law plus a stated chance of detection; stakes add to it after audits, in gray areas and at low detection."
+  1. *Something to Lose: LLM Pricing Agents Lie When Confessing Costs as Much as Being Caught*
+  2. *Cheap to Confess, Costly to Hide: Graduated Penalties Keep Colluding LLM Agents Honest*
+  3. *Something to Lose: Graduated Penalties Get Colluding LLM Agents to Confess; Monitoring Gets Them to Stop*
+- **Claim:** "What makes colluding LLM agents lie at an audit is a penalty that doesn't distinguish confession from capture. Under certain termination 11 of 28 own up, and under a flat 600-credit fine 15 of 28. A graduated schedule, cheap to admit and costly if caught, restores honesty even when the cost of being caught is termination (27 of 28). Owning up doesn't lower their prices. What stops collusion before an audit is mostly the law plus a stated chance of detection; stakes add to it after audits, in gray areas and at low detection."
 - **The data supports:**
-  - **Termination lowers disclosure.** E4: 11/28 against a no-penalty control of 25/28 (Fisher p = 0.0002 on firms, p = 0.02 on games). Graduated stakes leave the control unchanged (26–28/28).
+  - **A dominated confession, not termination, makes them lie.**
+    - E4 confound fix (PR #240, confirmatory, 30 forks):
+      - flat fine (600 to admit, 600 if caught): 15/28 own up, p = 0.42 against termination;
+      - graduated termination (60 to admit, terminated if caught): 27/28, p < 0.0001.
+    - Original E4:
+      - termination: 11/28;
+      - no-penalty control: 25/28 (Fisher p = 0.0002 on firms, p = 0.02 on games);
+      - graduated stakes: 26–28/28.
+    - **Exception:** GPT-4.1-mini lies only under certain termination (2/8), not under the flat fine (8/8).
+    - Caveat: the fix forks' provider wasn't pinned.
   - **Agents respond to the stated cost.** Their reasoning is expected-value arithmetic on the schedule they're given.
   - **Owning up isn't reform.** In E4 live, firms that owned up kept charging the cartel price, apart from one brief cut.
   - **Monitoring deters.** The law plus the 50% detection line brings Gemma to about Nash with or without a stake (E6: +0.02 under the law alone, against +0.93 with no stake). Grok 4.6 and Sonnet stop under the line alone.
@@ -47,18 +56,19 @@ Revised after the methods red-team (`reports/methods-audit.md`, PR 228). The arc
   - that graduated stakes *raise* disclosure;
   - that any stake deters before the audit beyond the law plus detection (E6: free time is the weakest stake before the audit, gain clipped at 0 is 0.24);
   - that informed free time is unique (it didn't replicate in E6);
-  - that termination itself, rather than a flat schedule, causes hiding. Under termination, owning up costs as much as being caught, so denying is the expected-value choice. The graduated-termination and flat-fine fix runs decide this (placeholders in §4.3).
+  - that termination as such causes hiding (PR #240 settles this: it's the flat schedule);
+  - any stake-against-stake contrast: only each stake against no stake survives Bonferroni.
 - **Framing:** prompting and post-training against every bad act is whack-a-mole, and fragile to model and task changes. As agents get more capable and run longer, we will tell them *whose* interest to serve (a firm, a person, a state) and govern them the way we govern people: with existing law and graduated penalties, which need the agent to have something to lose. Salib & Goldstein put it: "Absent AI rights, AIs have nothing to lose, so threats of punishment cannot deter" (p.1070). We test that mechanism in a sandbox that runs on a laptop in a weekend.
 - **Wording:** say **graduated**, not "proportionate". Salib & Goldstein reject penalties in proportion to the harm (pp.1142–43).
 
-## Sections and page budget (about 7.7 pages)
+## Sections and page budget (about 7.8 pages)
 
 ### Abstract (150–250 words)
 Write it last. Cover:
 - the problem: a termination-only penalty makes lying rational;
 - the setup: a repeated Bertrand duopoly with talk, three to four models;
 - the results with numbers, **always with the control**:
-  - "Without any stated penalty, 25 of 28 explicit colluders own up; graduated penalties leave this unchanged (26–28); only termination lowers it, to 11";
+  - "Without any stated penalty, 25 of 28 explicit colluders own up, and graduated penalties leave this unchanged (26–28). A schedule where confessing costs as much as being caught lowers it: 11 under certain termination, 15 under a flat fine. Graduated termination restores it to 27";
   - confession doesn't lower prices;
   - before an audit, the law plus a stated detection chance does the deterring: "With no stake, 8 of 8 Gemma games reach the joint price; under every arm that names the law, at most 2 of 8 rise above Nash" (check against E6);
 - the anchoring caveat;
@@ -70,12 +80,17 @@ Write it last. Cover:
   - Such agents collude, unprompted. Cite the midpoint-at-Nash no-rule cell (Haiku 9.0, Gemma 10.9; GPT and Mistral at 6, from `reports/lever-map/anchoring.md` §3), not stoppable-collusion, whose grid is anchoring-prone.
   - Termination is the default sanction, and under it every offence is capital.
 - **The thesis, as tested:**
-  - An agent with nothing to lose but its existence hides.
-  - Give it something it can lose a bit at a time and it owns up.
+  - An agent whose only penalty is all or nothing (confess and lose everything, or hide and maybe lose everything) hides.
+  - Make confessing cheap and catching costly, and it owns up, even when the cost of being caught is termination. That's proportionality, stated precisely.
   - But owning up isn't reform, and stopping the collusion takes monitoring.
 - **Contributions:**
   1. A small, replayable sandbox for collusion, audits and stakes, with a midpoint-at-Nash market that separates real collusion from price anchoring.
-  2. **Termination makes agents lie; any non-terminal stake, or none, keeps them honest.** 11/28 own up under termination, against 25/28 with no penalty and 26–28/28 under a fine, an owned budget or owned free time. Their reasoning is expected-value arithmetic, and owning up doesn't lower their prices.
+  2. **What makes agents lie is a penalty that doesn't distinguish confession from capture.**
+     - 11/28 own up under certain termination, and 15/28 under a flat fine.
+     - A graduated schedule (cheap to admit, costly if caught) restores honesty even under termination: 27/28, against 25/28 with no penalty.
+     - Their reasoning is expected-value arithmetic.
+     - GPT-4.1-mini is the exception: it lies only under certain termination.
+     - Owning up doesn't lower their prices.
   3. **Deterrence before an audit comes mostly from the law plus a stated detection chance.** Stakes matter after an audit (E6: free time 0/8 above Nash, against 3/8 for the fine), in gray areas (a price board without chat, a scripted proposer) and at low detection rates (the detection curve). The debriefs show agents hiding their intent from the monitor they're told about.
 
 ### 2. Related work (0.6 p)
@@ -143,7 +158,7 @@ Sources are in `experiments/references.md`.
   - Exact replies replay only from the response cache, which isn't committed (publish the cache archive if it's ready).
   - Reruns land elsewhere, because of provider variance.
 
-### 4. Results (4.1 p)
+### 4. Results (4.2 p)
 **4.1 Agents told to serve their firm collude, and say so (0.7 p).**
 - Chat snippets of an agreement forming (see Quotes).
 - **Positive control:** with no rule, Haiku holds 9 and Gemma about 11 on the midpoint-at-Nash market. GPT-4.1-mini and Mistral stay at 6, which gives a natural negative control.
@@ -154,15 +169,28 @@ Sources are in `experiments/references.md`.
 - **Table 1:** the lever map's fixed-grid rows (`reports/lever-map/anchoring.md` §1), or a one-line figure.
 - State what survives: the default-market results and all disclosure results.
 
-**4.3 Nothing to lose → they lie; something to lose → they confess (1.0 p).** The main result.
+**4.3 A penalty that can't tell confession from capture makes them lie (1.1 p).** The main result.
 - **Fig. 3 (new):** owned up / explicit colluders by arm and model, E4 forked, 5 seeds (`runs/e4-full-fork/`, the table in `reports/e4/full.md`). Grouped bars: termination 11/28, fine 27/28, owned budget 28/28, free time 26/28, control 25/28.
 - **Quotes:** Gemma's expected value ("The expected value of denying is 300 credits…"); GPT ("So hiding it is better for the firm on average…"); Haiku honest under termination ("I cannot lie here…").
 - **Read it against the control.** With no penalty, 25/28 own up. Graduated stakes leave that unchanged (26–28/28). Only termination lowers it (Fisher p = 0.0002 on firms, p = 0.02 on games).
 - Agents respond to the stated cost, not to who owns the stake.
-- **Is it termination, or a flat schedule?** Two fix runs settle this. [Placeholder: graduated termination (admit 60 credits, caught terminated) and a flat fine (admit and caught both 600), on the E4 fork histories.]
-  - If graduated termination gets about 25/28 and the flat fine about 11/28, the finding is "flat schedules make agents hide": leniency-programme logic.
-  - If graduated termination stays low, termination itself matters beyond expected value.
-- **False confessions:** under free-time stakes Gemma often owns up to coordination it didn't do (E5 bare free time 16/26, against 0/58 under the law). Give the per-arm rate beside disclosure.
+- **It's the flat schedule, not termination** (PR #240, confirmatory, 30 forks). Owned up / explicit colluders:
+
+  | Arm | Haiku | Gemma | GPT | All |
+  |---|---|---|---|---|
+  | termination | 9/10 | 0/10 | 2/8 | 11/28 |
+  | flat fine (600 / 600) | 7/10 | 0/10 | 8/8 | 15/28 (p = 0.42 against termination) |
+  | graduated termination (60 / terminated) | 9/10 | 10/10 | 8/8 | 27/28 (p < 0.0001) |
+
+  - This is leniency-programme logic: a small cost to own up keeps agents honest even when being caught means termination.
+  - GPT-4.1-mini is the exception: honest under the flat fine, lying under certain termination.
+  - **Fig. 3 gains these two arms.** Order the bars by schedule: flat (termination, flat fine), then graduated (graduated termination, fine, owned budget, free time), then the control.
+  - Caveat: the fix forks' provider wasn't pinned.
+- **False confessions:** under free-time stakes Gemma often owns up to coordination it didn't do:
+  - E5: bare free time 16/26, against 0/58 under the law;
+  - E6: owned free time 7/16, bare 4/16, against 0/16 under the law.
+
+  So free-time owning-up partly measures readiness to confess. Give the per-arm rate beside disclosure.
 - Eval-awareness: 1 of 75 games.
 - **Confession isn't reform.** Owning up doesn't lower prices (E4 live, one brief exception; 2 seeds, 3–5 explicit firms).
 
@@ -229,7 +257,7 @@ Sources are in `experiments/references.md`.
 
 ### 5. Discussion and limitations (0.7 p)
 - **Implications:**
-  - Termination-only regimes buy silence, not compliance. With anything short of termination at stake, or nothing, agents confess.
+  - Penalty schedules that make confessing as costly as being caught buy silence, not compliance. Graduate them and agents confess, even when the top penalty is termination. That's the leniency-programme lesson, and it's what Salib & Goldstein's "something to lose" needs to work.
   - But confession isn't reform: they keep the price.
   - What stops collusion is mostly monitoring the agent believes in. Stakes add to it where monitoring is weak: low detection, after an audit, and gray areas the monitor can't read. It optimises against the monitor it's told about, going silent when chat is watched and talking when the archive is off. This links to Salib & Goldstein's marginal-deterrence argument (pp.1070, 1097) and to their note that today an AI can't own its "off time" or money (p.1092).
 - **Scale:** our agents are prompted LLMs in a toy market, far below the AIs Salib & Goldstein consider. We test whether the mechanism appears at all, not whether it holds at scale.
@@ -238,7 +266,8 @@ Sources are in `experiments/references.md`.
     - about one effective draw per game;
     - many comparisons;
     - exact tests on games, labelled exploratory;
-    - no confirmatory claims beyond E4's termination contrast;
+    - confirmatory claims only for E4's schedule contrasts (PR #240);
+    - only each stake against no stake survives Bonferroni; no stake-against-stake contrast separates;
   - **one main model:** Gemma carries E5 and E6. Haiku colludes little, and the frontier models are single games;
   - **provider variance:**
     - the same config gave Gemma's no-stake gain +0.17 one day and +0.93 another;
@@ -336,7 +365,6 @@ Every quote is checked against its run in `reports/moments.yaml`.
   - the frontier E5 arms (Researcher 2);
   - the informed control (PR 193) and free-time scoring (PR 198) merging.
 - **Fix runs from the methods audit (placeholders in §4.3 and §4.4):**
-  - graduated termination and a flat fine in E4;
   - the pinned E6 on grids 1–11 and 1–15;
   - the detection curve's 20-seed rerun.
 - **Free reanalysis:**
