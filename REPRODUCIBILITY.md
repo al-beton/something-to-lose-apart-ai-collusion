@@ -22,14 +22,13 @@ So **the response cache is the replay record**, not a rerun. One more caution: s
 
 ## Replaying a run
 
-The replies behind every committed run are gathered into one archive:
+The replies behind every committed run are committed too, in `archive/`: compressed files of replies alone, one per experiment (none over 20 MB), with `archive/index.json` naming each run's file and whether the archive reproduces it.
 
 ```sh
-uv run lab archive pack runs --caches .cache/responses.sqlite <other caches> --out archive/replies.sqlite
-uv run lab archive replay runs/<experiment>/<run>/seed-0 --archive archive/replies.sqlite --out replayed
+uv run lab archive replay runs/<experiment>/<run>/seed-0 --archive archive --out replayed
 ```
 
-`pack` replays each run offline (a reply no cache holds is reported, never fetched) and says which runs it reproduces decision for decision. `replay` rebuilds a run's full `turns.jsonl`, prompts and replies included, from the archive alone. On 25 October 2026, 631 of 1,074 committed runs reproduced, every recent experiment among them. Most of the rest were early experiments cached in checkouts that no longer exist.
+rebuilds a run's full `turns.jsonl` (prompts, replies and native reasoning) from the archive alone, offline. No model is called, and a reply the archive lacks stops the replay rather than being fetched. `uv run lab archive pack runs --caches <cache files> --out archive` rebuilds the archive from local caches. It replays each run offline and says which runs it reproduces decision for decision. On 25 October 2026, 739 of 1,186 committed runs reproduced, every E4, E5 and lever-map run among them. Most of the rest were early experiments cached in checkouts that no longer exist.
 
 ## Rerunning a run
 
