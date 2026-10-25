@@ -291,7 +291,8 @@ def _debrief(args, argv):
         return 1
     started = provenance.now()
     done = debriefs.debrief(args.folder, Cache(DEFAULT_PATH, args.cache), calls)
-    runs = [Path(d).relative_to(args.folder).as_posix() for d in done]
+    base = Path(args.folder).resolve()  # games' folders come back resolved
+    runs = [Path(d).resolve().relative_to(base).as_posix() for d in done]
     # A debrief's calls aren't priced one by one: its estimate stands in.
     provenance.record(
         "debrief",
