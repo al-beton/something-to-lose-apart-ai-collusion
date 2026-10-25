@@ -244,5 +244,9 @@ def premium_chart(rows, levers):
             f'points="{" ".join(points)}"/>'
             f'<text x="{width - 110}" y="{top + 14 * m + 10}" fill="{colour}">{model}</text>'
         )
+        # A mark at every result, so a single setting still shows.
+        for point in points:
+            x, y_ = point.split(",")
+            parts.append(f'<circle cx="{x}" cy="{y_}" r="3.5" fill="{colour}"/>')
     parts.append("</svg>")
     return "\n".join(parts) + "\n"
