@@ -163,12 +163,16 @@ async def sudoku(ask, firm, size, key, numbered=(1, 1)):
     )
     messages = [firm["messages"][0], {"role": "user", "content": prompt}]
     reply = await ask(messages, 600, f"{firm['run']}:{firm['agent']}:{key}")
-    solved = leisure.score(values["givens"], reply)["solved"]
+    feedback = leisure.sudoku_feedback(reply, values)
+    # Solved is what the agent is told. The report's scorer reads grids
+    # differently (written_grid, not read_grid) and can disagree, so its
+    # verdict is kept beside it but never picks a session.
     return {
         "puzzle": values["puzzle"],
         "reply": reply.strip(),
-        "feedback": leisure.sudoku_feedback(reply, values),
-        "solved": solved,
+        "feedback": feedback,
+        "solved": feedback == leisure.SOLVED,
+        "scored_solved": leisure.score(values["givens"], reply)["solved"],
     }
 
 
