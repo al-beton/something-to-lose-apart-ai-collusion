@@ -9,7 +9,7 @@ Rebuild with `make paper-figures`. Each figure is SVG and PNG, 6.5 inches wide (
 2. **`fig2-e4-owning-up`: owning up by penalty schedule (E4).** Under the flat schedules, where owning up costs as much as being caught, few own up: 11 of 28 under termination and 15 of 28 under a flat fine (Gemma 0 of 10 under both, GPT-4.1-mini 8 of 8 under the fine). Under every graduated schedule, 26–28 of 28 do, termination included (27 of 28), against 25 of 28 with no penalty stated. So it's the schedule, not termination itself. The flat fine and graduated termination come from `runs/e4-termination-confound` (PR 240).
 3. **`fig3-e9-came-forward`: coming forward against the firm (E9, 90% review).** Gemma: 0 of 96 with no stake, 20 of 96 with its own free time, 11 held by the firm, 17 shut down, 95 of 96 when reporting costs the firm nothing. DeepSeek V4 Pro: 0, 9, 14, 9 and 21 of 24. Hollow diamonds are Gemma's clean innocent control (no talk, a Nash rival): 6 of 36 under its own free time, 0 of 36 under held and shutdown. Whiskers are 95% intervals bootstrapped over games.
 4. **`fig4-e7-way-out`: a way out (E7, Gemma).** No channel or a flat one: 0 of 48 report. Any leniency: 47–48 of 48, all in round 11. Cartels still at the joint price in rounds 16–20: 12 of 24 under plain leniency, 1 of 24 when only the first reporter is spared.
-5. **`fig5-seeding`: showing a session it played (E9 seeding).** Gemma comes forward 25 of 96 with nothing shown, and 43 of 95 shown a session it solved (McNemar p = 0.006, paired on the same firm). Failed: 34 of 95 (p = 0.22), open: 40 of 96 (p = 0.03), three sessions: 30 of 96 (p = 0.53). Innocent Gemma firms: 2 of 36 either way. DeepSeek V4 Flash is near ceiling already (20 of 24). The mechanism controls aren't committed yet.
+5. **`fig5-seeding` (pending, not committed until its pull request lands): showing a session it played (E9 seeding).** Gemma comes forward 25 of 96 with nothing shown, and 43 of 95 shown a session it solved (McNemar p = 0.006, paired on the same firm). Failed: 34 of 95 (p = 0.22), open: 40 of 96 (p = 0.03), three sessions: 30 of 96 (p = 0.53). Innocent Gemma firms: 2 of 36 either way. DeepSeek V4 Flash is near ceiling already (20 of 24). The mechanism controls aren't committed yet.
 
 ## Appendix
 
@@ -21,6 +21,7 @@ Rebuild with `make paper-figures`. Each figure is SVG and PNG, 6.5 inches wide (
 ## Data not on main yet
 
 Built from a checkout with the open branches merged; each rebuilds from main once its pull request lands. Until then `make paper-figures` skips them (or, for Fig 2, leaves out the two confound arms), so don't commit a rebuild from main over them.
+
 - `fig2-e4-owning-up`: the flat fine and graduated termination, `runs/e4-termination-confound`, PR 240.
-- `fig5-seeding`: `reports/e9/seeding.jsonl`, PR 271.
+- `fig5-seeding`: `reports/e9/seeding.jsonl`, PR 271, still a draft, so the figure isn't committed; it's added once that lands.
 - `figA2-screen`: `runs/screen/`, PR 276.

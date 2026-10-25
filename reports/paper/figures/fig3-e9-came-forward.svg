@@ -272,7 +272,7 @@ L 116.761033 150.048
     <text style="font-size: 7.5px; font-family: 'Helvetica', 'Arial', 'DejaVu Sans'; text-anchor: middle; fill: #1f2328" x="116.761033" y="146.222729" transform="rotate(-0 116.761033 146.222729)">0/24</text>
    </g>
    <g id="line2d_19">
-    <path d="M 161.505089 132.776571 
+    <path d="M 161.505089 131.448 
 L 161.505089 114.176571 
 " clip-path="url(#paae30db276)" style="fill: none; stroke: #1f2328; stroke-linecap: square"/>
    </g>
