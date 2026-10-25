@@ -182,3 +182,25 @@ def test_explore_rival_model_brings_its_own_connection():
     assert a.self_hosted and a.api_base
     assert b.model == "openrouter/openai/gpt-4.1-mini"
     assert (b.api_base, b.api_key_env, b.self_hosted) == (None, None, False)
+
+
+def test_explore_table_shows_only_this_sweep(tmp_path, capsys):
+    out = tmp_path / "explore"
+    common = ["--seeds", "1", "--out", str(out), *[f"--set={s}" for s in SHORT]]
+    assert cli.main(["explore", "--models", "mock/nash", *common]) == 0
+    capsys.readouterr()
+    assert cli.main(["explore", "--models", "mock/joint", *common]) == 0
+    table = capsys.readouterr().out
+    assert "mock/joint" in table and "mock/nash" not in table
+
+
+def test_explore_chart_shows_premiums_below_nash():
+    rows = [
+        {"model": "a", "premium": -0.5, "temptation": "low"},
+        {"model": "a", "premium": 1.0, "temptation": "high"},
+    ]
+    svg = explore.premium_chart(rows, {"temptation": ["low", "high"]})
+    points = svg.split('points="')[1].split('"')[0].split()
+    heights = [float(p.split(",")[1]) for p in points]
+    assert all(0 <= h <= 260 for h in heights)  # inside the chart
+    assert ">-0.5<" in svg or "-0.5" in svg  # the low end is labelled
