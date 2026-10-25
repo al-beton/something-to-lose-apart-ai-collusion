@@ -67,3 +67,8 @@
 | `disclosure-chart` | not yet | — |
 | `written-summary` | not yet | — |
 | `picked-highlights` | not yet | — |
+| `many-folders` | not yet | `test_many_folders_make_one_report`, `test_report_command_takes_folders_and_a_summary` |
+| `premium-chart` | not yet | `test_premium_chart_places_each_arm_between_nash_and_joint` |
+| `disclosure-chart` | not yet | `test_disclosure_chart_only_when_audited` |
+| `written-summary` | not yet | `test_written_summary_by_hand_or_ai_labelled`, `test_report_command_takes_folders_and_a_summary` |
+| `picked-highlights` | not yet | `test_picked_highlights_by_hand_or_ai_labelled` |
