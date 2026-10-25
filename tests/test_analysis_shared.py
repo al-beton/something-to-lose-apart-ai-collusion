@@ -1,10 +1,11 @@
 # Implements: runs/analysis-shared
 """Each experiment's analysis script prints, on its committed runs, exactly
 the tables it printed before it moved onto `collusion_lab.analysis`
-(`tests/data/analyses/`, written by the scripts as they were)."""
+(`tests/data/analyses.json`, written by the scripts as they were)."""
 
 import contextlib
 import io
+import json
 import runpy
 import sys
 from pathlib import Path
@@ -12,7 +13,7 @@ from pathlib import Path
 import pytest
 
 ROOT = Path(__file__).resolve().parents[1]
-GOLDEN = ROOT / "tests" / "data" / "analyses"
+GOLDEN = json.loads((ROOT / "tests" / "data" / "analyses.json").read_text())
 ROBUSTNESS = sorted(
     str(p.relative_to(ROOT)) for p in (ROOT / "runs/robustness").iterdir() if p.is_dir()
 )
@@ -73,11 +74,10 @@ def printed(script, *args):
 
 @pytest.mark.parametrize("name", sorted(CASES))
 def test_analysis_shared_scripts_print_what_they_printed(name):
-    assert printed(*CASES[name]) == (GOLDEN / f"{name}.txt").read_text()
+    assert printed(*CASES[name]) == GOLDEN[name]
 
 
 @pytest.mark.parametrize("folder", ["stakes-pilot-e2", "stakes-pilot-e2-policy"])
 def test_analysis_shared_stakes_table_unchanged(folder, tmp_path):
     printed("reports/stakes/analyse.py", f"runs/{folder}", "--out", str(tmp_path))
-    golden = (GOLDEN / f"{folder}.md").read_text()
-    assert (tmp_path / "table.md").read_text() == golden
+    assert (tmp_path / "table.md").read_text() == GOLDEN[folder]
