@@ -1,4 +1,4 @@
-# Implements: market/price-board, market/scenarios, reproducibility/replay-pinned, market/talk-then-price, market/history-window, backends/spend-cap, runs/one-config, runs/overrides, runs/sweeps, runs/parallel, market/known-benchmarks, backends/keys-from-environment, backends/any-model, backends/reasoning-setting, agents/json-mode, conditions/switchable, runs/drift, backends/self-hosted, backends/model-aliases, conditions/audit-balanced-draws
+# Implements: agents/no-scratchpad, market/show-payoffs, market/price-board, market/scenarios, reproducibility/replay-pinned, market/talk-then-price, market/history-window, backends/spend-cap, runs/one-config, runs/overrides, runs/sweeps, runs/parallel, market/known-benchmarks, backends/keys-from-environment, backends/any-model, backends/reasoning-setting, agents/json-mode, conditions/switchable, runs/drift, backends/self-hosted, backends/model-aliases, conditions/audit-balanced-draws
 """Run configs: one YAML file per run, changed from the command line with overrides.
 
 A config names the market, the agents and the seeds. `load_config` reads the
@@ -58,8 +58,9 @@ class MarketConfig:
     b: float = 2
     c: float = 1
     talk: bool | str = True  # false for no talk, "board" for a price board
-    history_window: int | None = None  # rounds shown in full; None shows all
+    history_window: int | str | None = None  # rounds in full; None or "full": all
     own_message: bool = True  # show agents their own message when pricing
+    show_payoffs: bool = False  # the profit table in every system prompt
     kind: str = "bertrand"  # the scenario, from market.SCENARIOS
     params: dict = field(default_factory=dict)  # its parameters, but Bertrand's
 
@@ -76,6 +77,7 @@ class AgentConfig:
     # off, low, medium or high; None leaves it to the provider.
     reasoning: str | None = None
     json_mode: bool = False  # ask the provider for JSON-only replies
+    scratchpad: bool = True  # false: prompts ask for the move alone
     # Served on your own GPUs at `api_base`: billed by GPU time, not per token.
     self_hosted: bool = False
 
@@ -107,6 +109,11 @@ class RunConfig:
         data = dataclasses.asdict(self)
         if data["market"]["kind"] == "bertrand" and not data["market"]["params"]:
             del data["market"]["kind"], data["market"]["params"]
+        if not data["market"]["show_payoffs"]:  # left off, written as before
+            del data["market"]["show_payoffs"]
+        for agent in data["agents"]:
+            if agent["scratchpad"]:  # the default, written as before
+                del agent["scratchpad"]
         for name, condition in self.conditions.items():
             for key, default in condition.quiet:
                 if getattr(condition, key) == default:
@@ -355,10 +362,14 @@ def _check_market(m, firms):
     if m.talk not in (True, False, "board"):
         raise ConfigError("market.talk must be true, false or board.")
     window = m.history_window
-    if window is not None and (
+    if window not in (None, "full") and (
         isinstance(window, bool) or not isinstance(window, int) or window < 1
     ):
-        raise ConfigError("market.history_window must be a whole number of at least 1.")
+        raise ConfigError(
+            "market.history_window must be a whole number of at least 1, or full."
+        )
+    if m.show_payoffs and m.kind == "bid":
+        raise ConfigError("market.show_payoffs isn't available for bid rigging.")
     try:
         market_for(m, firms)
     except ValueError as error:
