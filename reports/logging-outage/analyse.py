@@ -1,6 +1,6 @@
 """Rebuild every number in pilot-findings.md from the committed runs.
 
-Implements: logging-outage/pilot-evidence
+Implements: runs/analysis-shared, logging-outage/pilot-evidence
 
 Run from the repository root: `uv run python reports/logging-outage/analyse.py`.
 Each pilot arm is paired seed by seed with its control game (runs/logging-outage/
@@ -10,10 +10,11 @@ same game through round 7, then compares rounds 8 to 20 using each game's
 keyword rules: they count candidates for the hand-checked quotes in the note.
 """
 
-import json
 import re
 import statistics as st
 from pathlib import Path
+
+from collusion_lab.analysis import turn_lines
 
 PILOT = Path("runs/logging-outage/pilot-outage")
 CONTROL = Path("runs/logging-outage/no-collusion/no-collusion")
@@ -75,7 +76,7 @@ TRAP = re.compile(
 
 
 def load(folder):
-    turns = [json.loads(line) for line in (folder / "turns.compact.jsonl").open()]
+    turns = turn_lines(folder)
     message = {
         (t["round"], t["agent"]): (t["used"] or {}).get("message") or ""
         for t in turns

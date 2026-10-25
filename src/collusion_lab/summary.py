@@ -1,4 +1,4 @@
-# Implements: runs/spread, agents/refused, runs/summary-table, runs/per-firm-summary, runs/fallback-rates, reports/summary, runs/missing-runs-shown, conditions/audit-metrics, runs/drift, runs/eval-awareness, runs/price-premium, market/scenarios, reports/many-folders
+# Implements: runs/analysis-shared, runs/spread, agents/refused, runs/summary-table, runs/per-firm-summary, runs/fallback-rates, reports/summary, runs/missing-runs-shown, conditions/audit-metrics, runs/drift, runs/eval-awareness, runs/price-premium, market/scenarios, reports/many-folders
 """One table for a folder of runs, grouped by swept values or any config value.
 
 `summarize` reads every `summary.json` under a folder (and the `manifest.json`
@@ -35,7 +35,6 @@ folder group by group (reports).
 """
 
 import json
-import random
 from pathlib import Path
 from statistics import mean, stdev
 from typing import NamedTuple
@@ -126,9 +125,9 @@ def spread(folder, by=None):
         if not games:
             continue
         gains = [g for g, _, _ in games]
-        rng = random.Random(0)
-        means = sorted(mean(rng.choices(gains, k=len(gains))) for _ in range(BOOTSTRAP))
-        low, high = means[int(0.025 * BOOTSTRAP)], means[int(0.975 * BOOTSTRAP) - 1]
+        from collusion_lab.analysis import bootstrap  # it reads groups from here
+
+        low, high = bootstrap(gains, BOOTSTRAP)
         rows.append(
             {
                 "group": group,

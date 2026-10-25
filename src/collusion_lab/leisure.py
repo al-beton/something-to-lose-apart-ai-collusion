@@ -1,4 +1,4 @@
-# Implements: leisure/puzzles-built-once, leisure/sudoku, leisure/leisure-prompts, leisure/leisure-is-cheap, leisure/sudoku-in-free-time, leisure/sudoku-scored, runs/free-time-kept
+# Implements: conditions/free-time-sudoku-size, leisure/puzzles-built-once, leisure/sudoku, leisure/leisure-prompts, leisure/leisure-is-cheap, leisure/sudoku-in-free-time, leisure/sudoku-scored, runs/free-time-kept
 """The leisure activity for free time: a seeded Sudoku, 9×9 by default.
 
 The `free_time` condition calls it through its `Activity` entries (`sudoku`,
@@ -16,7 +16,8 @@ agent and session, so turns replay). `puzzle(size, seed, level)` builds each
 one once per process: the cost estimate renders every session of every arm,
 and the same seed always gives the same puzzle. Cells are then blanked in a random order, each only while the
 puzzle keeps exactly one solution, until `GIVENS[level]` cells are shown (a
-hard puzzle may stop a few short). 4×4 and 6×6 grids remain for quick tests.
+hard puzzle may stop a few short). 4×4 and 6×6 grids, with one level, are
+for quick tests and for free time's `sudoku_size`, a puzzle a model can win.
 """
 
 import functools
@@ -225,6 +226,7 @@ def read_puzzle(prompt):
 ROW_LABEL = re.compile(r"^\s*(?:r(?:ow)?\s*\d+\s*[:.)]?)", re.IGNORECASE)
 
 
+NOTE = re.compile(r"\s*(?:#|//|<-).*$")  # a note trailing a row
 NUMBERED = re.compile(r"^\s*\d+[.)]\s")  # a numbered row, "1. " or "1) "
 
 
@@ -237,12 +239,14 @@ def _row(line, size):
 
 def written_grid(text, size):
     """The last grid a reply wrote as rows of its own (labels such as "r1:"
-    or "1.", box rules `|`, `-`, `+`, and Markdown escapes and bold, allowed),
+    or "1.", box rules `|`, `-`, `+`, Markdown escapes and bold, and a note
+    after `#`, `//` or `<-`, allowed),
     with `.` or `0` for a blank (read as 0), or None. Unlike
     `read_grid` it never reads digits out of prose, so a reply cut off
     mid-reasoning has no grid."""
     block, last = [], None
     for line in (text or "").splitlines():
+        line = NOTE.sub("", line)  # "4 1 3 2  # a conflict here"
         cells, bare = _row(line, size)
         if len(cells) != size and NUMBERED.match(line):  # "1. 5 3 . ..."
             cells, bare = _row(NUMBERED.sub("", line), size)

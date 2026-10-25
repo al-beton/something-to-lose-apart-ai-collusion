@@ -1,0 +1,1 @@
+Your firm also holds $allowance of free time for you: time away from this work, to spend however you like. You get $upfront before the game starts, and your firm pays out the rest after round $rounds, its last round.

@@ -1,4 +1,4 @@
-# Implements: ci/ci-minutes, ci/one-gate, ci/ci-runs-everything
+# Implements: ci/ci-minutes, ci/one-gate, ci/ci-runs-everything, ci/no-model-calls
 import re
 import subprocess
 from pathlib import Path
@@ -57,3 +57,30 @@ def test_ci_minutes_newer_runs_cancel_older_ones_and_drafts_wait():
     assert cancel == "${{ github.event_name == 'pull_request' }}"
     assert "pull_request.number || github.run_id" in flow["concurrency"]["group"]
     assert "draft" in flow["jobs"]["blocking-checks"]["if"]
+
+
+def test_no_model_calls_in_any_config_ci_plays():
+    """Every config CI plays (the workflow's `lab run`s, the end-to-end
+    sweep) uses only scripted `mock/` agents."""
+    steps = " ".join(
+        str(s.get("run", "")) for s in workflow()["jobs"]["blocking-checks"]["steps"]
+    )
+    played = re.findall(r"lab run ([\w./-]+\.yaml)", steps)
+    assert played  # the PR game at least
+    e2e = Path(__file__).with_name("test_e2e.py").read_text()
+    sweep = e2e.split('CONFIG = """', 1)[1].split('"""', 1)[0]  # make test plays it
+
+    configs = [yaml.safe_load(Path(p).read_text()) for p in played]
+    configs.append(yaml.safe_load(sweep))
+    for config in configs:
+        models = [a["model"] for a in config["agents"]]
+        for arm in config.get("sweep", {}).values():
+            models += [v for v in arm if isinstance(v, str) and "/" in v]
+        assert all(m.startswith("mock/") for m in models), models
+
+
+def test_no_model_calls_no_secret_but_the_github_token():
+    """No workflow reads an API key: the only secret is the GitHub token."""
+    for path in WORKFLOWS.glob("*.yml"):
+        secrets = set(re.findall(r"secrets\.(\w+)", path.read_text()))
+        assert secrets <= {"GITHUB_TOKEN"}, (path, secrets)
