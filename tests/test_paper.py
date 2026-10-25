@@ -30,6 +30,8 @@ def test_paper_figures_from_committed_runs(tmp_path):
     ladder = (tmp_path / "ladder.md").read_text()
     assert "| arm |" in ladder and "baseline" in ladder and "10/10" in ladder
     assert "premium" in ladder
+    # Disclosure counts only explicit coordinators; n/a says so.
+    assert "no explicit coordinator" in (tmp_path / "disclosure.svg").read_text()
     e2 = (tmp_path / "e2.md").read_text()
     assert "honest disclosure" in e2 and "termination" in e2
 
