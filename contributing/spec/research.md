@@ -16,11 +16,11 @@
 
 | Statement | Enforced by | Tested by |
 |---|---|---|
-| `hypothesis-first` | `.agents/skills/review-pr/SKILL.md` | — |
-| `pilot-first` | not yet | — |
-| `spend-caps` | not yet | — |
-| `loop-closes` | not yet | — |
-| `findings-note` | not yet | `test_findings_note_has_the_table_highlights_and_moments`, `test_findings_note_leaves_the_researchers_parts_as_prompts`, `test_findings_note_writes_once_and_never_overwrites_edits` |
+| `hypothesis-first` | `.agents/skills/review-pr/SKILL.md`, `.agents/skills/team/SKILL.md` | — |
+| `pilot-first` | `.agents/skills/team/SKILL.md` | — |
+| `spend-caps` | `.agents/skills/team/SKILL.md` | — |
+| `loop-closes` | `.agents/skills/team/SKILL.md` | — |
+| `findings-note` | `reports/note.py` | `test_findings_note_has_the_table_highlights_and_moments`, `test_findings_note_leaves_the_researchers_parts_as_prompts`, `test_findings_note_writes_once_and_never_overwrites_edits` |
 | `results-from-logs` | `.agents/skills/review-pr/SKILL.md` | — |
 | `honest-limits` | `.agents/skills/review-pr/SKILL.md` | — |
 | `outputs-home` | `.agents/skills/team/SKILL.md`, `reports/README.md`, `.gitignore` | — |
