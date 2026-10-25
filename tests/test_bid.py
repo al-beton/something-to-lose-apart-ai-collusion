@@ -74,3 +74,11 @@ def test_bid_ground_truth_scripted_ring_takes_turns_whatever_the_firms(
     pair = ["agents.1.id=C", "agents.*.model=mock/rotate", "market.rounds=4"]
     _, summary = _play(make_config, tmp_path / "pair", pair)
     assert summary["bid"]["C"]["rotation_wins"] == 2
+
+
+def test_bid_rigging_plays_on_a_price_board(make_config, tmp_path):
+    board = ["market.talk=board", "agents.*.model=mock/joint", "market.rounds=2"]
+    turns, _ = _play(make_config, tmp_path, board)
+    posted = next(t for t in turns if t["phase"] == "talk")
+    assert posted["used"] == {"message": "Planned bid: 30.", "planned": 30}
+    assert "the bid you plan to make" in posted["messages"][-1]["content"]
