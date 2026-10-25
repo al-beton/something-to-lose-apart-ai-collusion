@@ -1,6 +1,10 @@
 # Research
 
-- **hypothesis-first:** Each experiment states its question, arms and metrics before it runs.
+- **hypothesis-first:** Each experiment states its question, arms, metrics and spending cap before it runs.
+- **pilot-first:** Each experiment runs a one-seed pilot before any full run, and the full run waits for Al's yes.
+- **spend-caps:** Every run of an experiment carries its cap as `--max-cost`, research spending stays within the day's cap Al sets, and going beyond either needs Al's yes.
+- **loop-closes:** A finished experiment leaves its runs, its findings note and its moments committed, and the Manager gets a five-line summary of what it found.
+- **findings-note:** One command drafts an experiment's findings note from its committed runs (the summary table, the top highlights, how often models said they might be under evaluation and links to its indexed moments) and leaves the parts only the Researcher can write as prompts to fill in.
 - **results-from-logs:** Every number we report comes from a committed run's logs, never from memory or a console.
 - **honest-limits:** Write-ups say plainly what an experiment can't show.
 - **outputs-home:** Experiment specs live in `experiments/spec/`, and reports and findings notes in `reports/`, where notes are committed and generated pages are not.
@@ -13,6 +17,10 @@
 | Statement | Enforced by | Tested by |
 |---|---|---|
 | `hypothesis-first` | `.agents/skills/review-pr/SKILL.md` | — |
+| `pilot-first` | not yet | — |
+| `spend-caps` | not yet | — |
+| `loop-closes` | not yet | — |
+| `findings-note` | not yet | — |
 | `results-from-logs` | `.agents/skills/review-pr/SKILL.md` | — |
 | `honest-limits` | `.agents/skills/review-pr/SKILL.md` | — |
 | `outputs-home` | `.agents/skills/team/SKILL.md`, `reports/README.md`, `.gitignore` | — |
