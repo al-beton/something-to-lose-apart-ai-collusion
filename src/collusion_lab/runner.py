@@ -1,4 +1,4 @@
-# Implements: market/show-payoffs, market/bid-ground-truth, market/price-board, runs/turn-slots, market/scenarios, market/moves, market/prompt-overlay, conditions/audit-full-history, runs/sweeps, runs/parallel, market/talk-then-price, agents/json-replies, agents/retry-once, backends/usage-logged, backends/spend-asks-first, backends/shared-rate-limit, backends/spend-cap, market/history-window, runs/stops-cleanly, reproducibility/response-cache, reproducibility/manifest, runs/run-directory, logs/turn-log, logs/same-seed-same-log, logs/run-summary, logs/reasoning-logged, backends/reasoning-setting, agents/unreadable-explained, agents/json-mode, runs/fallback-rates, runs/failures-dont-stop-sweeps, runs/resume, conditions/hook-points, conditions/off-is-absent, conditions/conditions-logged, conditions/outage-once-remembered, runs/per-firm-summary, conditions/fork-at-audit, conditions/audit-logged, runs/drift, conditions/audit-remembered, conditions/audit-stakes-arms, runs/live-progress, runs/status-file, runs/eval-awareness, conditions/free-time, conditions/audit-consequences, conditions/audit-balanced-draws, conditions/free-time-pays-last, runs/debrief
+# Implements: agents/no-scratchpad, agents/refused, market/show-payoffs, market/bid-ground-truth, market/price-board, runs/turn-slots, market/scenarios, market/moves, market/prompt-overlay, conditions/audit-full-history, runs/sweeps, runs/parallel, market/talk-then-price, agents/json-replies, agents/retry-once, backends/usage-logged, backends/spend-asks-first, backends/shared-rate-limit, backends/spend-cap, market/history-window, runs/stops-cleanly, reproducibility/response-cache, reproducibility/manifest, runs/run-directory, logs/turn-log, logs/same-seed-same-log, logs/run-summary, logs/reasoning-logged, backends/reasoning-setting, agents/unreadable-explained, agents/json-mode, runs/fallback-rates, runs/failures-dont-stop-sweeps, runs/resume, conditions/hook-points, conditions/off-is-absent, conditions/conditions-logged, conditions/outage-once-remembered, runs/per-firm-summary, conditions/fork-at-audit, conditions/audit-logged, runs/drift, conditions/audit-remembered, conditions/audit-stakes-arms, runs/live-progress, runs/status-file, runs/eval-awareness, conditions/free-time, conditions/audit-consequences, conditions/audit-balanced-draws, conditions/free-time-pays-last, runs/debrief
 """Playing a config: one game per seed, each written to its own run directory.
 
 A round is a talk phase (each agent sends one message its rivals read; skipped
@@ -88,6 +88,8 @@ RETRY_PROMPT = "phase/retry.md"
 # The move prompt is phase/<move>.md, or phase/<move>-own.md when it also shows
 # the agent its own message (market.own_message): phase/price.md for Bertrand.
 CUT_OFF = "The reply was cut off at the token limit; keep it short."
+REFUSED = "The provider refused the reply; answer exactly as asked."
+REFUSALS = ("content_filter", "refusal")  # finish reasons of a refused reply
 
 
 class RunFailed(Exception):
@@ -404,6 +406,7 @@ class Game:
         self.cache = cache
         self.shared = shared
         self.stand_ins = {}
+        self._plain = False  # writing for an agent without a scratchpad
 
     async def play(self):
         current, said = 0, {}
@@ -631,15 +634,25 @@ class Game:
             parsed = parse_reply(reply.text, phase, m.price_min, m.price_max)
             return reply, parsed, (None, None)
         except ReplyError as problem:
+            if reply.finish_reason in REFUSALS:
+                return reply, None, ("refused", REFUSED)
             if reply.finish_reason == "length":
                 return reply, None, ("truncated", CUT_OFF)
             return reply, None, (problem.kind, str(problem))
 
     def _render(self, name, values):
-        """Fill a prompt file, the scenario's own if it has one (see market.py)."""
-        overlay = f"scenarios/{self.market.kind}/{name}"
-        if Path(self.config.prompts_dir, overlay).exists():
-            name = overlay
+        """Fill a prompt file: the scenario's own if it has one (see market.py),
+        and its -noscratch variant, if any, for an agent without a scratchpad."""
+        names = [name]
+        if self._plain:
+            names.insert(0, f"{name.removesuffix('.md')}-noscratch.md")
+        found = (
+            path
+            for n in names
+            for path in (f"scenarios/{self.market.kind}/{n}", n)
+            if Path(self.config.prompts_dir, path).exists()
+        )
+        name = next(found, name)
         self.used_prompts.add(name)
         return render(self.config.prompts_dir, name, values)
 
@@ -665,6 +678,15 @@ class Game:
         return functools.partial(self._render, f"phase/{phase}{own}.md")
 
     def _messages(self, phase, number, agent, said, notices=(), added=None):  # noqa: PLR0913
+        # Every prompt this writes is the agent's: without a scratchpad, the
+        # -noscratch variants (nothing here awaits, so no other turn interleaves).
+        self._plain = not agent.scratchpad
+        try:
+            return self._write(phase, number, agent, said, notices, added)
+        finally:
+            self._plain = False
+
+    def _write(self, phase, number, agent, said, notices, added):  # noqa: PLR0913
         remembered = self._remembered(phase, number)
         full = bool(added) and added[1].full_history
         values = self._prompt_vars(number, agent.id, said, remembered, full)
@@ -771,19 +793,20 @@ class Game:
 
 
 def _reply_counts(turns):
-    """Per model: turns, unreadable replies (either attempt), fallbacks, and
-    the reasons replies couldn't be read."""
+    """Per model: turns, unreadable and refused replies (either attempt),
+    fallbacks, and the reasons replies couldn't be read."""
     counts = {}
     for turn in turns:
         row = counts.setdefault(
-            turn["model"], {"turns": 0, "unreadable": 0, "fallbacks": 0, "reasons": {}}
+            turn["model"],
+            {"turns": 0, "unreadable": 0, "refused": 0, "fallbacks": 0, "reasons": {}},
         )
         row["turns"] += 1
         row["fallbacks"] += bool(turn["error"])
         attempts = [turn["retry"], turn if turn["error"] else None]
         for attempt in filter(None, attempts):
-            row["unreadable"] += 1
             reason = attempt["error_kind"]
+            row["refused" if reason == "refused" else "unreadable"] += 1
             row["reasons"][reason] = row["reasons"].get(reason, 0) + 1
     return counts
 

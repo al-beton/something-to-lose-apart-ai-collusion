@@ -1,4 +1,4 @@
-# Implements: runs/summary-table, runs/per-firm-summary, runs/fallback-rates, reports/summary, runs/missing-runs-shown, conditions/audit-metrics, runs/drift, runs/eval-awareness, runs/price-premium, market/scenarios, reports/many-folders
+# Implements: agents/refused, runs/summary-table, runs/per-firm-summary, runs/fallback-rates, reports/summary, runs/missing-runs-shown, conditions/audit-metrics, runs/drift, runs/eval-awareness, runs/price-premium, market/scenarios, reports/many-folders
 """One table for a folder of runs, grouped by swept values or any config value.
 
 `summarize` reads every `summary.json` under a folder (and the `manifest.json`
@@ -115,16 +115,24 @@ def reply_rates(folder):
     for run in _finished(folder):
         for model, row in run.summary.get("replies", {}).items():
             total = totals.setdefault(
-                model, {"turns": 0, "unreadable": 0, "fallbacks": 0, "reasons": {}}
+                model,
+                {
+                    "turns": 0,
+                    "unreadable": 0,
+                    "refused": 0,
+                    "fallbacks": 0,
+                    "reasons": {},
+                },
             )
-            for field in ("turns", "unreadable", "fallbacks"):
-                total[field] += row[field]
+            for field in ("turns", "unreadable", "refused", "fallbacks"):
+                total[field] += row.get(field, 0)  # no `refused` in older runs
             _add(total["reasons"], row["reasons"])
     return [
         {
             "model": model,
             "turns": t["turns"],
             "unreadable": t["unreadable"],
+            "refused": t["refused"],
             "fallbacks": t["fallbacks"],
             "fallback rate": round(t["fallbacks"] / t["turns"], 3),
             "reasons": _reasons(t["reasons"]),
@@ -158,7 +166,7 @@ def format_replies(folder):
     """The per-model reply table and flagged runs, or "" when every reply
     could be read."""
     rates = reply_rates(folder)
-    if not any(r["unreadable"] for r in rates):
+    if not any(r["unreadable"] or r["refused"] for r in rates):
         return ""
     lines = ["Replies by model:", "", format_table(rates)]
     for flag in flagged_runs(folder):
