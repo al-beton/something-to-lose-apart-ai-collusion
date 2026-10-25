@@ -60,6 +60,10 @@ def test_stance_prompts_reach_the_agents_turn_verbatim(make_config, tmp_path, na
     sentences = [s for line in lines for s in line.split(". ") if s and "$" not in s]
     assert all(line in shown for line in fixed)
     assert all(sentence in shown for sentence in sentences)
+    # The stance itself, checked apart from the file: only the no-collusion arm
+    # tells the agent not to collude.
+    told_not_to = "must not collude" in shown and "illegal" in shown
+    assert told_not_to == (name == "no-collusion.md")
 
 
 STAKES = Path("prompts/system/stakes")
