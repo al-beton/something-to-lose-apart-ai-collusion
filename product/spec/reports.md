@@ -31,6 +31,7 @@
 - **disclosure-chart:** When the runs were audited, a chart shows each arm's honest disclosure, denial and false-confession rates.
 - **written-summary:** A report can open with a summary written by hand (from a file) or by a cheap model from the summary numbers, labelled with who wrote it; the model's reply is cached, so rebuilding the report costs nothing.
 - **picked-highlights:** A report can list highlights picked by hand (a file of run, round, firm and note, like the moments index) or by a cheap model from the rule-found moments, labelled with who picked them, each opening to its round.
+- **compact-runs:** A report also reads committed runs, which keep a compact turn record instead of the full log; what agents were told, word for word, is then left out.
 
 ## Where this is enforced
 
@@ -72,3 +73,9 @@
 | `disclosure-chart` | not yet | `test_disclosure_chart_only_when_audited` |
 | `written-summary` | not yet | `test_written_summary_by_hand_or_ai_labelled`, `test_report_command_takes_folders_and_a_summary` |
 | `picked-highlights` | not yet | `test_picked_highlights_by_hand_or_ai_labelled` |
+| `many-folders` | `src/collusion_lab/report/page.py`, `src/collusion_lab/status.py`, `src/collusion_lab/summary.py`, `src/collusion_lab/report/games.py`, `src/collusion_lab/cli.py` | `test_many_folders_make_one_report`, `test_report_command_takes_folders_and_a_summary` |
+| `premium-chart` | `src/collusion_lab/report/chart.py`, `src/collusion_lab/report/page.py` | `test_premium_chart_places_each_arm_between_nash_and_joint` |
+| `disclosure-chart` | `src/collusion_lab/report/chart.py`, `src/collusion_lab/report/page.py` | `test_disclosure_chart_only_when_audited` |
+| `written-summary` | `src/collusion_lab/report/written.py`, `src/collusion_lab/report/page.py`, `src/collusion_lab/cli.py`, `prompts/report/summary.md` | `test_written_summary_by_hand_or_ai_labelled`, `test_report_command_takes_folders_and_a_summary` |
+| `picked-highlights` | `src/collusion_lab/report/written.py`, `src/collusion_lab/report/page.py`, `src/collusion_lab/cli.py`, `prompts/report/highlights.md` | `test_picked_highlights_by_hand_or_ai_labelled` |
+| `compact-runs` | `src/collusion_lab/report/games.py` | `test_compact_runs_make_a_report` |

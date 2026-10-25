@@ -115,3 +115,23 @@ def test_report_command_takes_folders_and_a_summary(folders, tmp_path, capsys):
     assert cli.main([*args, "--out", str(out)]) == 0
     html = out.read_text()
     assert "By hand." in html and "mock/nash" in html
+
+
+def test_compact_runs_make_a_report(folders, tmp_path):
+    import shutil
+    import subprocess
+    import sys
+
+    committed = tmp_path / "committed"
+    for run in folders[0].rglob("turns.jsonl"):
+        keep = committed / run.parent.relative_to(folders[0])
+        keep.mkdir(parents=True)
+        for name in ("config.yaml", "summary.json", "manifest.json"):
+            shutil.copy(run.parent / name, keep / name)
+    subprocess.run(
+        [sys.executable, "reports/compact_turns.py", str(folders[0]), str(committed)],
+        check=True,
+    )
+    assert not list(committed.rglob("turns.jsonl"))
+    html = build_report(committed)
+    assert 'class="game"' in html and "mock/joint" in html
