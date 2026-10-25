@@ -1,7 +1,7 @@
 <!-- Implements: research/outputs-home -->
 # Paper outline: "Something to Lose"
 
-The run-by-run detail for the sprint report: which runs, numbers, figures and quotes each section uses. **`reports/paper/plan.md` (PR 256) decides the question, the claim and what goes in the main text; this outline follows it.** Al writes the prose, and picks the title and E9's branch.
+The run-by-run detail for the sprint report: which runs, numbers, figures and quotes each section uses. **`reports/paper/plan.md` (PR 256) decides the question, the claim and what goes in the main text; this outline follows it.** Al writes the prose. **Title: *Something to Lose*** (Al's choice, 25 Oct), with a subtitle if needed.
 
 ## The format (Apart, checked 25 Oct)
 
@@ -28,7 +28,8 @@ The run-by-run detail for the sprint report: which runs, numbers, figures and qu
 **`reports/paper/plan.md` (PR 256) decides these, and this outline follows it.** In short:
 - **The question:** "Can an AI agent be governed through something it owns: will graduated penalties get it to come forward, and will its own stake make it come forward even against the firm it serves?"
 - **Part 1 (settled, confirmatory):** when confessing costs as much as being caught, agents hide. A graduated schedule gets them to own up even when being caught means termination: 11/28 under termination, 15/28 under a flat fine, 27/28 under graduated termination.
-- **Part 2 (E9, the crux):** does the agent's own stake make it come forward against its firm? There's one claim and one title per E9 outcome, positive, null or ambiguous, in plan.md. Al picks on Monday morning HKT.
+- **Title:** *Something to Lose* (Al's choice). Any subtitle is Al's; plan.md lists one per E9 branch.
+- **Part 2 (E9, the crux):** does the agent's own stake make it come forward against its firm? E9 has landed positive on Gemma (20/96 against 0/96 at a 90% review) and DeepSeek V4 Pro (9/24 against 0/24), with the false-confession caveat (innocent agents 6/36 under free time). The numbers and sources are in `reports/paper/morning-pack.md`.
 - **Wording:** say **graduated**, not "proportionate". Salib & Goldstein reject penalties in proportion to the harm (pp.1142–43).
 - **Framing:** prompting and post-training against every bad act is whack-a-mole. Governing people works through law and graduated penalties, which need the governed to have something to lose (Salib & Goldstein, p.1070). We test whether that mechanism appears at all, in a sandbox that runs on a laptop.
 
