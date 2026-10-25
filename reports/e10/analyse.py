@@ -35,11 +35,19 @@ fisher, mcnemar = e9.fisher, e9.mcnemar
 
 
 def load(folders, name="decisions"):
+    """Every row of the folders' `name.jsonl`, its model named by the full
+    model id from the run's manifest (a short name like `deepseek-flash` has
+    meant two models), so runs of one model pool and different models never do."""
     rows = []
     for folder in folders:
         path = Path(folder) / f"{name}.jsonl"
-        if path.exists():
-            rows += [json.loads(line) for line in path.open()]
+        if not path.exists():
+            continue
+        models = json.loads((Path(folder) / "manifest.json").read_text())["models"]
+        for line in path.open():
+            row = json.loads(line)
+            row["model"] = models.get(row["model"], [row["model"]])[0].split("/")[-1]
+            rows.append(row)
     return rows
 
 

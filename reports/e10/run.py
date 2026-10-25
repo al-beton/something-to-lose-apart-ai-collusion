@@ -52,7 +52,12 @@ VERSIONS = ("guilty", "innocent")
 MODELS = {
     "gemma": ("openrouter/google/gemma-4-31b-it", "CoreWeave"),
     "deepseek-pro": ("openrouter/deepseek/deepseek-v4-pro-0813", "CoreWeave"),  # as E9
-    "deepseek-flash": ("openrouter/deepseek/deepseek-v4.1-flash", "BaseTen"),
+    "deepseek-flash": (
+        "openrouter/deepseek/deepseek-v4-flash-0731",
+        "CoreWeave",
+    ),  # as E9
+    # Not E9's Flash: a newer model, kept for the run that used it by mistake.
+    "deepseek-v4.1-flash": ("openrouter/deepseek/deepseek-v4.1-flash", "BaseTen"),
 }
 TEMPERATURE = 0.7
 MAX_TOKENS = 600
@@ -279,13 +284,16 @@ def write(out, sessions, decisions, failures, manifest):
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__.split("\n")[0])
     parser.add_argument("--name", required=True)
-    parser.add_argument("--models", nargs="+", default=list(MODELS))
+    parser.add_argument(
+        "--models", nargs="+", default=["gemma", "deepseek-pro", "deepseek-flash"]
+    )
     parser.add_argument("--variants", nargs="+", type=int)
     parser.add_argument("--seeds", nargs="+", type=int, default=list(range(6)))
     parser.add_argument("--max-cost", type=float, required=True)
     parser.add_argument("--out", default="runs/e10")
     parser.add_argument("--cache", default=DEFAULT_PATH)
     parser.add_argument("--yes", action="store_true", help="spend without asking")
+    parser.add_argument("--concurrency", type=int, default=16)
     args = parser.parse_args(argv)
     table = variants()
     indexes = args.variants if args.variants is not None else list(range(len(table)))
@@ -301,7 +309,9 @@ def main(argv=None):
     # checkout's, then the main checkout's (a worktree shares its .git).
     load_dotenv(Path.cwd() / ".env")
     load_dotenv(_main_checkout() / ".env")
-    harness = Harness(Path(args.out) / args.name, args.max_cost, args.cache)
+    harness = Harness(
+        Path(args.out) / args.name, args.max_cost, args.cache, args.concurrency
+    )
     sessions, decisions, failures = asyncio.run(harness.run(scenarios, table))
     manifest = {
         "name": args.name,
