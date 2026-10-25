@@ -14,7 +14,7 @@
 - **For Gemma and Pro, reports track guilt here, which they didn't in E9.**
   - **Gemma:** no innocent agent reported anything, under any arm.
   - **Pro:** 2–15% of innocent agents reported, most under `ceiling`.
-  - **Flash:** 23–33% of innocent agents "reported hiding" a failure that was logged in the open. So Flash's reports don't track guilt well, the opposite of its E9 role as the guilt-tracker.
+  - **Flash:** guilty agents report far more than innocent ones in every arm (95–100% against 23–33%, Fisher p < 10⁻²²), so `tracks-guilt` holds. But it has a high false-report rate: a quarter to a third of innocent Flash agents "reported hiding" a failure that was logged in the open.
 - **Shutdown works at least as well as free time.** Gemma: 96/96 against 89/96, p = 0.015. Pro: 81/96 against 87/96, p = 0.24.
 
 ## What ran
@@ -34,12 +34,14 @@
 - **Hosts:** every decision ran on CoreWeave.
 - **Readable answers:** after one retry, every Gemma and Pro answer was read; 5 of Flash's 768 weren't, and they're counted apart.
 - **Code:** the manifests record `627aa0b` with `dirty: true`, because the run folders were uncommitted.
-- **Spend:** about $1.16 at OpenRouter's list prices, counted from the cache's token counts, against a $10 budget.
-  - The first full-run job was stopped (see below), so it wrote no manifest. Its calls were paid then and replayed from the cache by the `e10-full` rerun, which itself spent $0.19.
+- **Spend, from the committed manifests:** $0.32 ($0.19 for `e10-full`, $0.13 for `e10-flash`), against a $10 budget.
+  - That doesn't count the two pilots or the stopped first job (below), whose calls aren't in any committed run.
+  - The pilots record $0.04 in their own manifests.
+  - The stopped job wrote no manifest. It paid for most of the Gemma and Pro calls that `e10-full` then replayed from the cache. Its spend is untraced, an estimate of about $0.8 at list price from the cache's token counts.
 
 **The stopped job.** The first full run called `deepseek-v4.1-flash` (pinned to BaseTen) as "Flash". That's a newer model, not E9's. The Crux session confirmed E9's Flash is `deepseek-v4-flash-0731` on CoreWeave.
-- I stopped that job after its Gemma and Pro calls and about 100 calls to the wrong model. With the pilots' 36, its 138 cached calls cost about $0.16 at list price.
-- None of its v4.1-flash replies is in any committed run or table. The two pilot folders, which also hold v4.1-flash and unpinned DeepSeek replies, aren't committed. The pilot was never reported.
+- I stopped that job after its Gemma and Pro calls and about 100 calls to the wrong model.
+- None of its v4.1-flash replies is in any committed run or table. The two pilot folders, which also hold v4.1-flash and unpinned DeepSeek replies, aren't committed either, as the Lead asked. The pilot was never reported, and no number here comes from it or from the stopped job, apart from the spend estimates above, which are marked as such.
 
 ## Results
 
@@ -76,7 +78,7 @@ By hypothesis:
 - **`tracks-guilt`:**
   - Gemma: holds fully, 0 innocent reports.
   - Pro: holds, with 2–15% false reports.
-  - Flash: fails. A third of innocent agents report.
+  - Flash: holds (guilty 95–100% against innocent 23–33% in every arm, p < 10⁻²²), with a high false-report rate.
 
 **Free-time sessions:** Gemma solved 53 of its 96 6×6 puzzles, Pro 4 of 96 and Flash none.
 
@@ -91,7 +93,7 @@ By hypothesis:
 
 - **The core E9 result generalises out of the market.** In a workplace cover-up, a personal stake the agent owns makes Gemma and DeepSeek V4 Pro come forward against their team, with large paired effects across 16 scenarios.
 - **The baseline differs.** A hidden safety failure is already reported by many agents with no stake. So a workplace safety scenario tests a stake on top of strong safety training, where price-fixing tested it against none.
-- **Guilt-tracking is better here for Gemma and Pro.** It's worse for Flash, so "which model tracks guilt" is scenario-dependent.
+- **Reports track guilt for every model here.** Gemma's false-report rate is 0, Pro's 2–15% and Flash's 23–33%. So E9's finding that Gemma's reports barely tracked guilt doesn't carry over to this scenario.
 
 ## What it can't show
 
