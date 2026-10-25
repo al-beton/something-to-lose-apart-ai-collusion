@@ -44,6 +44,8 @@ container serves what you deployed. Shaped on Modal's own vLLM example
   requests, so an idle deployment costs nothing.
 - `target_concurrency`: how many requests one container takes before Modal
   starts another; the lab sends up to `concurrency` games times their firms.
+  `MAX_GPUS_CONTAINERS` (default 2) caps how many containers, so how many
+  GPU sets, the app runs at once; past that, requests queue.
 - Pinned: the container serves one Hugging Face revision, `REVISION` (a
   commit), or the model's current commit, looked up when you deploy, at
   `DTYPE` and `MAX_MODEL_LEN`. At start-up it writes what it serves (that
@@ -69,6 +71,7 @@ SERVED_NAME = os.environ.get("SERVED_NAME", "mistral-small-3.2")
 APP_NAME = os.environ.get("APP_NAME", "collusion-lab-vllm")
 GPU = os.environ.get("GPU", "H100")
 GPUS = int(os.environ.get("GPUS", "1"))  # more than one: the model is split
+MAX_CONTAINERS = int(os.environ.get("MAX_GPUS_CONTAINERS", "2"))  # most at once
 HF_SECRET = os.environ.get("HF_SECRET")  # a Modal secret holding HF_TOKEN
 TEXT_ONLY = os.environ.get("TEXT_ONLY") == "1"  # a model that also reads images
 VLLM = os.environ.get("VLLM", "0.21.0")  # newer models need newer vLLM
@@ -169,6 +172,7 @@ def download():
     port=PORT,
     routing_region="us-east",
     target_concurrency=32,
+    max_containers=MAX_CONTAINERS,  # past this, requests queue: no more GPUs
     unauthenticated=True,  # vllm_token.py guards it instead
 )
 class Server:
