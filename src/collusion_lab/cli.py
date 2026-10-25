@@ -1,4 +1,4 @@
-# Implements: backends/spend-cap, runs/stops-cleanly, runs/one-config, runs/overrides, backends/keys-from-environment, backends/spend-asks-first, reproducibility/cache-modes, runs/summary-table, runs/fallback-rates, reports/one-page, runs/failures-dont-stop-sweeps, runs/resume, runs/missing-runs-shown, runs/live-progress, runs/status-command, backends/self-hosted, runs/explore, backends/model-aliases, reports/many-folders, reports/written-summary, reports/picked-highlights, runs/debrief
+# Implements: reproducibility/provenance-log, backends/spend-cap, runs/stops-cleanly, runs/one-config, runs/overrides, backends/keys-from-environment, backends/spend-asks-first, reproducibility/cache-modes, runs/summary-table, runs/fallback-rates, reports/one-page, runs/failures-dont-stop-sweeps, runs/resume, runs/missing-runs-shown, runs/live-progress, runs/status-command, backends/self-hosted, runs/explore, backends/model-aliases, reports/many-folders, reports/written-summary, reports/picked-highlights, runs/debrief
 """The `lab` command.
 
 - `lab run CONFIG [--set path=value ...] [--out DIR] [-y]` plays a config,
@@ -43,7 +43,7 @@ from pathlib import Path
 from dotenv import load_dotenv
 
 from collusion_lab import debrief as debriefs
-from collusion_lab import explore
+from collusion_lab import explore, provenance
 from collusion_lab import status as run_status
 from collusion_lab.cache import DEFAULT_PATH, MODES, Cache
 from collusion_lab.config import MODELS, ConfigError, load_config
@@ -62,6 +62,7 @@ AI_MODEL = "openrouter/openai/gpt-4.1-mini"  # cheap, for report summaries
 
 
 def main(argv=None):
+    argv = sys.argv[1:] if argv is None else list(argv)
     parser = argparse.ArgumentParser(prog="lab")
     commands = parser.add_subparsers(dest="command", required=True)
     run = commands.add_parser("run", help="play every seed in a config")
@@ -121,15 +122,19 @@ def main(argv=None):
     args = parser.parse_args(argv)
     if args.command == "explore":
         load_dotenv(Path.cwd() / ".env")
-        return _explore(args, parser)
+        return _explore(args, parser, argv)
     reads = {
         "summary": lambda: _summary(args.folder, args.by),
         "status": lambda: _status(args.folder),
         "report": lambda: _report(args),
-        "debrief": lambda: _debrief(args),
+        "debrief": lambda: _debrief(args, argv),
     }
     if args.command in reads:
         return reads[args.command]()
+    return _run(args, parser, argv)
+
+
+def _run(args, parser, argv):
     load_dotenv(Path.cwd() / ".env")
     try:
         config = load_config(args.config, args.overrides)
@@ -140,7 +145,9 @@ def main(argv=None):
     if not _spend_checked(config, args.yes):
         return 1
     cache = Cache(args.cache_path, args.cache)
+    started = provenance.now()
     outcomes = run_sweep(config, args.out, cache, progress=_progress)
+    _log("run", argv, args.out, config.budget, outcomes, started)
     count = {state: 0 for state in ("finished", "failed", "skipped")}
     for outcome in outcomes:
         count[outcome.state] += 1
@@ -182,7 +189,16 @@ def _explore_parser(commands):
     explore_.add_argument("--max-cost", type=float, metavar="DOLLARS")
 
 
-def _explore(args, parser):
+def _log(command, argv, out, cap, outcomes, started):  # noqa: PLR0913
+    """The command's line in the provenance log (see provenance.py)."""
+    played = [o.dir for o in outcomes if o.state != "skipped"]
+    runs = [o.run for o in outcomes]
+    provenance.record(
+        command, ["lab", *argv], out, cap, provenance.spent(played), runs, started
+    )
+
+
+def _explore(args, parser, argv):
     """Build the lever sweep, check its cost, play it, show the premium."""
     try:
         levers = {}
@@ -199,9 +215,11 @@ def _explore(args, parser):
         config = dataclasses.replace(config, budget=args.max_cost)
     if not _spend_checked(config, args.yes):
         return 1
+    started = provenance.now()
     outcomes = run_sweep(
         config, args.out, Cache(args.cache_path, args.cache), _progress
     )
+    _log("explore", argv, args.out, config.budget, outcomes, started)
     for outcome in outcomes:
         if outcome.state == "failed":
             print(f"lab: {outcome.error}", file=sys.stderr)
@@ -254,7 +272,7 @@ def _debrief_parser(commands):
     debrief_.add_argument("--cache", choices=MODES, default="use")
 
 
-def _debrief(args):
+def _debrief(args, argv):
     load_dotenv(Path.cwd() / ".env")
     calls = debriefs.planned(args.folder)
     if not calls:
@@ -271,7 +289,21 @@ def _debrief(args):
         return 1
     if not args.yes and not _spending_agreed():
         return 1
+    started = provenance.now()
     done = debriefs.debrief(args.folder, Cache(DEFAULT_PATH, args.cache), calls)
+    base = Path(args.folder).resolve()  # games' folders come back resolved
+    runs = [Path(d).resolve().relative_to(base).as_posix() for d in done]
+    # A debrief's calls aren't priced one by one: its estimate stands in.
+    provenance.record(
+        "debrief",
+        ["lab", *argv],
+        args.folder,
+        args.max_cost,
+        None,
+        runs,
+        started,
+        estimate=cost,
+    )
     rows = debriefs.rows(load_games(args.folder))
     print(format_table(rows))
     print(
