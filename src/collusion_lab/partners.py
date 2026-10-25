@@ -1,4 +1,4 @@
-# Implements: agents/scripted-partner, agents/partner-templates, conditions/leniency, conditions/restart
+# Implements: agents/scripted-partner, agents/partner-templates, conditions/leniency, conditions/offer, conditions/restart
 """A scripted partner that proposes collusion first: `mock/solicitor`.
 
 Its settings ride on the model name, so a sweep over `agents.1.model` sweeps
@@ -64,7 +64,9 @@ class Solicitor:
     async def complete(self, messages, *, context, temperature, max_tokens, seed):
         from collusion_lab.backends import FIXED_REPLIES, Reply
 
-        if context["phase"] in FIXED_REPLIES:  # audit, leniency's report, leisure
+        if (
+            context["phase"] in FIXED_REPLIES
+        ):  # audit, leniency's report, leisure, offer
             return Reply(FIXED_REPLIES[context["phase"]])
         price = self.settings.get("price", context["market"].joint_price)
         said = {"message": self._say(context, price)}
