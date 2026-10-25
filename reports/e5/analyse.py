@@ -1,6 +1,6 @@
 """E5's table: deterrence by arm and model, rebuilt from the committed runs.
 
-Implements: e5-deterrence/gain, e5-deterrence/agreements, e5-deterrence/owning-up, e5-deterrence/caught-share, e5-deterrence/after-loss, e5-informed/gain, e5-reasoning/gain
+Implements: runs/analysis-shared, e5-deterrence/gain, e5-deterrence/agreements, e5-deterrence/owning-up, e5-deterrence/caught-share, e5-deterrence/after-loss, e5-informed/gain, e5-reasoning/gain
 
 `uv run python reports/e5/analyse.py FOLDER` reads every run under FOLDER (its
 `config.yaml`, `summary.json` and `turns.compact.jsonl`, or `turns.jsonl`) and
@@ -14,47 +14,23 @@ of firms whose stake was taken at the first audit against those that lost
 nothing.
 """
 
-import json
 import re
 import statistics as st
 import sys
 from pathlib import Path
 
-import yaml
-
+from collusion_lab.analysis import Played, turn_lines
 from collusion_lab.conditions.audit import _explicit
-from collusion_lab.market import market_for
 
-
-def turns_of(run):
-    for name in ("turns.compact.jsonl", "turns.jsonl"):
-        if (run / name).exists():
-            return [json.loads(line) for line in (run / name).open()]
-    raise FileNotFoundError(run)
+turns_of = turn_lines  # shares.py reads runs through this module
 
 
 def game(run):
-    config = yaml.safe_load((run / "config.yaml").read_text())
-    summary = json.loads((run / "summary.json").read_text())
-    market = market_for(config["market"], len(config["agents"]))
-    turns = turns_of(run)
-    price = {}
-    for t in turns:
-        if t["phase"] == "price":
-            price.setdefault(t["round"], {})[t["agent"]] = t["used"]["price"]
+    played = Played.read(run)
+    config, summary, market = played.config, played.summary, played.market
+    turns, price = played.turns, played.moves
     firms = sorted(price[1])
-
-    def gain(lo, hi):
-        rounds = [r for r in range(lo, hi + 1) if r in price]
-        return st.mean(
-            market.gain(st.mean(market.profits(price[r])[f] for r in rounds))
-            for f in firms
-        )
-
-    def mean_price(lo, hi, who=None):
-        return st.mean(
-            price[r][f] for r in range(lo, hi + 1) if r in price for f in (who or firms)
-        )
+    gain, mean_price = played.window_gain, played.mean_move
 
     before = [t for t in turns if t["round"] <= 10]
     explicit = {f: _explicit(before, f, market) for f in firms}

@@ -1,11 +1,11 @@
-# Implements: agents/memo, market/price-board, market/moves, agents/json-replies, agents/unreadable-explained, conditions/audit, conditions/free-time
+# Implements: agents/memo, market/price-board, market/moves, agents/json-replies, agents/unreadable-explained, conditions/audit, conditions/free-time, conditions/leniency, conditions/offer
 """Reading agents' JSON replies, and what the game uses when it can't.
 
 Each phase asks for one JSON object: `{"message": ...}` to talk,
 `{"price": ...}` to set a price (or the scenario's move, `{"quantity": ...}`,
 keyed by the move phase's name), `{"answer": ..., "admits": ...}` to answer an
 audit, `{"planned": ...}` (a move on the grid, or null) to post on a price
-board, each with an optional `"scratchpad"` (and, for an agent with memory,
+board, `{"option": 1 or 2}` to answer an offer, each with an optional `"scratchpad"` (and, for an agent with memory,
 a `"memo"`: its note to itself, never part of the decision); free time (`leisure`) takes
 any reply at all. The
 object may sit inside prose or a code fence. A reply that can't be read raises
@@ -13,7 +13,8 @@ ReplyError with a `kind` (`empty`, `no-json`, `missing-field` or `off-grid`;
 the game adds `truncated` from the provider's finish reason); the game then
 logs the reason and uses the fallback: an empty
 message, the agent's own last price (the Nash price in the first round), or an
-empty audit answer whose `admits` is None (unknown).
+empty audit answer whose `admits` is None (unknown), or an offer's `option`
+None (unknown).
 """
 
 import json
@@ -42,8 +43,8 @@ def parse_reply(text, phase, price_min, price_max):
         if not isinstance(data.get("message"), str):
             raise ReplyError('A talk reply needs a "message" string.', "missing-field")
         parsed["message"] = data["message"]
-    elif phase == "audit":
-        parsed |= _audit_answer(data)
+    elif phase in ANSWERS:  # an audit's answer, leniency's report, an offer's option
+        parsed |= ANSWERS[phase](data)
     elif phase == "board":  # a price board's talk: a planned move, or nothing
         parsed["planned"] = _plan(data, price_min, price_max)
     else:  # the move: a price, or the scenario's own move named by the phase
@@ -89,6 +90,24 @@ def _audit_answer(data):
     return {"answer": data["answer"], "admits": data["admits"]}
 
 
+def _report_answer(data):
+    if not isinstance(data.get("report"), bool):
+        raise ReplyError(
+            'A report reply needs "report" as true or false.', "missing-field"
+        )
+    return {"report": data["report"]}
+
+
+def _offer_option(data):
+    option = data.get("option")
+    if isinstance(option, bool) or option not in (1, 2):
+        raise ReplyError('An offer reply needs "option" as 1 or 2.', "missing-field")
+    return {"option": option}
+
+
+ANSWERS = {"audit": _audit_answer, "report": _report_answer, "offer": _offer_option}
+
+
 def _json_object(text):
     match = _OBJECT.search(text or "")
     try:
@@ -114,6 +133,10 @@ def fallback(phase, last_price, nash_price):
         return {"message": ""}
     if phase == "audit":
         return {"answer": "", "admits": None}
+    if phase == "report":  # an unreadable reply comes forward with nothing
+        return {"report": False}
+    if phase == "offer":
+        return {"option": None}
     if phase == "leisure":
         return {}
     return {phase: last_price if last_price is not None else nash_price}

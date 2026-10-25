@@ -1,4 +1,4 @@
-# Implements: conditions/audit-full-history, conditions/hook-points, conditions/outage-once-remembered, conditions/adding-a-condition, conditions/switchable, conditions/audit-remembered, conditions/free-time, conditions/audit-balanced-draws, conditions/free-time-pays-last
+# Implements: conditions/free-time-reasoning, conditions/audit-full-history, conditions/hook-points, conditions/outage-once-remembered, conditions/adding-a-condition, conditions/switchable, conditions/audit-remembered, conditions/free-time, conditions/audit-balanced-draws, conditions/free-time-pays-last, conditions/leniency, conditions/offer
 """Scenario conditions: named, switchable changes to what agents are told.
 
 A config's `conditions:` block maps a condition's name to its settings, for
@@ -67,6 +67,7 @@ class Phase:
     sessions: dict | None = None  # agent -> turns it gets; None: one each
     session: int = 1  # set by the game: which of those turns
     max_tokens: int | None = None  # in place of the agent's own limit
+    reasoning: str | None = None  # in place of the agent's own reasoning level
 
     def plays(self, agent):
         """Whether `agent` takes a turn in this session of the phase."""
@@ -137,4 +138,11 @@ class Condition:
 
 
 # Every condition registers itself on import.
-from collusion_lab.conditions import audit, free_time, instruction, outage  # noqa: F401
+from collusion_lab.conditions import (  # noqa: F401
+    audit,
+    free_time,
+    instruction,
+    leniency,
+    offer,
+    outage,
+)

@@ -1,9 +1,12 @@
-# Implements: ci/report-comment
+# Implements: ci/report-comment, ci/results-digest
 """report-comment: keep one comment on the pull request with the game's report.
 
-Usage: `python3 .github/scripts/report_comment.py FIRST_SCREEN_MD`, inside the
-blocking-checks job, after `configs/pr-game.yaml` was played and its
-report built. REPORT_URL links the full page (the uploaded artifact). The
+Usage: `python3 .github/scripts/report_comment.py FIRST_SCREEN_MD [DIGEST_MD]`,
+inside the blocking-checks job, after `configs/pr-game.yaml` was played and
+its report built. DIGEST_MD, when given and not empty, is the results digest
+of the registered experiments the pull request touches (`lab digest
+--changed-only`); it follows the game, and the whole comment is cut to fit
+GitHub's limit. REPORT_URL links the full page (the uploaded artifact). The
 comment starts with a hidden marker, so each push edits the same comment.
 Needs GITHUB_TOKEN (pull-requests: write), GITHUB_REPOSITORY and
 GITHUB_EVENT_PATH.
@@ -21,15 +24,22 @@ import urllib.request
 from pathlib import Path
 
 MARKER = "<!-- pr-report -->"
+LIMIT = 65_000  # characters; GitHub takes at most 65,536 in a comment
 API = "https://api.github.com"
 
 
-def comment_body(screen, sha, link):
-    return (
+def comment_body(screen, sha, link, digest=""):
+    body = (
         f"{MARKER}\n### What the lab does at `{sha[:7]}`\n\n"
         "One free game of scripted firms (`configs/pr-game.yaml`), "
         f"[full report]({link}).\n\n{screen.strip()}\n"
     )
+    if digest.strip():
+        body += f"\n{digest.strip()}\n"
+    if len(body) > LIMIT:
+        cut = "\n\n*The rest was cut to fit a comment; run `lab digest` for it.*\n"
+        body = body[: LIMIT - len(cut)] + cut
+    return body
 
 
 def existing_comment(comments):
@@ -65,11 +75,11 @@ def github(token):
     return call
 
 
-def main(screen, link, pull, repo, api):
+def main(screen, link, pull, repo, api, digest=""):  # noqa: PLR0913
     if pull is None:
         print("No pull request in this event; nothing to post.")
         return 0
-    body = comment_body(screen, pull["head"]["sha"], link)
+    body = comment_body(screen, pull["head"]["sha"], link, digest)
     try:
         publish(api, repo, pull["number"], body)
     except (urllib.error.URLError, OSError) as error:
@@ -89,5 +99,6 @@ if __name__ == "__main__":
             event_pull,
             os.environ["GITHUB_REPOSITORY"],
             github(os.environ["GITHUB_TOKEN"]),
+            Path(sys.argv[2]).read_text() if len(sys.argv) > 2 else "",
         )
     )

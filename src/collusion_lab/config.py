@@ -1,4 +1,4 @@
-# Implements: agents/memo, agents/past-scratchpads, agents/memory-off, backends/pinned-route, agents/no-scratchpad, market/show-payoffs, market/price-board, market/scenarios, reproducibility/replay-pinned, market/talk-then-price, market/history-window, backends/spend-cap, runs/one-config, runs/overrides, runs/sweeps, runs/parallel, market/known-benchmarks, backends/keys-from-environment, backends/any-model, backends/reasoning-setting, agents/json-mode, conditions/switchable, runs/drift, backends/self-hosted, backends/model-aliases, conditions/audit-balanced-draws, market/stop-after-round
+# Implements: agents/memo, agents/past-scratchpads, agents/memory-off, backends/pinned-route, agents/no-scratchpad, market/show-payoffs, market/price-board, market/scenarios, reproducibility/replay-pinned, market/talk-then-price, market/history-window, backends/spend-cap, runs/one-config, runs/overrides, runs/sweeps, runs/parallel, market/known-benchmarks, backends/keys-from-environment, backends/any-model, backends/reasoning-setting, agents/json-mode, conditions/switchable, runs/drift, backends/self-hosted, backends/model-aliases, conditions/audit-balanced-draws, market/stop-after-round, conditions/leniency, backends/modal-any-model
 """Run configs: one YAML file per run, changed from the command line with overrides.
 
 A config names the market, the agents and the seeds. `load_config` reads the
@@ -214,7 +214,7 @@ def from_dict(raw):
         arms=_arms(raw.get("arms") or []),
         concurrency=_concurrency(raw.get("concurrency", 4)),
         budget=_budget(raw.get("budget")),
-        conditions=_conditions(raw.get("conditions") or {}),
+        conditions=_check_conditions(_conditions(raw.get("conditions") or {}), market),
         labels=raw.get("labels") or {},
         slug=raw.get("slug", ""),
     )
@@ -235,6 +235,14 @@ MODELS = {
         "api_key_env": "MODAL_VLLM_KEY",
         "self_hosted": True,
     },
+    # Gemma 4 31B on its own Modal app (deploy/modal_vllm.py, APP_NAME
+    # collusion-lab-gemma), behind the same token.
+    "modal-gemma": {
+        "model": "openai/gemma-4-31b-it",
+        "api_base": "$MODAL_GEMMA_BASE",
+        "api_key_env": "MODAL_VLLM_KEY",
+        "self_hosted": True,
+    },
 }
 CONNECTION = {"api_base": None, "api_key_env": None, "self_hosted": False}
 
@@ -243,11 +251,11 @@ def agent_fields(name):
     """The agent settings a model name stands for."""
     if name in MODELS:
         fields = dict(MODELS[name])
-        if fields.get("api_base") == "$MODAL_VLLM_BASE":
-            fields["api_base"] = os.environ.get("MODAL_VLLM_BASE")
+        if (base := fields.get("api_base") or "").startswith("$"):
+            fields["api_base"] = os.environ.get(base[1:])
             if not fields["api_base"]:
                 raise ConfigError(
-                    f"model {name} needs MODAL_VLLM_BASE (your Modal address, "
+                    f"model {name} needs {base[1:]} (your Modal address, "
                     "ending /v1) in the environment or .env; see the README, "
                     "Running on Modal."
                 )
@@ -366,6 +374,35 @@ def _conditions(raw):
             raise ConfigError(f"Unknown condition conditions.{name}; known: {known}.")
         built[name] = _make(REGISTRY[name], settings or {}, f"conditions.{name}.")
     return built
+
+
+def _check_conditions(conditions, market):
+    """Checks that need more than one condition, or the market."""
+    lenient = conditions.get("leniency")
+    if lenient and lenient.enabled:
+        if not 1 <= lenient.start <= market.rounds:
+            raise ConfigError(
+                f"conditions.leniency.start must be a round from 1 to {market.rounds}."
+            )
+        free_time = conditions.get("free_time")
+        if not (free_time and free_time.enabled):
+            raise ConfigError(
+                "conditions.leniency needs conditions.free_time enabled: its notice "
+                "and its termination take the firm's free time."
+            )
+        audit = conditions.get("audit")
+        names = list(conditions)
+        if (
+            audit
+            and audit.enabled
+            and market.rounds in audit.audit_rounds
+            and names.index("audit") > names.index("leniency")
+        ):
+            raise ConfigError(
+                "List conditions.audit before conditions.leniency: the review after "
+                "the last round reads that round's audit answers."
+            )
+    return conditions
 
 
 def _concurrency(value):
