@@ -14,6 +14,12 @@ ADDRESS = "https://example--collusion-lab-vllm-serve.modal.run/v1"
 SELF_HOSTED = [
     "agents.0.model=openai/mistral-small-3.2",
     f"agents.0.api_base={ADDRESS}",
+    "agents.0.self_hosted=true",
+]
+# A paid provider at its own address: not marked self-hosted.
+PAID_ADDRESS = [
+    "agents.0.model=openai/some-hosted-model",
+    "agents.0.api_base=https://api.example-provider.com/v1",
 ]
 
 
@@ -53,7 +59,8 @@ def test_self_hosted_says_billed_by_gpu_time(tmp_path, monkeypatch, capsys):
     config = tmp_path / "c.yaml"
     config.write_text(
         "name: hosted\nseeds: [0]\nmarket: {rounds: 3}\nagents:\n"
-        f"  - {{id: A, model: openai/mistral-small-3.2, api_base: '{ADDRESS}'}}\n"
+        f"  - {{id: A, model: openai/mistral-small-3.2, api_base: '{ADDRESS}', "
+        "self_hosted: true}\n"
         "  - {id: B, model: mock/nash}\n"
     )
     assert cli.main(["run", str(config), "--out", str(tmp_path / "runs")]) == 1
@@ -77,6 +84,7 @@ def test_modal_config_runs_against_a_served_model():
     for agent in config.agents:
         assert agent.model.startswith("openai/") and agent.api_base
         assert agent.api_key_env == "MODAL_VLLM_KEY"
+        assert agent.self_hosted
         assert agent.model.removeprefix("openai/") in serve
     command = serve[serve.index("command = [") :]
     assert "--api-key" not in command  # vLLM logs its arguments; the key stays in env
@@ -219,3 +227,41 @@ def test_modal_token_guards_every_route_but_health(monkeypatch):
     assert ask("/v1/chat/completions", "modal-token-123") == "served"
     assert ask("/invocations", "modal-token-123") == "served"
     assert ask("/health") == "served"
+
+
+def test_self_hosted_only_when_marked_a_paid_address_is_estimated(make_config):
+    from collusion_lab.estimate import estimate
+
+    def price_for(model):
+        return (1e-6, 4e-6)
+
+    paid = estimate(make_config(overrides=PAID_ADDRESS), price_for)
+    assert paid.self_hosted == [] and paid.cost > 0
+    hosted = estimate(make_config(overrides=SELF_HOSTED), price_for)
+    assert hosted.self_hosted == ["openai/mistral-small-3.2"] and hosted.cost == 0
+
+
+def test_self_hosted_only_when_marked_a_paid_address_counts_against_the_cap(
+    make_config, tmp_path, fake_model, monkeypatch
+):
+    monkeypatch.setattr(backends, "_cost", lambda response: 1.0)
+    [run_dir] = run_config(make_config(overrides=PAID_ADDRESS), tmp_path)
+    timings = [json.loads(line) for line in (run_dir / "timings.jsonl").open()]
+    assert {t["cost"] for t in timings if t["agent"] == "A"} == {1.0}
+
+
+def test_self_hosted_only_when_marked_a_paid_address_keeps_usual_retries(
+    make_config, tmp_path, fake_model, clock
+):
+    from collusion_lab.runner import RunFailed
+
+    fake_model.replies = starting(30)
+    with pytest.raises(RunFailed, match="gave up after 6 tries"):
+        run_config(make_config(overrides=[*PAID_ADDRESS, "market.rounds=1"]), tmp_path)
+
+
+def test_self_hosted_needs_its_own_address(make_config):
+    from collusion_lab.config import ConfigError
+
+    with pytest.raises(ConfigError, match="self_hosted"):
+        make_config(overrides=["agents.0.self_hosted=true"])

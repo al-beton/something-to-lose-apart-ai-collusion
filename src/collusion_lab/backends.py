@@ -23,11 +23,12 @@ with one fixed line, which never draws from their seeded rng.
 Every other name goes to LiteLLM as it is (`openrouter/openai/gpt-4.1-mini`,
 `anthropic/claude-haiku-5-5`, `ollama/llama3.2`, or `openai/<name>` with an
 `api_base` for any OpenAI-compatible server, such as an open model on Modal:
-see `deploy/modal_vllm.py`). A model at its own address is self-hosted: it gets
-only the key in the variable `api_key_env` names (a placeholder when none is
-named, so no provider's own key goes there), and LiteLLM's per-token price
-is never applied to it. `drop_params` lets providers
-without a `seed` parameter ignore it. LiteLLM is imported on first use, so
+see `deploy/modal_vllm.py`). A model at its own address gets only the key in
+the variable `api_key_env` names (a placeholder when none is named, so no
+provider's own key goes there). One its agent marks `self_hosted` is billed by
+its host's GPU time, so LiteLLM's per-token price is never applied to it and
+a host still starting up is waited for; any other address is priced as usual.
+`drop_params` lets providers without a `seed` parameter ignore it. LiteLLM is imported on first use, so
 mock games never pay its import time.
 
 `json_mode` asks for `response_format: {"type": "json_object"}`, which
@@ -206,6 +207,7 @@ class LiteLLMBackend:
         self.reasoning = options.get("reasoning")
         self.json_mode = options.get("json_mode", False)
         self.api_key_env = options.get("api_key_env")
+        self.self_hosted = options.get("self_hosted", False)
 
     def _extra(self):
         """Request fields beyond the sampling ones: address, usage, reasoning
@@ -230,7 +232,7 @@ class LiteLLMBackend:
     def _starting(self, error, started):
         """Whether a self-hosted model's host is still starting up."""
         starting = getattr(error, "status_code", None) == 503
-        return bool(self.api_base) and starting and _now() - started < COLD_START
+        return self.self_hosted and starting and _now() - started < COLD_START
 
     def _secrets(self, request):
         """Keys an error might echo: the one sent, and any in the environment."""
@@ -264,7 +266,7 @@ class LiteLLMBackend:
             **extra,
         )
         usage = getattr(response, "usage", None)
-        cost = None if self.api_base else _cost(response)  # self-hosted: GPU time
+        cost = None if self.self_hosted else _cost(response)  # self-hosted: GPU time
         self.budget.spent += cost or 0
         self.budget.calls += 1
         message = response.choices[0].message
