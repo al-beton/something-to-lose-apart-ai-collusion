@@ -740,3 +740,21 @@ def test_from_run_files_reads_a_committed_compact_run(talks, tmp_path):
     assert "<td>8.5</td><td>0.778</td>" in section(html, "summary")
     # Profits are rebuilt from the prices: round 1 at 9 each earns 81.
     assert "<td>Firm A</td><td>9</td><td>81</td>" in games
+
+
+def test_from_run_files_shows_a_compact_runs_notices(noticed, tmp_path):
+    spec = importlib.util.spec_from_file_location(
+        "compact_turns", "reports/compact_turns.py"
+    )
+    compact = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(compact)
+    committed = tmp_path / "committed" / "talks"
+    compact.main(noticed, committed)
+    for name in ("summary.json", "manifest.json", "config.yaml"):
+        for path in noticed.rglob(name):
+            shutil.copy(path, committed / path.relative_to(noticed))
+    html = build_report(committed)
+    assert NOTICE in round_html(html, "g0-r3") and NOTICE in round_html(html, "g0-r4")
+    assert NOTICE not in round_html(html, "g0-r2")
+    setup = section(html, "setup")
+    assert setup.count(NOTICE) == 1 and "rounds 3 to 4" in setup
