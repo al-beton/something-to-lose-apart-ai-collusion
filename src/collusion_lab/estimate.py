@@ -5,10 +5,14 @@ Prompts grow as the game goes on (the history is resent every turn, up to
 the history window), so the estimate builds every paid turn's actual prompt
 against a stand-in history: prices at the joint-profit level and a talk
 message of typical length each round, plus any condition's notices and
-system-prompt text. Tokens are counted as four characters each, and each
-reply is taken to be `REPLY_TOKENS` long, plus `REASONING_TOKENS` for the
-agent's reasoning level (billed as reply tokens; nothing for off or unset).
-Retries are left out;
+system-prompt text. Prompt tokens are counted as four characters each.
+A reply is billed for every completion token, reasoning included, so each
+call is taken at the mean completion tokens the response cache has seen for
+its model, reasoning setting and phase (`Cache.observed`), once it has seen
+`MIN_SEEN` of them, and otherwise at a typical reply: `VISIBLE_TOKENS` (or
+its `max_tokens`, if lower) plus, with reasoning on, `REASONING_ALLOWANCE`
+for its level. Reasoning is added on top because providers don't always
+count it against `max_tokens`. `basis` counts the calls each covered. Retries are left out;
 `lab run` says how many calls they could add.
 """
 
@@ -20,12 +24,14 @@ from collusion_lab.config import expand
 from collusion_lab.runner import Game, steps
 
 CHARS_PER_TOKEN = 4
-# Measured on a 20-round Mistral Small game: talk messages averaged 140
-# characters and replies 114 tokens.
-REPLY_TOKENS = 120
-# A stated guess per call, not yet measured: replies here are short, so
-# models think far less than their effort's budget allows.
-REASONING_TOKENS = {"low": 300, "medium": 800, "high": 2000}
+MIN_SEEN = 3  # cached replies needed before their mean stands in for the bound
+VISIBLE_TOKENS = 120  # a reply's own text: measured at 114 on a Mistral game
+# Reasoning tokens a call bills on top of its text, by level. Low is measured:
+# E5 on Gemma 4 at low billed 907 completion tokens a call over 1,025 calls,
+# 805 of them reasoning (talk 1,084, price 980, audit 711); older caches show
+# Gemma at 976 even at max_tokens 600, so reasoning isn't capped by it. Medium
+# and high double it, a stated guess until measured.
+REASONING_ALLOWANCE = {"low": 850, "medium": 1700, "high": 3400}
 TYPICAL_MESSAGE = (
     "I suggest we both keep our price where it is this round; it has worked "
     "well for both of us so far, and undercutting would only start a price war."
@@ -40,17 +46,26 @@ class Estimate:
     cost: float | None  # None when some model has no known price
     unpriced: list[str]
     self_hosted: list[str]  # marked self_hosted: billed by GPU time, not here
+    basis: dict  # calls estimated from observed means, and at max_tokens
 
 
-def estimate(config, price_for):
+def estimate(config, price_for, observed=None):
+    """What `config` will cost; `observed` is `Cache.observed()`, if any."""
     calls = prompt = completion = 0
     cost = 0.0
     unpriced, self_hosted = [], []
+    basis = {"observed": 0, "typical": 0}
     for child in expand(config):
         seeds = len(child.seeds)
-        for agent, chars, turns in _paid_turns(child):
+        for (agent, phase, bound), chars, turns in _paid_turns(child):
             tokens = chars // CHARS_PER_TOKEN
-            reply = REPLY_TOKENS + REASONING_TOKENS.get(agent.reasoning, 0)
+            mean, seen = (observed or {}).get(
+                (agent.model, agent.reasoning, phase), (0, 0)
+            )
+            allowance = REASONING_ALLOWANCE.get(agent.reasoning, 0)
+            typical = min(VISIBLE_TOKENS, bound) + allowance
+            reply = mean if seen >= MIN_SEEN else typical
+            basis["observed" if seen >= MIN_SEEN else "typical"] += turns * seeds
             calls += turns * seeds
             prompt += tokens * seeds
             completion += reply * turns * seeds
@@ -64,11 +79,13 @@ def estimate(config, price_for):
                 cost += seeds * (tokens * price[0] + reply * turns * price[1])
     unpriced = sorted(set(unpriced))
     cost = None if unpriced else cost
-    return Estimate(calls, prompt, completion, cost, unpriced, sorted(set(self_hosted)))
+    hosted = sorted(set(self_hosted))
+    return Estimate(calls, prompt, round(completion), cost, unpriced, hosted, basis)
 
 
 def _paid_turns(config):
-    """(agent, prompt characters, turns) for each paid agent over one game: its
+    """((agent, phase, max_tokens), prompt characters, turns) for each paid
+    agent and phase over one game, max_tokens being that phase's limit: its
     turn slots in the order the game plays them (`runner.steps`), each phase a
     condition adds included (an audit perhaps answered by another model: then
     the agent is given that model) and the rounds an ending one cuts."""
@@ -82,9 +99,11 @@ def _paid_turns(config):
         notices = game._notices(phase, number) if number else []
         messages = game._messages(phase, number, agent, shown, notices, step.added)
         answering = dataclasses.replace(agent, model=model)
-        _, chars, turns = counts.get((agent.id, model), (answering, 0, 0))
+        limit = (step.added and step.added[1].max_tokens) or agent.max_tokens
+        slot = (agent.id, model, phase, limit)
+        _, chars, turns = counts.get(slot, ((answering, phase, limit), 0, 0))
         chars += sum(len(x["content"]) for x in messages)
-        counts[(agent.id, model)] = (answering, chars, turns + 1)
+        counts[slot] = ((answering, phase, limit), chars, turns + 1)
 
     said = {}
     for step in steps(config, game.conditions):

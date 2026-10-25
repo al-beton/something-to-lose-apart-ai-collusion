@@ -1,17 +1,23 @@
-# Implements: backends/serving-provider-logged, reproducibility/manifest, runs/resume, market/prompt-overlay, runs/per-firm-summary
+# Implements: backends/modal-pinned, backends/serving-provider-logged, reproducibility/manifest, runs/resume, market/prompt-overlay, runs/per-firm-summary
 """What produced a run: config, prompt hashes, code, packages, models, spend.
 
 Written as `manifest.json` next to each run's logs. Unlike `turns.jsonl`, it
 holds things that vary between identical runs (times, cache hits, cost), so
 the turn log stays byte-identical on replay. `agent_cost` splits `cost` by
 agent; a resumed run's runner adds `earlier_cost` and `earlier_agent_cost`,
-what earlier attempts spent.
+what earlier attempts spent. `serving` holds, for each self-hosted firm,
+what its server's `/provenance` said it serves (see deploy/modal_vllm.py),
+or why it couldn't be asked, or that it wasn't: a run answered from the
+cache asks nothing.
 """
 
 import hashlib
 import importlib.metadata
+import json
+import os
 import platform
 import subprocess
+import urllib.request
 from pathlib import Path
 
 from collusion_lab.backends import is_mock
@@ -19,7 +25,35 @@ from collusion_lab.backends import is_mock
 PACKAGES = ("collusion-lab", "litellm", "pyyaml")
 
 
-def build(config, prompt_names, calls, started, finished):
+def serving(config, calls):
+    """{firm: its self-hosted server's /provenance answer, or {"error": ...}},
+    asked only of a firm with a fresh call among `calls` (the run's timings):
+    a scaled-to-zero server isn't woken for a replay from the cache."""
+    found = {}
+    fresh = {c["agent"] for c in calls if not c["cached"]}
+    for agent in config.agents:
+        if not (agent.self_hosted and agent.api_base):
+            continue
+        if agent.id not in fresh:
+            found[agent.id] = {"skipped": "no fresh calls"}
+            continue
+        root = agent.api_base.rstrip("/").removesuffix("/v1")
+        key = os.environ.get(agent.api_key_env or "", "")
+        headers = {"Authorization": f"Bearer {key}"} if key else {}
+        try:
+            found[agent.id] = _get_json(f"{root}/provenance", headers)
+        except (OSError, ValueError) as error:
+            found[agent.id] = {"error": f"{type(error).__name__}: {error}"}
+    return found
+
+
+def _get_json(url, headers):
+    request = urllib.request.Request(url, headers=headers)
+    with urllib.request.urlopen(request, timeout=10) as reply:
+        return json.load(reply)
+
+
+def build(config, prompt_names, calls, started, finished, serving=None):  # noqa: PLR0913
     paid = [c for c in calls if not is_mock(c["model"])]
     models, providers = {}, {}
     for call in paid:
@@ -55,6 +89,7 @@ def build(config, prompt_names, calls, started, finished):
         "agent_cost": _agent_cost(fresh),
         "started": started,
         "finished": finished,
+        "serving": serving or {},
     }
 
 
