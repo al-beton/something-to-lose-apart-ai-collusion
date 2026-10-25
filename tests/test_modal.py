@@ -482,6 +482,14 @@ def test_modal_any_model_spreads_over_its_gpus(monkeypatch):
     assert command[command.index("--tensor-parallel-size") + 1] == "2"
 
 
+def test_modal_any_model_caps_its_gpu_containers(monkeypatch):
+    server, _ = _deployed(monkeypatch)
+    assert server["max_containers"] == 2
+    monkeypatch.setenv("MAX_GPUS_CONTAINERS", "4")
+    server, _ = _deployed(monkeypatch)
+    assert server["max_containers"] == 4
+
+
 def test_modal_any_model_gated_token_only_from_the_secret(monkeypatch):
     server, _ = _deployed(monkeypatch)
     assert server["secrets"] == ["collusion-lab-vllm"]
