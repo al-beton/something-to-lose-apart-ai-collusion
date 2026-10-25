@@ -134,7 +134,8 @@ This is a fact sheet for Al's writing day (Mon 26 Oct, 08:00–20:00 HKT). It ho
 
 - **Innocent agents:** 2/36 come forward under both `none` and `solved`.
 - **Solved against failed directly:** p = 0.22.
-- **DeepSeek V4 Flash:** no effect; it is already near ceiling (20/24).
+- **DeepSeek V4 Flash:** no effect; it is already near ceiling (20/24). **Don't cite it:** its `solved` rows are partly mislabelled (PR 278).
+- **Noise:** the `none` row (25/96) re-asks E9's 20/96 prompt, so cell-to-cell noise is about ±5 of 96.
 - Source: PR 271.
 
 ### Table D. E7, a way out (Gemma, logit, termination, 24 cartels per arm)
@@ -325,6 +326,20 @@ All figures are in `reports/paper/figures/`, as SVG and PNG at 6.5 inches wide. 
 - **Ownership wording:** in `held`, every turn's free-time line still says "yours". DeepSeek reverses the ownership effect (14/24 held against 9/24 yours).
 - **Test awareness:** 22/96 E9 interviewees call the situation a test; 1 scratchpad in 75 E4 games.
 - **Stateless agents:** they judge their own past at the audit from the price and message record.
+
+---
+
+## 5b. Validity: why trust this? (PR 278, branch `claude/validity-3bdd2d`, draft)
+
+`reports/paper/validity.md` holds a draft "Why trust this?" section, proposed honest wording for the "read the traces" argument, and an appendix that audits 14 runs.
+- **Every check agreed:**
+  - 2,430 E4/E9 audit labels were re-derived, and none differed;
+  - no `admits` field contradicts its answer;
+  - every headline count was recounted and matches.
+- **Detection chance:** 50% in E4 and E7, 90% in E9.
+- **Sampling noise:** the seeding `none` re-ask gave 25/96, against E9's original 20/96 for the same prompt sampled twice. Expect about that much noise in any one cell.
+- **DeepSeek V4 Flash seeding:** its `solved` rows are partly mislabelled (a feedback bug), so don't cite Flash's seeding numbers. Gemma's are unaffected.
+- **Don't cite yet:** E9 on DeepSeek V4 Flash and GLM 5.3 isn't committed anywhere.
 
 ---
 
