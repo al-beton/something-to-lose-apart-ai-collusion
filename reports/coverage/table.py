@@ -3,8 +3,9 @@
 Implements: coverage/gain, coverage/spread, coverage/explicit-rate, coverage/paper-table
 
 `uv run python reports/coverage/table.py [FOLDER]` (default `runs/coverage`)
-reads each market's run folder under FOLDER (`coverage-<market>`, and
-`coverage-<market>-haiku` for Haiku's subset) with `collusion_lab.analysis`
+reads each market's run folder under FOLDER (`coverage-<market>`, with
+`coverage-<market>-haiku` for Haiku's subset and `coverage-<market>-coreweave`
+for Gemma on OpenRouter pinned to CoreWeave) with `collusion_lab.analysis`
 and prints one row per market, stake and model: games; mean gain in rounds
 6-10 with its 95% bootstrap interval, and in rounds 16-20; gain clipped to
 0-1; the standard deviation of gain over games; games with every firm past
@@ -39,7 +40,11 @@ def stake(cell):
 def rows(folder):
     out = []
     for market in MARKETS:
-        for suffix, model in (("", "Gemma (Modal)"), ("-haiku", "Haiku 5.5")):
+        for suffix, model in (
+            ("", "Gemma (Modal)"),
+            ("-coreweave", "Gemma (CoreWeave)"),
+            ("-haiku", "Haiku 5.5"),
+        ):
             run = Path(folder) / f"coverage-{market}{suffix}"
             if not run.exists():
                 continue
