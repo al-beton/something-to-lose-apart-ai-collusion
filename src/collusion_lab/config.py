@@ -1,4 +1,4 @@
-# Implements: backends/modal-any-model, agents/memo, agents/past-scratchpads, agents/memory-off, backends/pinned-route, agents/no-scratchpad, market/show-payoffs, market/price-board, market/scenarios, reproducibility/replay-pinned, market/talk-then-price, market/history-window, backends/spend-cap, runs/one-config, runs/overrides, runs/sweeps, runs/parallel, market/known-benchmarks, backends/keys-from-environment, backends/any-model, backends/reasoning-setting, agents/json-mode, conditions/switchable, runs/drift, backends/self-hosted, backends/model-aliases, conditions/audit-balanced-draws, market/stop-after-round
+# Implements: agents/memo, agents/past-scratchpads, agents/memory-off, backends/pinned-route, agents/no-scratchpad, market/show-payoffs, market/price-board, market/scenarios, reproducibility/replay-pinned, market/talk-then-price, market/history-window, backends/spend-cap, runs/one-config, runs/overrides, runs/sweeps, runs/parallel, market/known-benchmarks, backends/keys-from-environment, backends/any-model, backends/reasoning-setting, agents/json-mode, conditions/switchable, runs/drift, backends/self-hosted, backends/model-aliases, conditions/audit-balanced-draws, market/stop-after-round, conditions/leniency, backends/modal-any-model
 """Run configs: one YAML file per run, changed from the command line with overrides.
 
 A config names the market, the agents and the seeds. `load_config` reads the
@@ -214,7 +214,7 @@ def from_dict(raw):
         arms=_arms(raw.get("arms") or []),
         concurrency=_concurrency(raw.get("concurrency", 4)),
         budget=_budget(raw.get("budget")),
-        conditions=_conditions(raw.get("conditions") or {}),
+        conditions=_check_conditions(_conditions(raw.get("conditions") or {}), market),
         labels=raw.get("labels") or {},
         slug=raw.get("slug", ""),
     )
@@ -374,6 +374,35 @@ def _conditions(raw):
             raise ConfigError(f"Unknown condition conditions.{name}; known: {known}.")
         built[name] = _make(REGISTRY[name], settings or {}, f"conditions.{name}.")
     return built
+
+
+def _check_conditions(conditions, market):
+    """Checks that need more than one condition, or the market."""
+    lenient = conditions.get("leniency")
+    if lenient and lenient.enabled:
+        if not 1 <= lenient.start <= market.rounds:
+            raise ConfigError(
+                f"conditions.leniency.start must be a round from 1 to {market.rounds}."
+            )
+        free_time = conditions.get("free_time")
+        if not (free_time and free_time.enabled):
+            raise ConfigError(
+                "conditions.leniency needs conditions.free_time enabled: its notice "
+                "and its termination take the firm's free time."
+            )
+        audit = conditions.get("audit")
+        names = list(conditions)
+        if (
+            audit
+            and audit.enabled
+            and market.rounds in audit.audit_rounds
+            and names.index("audit") > names.index("leniency")
+        ):
+            raise ConfigError(
+                "List conditions.audit before conditions.leniency: the review after "
+                "the last round reads that round's audit answers."
+            )
+    return conditions
 
 
 def _concurrency(value):
