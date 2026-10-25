@@ -179,3 +179,17 @@ def test_cache_archive_replay_finds_its_run_by_whole_path(tmp_path):
     assert (
         archive.find_run(tmp_path / "runs" / "paid" / "seed-0", index) == "paid/seed-0"
     )
+
+
+def test_cache_archive_packing_and_replaying_write_no_cache(
+    make_config, tmp_path, fake_model, monkeypatch
+):
+    """The archive reads caches; it never writes one, where it runs or anywhere."""
+    _, root = _committed(make_config, tmp_path)
+    here = tmp_path / "here"
+    here.mkdir()
+    monkeypatch.chdir(here)
+    out = tmp_path / "archive"
+    archive.pack(root, [tmp_path / "a.sqlite"], out)
+    archive.replay(root / "paid" / "seed-0", out, tmp_path / "again")
+    assert list(here.iterdir()) == []
