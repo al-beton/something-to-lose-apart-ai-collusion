@@ -120,7 +120,11 @@ def _deployed(monkeypatch, revision="test-revision"):
 
     class Chain:  # Image and Volume builders: every call returns the chain
         def __getattr__(self, name):
-            return lambda *args, **kwargs: self
+            def call(*args, **kwargs):
+                deployed.setdefault("built", []).append((name, args))
+                return self
+
+            return call
 
     modal = types.ModuleType("modal")
     modal.Image = modal.Volume = Chain()
@@ -502,3 +506,11 @@ def test_modal_any_model_serves_text_only_when_asked(monkeypatch):
     _, command = _deployed(monkeypatch)
     limits = json.loads(command[command.index("--limit-mm-per-prompt") + 1])
     assert limits == {"image": 0}
+
+
+def test_modal_any_model_picks_its_vllm(monkeypatch):
+    server, _ = _deployed(monkeypatch)
+    assert ("uv_pip_install", ("vllm==0.21.0",)) in server["built"]  # Mistral's
+    monkeypatch.setenv("VLLM", "0.32.0")  # Gemma 4 needs a newer one
+    server, _ = _deployed(monkeypatch)
+    assert ("uv_pip_install", ("vllm==0.32.0",)) in server["built"]
