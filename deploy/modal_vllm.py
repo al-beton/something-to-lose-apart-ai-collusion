@@ -11,18 +11,19 @@ deploys the same way as its own app, beside this one, from the environment
 alone:
 
     APP_NAME=collusion-lab-gemma MODEL=google/gemma-4-31B-it \
-      SERVED_NAME=gemma-4-31b-it REVISION=<commit> HF_SECRET=huggingface \
-      uvx modal deploy deploy/modal_vllm.py
+      SERVED_NAME=gemma-4-31b-it REVISION=<commit> TEXT_ONLY=1 VLLM=0.32.0 \
+      MAX_MODEL_LEN=8192 uvx modal deploy deploy/modal_vllm.py
 
 `APP_NAME` names the app (default `collusion-lab-vllm`, Mistral's), `MODEL`
 and `REVISION` the Hugging Face model and commit, `SERVED_NAME` the name a
 config asks for, `GPU` and `GPUS` the card and how many (two spreads the
 model over both), and `TEXT_ONLY=1` serves a model that also reads images
 (Gemma 4) for text alone. `VLLM` picks the vLLM release (default 0.21.0,
-Mistral's); Gemma 4 needs 0.32.0, whose Transformers knows it, and
-`GPU_MEMORY=0.95` (vLLM's share of the card) to hold a 16k context. They are baked into the image, so the container serves what
-you deployed. Shaped on Modal's own vLLM
-example (docs/examples/vllm_inference).
+Mistral's); Gemma 4 needs 0.32.0, whose Transformers knows it, and an
+8k context (`MAX_MODEL_LEN=8192`) to fit one H100; `GPU_MEMORY` sets vLLM's
+share of each card (default 0.9). They are baked into the image, so the
+container serves what you deployed. Shaped on Modal's own vLLM example
+(docs/examples/vllm_inference).
 
 - Model: Mistral Small 3.2 (24B), the model the lab's cheap and stakes
   configs use through OpenRouter. About 48 GB in bf16, so it fits one H100

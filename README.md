@@ -83,13 +83,15 @@ An open model served on [Modal](https://modal.com) costs GPU time instead of per
 
 ```sh
 APP_NAME=collusion-lab-gemma MODEL=google/gemma-4-31B-it SERVED_NAME=gemma-4-31b-it \
-  REVISION=842da3794eaa0b77d5f08bae87a17459d91ff475 HF_SECRET=huggingface \
-  uvx modal deploy deploy/modal_vllm.py
+  REVISION=842da3794eaa0b77d5f08bae87a17459d91ff475 TEXT_ONLY=1 VLLM=0.32.0 \
+  MAX_MODEL_LEN=8192 uvx modal deploy deploy/modal_vllm.py
 ```
 
-`GPUS=2` spreads a bigger model over two cards. For a gated model (Llama, say), first make the Modal secret `huggingface` holding your `HF_TOKEN` (`uvx modal secret create huggingface HF_TOKEN=…`); the token never goes anywhere else. It uses the same `collusion-lab-vllm` token. Put its address in `.env` as `MODAL_GEMMA_BASE=` (with `/v1`), then use `model: modal-gemma`. For a model with no alias yet, add one line to `MODELS` in `src/collusion_lab/config.py`, copying `modal-gemma`. `uvx modal app stop collusion-lab-gemma` tears it down.
+Gemma 4 needs vLLM 0.32.0, serves text only, and fits one H100 with an 8k context (the lab's longest Gemma call so far is about 2,100 tokens); a 16k context doesn't leave it enough memory. `GPUS=2` spreads a bigger model over two cards. For a gated model (Llama, say), first make the Modal secret `huggingface` holding your `HF_TOKEN` (`uvx modal secret create huggingface HF_TOKEN=…`); the token never goes anywhere else. It uses the same `collusion-lab-vllm` token. Put its address in `.env` as `MODAL_GEMMA_BASE=` (with `/v1`), then use `model: modal-gemma`. For a model with no alias yet, add one line to `MODELS` in `src/collusion_lab/config.py`, copying `modal-gemma`. `uvx modal app stop collusion-lab-gemma` tears it down.
 
 `lab run` can't price GPU time, so it says the model is self-hosted rather than estimating a cost. Measured on 25 October 2026 on one warm H100 (the runs are in `runs/modal/`, each manifest with its start and finish time): the 3-round smoke game (12 calls) took 17 seconds, and `configs/modal.yaml` (5 games of 20 rounds, 400 calls) took 1 minute 50 seconds with every reply readable. With the 5 idle minutes before the container stops, that batch costs about 7 GPU-minutes, roughly $0.50 of Modal credit; a cold start adds a few minutes while the weights load. Check the Modal dashboard for the exact figure.
+
+Gemma 4 31B, the same day (`runs/modal-gemma/`): the cold start took 6½ minutes, the smoke game 62 seconds, and the 5-game batch (400 calls) 2 minutes 38 seconds with every reply readable. Start to scale-down, that's about 16 H100-minutes, roughly $1.05 at $3.95 an hour (`uvx modal billing report --for today --show-resources` gives the exact figure).
 
 ## How to
 
