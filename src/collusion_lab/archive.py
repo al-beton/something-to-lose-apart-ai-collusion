@@ -151,11 +151,11 @@ def _attempt(root, config_path, merged, scratch):
 
 def load_run_config(run_dir):
     """A committed run's config, with the prompts it actually read: each
-    prompt file its manifest recorded is found by its SHA-256, whether it
-    has since moved (the file of the same text under the prompts folder) or
-    been edited in place (the version of it in git history). When any was
-    edited, the config reads from a copy of the prompts folder holding the
-    run's versions, so a replay asks exactly what the run asked."""
+    prompt file its manifest recorded (an agent's or a condition's), when it
+    has since moved or been edited in place, is put back at its recorded path
+    with the text of that SHA-256, taken from the file that now holds it or
+    from git history, in a copy of the prompts folder the config then reads.
+    So a replay asks exactly what the run asked."""
     run_dir = Path(run_dir)
     config = load_config(run_dir / "config.yaml")
     prompts = Path(config.prompts_dir)
@@ -165,23 +165,18 @@ def load_run_config(run_dir):
     recorded = (
         json.loads(manifest.read_text()).get("prompts", {}) if manifest.exists() else {}
     )
-    agents = []
-    for agent in config.agents:
-        if not (prompts / agent.prompt).exists() and agent.prompt in recorded:
-            found = _same_text(prompts, recorded[agent.prompt])
-            if found:
-                agent = dataclasses.replace(agent, prompt=found)
-        agents.append(agent)
-    config = dataclasses.replace(config, agents=agents)
-    edited = {
-        name: text
-        for name, digest in recorded.items()
-        if (prompts / name).exists()
-        and _digest((prompts / name).read_bytes()) != digest
-        if (text := _from_history(prompts, name, digest)) is not None
-    }
-    if edited:
-        config = dataclasses.replace(config, prompts_dir=str(_overlay(prompts, edited)))
+    restored = {}
+    for name, digest in recorded.items():
+        path = prompts / name
+        if path.exists() and _digest(path.read_bytes()) == digest:
+            continue
+        text = _same_text(prompts, digest) or _from_history(prompts, name, digest)
+        if text is not None:
+            restored[name] = text
+    if restored:
+        config = dataclasses.replace(
+            config, prompts_dir=str(_overlay(prompts, restored))
+        )
     return config
 
 
@@ -190,10 +185,11 @@ def _digest(data):
 
 
 def _same_text(prompts, digest):
-    """The prompt file under `prompts` whose SHA-256 is `digest`, or None."""
+    """The text of the prompt file under `prompts` whose SHA-256 is
+    `digest`, wherever it now lives, or None."""
     for path in sorted(prompts.rglob("*.md")):
-        if _digest(path.read_bytes()) == digest:
-            return path.relative_to(prompts).as_posix()
+        if _digest(text := path.read_bytes()) == digest:
+            return text
     return None
 
 
@@ -228,7 +224,8 @@ def _overlay_root():
 
 
 def _overlay(prompts, edited):
-    """A copy of `prompts` with the given files at the versions a run read."""
+    """A copy of `prompts` with the given files, at their recorded paths, at
+    the versions a run read."""
     key = _digest(
         json.dumps(sorted((n, _digest(t)) for n, t in edited.items())).encode()
     )
@@ -236,6 +233,7 @@ def _overlay(prompts, edited):
     if not folder.exists():
         shutil.copytree(prompts, folder)
         for name, text in edited.items():
+            (folder / name).parent.mkdir(parents=True, exist_ok=True)
             (folder / name).write_bytes(text)
     return folder
 

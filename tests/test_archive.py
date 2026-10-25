@@ -247,9 +247,18 @@ def test_cache_archive_finds_a_moved_prompt_by_its_text(
     manifest = json.loads((run / "manifest.json").read_text())
     manifest["prompts"]["old/neutral.md"] = manifest["prompts"].pop("system/neutral.md")
     (run / "manifest.json").write_text(json.dumps(manifest))
-    assert archive.load_run_config(run).agents[0].prompt == "system/neutral.md"
+    read = Path(archive.load_run_config(run).prompts_dir)
+    neutral = Path(__file__).parents[1] / "prompts" / "system" / "neutral.md"
+    assert (read / "old" / "neutral.md").read_text() == neutral.read_text()
     [result] = archive.pack(root, [tmp_path / "a.sqlite"], tmp_path / "archive")
     assert result.state == "reproduced"
+    # A condition's prompt is put back at its recorded path too.
+    manifest["prompts"]["conditions/old/question.md"] = archive._digest(
+        (neutral.parents[1] / "conditions" / "audit" / "question-1.md").read_bytes()
+    )
+    (run / "manifest.json").write_text(json.dumps(manifest))
+    read = Path(archive.load_run_config(run).prompts_dir)
+    assert (read / "conditions" / "old" / "question.md").exists()
 
 
 def test_cache_archive_replays_an_edited_prompt_at_the_version_the_run_read(
