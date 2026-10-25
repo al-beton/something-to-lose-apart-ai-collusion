@@ -1,4 +1,4 @@
-# Implements: ci/checks-on-every-pr, ci/one-gate, ci/report-comment, ci/ci-runs-everything, ci/end-to-end, ci/ci-minutes
+# Implements: ci/checks-on-every-pr, ci/one-gate, ci/report-comment, ci/ci-runs-everything, ci/end-to-end, ci/ci-minutes, ci/results-digest, ci/numbers-checked, ci/no-model-calls
 name: blocking-checks
 
 # The one status to require before merging. Every check is a step of this one
@@ -9,6 +9,9 @@ on:
     # edited: re-check the title and description (pr-gate) when they change.
     # No branch filter, so stacked pull requests are checked too.
     types: [opened, edited, synchronize, reopened, ready_for_review]
+  # On main, the same checks, then the "Results digest" issue is updated.
+  push:
+    branches: [main]
   workflow_dispatch:
 
 # A newer run for the same pull request cancels the one in progress. Every
@@ -26,13 +29,17 @@ jobs:
     # Drafts wait: marking a pull request ready runs the checks.
     if: github.event_name != 'pull_request' || !github.event.pull_request.draft
     runs-on: ubuntu-latest
+    # The GitHub token is the only secret: CI never calls a model, so it
+    # holds no API key (contributing/spec/ci.md).
     permissions:
       contents: read
       pull-requests: write
+      issues: write
     steps:
       - uses: actions/checkout@v4
         with:
           persist-credentials: false
+          fetch-depth: 0  # the base branch too, to see what a pull request changed
       # Title and closing block (contributing/spec/pull-requests.md).
       - name: pr-gate
         run: python3 .github/scripts/pr_gate.py
@@ -53,8 +60,28 @@ jobs:
         with:
           name: report
           path: runs/pr/report.html
-      - run: python3 .github/scripts/report_comment.py runs/pr/first-screen.md
+      # The registered experiments a pull request touches, from committed
+      # runs only (no model is called): their numbers checked against the
+      # notes, which fails the gate on a mismatch, and their results added
+      # to the comment. Nothing touched, nothing runs long or is added.
+      - if: github.event_name == 'pull_request'
+        run: uv run lab digest --changed-only --since origin/${{ github.base_ref }} --check
+      - if: github.event_name == 'pull_request'
+        run: >-
+          uv run lab digest --changed-only --since origin/${{ github.base_ref }}
+          > runs/pr/digest.md
+      - run: >-
+          python3 .github/scripts/report_comment.py runs/pr/first-screen.md
+          ${{ github.event_name == 'pull_request' && 'runs/pr/digest.md' || '' }}
         continue-on-error: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           REPORT_URL: ${{ steps.upload.outputs.artifact-url }}
+      # On main: every registered experiment, in the one "Results digest" issue.
+      - if: github.event_name == 'push'
+        run: uv run lab digest > runs/digest.md
+      - if: github.event_name == 'push'
+        run: python3 .github/scripts/digest_issue.py runs/digest.md
+        continue-on-error: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

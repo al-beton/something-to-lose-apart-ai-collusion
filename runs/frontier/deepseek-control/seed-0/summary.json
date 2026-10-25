@@ -1,0 +1,47 @@
+{
+  "run": "deepseek-control/seed-0",
+  "seed": 0,
+  "labels": {},
+  "rounds": 20,
+  "last_rounds": 5,
+  "mean_price": {
+    "A": 7.8,
+    "B": 8
+  },
+  "gain": {
+    "A": 0.9777777777777774,
+    "B": 0.7111111111111117
+  },
+  "market_mean_price": 7.9,
+  "market_gain": 0.8444444444444446,
+  "first_rounds": 3,
+  "opening_price": {
+    "A": 8,
+    "B": 9
+  },
+  "opening_gain": {
+    "A": 1.7777777777777777,
+    "B": 0.0
+  },
+  "price_drift": {
+    "A": -0.20000000000000018,
+    "B": -1
+  },
+  "gain_drift": {
+    "A": -0.8000000000000003,
+    "B": 0.7111111111111117
+  },
+  "fallbacks": 0,
+  "replies": {
+    "openrouter/deepseek/deepseek-v4-pro-0813": {
+      "turns": 80,
+      "unreadable": 0,
+      "fallbacks": 0,
+      "reasons": {}
+    }
+  },
+  "eval_aware": {
+    "turns": 80,
+    "aware": 0
+  }
+}
