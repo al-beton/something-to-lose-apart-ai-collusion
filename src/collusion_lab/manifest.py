@@ -33,7 +33,7 @@ def build(config, prompt_names, calls, started, finished):
         "prompts": {
             name: _hash(Path(config.prompts_dir, name)) for name in prompt_names
         },
-        "code": _code(),
+        "code": code(),
         "packages": _packages(),
         "models": {agent: sorted(v) for agent, v in sorted(models.items())},
         "calls": len(paid),
@@ -80,7 +80,7 @@ def _hash(path):
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
-def _code():
+def code():
     """The lab's own commit: git is asked about this package's folder, not the
     working directory, which may be another repository holding the configs.
     An installed copy outside a checkout reports None."""
