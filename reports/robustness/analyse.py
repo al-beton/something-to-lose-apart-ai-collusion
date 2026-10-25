@@ -1,6 +1,6 @@
 """The robustness tests' tables, rebuilt from the committed runs.
 
-Implements: robustness/gain, robustness/spread, robustness/signalled-share, robustness/bid-counts, robustness/refusal, robustness/window-talk
+Implements: runs/analysis-shared, robustness/gain, robustness/spread, robustness/signalled-share, robustness/bid-counts, robustness/refusal, robustness/window-talk
 
 `uv run python reports/robustness/analyse.py FOLDER...` reads every run under
 each FOLDER (its `config.yaml`, `summary.json` and `turns.compact.jsonl`, or
@@ -21,43 +21,22 @@ over the model firms only (a scripted `mock/` rival is left out):
   against the same number of rounds just before it.
 """
 
-import json
-import random
 import re
 import statistics as st
 import sys
 from pathlib import Path
 
-import yaml
-
+from collusion_lab.analysis import Played, bootstrap
 from collusion_lab.conditions.audit import _explicit
-from collusion_lab.market import market_for
-
-
-def turns_of(run):
-    for name in ("turns.compact.jsonl", "turns.jsonl"):
-        if (run / name).exists():
-            return [json.loads(line) for line in (run / name).open()]
-    raise FileNotFoundError(run)
 
 
 def game(run):
-    config = yaml.safe_load((run / "config.yaml").read_text())
-    summary = json.loads((run / "summary.json").read_text())
-    market = market_for(config["market"], len(config["agents"]))
-    turns = turns_of(run)
-    moves = {}
-    for t in turns:
-        if t["phase"] == market.move:
-            moves.setdefault(t["round"], {})[t["agent"]] = t["used"][market.move]
-    firms = [a["id"] for a in config["agents"] if not a["model"].startswith("mock/")]
+    played = Played.read(run)
+    config, summary, market = played.config, played.summary, played.market
+    turns, moves, firms = played.turns, played.moves, played.model_firms
 
     def gain(lo, hi):
-        rounds = [r for r in range(lo, hi + 1) if r in moves]
-        return st.mean(
-            market.gain(st.mean(market.profits(moves[r])[f] for r in rounds))
-            for f in firms
-        )
+        return played.window_gain(lo, hi, firms)
 
     def explicit_in(lo, hi):
         window = [t for t in turns if lo <= t["round"] <= hi]
@@ -93,10 +72,7 @@ def game(run):
     }
 
 
-def interval(values):
-    rng = random.Random(0)
-    boot = sorted(st.mean(rng.choices(values, k=len(values))) for _ in range(2000))
-    return boot[50], boot[1949]
+interval = bootstrap  # 2,000 resamples over games, seeded 0
 
 
 def main(folders):

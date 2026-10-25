@@ -82,7 +82,7 @@ def test_memo_carried_to_the_next_round_and_never_to_rivals(
     assert "memo" not in move[0]["used"]  # never part of the move
 
 
-def test_memo_cut_to_its_length_and_missing_one_refused(
+def test_memo_cut_to_its_length_and_missing_one_logged(
     make_config, tmp_path, monkeypatch, fake_model
 ):
     playing(monkeypatch, fake_model)
@@ -93,7 +93,7 @@ def test_memo_cut_to_its_length_and_missing_one_refused(
     shutil.rmtree(tmp_path / "runs")
     run_dir = memo_run(make_config, tmp_path)
     move = [t for t in turns(run_dir) if t["agent"] == "A" and t["phase"] == "price"]
-    assert move[0]["memo"] is None and move[0]["memo_error"] == "refused"
+    assert move[0]["memo"] is None and move[0]["memo_error"] == "missing"
     assert move[0]["used"] == {"price": 9}  # the move still counts
     assert "Your notes from last round" not in told(move[1])
 

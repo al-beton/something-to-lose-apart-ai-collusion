@@ -1,4 +1,4 @@
-# Implements: reproducibility/cache-archive, backends/reasoning-in-estimate, reproducibility/provenance-log, backends/spend-cap, runs/stops-cleanly, runs/one-config, runs/overrides, backends/keys-from-environment, backends/spend-asks-first, reproducibility/cache-modes, runs/summary-table, runs/fallback-rates, reports/one-page, runs/failures-dont-stop-sweeps, runs/resume, runs/missing-runs-shown, runs/live-progress, runs/status-command, backends/self-hosted, runs/explore, backends/model-aliases, reports/many-folders, reports/written-summary, reports/picked-highlights, runs/debrief, reports/free-time-gallery, runs/spread
+# Implements: runs/analyse, backends/reasoning-in-estimate, reproducibility/provenance-log, backends/spend-cap, runs/stops-cleanly, runs/one-config, runs/overrides, backends/keys-from-environment, backends/spend-asks-first, reproducibility/cache-modes, runs/summary-table, runs/fallback-rates, reports/one-page, runs/failures-dont-stop-sweeps, runs/resume, runs/missing-runs-shown, runs/live-progress, runs/status-command, backends/self-hosted, runs/explore, backends/model-aliases, reports/many-folders, reports/written-summary, reports/picked-highlights, runs/debrief, reports/free-time-gallery, runs/spread, reproducibility/cache-archive
 """The `lab` command.
 
 - `lab run CONFIG [--set path=value ...] [--out DIR] [-y]` plays a config,
@@ -18,6 +18,9 @@
   combination of named lever settings and models (explore.py), asking before
   spending as `lab run` does, then prints the price premium by setting and
   model and saves a chart of it next to the runs;
+- `lab analyse FOLDER [--by PATH] [--rounds A-B] [--against CELL] [--json]`
+  prints every measure per cell (analysis.py), with exact tests against one
+  cell if asked;
 - `lab debrief FOLDER [-y] [--max-cost DOLLARS]` asks each model firm in
   every finished game under the folder what it did and why (debrief.py),
   saying first what that will cost, and saves the replies beside each run;
@@ -42,12 +45,13 @@ when the estimate is over it, and stops the run once actual spend passes it.
 
 import argparse
 import dataclasses
+import json
 import sys
 from pathlib import Path
 
 from dotenv import load_dotenv
 
-from collusion_lab import archive, explore, provenance
+from collusion_lab import analysis, archive, explore, provenance
 from collusion_lab import debrief as debriefs
 from collusion_lab import status as run_status
 from collusion_lab.cache import DEFAULT_PATH, MODES, Cache
@@ -101,7 +105,7 @@ def main(argv=None):
     status = commands.add_parser("status", help="where every run in a folder stands")
     status.add_argument("folder")
     _report_parser(commands)
-    for add in (_explore_parser, _debrief_parser, _archive_parser):
+    for add in (_explore_parser, _debrief_parser, _analyse_parser, _archive_parser):
         add(commands)
     args = parser.parse_args(argv)
     if args.command == "explore":
@@ -112,6 +116,7 @@ def main(argv=None):
         "status": lambda: _status(args.folder),
         "report": lambda: _report(args),
         "debrief": lambda: _debrief(args, argv),
+        "analyse": lambda: _analyse(args),
         "archive": lambda: _archive(args),
     }
     if args.command in reads:
@@ -312,6 +317,34 @@ def _archive(args):
         + ", ".join(f"{n} {state}" for state, n in count.items())
         + f"; {replies} replies read, archived at {args.out}."
     )
+    return 0
+
+
+def _analyse_parser(commands):
+    analyse_ = commands.add_parser("analyse", help="every measure, per cell")
+    analyse_.add_argument("folder")
+    analyse_.add_argument(
+        "--by", action="append", metavar="PATH", help="group by a config value"
+    )
+    analyse_.add_argument(
+        "--rounds", metavar="A-B", help="the window (default: the last rounds)"
+    )
+    analyse_.add_argument(
+        "--against", metavar="CELL", help="exact tests of each cell against this"
+    )
+    analyse_.add_argument("--json", action="store_true", help="print JSON rows")
+
+
+def _analyse(args):
+    rows = analysis.analyse(args.folder, args.by, args.rounds)
+    if args.against:
+        try:
+            analysis.exact_tests(rows, args.against)
+        except ValueError as error:
+            print(f"lab: {error}", file=sys.stderr)
+            return 1
+    rows = analysis.printable(rows)
+    print(json.dumps(rows, indent=2) if args.json else format_table(rows))
     return 0
 
 

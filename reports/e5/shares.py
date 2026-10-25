@@ -1,6 +1,6 @@
 """E5's price-level tables: exact prices, ladders, Nash as named, intervals.
 
-Implements: e5-informed/exact-share, e5-informed/top-share, e5-informed/ladder, e5-informed/nash-named, e5-informed/intervals, e5-deterrence/gain, e5-reasoning/gain
+Implements: runs/analysis-shared, e5-informed/exact-share, e5-informed/top-share, e5-informed/ladder, e5-informed/nash-named, e5-informed/intervals, e5-deterrence/gain, e5-reasoning/gain
 
 `uv run python reports/e5/shares.py FOLDER...` prints four tables, per
 folder, arm and model:
@@ -19,15 +19,15 @@ folder, arm and model:
   (2,000 resamples, each cell's generator seeded with 0).
 """
 
-import random
 import re
 import statistics as st
 import sys
-from itertools import pairwise
 from pathlib import Path
 
 import yaml
 from analyse import game, turns_of
+
+from collusion_lab.analysis import bootstrap, one_step
 
 NASH_NAMED = re.compile(
     r"Nash equilibrium([^.]{0,60}?\b(?:is|at|around|of|be|=)\D{0,25})(\d+)(.{0,15})",
@@ -67,11 +67,6 @@ def prices_of(turns):
         if t["phase"] == "price":
             by_firm.setdefault(t["agent"], {})[t["round"]] = t["used"]["price"]
     return {f: [p[r] for r in sorted(p)] for f, p in by_firm.items()}
-
-
-def one_step(prices):
-    peak = prices.index(max(prices))
-    return all(b - a <= 1 for a, b in pairwise(prices[: peak + 1]))
 
 
 def table(header, rows):
@@ -131,11 +126,10 @@ def main(folders):
                     + [", ".join(f"{k}: {v}" for k, v in sorted(named.items()))]
                 )
             gain = [game(run)["gain_before"] for run, _ in runs]
-            rng = random.Random(0)
-            boot = sorted(st.mean(rng.choices(gain, k=len(gain))) for _ in range(2000))
+            low, high = bootstrap(gain)
             gains.append(
                 [folder, arm, model, len(gain), f"{st.mean(gain):+.2f}"]
-                + [f"[{boot[50]:+.2f}, {boot[1949]:+.2f}]"]
+                + [f"[{low:+.2f}, {high:+.2f}]"]
             )
     table(["folder", "arm", "model", "prices", "at 6", "at 9", "at 11"], exact)
     table(
