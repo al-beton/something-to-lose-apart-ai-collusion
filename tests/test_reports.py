@@ -10,10 +10,10 @@ import pytest
 
 from collusion_lab import backends, cli
 from collusion_lab.config import load_config
-from collusion_lab.market import Bertrand
+from collusion_lab.market import Bertrand, named_prices
 from collusion_lab.report import build_report, load_games
 from collusion_lab.report.chart import price_ticks
-from collusion_lab.report.highlights import find_highlights, named_prices
+from collusion_lab.report.highlights import find_highlights
 from collusion_lab.report.markdown import first_screen_markdown
 from collusion_lab.runner import run_config
 from collusion_lab.summary import cell, format_table, summarize
