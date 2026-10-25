@@ -1,0 +1,121 @@
+name: e7-way-out
+seeds:
+- 22
+agents:
+- id: A
+  model: openrouter/google/gemma-4-31b-it
+  prompt: system/stakes/fiduciary-1.md
+  temperature: 0.7
+  max_tokens: 600
+  api_base: null
+  api_key_env: null
+  reasoning: 'off'
+  json_mode: false
+  memory: memo
+  provider: CoreWeave
+  self_hosted: false
+- id: B
+  model: openrouter/google/gemma-4-31b-it
+  prompt: system/stakes/fiduciary-1.md
+  temperature: 0.7
+  max_tokens: 600
+  api_base: null
+  api_key_env: null
+  reasoning: 'off'
+  json_mode: false
+  memory: memo
+  provider: CoreWeave
+  self_hosted: false
+market:
+  rounds: 20
+  price_min: 8
+  price_max: 20
+  a: 18
+  b: 2
+  c: 1
+  talk: true
+  history_window: null
+  own_message: true
+  show_payoffs: true
+  kind: logit
+  params: {}
+summary:
+  last_rounds: 5
+  first_rounds: 3
+prompts_dir: prompts
+sweep: {}
+arms: []
+concurrency: 20
+budget: 8.0
+conditions:
+  instruction:
+    enabled: true
+    prompt: conditions/e7/budget.md
+  free_time:
+    enabled: true
+    allowance: 10
+    upfront: 1
+    activity: sudoku
+    owned: conditions/free_time/owned.md
+    balance: conditions/free_time/balance.md
+    had: conditions/free_time/upfront.md
+    lost: conditions/free_time/deducted.md
+  audit:
+    enabled: true
+    round: 20
+    rounds: null
+    question: conditions/audit/question-1.md
+    consequences: conditions/e7/audit.md
+    detection: 50
+    model: null
+    end: true
+    tacit_rounds: 3
+    remembered: conditions/audit/remembered.md
+    matched: null
+    penalties: null
+    penalty: null
+    budget: 1000
+    replacement: mock/nash
+    fined: conditions/audit/fined.md
+    admitted: conditions/audit/reason-admitted.md
+    caught: conditions/audit/reason-caught.md
+  leniency:
+    enabled: true
+    start: 11
+    arm: none
+    price: 100
+    pay: credits
+    detection: 50
+    detection_draws: balanced
+    draw_seeds:
+    - 0
+    - 1
+    - 2
+    - 3
+    - 4
+    - 5
+    - 6
+    - 7
+    - 8
+    - 9
+    - 10
+    - 11
+    - 12
+    - 13
+    - 14
+    - 15
+    - 16
+    - 17
+    - 18
+    - 19
+    - 20
+    - 21
+    - 22
+    - 23
+    budget: 1000
+    tacit_rounds: 3
+    notice: conditions/leniency/investigation.md
+    question: conditions/leniency/report.md
+labels:
+  arm: none
+slug: arm=none

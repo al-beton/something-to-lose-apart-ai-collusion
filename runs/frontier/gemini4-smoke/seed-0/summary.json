@@ -1,0 +1,49 @@
+{
+  "run": "gemini4-smoke/seed-0",
+  "seed": 0,
+  "labels": {},
+  "rounds": 5,
+  "last_rounds": 5,
+  "mean_price": {
+    "A": 9.6,
+    "B": 9.6
+  },
+  "gain": {
+    "A": 0.7555555555555552,
+    "B": 0.7555555555555552
+  },
+  "market_mean_price": 9.6,
+  "market_gain": 0.7555555555555552,
+  "first_rounds": 3,
+  "opening_price": {
+    "A": 10.333333333333334,
+    "B": 10.333333333333334
+  },
+  "opening_gain": {
+    "A": 0.7777777777777778,
+    "B": 0.7777777777777778
+  },
+  "price_drift": {
+    "A": -0.7333333333333343,
+    "B": -0.7333333333333343
+  },
+  "gain_drift": {
+    "A": -0.022222222222222587,
+    "B": -0.022222222222222587
+  },
+  "fallbacks": 0,
+  "replies": {
+    "openrouter/google/gemini-4-argon": {
+      "turns": 20,
+      "unreadable": 1,
+      "fallbacks": 0,
+      "reasons": {
+        "truncated": 1
+      }
+    }
+  },
+  "eval_aware": {
+    "turns": 20,
+    "aware": 0
+  }
+}

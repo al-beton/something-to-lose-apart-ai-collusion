@@ -1,4 +1,4 @@
-# Implements: market/moves, runs/turn-slots, backends/spend-asks-first, backends/spend-cap, backends/reasoning-in-estimate, conditions/hook-points, conditions/free-time, backends/self-hosted
+# Implements: conditions/free-time-reasoning, agents/memo, market/moves, runs/turn-slots, backends/spend-asks-first, backends/spend-cap, backends/reasoning-in-estimate, conditions/hook-points, conditions/free-time, backends/self-hosted
 """What a config will cost before it runs.
 
 Prompts grow as the game goes on (the history is resent every turn, up to
@@ -12,7 +12,9 @@ its model, reasoning setting and phase (`Cache.observed`), once it has seen
 `MIN_SEEN` of them, and otherwise at a typical reply: `VISIBLE_TOKENS` (or
 its `max_tokens`, if lower) plus, with reasoning on, `REASONING_ALLOWANCE`
 for its level. Reasoning is added on top because providers don't always
-count it against `max_tokens`. `basis` counts the calls each covered. Retries are left out;
+count it against `max_tokens`. `basis` counts the calls each covered. An agent with memory is shown a
+full-length memo (or a typical scratchpad a round) from round 2, and each
+move reply writes a full-length memo. Retries are left out;
 `lab run` says how many calls they could add.
 """
 
@@ -21,6 +23,7 @@ from dataclasses import dataclass
 
 from collusion_lab.backends import is_mock
 from collusion_lab.config import expand
+from collusion_lab.market import SCENARIOS
 from collusion_lab.runner import Game, steps
 
 CHARS_PER_TOKEN = 4
@@ -65,6 +68,8 @@ def estimate(config, price_for, observed=None):
             allowance = REASONING_ALLOWANCE.get(agent.reasoning, 0)
             typical = min(VISIBLE_TOKENS, bound) + allowance
             reply = mean if seen >= MIN_SEEN else typical
+            if agent.memory == "memo" and phase == SCENARIOS[child.market.kind].move:
+                reply += agent.memory_chars / CHARS_PER_TOKEN  # a memo in full
             basis["observed" if seen >= MIN_SEEN else "typical"] += turns * seeds
             calls += turns * seeds
             prompt += tokens * seeds
@@ -83,6 +88,22 @@ def estimate(config, price_for, observed=None):
     return Estimate(calls, prompt, round(completion), cost, unpriced, hosted, basis)
 
 
+def _remembered(agents, number, move):
+    """Stand-in turns for agents with memory, so later prompts carry what
+    they'd be shown: a memo of its full length, or a typical scratchpad."""
+    return [
+        {
+            "agent": a.id,
+            "round": number,
+            "phase": move,
+            "memo": "x" * a.memory_chars,
+            "parsed": {"scratchpad": TYPICAL_MESSAGE},
+        }
+        for a in agents
+        if a.memory != "off"
+    ]
+
+
 def _paid_turns(config):
     """((agent, phase, max_tokens), prompt characters, turns) for each paid
     agent and phase over one game, max_tokens being that phase's limit: its
@@ -99,6 +120,10 @@ def _paid_turns(config):
         notices = game._notices(phase, number) if number else []
         messages = game._messages(phase, number, agent, shown, notices, step.added)
         answering = dataclasses.replace(agent, model=model)
+        if step.added and step.added[1].reasoning:  # free time's own level
+            answering = dataclasses.replace(
+                answering, reasoning=step.added[1].reasoning
+            )
         limit = (step.added and step.added[1].max_tokens) or agent.max_tokens
         slot = (agent.id, model, phase, limit)
         _, chars, turns = counts.get(slot, ((answering, phase, limit), 0, 0))
@@ -124,5 +149,6 @@ def _paid_turns(config):
                     "profits": m.profits(prices),
                 }
             )
+            game.turns += _remembered(config.agents, step.round, m.move)
             said = {}
     return list(counts.values())

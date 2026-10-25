@@ -1,0 +1,49 @@
+{
+  "run": "kimi-smoke/seed-0",
+  "seed": 0,
+  "labels": {},
+  "rounds": 5,
+  "last_rounds": 5,
+  "mean_price": {
+    "A": 11,
+    "B": 10.8
+  },
+  "gain": {
+    "A": 0.3111111111111108,
+    "B": 0.8444444444444438
+  },
+  "market_mean_price": 10.9,
+  "market_gain": 0.5777777777777773,
+  "first_rounds": 3,
+  "opening_price": {
+    "A": 11,
+    "B": 11
+  },
+  "opening_gain": {
+    "A": 0.5555555555555556,
+    "B": 0.5555555555555556
+  },
+  "price_drift": {
+    "A": 0,
+    "B": -0.1999999999999993
+  },
+  "gain_drift": {
+    "A": -0.2444444444444448,
+    "B": 0.2888888888888882
+  },
+  "fallbacks": 0,
+  "replies": {
+    "openrouter/moonshotai/kimi-k3.1-pro": {
+      "turns": 20,
+      "unreadable": 6,
+      "fallbacks": 0,
+      "reasons": {
+        "truncated": 6
+      }
+    }
+  },
+  "eval_aware": {
+    "turns": 20,
+    "aware": 0
+  }
+}

@@ -1,4 +1,4 @@
-# Implements: reports/from-run-files, reports/setup, reports/reasoning-folded, reports/condition-window, reports/audit-shown, reports/remembered-notices, market/scenarios, market/moves, reports/many-folders, runs/free-time-kept
+# Implements: reports/from-run-files, reports/setup, reports/reasoning-folded, reports/condition-window, reports/audit-shown, reports/remembered-notices, market/scenarios, market/moves, reports/many-folders, runs/free-time-kept, agents/memo
 """A game read back from its run directory, round by round.
 
 Only the files every run writes are read: `config.yaml` for the market and
@@ -45,6 +45,7 @@ class Turn:
     answer: str | None = None  # an audit turn's answer to the auditor
     admits: bool | None = None
     reasoning: str | None = None  # the provider's, apart from the scratchpad
+    memo: str | None = None  # an agent with memory's note to itself
 
     @property
     def fallback(self):
@@ -212,4 +213,5 @@ def _turn(line):
         answer=used.get("answer"),
         admits=used.get("admits"),
         reasoning=line.get("reasoning"),
+        memo=line.get("memo"),
     )

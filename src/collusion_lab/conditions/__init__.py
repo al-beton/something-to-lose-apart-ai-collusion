@@ -1,4 +1,4 @@
-# Implements: conditions/audit-full-history, conditions/hook-points, conditions/outage-once-remembered, conditions/adding-a-condition, conditions/switchable, conditions/audit-remembered, conditions/free-time, conditions/audit-balanced-draws, conditions/free-time-pays-last
+# Implements: conditions/free-time-reasoning, conditions/audit-full-history, conditions/hook-points, conditions/outage-once-remembered, conditions/adding-a-condition, conditions/switchable, conditions/audit-remembered, conditions/free-time, conditions/audit-balanced-draws, conditions/free-time-pays-last, conditions/leniency, conditions/offer, conditions/restart
 """Scenario conditions: named, switchable changes to what agents are told.
 
 A config's `conditions:` block maps a condition's name to its settings, for
@@ -19,7 +19,7 @@ points, in config order:
 - `after_round(record)`: sees the round just played (prices, profits, what
   was said); its return is ignored;
 - `phase_after(number)`: a `Phase` the condition adds after that round
-  (number 0: before round 1), or None; each agent then gets one turn, or
+  (number 0: before round 1), a list of them played in order, or None; each agent then gets one turn, or
   `Phase.sessions[agent]` turns, whose user message is
   `phase_prompt(number, render, values)`, where `values` are that agent's
   usual prompt values (`$history` and so on) plus `agent` (its id) and
@@ -37,7 +37,9 @@ The notice hooks return the text to show, or None. `render(name, values)` fills 
 file from `prompts/` with the condition's own values. `active(number)` says
 whether the condition is in force that round, for the turn log.
 `keeps_notice()` says whether a round-start notice it gave stays in agents'
-history for every later turn while it is active.
+history for every later turn while it is active. `replay_seed()` is a seed
+the game asks every turn with, but those of phases marked `resampled`, in
+place of its own (a recorded game replayed, as `restart` does), or None.
 
 To add a condition: write a module here with a frozen dataclass subclassing
 `Condition` (its fields are its settings, each with a default), give it a
@@ -67,6 +69,9 @@ class Phase:
     sessions: dict | None = None  # agent -> turns it gets; None: one each
     session: int = 1  # set by the game: which of those turns
     max_tokens: int | None = None  # in place of the agent's own limit
+    memory: bool = False  # show the agent's memory, as on its next move turn
+    resampled: bool = False  # asked with the game's own seed (replay_seed)
+    reasoning: str | None = None  # in place of the agent's own reasoning level
 
     def plays(self, agent):
         """Whether `agent` takes a turn in this session of the phase."""
@@ -92,6 +97,9 @@ class Condition:
 
     def replaced(self):
         return {}
+
+    def replay_seed(self):
+        return None
 
     def pinned(self, config):
         """This condition as one game of `config` writes it in its own config:
@@ -137,4 +145,12 @@ class Condition:
 
 
 # Every condition registers itself on import.
-from collusion_lab.conditions import audit, free_time, instruction, outage  # noqa: F401
+from collusion_lab.conditions import (  # noqa: F401
+    audit,
+    free_time,
+    instruction,
+    leniency,
+    offer,
+    outage,
+    restart,
+)
