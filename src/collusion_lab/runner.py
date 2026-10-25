@@ -1,4 +1,4 @@
-# Implements: agents/no-scratchpad, agents/refused, market/show-payoffs, market/bid-ground-truth, market/price-board, runs/turn-slots, market/scenarios, market/moves, market/prompt-overlay, conditions/audit-full-history, runs/sweeps, runs/parallel, market/talk-then-price, agents/json-replies, agents/retry-once, backends/usage-logged, backends/spend-asks-first, backends/shared-rate-limit, backends/spend-cap, market/history-window, runs/stops-cleanly, reproducibility/response-cache, reproducibility/manifest, runs/run-directory, logs/turn-log, logs/same-seed-same-log, logs/run-summary, logs/reasoning-logged, backends/reasoning-setting, agents/unreadable-explained, agents/json-mode, runs/fallback-rates, runs/failures-dont-stop-sweeps, runs/resume, conditions/hook-points, conditions/off-is-absent, conditions/conditions-logged, conditions/outage-once-remembered, runs/per-firm-summary, conditions/fork-at-audit, conditions/audit-logged, runs/drift, conditions/audit-remembered, conditions/audit-stakes-arms, runs/live-progress, runs/status-file, runs/eval-awareness, conditions/free-time, conditions/audit-consequences, conditions/audit-balanced-draws, conditions/free-time-pays-last, runs/debrief
+# Implements: backends/serving-provider-logged, backends/pinned-route, agents/no-scratchpad, agents/refused, market/show-payoffs, market/bid-ground-truth, market/price-board, runs/turn-slots, market/scenarios, market/moves, market/prompt-overlay, conditions/audit-full-history, runs/sweeps, runs/parallel, market/talk-then-price, agents/json-replies, agents/retry-once, backends/usage-logged, backends/spend-asks-first, backends/shared-rate-limit, backends/spend-cap, market/history-window, runs/stops-cleanly, reproducibility/response-cache, reproducibility/manifest, runs/run-directory, logs/turn-log, logs/same-seed-same-log, logs/run-summary, logs/reasoning-logged, backends/reasoning-setting, agents/unreadable-explained, agents/json-mode, runs/fallback-rates, runs/failures-dont-stop-sweeps, runs/resume, conditions/hook-points, conditions/off-is-absent, conditions/conditions-logged, conditions/outage-once-remembered, runs/per-firm-summary, conditions/fork-at-audit, conditions/audit-logged, runs/drift, conditions/audit-remembered, conditions/audit-stakes-arms, runs/live-progress, runs/status-file, runs/eval-awareness, conditions/free-time, conditions/audit-consequences, conditions/audit-balanced-draws, conditions/free-time-pays-last, runs/debrief
 """Playing a config: one game per seed, each written to its own run directory.
 
 A round is a talk phase (each agent sends one message its rivals read; skipped
@@ -374,6 +374,7 @@ def _backend(agent, rng, cache, shared):
         json_mode=agent.json_mode,
         api_key_env=agent.api_key_env,
         self_hosted=agent.self_hosted,
+        provider=agent.provider,
     )
     if cache is None or is_mock(agent.model):
         return backend
@@ -625,6 +626,8 @@ class Game:
                 "usage": reply.usage,
                 "model_version": reply.model_version,
                 "retries": reply.retries,
+                "provider": reply.provider,
+                "fingerprint": reply.fingerprint,
             }
         )
         m = self.market

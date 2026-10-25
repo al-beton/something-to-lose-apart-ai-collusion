@@ -1,4 +1,4 @@
-# Implements: reproducibility/cache-archive, backends/spend-cap, runs/stops-cleanly, runs/one-config, runs/overrides, backends/keys-from-environment, backends/spend-asks-first, reproducibility/cache-modes, runs/summary-table, runs/fallback-rates, reports/one-page, runs/failures-dont-stop-sweeps, runs/resume, runs/missing-runs-shown, runs/live-progress, runs/status-command, backends/self-hosted, runs/explore, backends/model-aliases, reports/many-folders, reports/written-summary, reports/picked-highlights, runs/debrief
+# Implements: reproducibility/cache-archive, reproducibility/provenance-log, backends/spend-cap, runs/stops-cleanly, runs/one-config, runs/overrides, backends/keys-from-environment, backends/spend-asks-first, reproducibility/cache-modes, runs/summary-table, runs/fallback-rates, reports/one-page, runs/failures-dont-stop-sweeps, runs/resume, runs/missing-runs-shown, runs/live-progress, runs/status-command, backends/self-hosted, runs/explore, backends/model-aliases, reports/many-folders, reports/written-summary, reports/picked-highlights, runs/debrief, reports/free-time-gallery
 """The `lab` command.
 
 - `lab run CONFIG [--set path=value ...] [--out DIR] [-y]` plays a config,
@@ -12,7 +12,8 @@
   where; `--summary FILE` or `--ai-summary` puts a summary on top, and
   `--highlights FILE` or `--ai-highlights` adds picked highlights, each
   labelled with who wrote it (a cheap model, `--ai-model`, for the `--ai-`
-  ones, its replies cached);
+  ones, its replies cached); `--free-time` writes the free-time gallery
+  instead (`FOLDER/free-time.html`);
 - `lab explore --lever NAME=A,B ... --models A,B [--seeds N]` plays every
   combination of named lever settings and models (explore.py), asking before
   spending as `lab run` does, then prints the price premium by setting and
@@ -46,14 +47,14 @@ from pathlib import Path
 
 from dotenv import load_dotenv
 
-from collusion_lab import archive, explore
+from collusion_lab import archive, explore, provenance
 from collusion_lab import debrief as debriefs
 from collusion_lab import status as run_status
 from collusion_lab.cache import DEFAULT_PATH, MODES, Cache
 from collusion_lab.config import MODELS, ConfigError, load_config
 from collusion_lab.estimate import CHARS_PER_TOKEN, estimate
 from collusion_lab.prices import price_for
-from collusion_lab.report import load_games, write_report, written
+from collusion_lab.report import free_time, load_games, write_report, written
 from collusion_lab.runner import paid_calls, run_sweep
 from collusion_lab.summary import (
     format_missing,
@@ -66,6 +67,7 @@ AI_MODEL = "openrouter/openai/gpt-4.1-mini"  # cheap, for report summaries
 
 
 def main(argv=None):
+    argv = sys.argv[1:] if argv is None else list(argv)
     parser = argparse.ArgumentParser(prog="lab")
     commands = parser.add_subparsers(dest="command", required=True)
     run = commands.add_parser("run", help="play every seed in a config")
@@ -97,44 +99,26 @@ def main(argv=None):
     )
     status = commands.add_parser("status", help="where every run in a folder stands")
     status.add_argument("folder")
-    report = commands.add_parser("report", help="one HTML page for a folder of runs")
-    report.add_argument("folders", nargs="+", metavar="FOLDER")
-    report.add_argument(
-        "--out", help="where to write it (default FOLDER/report.html, the first)"
-    )
-    said = report.add_mutually_exclusive_group()
-    said.add_argument("--summary", metavar="FILE", help="your own summary, on top")
-    said.add_argument(
-        "--ai-summary", action="store_true", help="a cheap model writes one (cached)"
-    )
-    picked = report.add_mutually_exclusive_group()
-    picked.add_argument(
-        "--highlights", metavar="FILE", help="moments you picked (YAML)"
-    )
-    picked.add_argument(
-        "--ai-highlights", action="store_true", help="a cheap model picks 5 (cached)"
-    )
-    report.add_argument(
-        "--ai-model", default=AI_MODEL, help=f"model for --ai-* (default {AI_MODEL})"
-    )
-    report.add_argument(
-        "-y", "--yes", action="store_true", help="don't ask before an --ai- call"
-    )
+    _report_parser(commands)
     for add in (_explore_parser, _debrief_parser, _archive_parser):
         add(commands)
     args = parser.parse_args(argv)
     if args.command == "explore":
         load_dotenv(Path.cwd() / ".env")
-        return _explore(args, parser)
+        return _explore(args, parser, argv)
     reads = {
         "summary": lambda: _summary(args.folder, args.by),
         "status": lambda: _status(args.folder),
         "report": lambda: _report(args),
-        "debrief": lambda: _debrief(args),
+        "debrief": lambda: _debrief(args, argv),
         "archive": lambda: _archive(args),
     }
     if args.command in reads:
         return reads[args.command]()
+    return _run(args, parser, argv)
+
+
+def _run(args, parser, argv):
     load_dotenv(Path.cwd() / ".env")
     try:
         config = load_config(args.config, args.overrides)
@@ -145,7 +129,9 @@ def main(argv=None):
     if not _spend_checked(config, args.yes):
         return 1
     cache = Cache(args.cache_path, args.cache)
+    started = provenance.now()
     outcomes = run_sweep(config, args.out, cache, progress=_progress)
+    _log("run", argv, args.out, config.budget, outcomes, started)
     count = {state: 0 for state in ("finished", "failed", "skipped")}
     for outcome in outcomes:
         count[outcome.state] += 1
@@ -187,7 +173,16 @@ def _explore_parser(commands):
     explore_.add_argument("--max-cost", type=float, metavar="DOLLARS")
 
 
-def _explore(args, parser):
+def _log(command, argv, out, cap, outcomes, started):  # noqa: PLR0913
+    """The command's line in the provenance log (see provenance.py)."""
+    played = [o.dir for o in outcomes if o.state != "skipped"]
+    runs = [o.run for o in outcomes]
+    provenance.record(
+        command, ["lab", *argv], out, cap, provenance.spent(played), runs, started
+    )
+
+
+def _explore(args, parser, argv):
     """Build the lever sweep, check its cost, play it, show the premium."""
     try:
         levers = {}
@@ -204,9 +199,11 @@ def _explore(args, parser):
         config = dataclasses.replace(config, budget=args.max_cost)
     if not _spend_checked(config, args.yes):
         return 1
+    started = provenance.now()
     outcomes = run_sweep(
         config, args.out, Cache(args.cache_path, args.cache), _progress
     )
+    _log("explore", argv, args.out, config.budget, outcomes, started)
     for outcome in outcomes:
         if outcome.state == "failed":
             print(f"lab: {outcome.error}", file=sys.stderr)
@@ -225,6 +222,11 @@ def _explore(args, parser):
 def _report(args):
     load_dotenv(Path.cwd() / ".env")
     folders = args.folders[0] if len(args.folders) == 1 else args.folders
+    if args.free_time:
+        out = Path(args.out or Path(args.folders[0]) / "free-time.html")
+        out.write_text(free_time.gallery(folders))
+        print(out)
+        return 0
     cache = Cache(DEFAULT_PATH)
     prompts = []
     if args.ai_summary:
@@ -247,6 +249,37 @@ def _report(args):
     out = args.out or Path(args.folders[0]) / "report.html"
     print(write_report(folders, out, summary=summary, highlights=highlights))
     return 0
+
+
+def _report_parser(commands):
+    report = commands.add_parser("report", help="one HTML page for a folder of runs")
+    report.add_argument("folders", nargs="+", metavar="FOLDER")
+    report.add_argument(
+        "--out", help="where to write it (default FOLDER/report.html, the first)"
+    )
+    said = report.add_mutually_exclusive_group()
+    said.add_argument("--summary", metavar="FILE", help="your own summary, on top")
+    said.add_argument(
+        "--ai-summary", action="store_true", help="a cheap model writes one (cached)"
+    )
+    picked = report.add_mutually_exclusive_group()
+    picked.add_argument(
+        "--highlights", metavar="FILE", help="moments you picked (YAML)"
+    )
+    picked.add_argument(
+        "--ai-highlights", action="store_true", help="a cheap model picks 5 (cached)"
+    )
+    report.add_argument(
+        "--ai-model", default=AI_MODEL, help=f"model for --ai-* (default {AI_MODEL})"
+    )
+    report.add_argument(
+        "-y", "--yes", action="store_true", help="don't ask before an --ai- call"
+    )
+    report.add_argument(
+        "--free-time",
+        action="store_true",
+        help="write the free-time gallery instead (FOLDER/free-time.html)",
+    )
 
 
 def _archive_parser(commands):
@@ -291,7 +324,7 @@ def _debrief_parser(commands):
     debrief_.add_argument("--cache", choices=MODES, default="use")
 
 
-def _debrief(args):
+def _debrief(args, argv):
     load_dotenv(Path.cwd() / ".env")
     calls = debriefs.planned(args.folder)
     if not calls:
@@ -308,7 +341,21 @@ def _debrief(args):
         return 1
     if not args.yes and not _spending_agreed():
         return 1
+    started = provenance.now()
     done = debriefs.debrief(args.folder, Cache(DEFAULT_PATH, args.cache), calls)
+    base = Path(args.folder).resolve()  # games' folders come back resolved
+    runs = [Path(d).resolve().relative_to(base).as_posix() for d in done]
+    # A debrief's calls aren't priced one by one: its estimate stands in.
+    provenance.record(
+        "debrief",
+        ["lab", *argv],
+        args.folder,
+        args.max_cost,
+        None,
+        runs,
+        started,
+        estimate=cost,
+    )
     rows = debriefs.rows(load_games(args.folder))
     print(format_table(rows))
     print(
