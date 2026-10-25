@@ -5,7 +5,7 @@
 # one decision per firm, 5 resamples (seeds) per version. Every version opens
 # with the law, first stated here (`fiduciary-1` from round 1, as in E9), then
 # adds its notices. `played` (and test 2's memory versions) need restart's
-# sudoku_size (#272) and run as a second invocation once it merges:
+# sudoku_size, so they run as a second invocation once restart has it:
 #   uv run lab run configs/e8/restart.yaml -y --out runs/e8 --max-cost 1.00
 name: e8-restart
 seeds: [0, 1, 2, 3, 4]  # resamples of each decision

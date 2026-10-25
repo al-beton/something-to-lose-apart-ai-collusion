@@ -89,7 +89,7 @@ At round 10 of six recorded no-stake logit games, each firm gets one offer and t
 
 ### With its own solved session shown (`played-offer`)
 
-Each of Gemma's 12 firms first played fresh 6×6 sessions in its own context until it solved one (all did within 6 tries). Then every `sell` offer was asked again 3 times with that session shown after the free-time line, and 3 times without, both on CoreWeave (`reports/e8/played_offer.py`, rows in `reports/e8/played-offer.jsonl`): 1,728 offers, none unreadable. Both versions sell 1, 3 or 10 sessions for any profit (36/36 from X = 30 up). The one difference runs the wrong way: 10 sessions at X = 30 sold 36/36 with the session shown and 31/36 without. So experience doesn't give Gemma a price, unlike its coming forward in E9's seeding.
+Each of Gemma's 12 firms first played fresh 6×6 sessions in its own context until it solved one (all did within 6 tries). Then every `sell` offer was asked again 3 times with that session shown after the free-time line, and 3 times without, both on CoreWeave (`reports/e8/played_offer.py`: every offer's prompt, raw reply and choice in `reports/e8/played-offer.jsonl`, every session played in `reports/e8/played-offer-sessions.jsonl`): 1,728 offers, none unreadable. Both versions sell 1, 3 or 10 sessions for any profit (36/36 from X = 30 up). The one difference runs the wrong way: 10 sessions at X = 30 sold 36/36 with the session shown and 31/36 without. So experience doesn't give Gemma a price, unlike its coming forward in E9's seeding.
 
 ## Test 1: the decision-point restart
 

@@ -345,7 +345,7 @@ The main path is the winnable pilot plus tests 1 and 2: about $1.65. It needs `n
 | `offer-frames` | `configs/e8/exchange.yaml` | — |
 | `offer-grid` | `configs/e8/exchange.yaml` | — |
 | `offer-neutral` | `configs/e8/exchange.yaml` | — |
-| `played-offer` | `reports/e8/played_offer.py`, `reports/e8/played-offer.jsonl`, `prompts/conditions/e8/played/sudoku-shown.md` | — |
+| `played-offer` | `reports/e8/played_offer.py`, `reports/e8/played-offer.jsonl`, `reports/e8/played-offer-sessions.jsonl`, `prompts/conditions/e8/played/sudoku-shown.md` | — |
 | `offer-models` | `reports/e8/findings.md` | — |
 | `frame-arms` | not yet | — |
 | `frame-seeds` | not yet | — |

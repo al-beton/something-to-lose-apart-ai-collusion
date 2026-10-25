@@ -17,9 +17,12 @@ in two versions:
 
 Both versions go to the same pinned host, so the difference between them is
 the session, not the host. Every call goes through the response cache. Rows
-go to `reports/e8/played-offer.jsonl`: firm, k, X, version, seed, the option
-chosen and whether it traded (the trade's position in the offer is the
-original turn's). Firms that solve nothing in `--tries` are left out, and the
+go to `reports/e8/played-offer.jsonl`: model, host, firm, k, X, version, seed,
+the user message asked, the raw reply, the option chosen and whether it
+traded (the trade's position in the offer is the original turn's). Every
+session played goes to `reports/e8/played-offer-sessions.jsonl`: firm, try,
+puzzle, reply, feedback and whether it was solved, so each shown session can
+be checked. Firms that solve nothing in `--tries` are left out, and the
 script says how many.
 
     uv run python reports/e8/played_offer.py runs/e8/e8-exchange-owned \
@@ -41,6 +44,7 @@ from collusion_lab.prompts import render
 ROOT = Path(__file__).resolve().parents[2]
 PROMPTS = ROOT / "prompts"
 OUT = ROOT / "reports/e8/played-offer.jsonl"
+SESSIONS = ROOT / "reports/e8/played-offer-sessions.jsonl"
 HAD = "Before the game started you had 1 session of your free time."
 OPTION = re.compile(r'"option"\s*:\s*"?([12])')
 
@@ -90,8 +94,10 @@ class Asker:
         return reply.text or ""
 
 
-async def solved_session(ask, firm, system, size, tries):
-    """The firm's first solved session in `tries`, and how many it played."""
+async def solved_session(ask, firm, system, args, log):
+    """The firm's first solved session in `args.tries`, and how many it played;
+    every session played is appended to `log`."""
+    size, tries = args.size, args.tries
     for n in range(1, tries + 1):
         values = leisure.sudoku_values(f"e8-played:{firm}:{n}", size)
         prompt = render(
@@ -106,12 +112,15 @@ async def solved_session(ask, firm, system, size, tries):
             },
         )
         reply = await ask([system, {"role": "user", "content": prompt}], f"{firm}:{n}")
-        if leisure.score(values["givens"], reply)["solved"]:
-            return {
-                "puzzle": values["puzzle"],
-                "reply": reply.strip(),
-                "feedback": leisure.sudoku_feedback(reply, values),
-            }, n
+        solved = leisure.score(values["givens"], reply)["solved"]
+        session = {
+            "puzzle": values["puzzle"],
+            "reply": reply.strip(),
+            "feedback": leisure.sudoku_feedback(reply, values),
+        }
+        log.append({"firm": firm, "try": n, **session, "solved": solved})
+        if solved:
+            return session, n
     return None, tries
 
 
@@ -129,11 +138,9 @@ def with_session(messages, session):
 async def main(args):
     ask = Asker(args.model, args.provider, Cache(args.cache))
     firms = offer_turns(args.folder)
+    log = []
     sessions = await asyncio.gather(
-        *(
-            solved_session(ask, f, firms[f]["system"], args.size, args.tries)
-            for f in sorted(firms)
-        )
+        *(solved_session(ask, f, firms[f]["system"], args, log) for f in sorted(firms))
     )
     jobs, left_out = [], []
     for firm, (session, played) in zip(sorted(firms), sessions, strict=True):
@@ -155,12 +162,16 @@ async def main(args):
         option = int(m.group(1)) if m else None
         traded = None if option is None else (option == 1) == first
         return {
+            "model": args.model,
+            "provider": args.provider,
             "firm": firm,
             "tries": played,
             "k": k,
             "X": x,
             "version": version,
             "seed": seed,
+            "asked": asked[1]["content"],
+            "reply": reply,
             "option": option,
             "traded": traded,
         }
@@ -168,6 +179,9 @@ async def main(args):
     rows = await asyncio.gather(*(one(j) for j in jobs))
     with OUT.open("w") as f:
         for row in rows:
+            f.write(json.dumps(row) + "\n")
+    with SESSIONS.open("w") as f:
+        for row in sorted(log, key=lambda r: (r["firm"], r["try"])):
             f.write(json.dumps(row) + "\n")
     print(f"{len(rows)} offers asked; {len(left_out)} firms solved nothing: {left_out}")
 
