@@ -125,7 +125,12 @@ def _deployed(monkeypatch, revision="test-revision"):
     modal = types.ModuleType("modal")
     modal.Image = modal.Volume = Chain()
     modal.Secret = types.SimpleNamespace(from_name=lambda name: name)
-    modal.App = lambda name: types.SimpleNamespace(server=decorator)
+
+    def app(name):
+        deployed["app"] = name
+        return types.SimpleNamespace(server=decorator)
+
+    modal.App = app
     modal.enter = modal.exit = lambda: lambda f: f
     monkeypatch.setitem(sys.modules, "modal", modal)
     ran = []
@@ -445,3 +450,48 @@ def test_modal_pinned_cached_replay_wakes_no_server(
     assert len(asked) == 1
     record = json.loads((again / "manifest.json").read_text())
     assert record["serving"] == {"A": {"skipped": "no fresh calls"}}
+
+
+def test_modal_any_model_deploys_as_its_own_app(monkeypatch):
+    server, command = _deployed(monkeypatch)
+    assert server["app"] == "collusion-lab-vllm"  # Mistral's, as before
+    monkeypatch.setenv("APP_NAME", "collusion-lab-gemma")
+    monkeypatch.setenv("MODEL", "google/gemma-4-31B-it")
+    monkeypatch.setenv("SERVED_NAME", "gemma-4-31b-it")
+    server, command = _deployed(monkeypatch)
+    assert server["app"] == "collusion-lab-gemma"
+    assert command[2] == "google/gemma-4-31B-it"
+    assert command[command.index("--served-model-name") + 1] == "gemma-4-31b-it"
+    assert "--tokenizer-mode" not in command  # Mistral's own format only
+
+
+def test_modal_any_model_spreads_over_its_gpus(monkeypatch):
+    server, command = _deployed(monkeypatch)
+    assert server["gpu"] == "H100" and "--tensor-parallel-size" not in command
+    monkeypatch.setenv("GPUS", "2")
+    server, command = _deployed(monkeypatch)
+    assert server["gpu"] == "H100:2"
+    assert command[command.index("--tensor-parallel-size") + 1] == "2"
+
+
+def test_modal_any_model_gated_token_only_from_the_secret(monkeypatch):
+    server, _ = _deployed(monkeypatch)
+    assert server["secrets"] == ["collusion-lab-vllm"]
+    monkeypatch.setenv("HF_SECRET", "huggingface")
+    server, _ = _deployed(monkeypatch)
+    assert server["secrets"] == ["collusion-lab-vllm", "huggingface"]
+    text = (ROOT / "deploy/modal_vllm.py").read_text()
+    assert "HF_TOKEN" not in text.split('"""', 2)[2]  # never read by the script
+
+
+def test_modal_any_model_gemma_alias_reads_its_address(make_config, monkeypatch):
+    monkeypatch.setenv(
+        "MODAL_GEMMA_BASE", "https://example--collusion-lab-gemma.modal.run/v1"
+    )
+    [agent, _] = make_config(overrides=["agents.0.model=modal-gemma"]).agents
+    assert agent.model == "openai/gemma-4-31b-it" and agent.self_hosted
+    assert agent.api_base == "https://example--collusion-lab-gemma.modal.run/v1"
+    assert agent.api_key_env == "MODAL_VLLM_KEY"
+    monkeypatch.delenv("MODAL_GEMMA_BASE")
+    with pytest.raises(ConfigError, match="MODAL_GEMMA_BASE"):
+        make_config(overrides=["agents.0.model=modal-gemma"])
