@@ -1,4 +1,4 @@
-# Implements: backends/spend-cap, runs/stops-cleanly, runs/one-config, runs/overrides, backends/keys-from-environment, backends/spend-asks-first, reproducibility/cache-modes, runs/summary-table, runs/fallback-rates, reports/one-page, runs/failures-dont-stop-sweeps, runs/resume, runs/missing-runs-shown, runs/live-progress, runs/status-command, backends/self-hosted, runs/explore, backends/model-aliases
+# Implements: backends/spend-cap, runs/stops-cleanly, runs/one-config, runs/overrides, backends/keys-from-environment, backends/spend-asks-first, reproducibility/cache-modes, runs/summary-table, runs/fallback-rates, reports/one-page, runs/failures-dont-stop-sweeps, runs/resume, runs/missing-runs-shown, runs/live-progress, runs/status-command, backends/self-hosted, runs/explore, backends/model-aliases, reports/many-folders, reports/written-summary, reports/picked-highlights
 """The `lab` command.
 
 - `lab run CONFIG [--set path=value ...] [--out DIR] [-y]` plays a config,
@@ -7,8 +7,12 @@
 - `lab status FOLDER` prints every planned run under a folder by state, from
   the `status.json` files `lab run` keeps up to date;
 - `lab summary FOLDER [--by PATH ...]` prints one table for a folder of runs;
-- `lab report FOLDER [--out FILE]` writes one shareable HTML page for it
-  (`FOLDER/report.html` by default) and prints where;
+- `lab report FOLDER... [--out FILE]` writes one shareable HTML page for one
+  or more folders (`FOLDER/report.html`, the first, by default) and prints
+  where; `--summary FILE` or `--ai-summary` puts a summary on top, and
+  `--highlights FILE` or `--ai-highlights` adds picked highlights, each
+  labelled with who wrote it (a cheap model, `--ai-model`, for the `--ai-`
+  ones, its replies cached);
 - `lab explore --lever NAME=A,B ... --models A,B [--seeds N]` plays every
   combination of named lever settings and models (explore.py), asking before
   spending as `lab run` does, then prints the price premium by setting and
@@ -39,9 +43,9 @@ from collusion_lab import explore
 from collusion_lab import status as run_status
 from collusion_lab.cache import DEFAULT_PATH, MODES, Cache
 from collusion_lab.config import MODELS, ConfigError, load_config
-from collusion_lab.estimate import estimate
+from collusion_lab.estimate import CHARS_PER_TOKEN, estimate
 from collusion_lab.prices import price_for
-from collusion_lab.report import write_report
+from collusion_lab.report import write_report, written
 from collusion_lab.runner import paid_calls, run_sweep
 from collusion_lab.summary import (
     format_missing,
@@ -49,6 +53,8 @@ from collusion_lab.summary import (
     format_table,
     summarize,
 )
+
+AI_MODEL = "openrouter/openai/gpt-4.1-mini"  # cheap, for report summaries
 
 
 def main(argv=None):
@@ -84,8 +90,28 @@ def main(argv=None):
     status = commands.add_parser("status", help="where every run in a folder stands")
     status.add_argument("folder")
     report = commands.add_parser("report", help="one HTML page for a folder of runs")
-    report.add_argument("folder")
-    report.add_argument("--out", help="where to write it (default FOLDER/report.html)")
+    report.add_argument("folders", nargs="+", metavar="FOLDER")
+    report.add_argument(
+        "--out", help="where to write it (default FOLDER/report.html, the first)"
+    )
+    said = report.add_mutually_exclusive_group()
+    said.add_argument("--summary", metavar="FILE", help="your own summary, on top")
+    said.add_argument(
+        "--ai-summary", action="store_true", help="a cheap model writes one (cached)"
+    )
+    picked = report.add_mutually_exclusive_group()
+    picked.add_argument(
+        "--highlights", metavar="FILE", help="moments you picked (YAML)"
+    )
+    picked.add_argument(
+        "--ai-highlights", action="store_true", help="a cheap model picks 5 (cached)"
+    )
+    report.add_argument(
+        "--ai-model", default=AI_MODEL, help=f"model for --ai-* (default {AI_MODEL})"
+    )
+    report.add_argument(
+        "-y", "--yes", action="store_true", help="don't ask before an --ai- call"
+    )
     _explore_parser(commands)
     args = parser.parse_args(argv)
     if args.command == "explore":
@@ -96,8 +122,7 @@ def main(argv=None):
     if args.command == "status":
         return _status(args.folder)
     if args.command == "report":
-        print(write_report(args.folder, args.out))
-        return 0
+        return _report(args)
     load_dotenv(Path.cwd() / ".env")
     try:
         config = load_config(args.config, args.overrides)
@@ -183,6 +208,51 @@ def _explore(args, parser):
     chart.write_text(explore.premium_chart(rows, levers))
     print(f"\nChart: {chart}\nFull report: lab report {args.out}")
     return 1 if any(o.state == "failed" for o in outcomes) else 0
+
+
+def _report(args):
+    load_dotenv(Path.cwd() / ".env")
+    folders = args.folders[0] if len(args.folders) == 1 else args.folders
+    cache = Cache(DEFAULT_PATH)
+    prompts = []
+    if args.ai_summary:
+        prompts.append(written.summary_prompt(folders))
+    if args.ai_highlights:
+        prompts.append(written.highlights_prompt(folders))
+    if prompts:
+        print(_report_spend_line(args.ai_model, prompts))
+        if not args.yes and not _spending_agreed():
+            return 1
+    summary = highlights = None
+    if args.summary:
+        summary = written.hand_summary(args.summary)
+    elif args.ai_summary:
+        summary = written.ai_summary(folders, args.ai_model, cache)
+    if args.highlights:
+        highlights = written.hand_highlights(args.highlights)
+    elif args.ai_highlights:
+        highlights = written.ai_highlights(folders, args.ai_model, cache)
+    out = args.out or Path(args.folders[0]) / "report.html"
+    print(write_report(folders, out, summary=summary, highlights=highlights))
+    return 0
+
+
+def _report_spend_line(model, prompts):
+    """Which model the report asks, how often, and the estimated cost."""
+    calls = len(prompts)
+    tokens = sum(len(p) for p in prompts) // CHARS_PER_TOKEN
+    reply = written.REPLY_TOKENS * calls
+    price = price_for(model)
+    cost = (
+        "estimated cost unknown (no price for it)"
+        if price is None
+        else f"estimated at most ${tokens * price[0] + reply * price[1]:.4f}"
+    )
+    plural = "call" if calls == 1 else "calls"
+    return (
+        f"The report asks {model} for its summary or highlights: {calls} {plural}, "
+        f"{tokens:,} prompt tokens, {cost} (nothing if already cached)."
+    )
 
 
 def _summary(folder, by):

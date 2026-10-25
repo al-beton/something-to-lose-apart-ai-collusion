@@ -1,4 +1,4 @@
-# Implements: runs/summary-table, runs/per-firm-summary, runs/fallback-rates, reports/summary, runs/missing-runs-shown, conditions/audit-metrics, runs/drift, runs/eval-awareness, runs/price-premium, market/scenarios
+# Implements: runs/summary-table, runs/per-firm-summary, runs/fallback-rates, reports/summary, runs/missing-runs-shown, conditions/audit-metrics, runs/drift, runs/eval-awareness, runs/price-premium, market/scenarios, reports/many-folders
 """One table for a folder of runs, grouped by swept values or any config value.
 
 `summarize` reads every `summary.json` under a folder (and the `manifest.json`
@@ -49,7 +49,7 @@ FIRM_COLUMNS = (
     "gain drift",
 )
 FLAG_RATE = 0.1  # flag a run when more than one turn in ten fell back
-from collusion_lab.status import unfinished
+from collusion_lab.status import base, find, roots, unfinished
 
 
 class Run(NamedTuple):
@@ -70,7 +70,7 @@ def group_runs(folder, by=None, only=None):
     leaves out every other run under the folder."""
     runs = _finished(folder)
     runs += [
-        _missing(Path(folder) / path, entry)
+        _missing(base(folder) / path, entry)
         for path, entry in unfinished(folder).items()
     ]
     if only is not None:
@@ -78,9 +78,11 @@ def group_runs(folder, by=None, only=None):
         runs = [r for r in runs if Path(r.dir).resolve() in keep]
     if by is None:
         by = list(dict.fromkeys(k for r in runs for k in r.labels))
+        if len(roots(folder)) > 1:  # the same settings in two folders stay apart
+            by = ["folder", *by]
     groups = {}
     for run in runs:
-        key = tuple(_value(run, name) for name in by)
+        key = tuple(_in_folder(run, folder, name) for name in by)
         groups.setdefault(key, []).append(run)
     return by, [(key, groups[key]) for key in sorted(groups, key=_sort_key)]
 
@@ -94,7 +96,7 @@ def summarize(folder, by=None, only=None):
 
 
 def _finished(folder):
-    return [_load(path) for path in sorted(Path(folder).rglob("summary.json"))]
+    return [_load(path) for path in find(folder, "summary.json")]
 
 
 def _add(counts, more):
@@ -352,6 +354,15 @@ def spent(folder):
     not, so a total of spend leaves nothing out."""
     _, groups = group_runs(folder)
     return [r.manifest for _, runs in groups for r in runs if "calls" in r.manifest]
+
+
+def _in_folder(run, folder, name):
+    """A run's value for `name`, where "folder" names which folder it's in."""
+    if name != "folder" or len(roots(folder)) == 1:
+        return _value(run, name)
+    where = Path(run.dir).resolve()
+    root = next(r for r in roots(folder) if where.is_relative_to(r))
+    return root.relative_to(base(folder)).as_posix()  # unique, unlike its name
 
 
 def _value(run, name):

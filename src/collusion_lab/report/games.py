@@ -1,4 +1,4 @@
-# Implements: reports/from-run-files, reports/setup, reports/reasoning-folded, reports/condition-window, reports/audit-shown, reports/remembered-notices, market/scenarios
+# Implements: reports/from-run-files, reports/setup, reports/reasoning-folded, reports/condition-window, reports/audit-shown, reports/remembered-notices, market/scenarios, reports/many-folders
 """A game read back from its run directory, round by round.
 
 Only the files every run writes are read: `config.yaml` for the market and
@@ -19,6 +19,7 @@ from pathlib import Path
 import yaml
 
 from collusion_lab.market import Grid, market_for
+from collusion_lab.status import find
 
 
 @dataclass(frozen=True)
@@ -73,6 +74,7 @@ class Game:
     config: dict
     summary: dict
     manifest: dict
+    dir: Path | None = None  # where the run's files are
 
     def windows(self):
         """Conditions in force for only part of the game, with their rounds.
@@ -125,12 +127,13 @@ def load_game(run_dir):
         config,
         summary,
         manifest,
+        run_dir.resolve(),
     )
 
 
 def load_games(folder):
-    """Every game under a folder (or the folder itself), by run id."""
-    games = [load_game(p.parent) for p in Path(folder).rglob("summary.json")]
+    """Every game under a folder or folders (or the folder itself), by run id."""
+    games = [load_game(p.parent) for p in find(folder, "summary.json")]
     return sorted(games, key=lambda g: g.run)
 
 
