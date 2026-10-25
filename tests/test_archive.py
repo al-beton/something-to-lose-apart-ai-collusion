@@ -299,6 +299,32 @@ def test_cache_archive_replays_an_edited_prompt_at_the_version_the_run_read(
     assert (read / "gone" / "note.md").read_text() == "A note the run read.\n"
 
 
+def test_cache_archive_takes_free_time_replies_from_the_run_log(
+    make_config, tmp_path, fake_model
+):
+    """Games running at once ask the same free-time question; each gets its
+    own sample, but the cache keeps only the last written. The run's own
+    replies survive in its log, and the archive takes them from there."""
+    on = "conditions={free_time: {enabled: true, allowance: 2, upfront: 1, activity: sudoku}}"
+    _, root = _committed(make_config, tmp_path, [*PAID, on], name="free")
+    with sqlite3.connect(tmp_path / "a.sqlite") as db:
+        rows = list(db.execute("SELECT key, reply FROM replies"))
+        for n, (key, text) in enumerate(rows):
+            record = json.loads(text)
+            if record["about"]["phase"] == "leisure":
+                record["text"] = f"Another game's sample of the same request, {n}."
+                db.execute(
+                    "UPDATE replies SET reply = ? WHERE key = ?",
+                    (json.dumps(record), key),
+                )
+    out = tmp_path / "archive"
+    [result] = archive.pack(root, [tmp_path / "a.sqlite"], out)
+    assert result.state == "reproduced"
+    again = archive.replay(root / "free" / "seed-0", out, tmp_path / "again")
+    assert archive._same(root / "free" / "seed-0", again)
+    assert "Another game's" not in json.dumps(_archived(out))
+
+
 def test_cache_archive_packing_one_experiment_leaves_the_others(
     make_config, tmp_path, fake_model, monkeypatch
 ):
