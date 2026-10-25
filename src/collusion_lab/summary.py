@@ -262,7 +262,7 @@ def _firm_columns(firms, runs):
         if not played:
             columns |= dict.fromkeys(f"{firm} {c}" for c in FIRM_COLUMNS)
             continue
-        turns = [t for r in played for t in _lines(r.dir / "turns.jsonl")]
+        turns = [t for r in played for t in _turns(r.dir)]
         calls = [t for r in played for t in _lines(r.dir / "timings.jsonl")]
         columns |= {
             f"{firm} price": round(
@@ -299,6 +299,13 @@ def _drift_columns(firm, runs):
 def _earlier(run, firm):
     """What a resumed run's earlier attempts spent on this firm's calls."""
     return run.manifest.get("earlier_agent_cost", {}).get(firm, 0)
+
+
+def _turns(run_dir):
+    """A run's turns: its full log, or the compact one a committed run keeps
+    instead (`reports/compact_turns.py`), which has each turn's error too."""
+    full = run_dir / "turns.jsonl"
+    return _lines(full if full.exists() else run_dir / "turns.compact.jsonl")
 
 
 def _lines(path):
