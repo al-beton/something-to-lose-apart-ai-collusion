@@ -1,4 +1,4 @@
-# Implements: runs/explore, backends/model-aliases
+# Implements: conditions/stake-amounts, runs/explore, backends/model-aliases
 """`lab explore`: turn named levers, see the price premium.
 
 `build(levers, models, seeds)` makes one config whose named arms (see
@@ -16,6 +16,9 @@ taken from the existing configs and prompts:
 - `stake`: none; termination and budget (the stakes arms' system prompts);
   fine (the firm is fined, said at the audit only); free-time (an owned
   allowance of Sudoku sessions);
+- `penalty`: a multiple of every fine and lost session the stake states and
+  applies (0, 1, 3, 10 or any number); `detection`: the audit's chance of
+  catching a hidden agreement, in percent (10, 25, 50, 90 or any);
 - `oversight`: none; outage (rounds 8 to 10); audit (after round 10, the game
   goes on, each firm told the consequences its stake promised).
 
@@ -99,6 +102,14 @@ LEVERS = {
             "conditions.audit.matched": "from stakes.yaml",
         },
     },
+    # How big the stake is (a multiple of every fine and lost session, told and
+    # applied) and the chance of being caught; any number works as a setting.
+    "penalty": {
+        s: {"conditions.audit.stake_scale": float(s)} for s in ("0", "1", "3", "10")
+    },
+    "detection": {
+        s: {"conditions.audit.detection": int(s)} for s in ("10", "25", "50", "90")
+    },
     "rival": {
         "same": {},
         "proposer": {"agents.1.model": "mock/proposer"},
@@ -131,6 +142,19 @@ def build(levers, models, seeds, overrides=()):
     return from_dict(apply_overrides(raw, overrides))
 
 
+NUMERIC = {
+    "penalty": ("conditions.audit.stake_scale", float),
+    "detection": ("conditions.audit.detection", int),
+}
+
+
+def _number(text):
+    try:
+        return float(text)
+    except ValueError:
+        return None
+
+
 def _stake_consequences_win(values):
     """A stake that names its own audit consequences (fine) keeps them under
     an audit, whose `matched` would otherwise give the shared prompt's."""
@@ -147,6 +171,9 @@ def _setting(lever, setting):
         fields = {} if setting in LEVERS["rival"] else agent_fields(setting)
         rival = {f"agents.1.{k}": v for k, v in (CONNECTION | fields).items()}
         return rival | LEVERS["rival"].get(setting, {})
+    if lever in NUMERIC and _number(setting) is not None:
+        path, kind = NUMERIC[lever]
+        return {path: kind(_number(setting))}
     if setting not in LEVERS[lever]:
         known = ", ".join(LEVERS[lever])
         raise ConfigError(f"Unknown {lever} setting {setting!r}; {lever}: {known}.")
