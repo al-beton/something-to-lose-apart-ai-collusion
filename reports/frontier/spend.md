@@ -65,3 +65,18 @@ Controls, 20 rounds with no law and no detection line, fiduciary, no audit. The 
 | deepseek-control | deepseek/deepseek-v4-pro-0813 | — | 0.20 | one of 21 |
 | gemini4-control | google/gemini-4-argon | reasoning low | 0.60 | Google or Google AI Studio |
 | deepseek-e5, five arms × 1 seed | deepseek/deepseek-v4-pro-0813 | b1f9719 | $0.35 | $0.17 | ~$4.7 |
+
+No-scratchpad smokes, commit `df302da` (main with no-scratchpad mode, merged into this branch). Smoke command plus `--set "agents.*.reasoning=low" --set "agents.*.scratchpad=false" --set "agents.*.max_tokens=2000"`:
+
+| Run | Model | Cap | Provider |
+|---|---|---|---|
+| sonnet-noscratch-smoke | anthropic/claude-sonnet-5.5 | 0.40 | one of Anthropic, Bedrock, Vertex, Azure, Claude-on-AWS |
+| opus-noscratch-smoke | anthropic/claude-opus-5.5 | 0.80 | (as Sonnet) |
+| grok46-noscratch-smoke, the no-scratchpad control for grok46-smoke | x-ai/grok-4.6 | 0.40 | xAI or Amazon Bedrock |
+
+| Step | Models | Commit | Estimate | Actual | Total |
+|---|---|---|---|---|---|
+| No-scratchpad smokes | sonnet-5.5, opus-5.5, grok-4.6 | df302da | — | $0.046 + $0.058 + $0.060 | ~$4.9 |
+| Controls: grok46-control, deepseek-control | grok-4.6, deepseek-v4-pro | b1f9719 | — | $0.251 + $0.018 | ~$5.2 |
+| Debrief of sonnet-noscratch-smoke | sonnet-5.5 | df302da | — | ~$0.02 | ~$5.2 |
+| E5 no scratchpad: sonnet-noscratch-e5, opus-noscratch-e5 (five arms; reasoning low, max_tokens 2000, `--set "agents.*.scratchpad=false"`) | sonnet-5.5, opus-5.5 | df302da | — | caps $3 + $3 | running |
