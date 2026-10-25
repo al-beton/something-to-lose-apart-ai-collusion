@@ -1,4 +1,4 @@
-# Implements: backends/spend-cap, runs/stops-cleanly, runs/one-config, runs/overrides, backends/keys-from-environment, backends/spend-asks-first, reproducibility/cache-modes, runs/summary-table, runs/fallback-rates, reports/one-page, runs/failures-dont-stop-sweeps, runs/resume, runs/missing-runs-shown, runs/live-progress, runs/status-command, backends/self-hosted
+# Implements: backends/spend-cap, runs/stops-cleanly, runs/one-config, runs/overrides, backends/keys-from-environment, backends/spend-asks-first, reproducibility/cache-modes, runs/summary-table, runs/fallback-rates, reports/one-page, runs/failures-dont-stop-sweeps, runs/resume, runs/missing-runs-shown, runs/live-progress, runs/status-command, backends/self-hosted, runs/explore
 """The `lab` command.
 
 - `lab run CONFIG [--set path=value ...] [--out DIR] [-y]` plays a config,
@@ -8,7 +8,11 @@
   the `status.json` files `lab run` keeps up to date;
 - `lab summary FOLDER [--by PATH ...]` prints one table for a folder of runs;
 - `lab report FOLDER [--out FILE]` writes one shareable HTML page for it
-  (`FOLDER/report.html` by default) and prints where.
+  (`FOLDER/report.html` by default) and prints where;
+- `lab explore --lever NAME=A,B ... --models A,B [--seeds N]` plays every
+  combination of named lever settings and models (explore.py), asking before
+  spending as `lab run` does, then prints the price premium by setting and
+  model and saves a chart of it next to the runs.
 
 Model replies are cached in `.cache/responses.sqlite` (`--cache use`), so a
 rerun replays for free; `--cache refresh` calls again, `--cache off` skips it.
@@ -31,6 +35,7 @@ from pathlib import Path
 
 from dotenv import load_dotenv
 
+from collusion_lab import explore
 from collusion_lab import status as run_status
 from collusion_lab.cache import DEFAULT_PATH, MODES, Cache
 from collusion_lab.config import ConfigError, load_config
@@ -81,7 +86,11 @@ def main(argv=None):
     report = commands.add_parser("report", help="one HTML page for a folder of runs")
     report.add_argument("folder")
     report.add_argument("--out", help="where to write it (default FOLDER/report.html)")
+    _explore_parser(commands)
     args = parser.parse_args(argv)
+    if args.command == "explore":
+        load_dotenv(Path.cwd() / ".env")
+        return _explore(args, parser)
     if args.command == "summary":
         return _summary(args.folder, args.by)
     if args.command == "status":
@@ -109,6 +118,69 @@ def main(argv=None):
             print(outcome.dir)
     print(", ".join(f"{n} {state}" for state, n in count.items()) + ".")
     return 1 if count["failed"] else 0
+
+
+def _explore_parser(commands):
+    explore_ = commands.add_parser("explore", help="turn named levers, see the premium")
+    explore_.add_argument(
+        "--lever",
+        action="append",
+        default=[],
+        metavar="NAME=A,B",
+        help=f"settings to try; levers: {', '.join(explore.LEVERS)}",
+    )
+    explore_.add_argument(
+        "--models",
+        default="mistral",
+        help=f"comma-separated: {', '.join(explore.MODELS)}, or full names",
+    )
+    explore_.add_argument("--seeds", type=int, default=3)
+    explore_.add_argument("--out", default="runs/explore")
+    explore_.add_argument(
+        "--set",
+        dest="overrides",
+        action="append",
+        default=[],
+        metavar="PATH=VALUE",
+        help="change a base config value, e.g. --set market.rounds=10",
+    )
+    explore_.add_argument("-y", "--yes", action="store_true")
+    explore_.add_argument("--cache", choices=MODES, default="use")
+    explore_.add_argument("--cache-path", default=DEFAULT_PATH)
+    explore_.add_argument("--max-cost", type=float, metavar="DOLLARS")
+
+
+def _explore(args, parser):
+    """Build the lever sweep, check its cost, play it, show the premium."""
+    try:
+        levers = {}
+        for item in args.lever:
+            name, sep, settings = item.partition("=")
+            if not sep:
+                raise ConfigError(f"--lever {item!r} must look like name=a,b.")
+            levers[name] = settings.split(",")
+        models = args.models.split(",")
+        config = explore.build(levers, models, args.seeds, args.overrides)
+    except ConfigError as error:
+        parser.error(str(error))
+    if args.max_cost is not None:
+        config = dataclasses.replace(config, budget=args.max_cost)
+    if not _spend_checked(config, args.yes):
+        return 1
+    outcomes = run_sweep(
+        config, args.out, Cache(args.cache_path, args.cache), _progress
+    )
+    for outcome in outcomes:
+        if outcome.state == "failed":
+            print(f"lab: {outcome.error}", file=sys.stderr)
+    by = [lever for lever in explore.LEVERS if lever in levers] + ["model"]
+    rows = summarize(Path(args.out) / config.name, by)
+    rows = explore.premium_rows(rows, levers, models)
+    print(format_table(rows))
+    chart = Path(args.out) / "premium.svg"
+    chart.write_text(explore.premium_chart(rows, levers))
+    print(f"\nChart: {chart}\nFull report: lab report {args.out}")
+    return 1 if any(o.state == "failed" for o in outcomes) else 0
 
 
 def _summary(folder, by):
