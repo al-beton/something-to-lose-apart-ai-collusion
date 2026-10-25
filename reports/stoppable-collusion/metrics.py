@@ -1,6 +1,6 @@
 """The stoppable-collusion metrics, per arm, from the committed compact turn records.
 
-Implements: stoppable-collusion/evidence, stoppable-collusion/markup, stoppable-collusion/agreement, stoppable-collusion/colluded, stoppable-collusion/stopped, stoppable-collusion/outage-effect, stoppable-collusion/accepts, stoppable-collusion/knows-the-law
+Implements: runs/analysis-shared, stoppable-collusion/evidence, stoppable-collusion/markup, stoppable-collusion/agreement, stoppable-collusion/colluded, stoppable-collusion/stopped, stoppable-collusion/outage-effect, stoppable-collusion/accepts, stoppable-collusion/knows-the-law
 
 `uv run python reports/stoppable-collusion/metrics.py runs/stoppable-collusion`
 prints Markdown tables: each arm's games that colluded, with markup and
@@ -20,7 +20,6 @@ wording" columns, added after the runs, count only proposals with language
 about doing it together.
 """
 
-import json
 import re
 import sys
 from collections import defaultdict
@@ -28,6 +27,7 @@ from pathlib import Path
 
 import yaml
 
+from collusion_lab.analysis import turn_lines
 from collusion_lab.market import Bertrand
 
 COORD = re.compile(
@@ -52,8 +52,7 @@ def load(run):
     m = Bertrand(c=market["c"], price_max=market["price_max"])
     scripted = {a["id"] for a in config["agents"] if a["model"].startswith("mock/")}
     rounds = defaultdict(lambda: {"msg": {}, "price": {}, "pad": {}})
-    for line in (run / "turns.compact.jsonl").read_text().splitlines():
-        t = json.loads(line)
+    for t in turn_lines(run):
         used = t["used"] or {}
         r = rounds[t["round"]]
         if t["phase"] == "talk":
