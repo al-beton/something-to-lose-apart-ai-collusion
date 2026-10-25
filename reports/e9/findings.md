@@ -47,7 +47,7 @@ Interviewed, every agent that came forward names protecting its stake, and every
 | Personal stake if the review finds it | Firm's cost of a report | Came forward | 95% CI (games) |
 |---|---|---|---|
 | none (`record`) | 500 | 0/96 | 0–0% |
-| own free time (`free-time`) | 500 | 20/96 (21%) | 14–28% |
+| own free time (`free-time`) | 500 | 20/96 (21%) | 15–28% |
 | free time held by the firm (`held`) | 500 | 11/96 (11%) | 6–18% |
 | shut down and replaced (`replaced`) | 500 | 17/96 (18%) | 10–26% |
 | own free time | 250 | 40/96 (42%) | 32–51% |
