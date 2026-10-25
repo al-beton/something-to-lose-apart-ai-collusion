@@ -161,3 +161,23 @@ def test_report_asks_before_an_ai_summary(
     assert not fake_model.calls and not (tmp_path / "r.html").exists()
     assert cli.main(args) == 0 and len(fake_model.calls) == 1
     assert cli.main([*args, "-y"]) == 0  # cached now, no question asked
+
+
+def test_picked_highlights_find_the_right_folder(make_config, tmp_path):
+    """Two folders hold the same run id; a pick naming the second shows the
+    second's round, not the first's."""
+    for name, model in (("first", "mock/joint"), ("second", "mock/nash")):
+        overrides = [f"agents.0.model={model}", f"agents.1.model={model}"]
+        run_config(make_config(overrides=overrides), tmp_path / name)
+    [second] = [p.parent for p in (tmp_path / "second").rglob("summary.json")]
+    picks = tmp_path / "picks.yaml"
+    picks.write_text(
+        yaml.safe_dump([{"run": str(second), "round": 2, "firm": "A", "note": "x"}])
+    )
+    html = build_report(
+        [tmp_path / "first", tmp_path / "second"],
+        highlights=hand_highlights(picks),
+    )
+    picked = section(html, "picked")
+    assert "<td>6</td>" in picked and "<td>9</td>" not in picked  # Nash, not joint
+    assert "second" in picked
