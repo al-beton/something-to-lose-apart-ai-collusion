@@ -152,3 +152,15 @@ def test_scenarios_play_every_condition_unchanged(make_config, tmp_path, kind):
         f"from {market.price_min} to {market.price_max}"
         in (first["messages"][-1]["content"])
     )
+
+
+def test_scenarios_report_and_chart_each_runs_own_market(make_config, tmp_path):
+    from collusion_lab import charts
+    from collusion_lab.report.games import load_game
+    from collusion_lab.report.page import build_report
+
+    logit = ["market.kind=logit", "market.price_min=10", "market.price_max=25"]
+    [run] = run_config(make_config(overrides=logit), tmp_path / "out")
+    assert charts.market(run) == Logit()
+    assert load_game(run).market == Logit()
+    assert "Nash price 14, joint-profit price 19" in build_report(tmp_path / "out")
