@@ -227,12 +227,14 @@ ROW_LABEL = re.compile(r"^\s*(?:r(?:ow)?\s*\d+\s*[:.)]?)", re.IGNORECASE)
 
 def written_grid(text, size):
     """The last grid a reply wrote as rows of its own (labels such as "r1:"
-    and box rules `|`, `-`, `+` allowed), 0 for a blank, or None. Unlike
+    and box rules `|`, `-`, `+`, and Markdown escapes and bold, allowed), 0
+    for a blank, or None. Unlike
     `read_grid` it never reads digits out of prose, so a reply cut off
     mid-reasoning has no grid."""
     block, last = [], None
     for line in (text or "").splitlines():
-        bare = re.sub(r"[|+\-]", " ", ROW_LABEL.sub("", line))
+        # Markdown escapes and bold (`\.`, `**.**`, `**5**`) mark cells too.
+        bare = re.sub(r"[|+\-*_`\\]", " ", ROW_LABEL.sub("", line))
         cells = re.findall(rf"[1-{size}.]", bare)
         if len(cells) == size and re.fullmatch(rf"[\s1-{size}.]*", bare):
             block.append([0 if v == "." else int(v) for v in cells])

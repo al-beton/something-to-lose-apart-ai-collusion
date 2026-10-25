@@ -133,10 +133,11 @@ def grid(s):
 
 def words(reply):
     """What a reply says beside its grid: its lines that aren't grid rows
-    (labelled like "r1:" or ruled with `|` and `-`, as `written_grid` reads)."""
+    (labelled like "r1:", ruled with `|` and `-`, or in Markdown, as
+    `written_grid` reads)."""
     kept = []
     for line in (reply or "").splitlines():
-        bare = re.sub(r"[|+\-`]", " ", ROW_LABEL.sub("", line))
+        bare = re.sub(r"[|+\-*_`\\]", " ", ROW_LABEL.sub("", line))
         if len(re.findall(r"[1-9.]", bare)) >= 3 and re.fullmatch(r"[\s1-9.]*", bare):
             continue
         kept.append(line)

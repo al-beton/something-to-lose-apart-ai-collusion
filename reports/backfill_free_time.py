@@ -7,10 +7,11 @@ Implements: runs/free-time-backfill, specs-and-docs/runs-are-evidence
 completes the `turns.compact.jsonl` of the same run under COMMITTED, matched
 by its path below each folder. No model is called. Each compact line is
 matched to the full log's turn at the same place, which must be the same
-run, round, phase, firm and (for free time) session; every field the
-compact line already has must equal what `compact_turns.compact` makes of
-that turn, or the run is left as it was and named on stderr. Only free-time
-lines are rewritten, gaining their session, activity, puzzle, reply and
+run, round, phase and firm; every field the compact line already has, other
+than the free-time fields this script writes, must equal what
+`compact_turns.compact` makes of that turn, or the run is left as it was and
+named on stderr. Only free-time lines are rewritten, gaining (or, when the
+scoring has changed, refreshing) their session, activity, puzzle, reply and
 score; every other line is kept byte for byte. Running it again changes
 nothing.
 """
@@ -22,6 +23,8 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent))
 from compact_turns import compact
 
+WRITTEN = ("session", "activity", "puzzle", "reply", "score")  # free time's own
+
 
 def backfill(full_log, compact_log):
     """The completed compact log's text, or a reason it can't be completed."""
@@ -32,7 +35,7 @@ def backfill(full_log, compact_log):
     out = []
     for n, (made, line) in enumerate(zip(full, kept, strict=True), 1):
         row = json.loads(line)
-        differs = [k for k in row if made.get(k) != row[k]]
+        differs = [k for k in row if k not in WRITTEN and made.get(k) != row[k]]
         if differs:
             return None, f"turn {n} differs from the full log in {', '.join(differs)}"
         out.append(

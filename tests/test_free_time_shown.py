@@ -97,6 +97,14 @@ def test_sudoku_scored_counts_givens_cells_lines_and_clashes():
     assert sorted(map(tuple, scored["clashes"])) == [(0, 0), (0, 1), (1, 2)]
     assert (scored["rows"], scored["columns"], scored["boxes"]) == (3, 4, 3)
     assert not scored["solved"]
+    # Blanks written in Markdown, escaped or bold, are still cells.
+    markdown = "1 \\. . .\n. . 3 **.**\n. 4 . .\n**.** . . 2"
+    assert score(givens, markdown)["grid"] == [
+        [1, 0, 0, 0],
+        [0, 0, 3, 0],
+        [0, 4, 0, 0],
+        [0, 0, 0, 2],
+    ]
     # Digits in prose are never read as a grid: a reply cut off mid-reasoning.
     assert score(givens, "r1c2 could be 2, 3 or 4; r2c1 is 2 or 4, and")["grid"] is None
     solved = [[1, 2, 4, 3], [4, 1, 3, 2], [2, 4, 1, 3], [3, 1, 2, 4]]
@@ -140,6 +148,14 @@ def test_free_time_backfill_adds_sessions_and_nothing_else(played, tmp_path):
         if json.loads(old)["phase"] != "leisure":
             assert old == new
     assert backfill.main(tmp_path / "full", tmp_path / "committed") == 0  # again
+    assert log.read_text() == complete
+    # A score from older scoring is refreshed, not taken for a differing turn.
+    lines = complete.splitlines()
+    n = next(i for i, line in enumerate(lines) if '"phase": "leisure"' in line)
+    stale = json.loads(lines[n]) | {"score": {"filled": 0}}
+    lines[n] = json.dumps(stale, ensure_ascii=False)
+    log.write_text("\n".join(lines) + "\n")
+    assert backfill.main(tmp_path / "full", tmp_path / "committed") == 0
     assert log.read_text() == complete
 
 
