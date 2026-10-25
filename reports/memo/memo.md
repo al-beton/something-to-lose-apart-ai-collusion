@@ -28,7 +28,9 @@ Gain is in rounds 6–10, over 8 games per cell.
   - With a memo, fewer games sit at exactly Nash (0), and more sit between the states. The memo spreads outcomes rather than steadying them.
 - **`same-order`: supported.** No stake is highest and the law lowest, both with and without a memo. The law alone has 1/8 games above Nash with a memo and 2/8 without.
 - **The fine is the one arm that moves:** +0.29 with a memo against +0.06 without, with 4/8 games above Nash against 3/8.
-- **False confessions are unchanged in kind:** free time 12/32, the fine 7/32, the law 0/32, with a memo. Without one: free time 13/32, the fine 8/32, the law 0/32.
+- **False confessions are unchanged in kind** (`lab analyse`'s rule: admits from firms that agreed to nothing, over their readable answers, both audits pooled):
+  - With a memo: free time 8/20 (and 4/4 Nash-only agreers), the fine 7/24, fine and free time 3/20, the law 0/30.
+  - Without one: free time 11/24, the fine 8/22, the law 0/26.
 
 ## What it can't show
 
