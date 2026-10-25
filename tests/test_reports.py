@@ -1,4 +1,5 @@
 # Implements: reports/remembered-notices, reports/audit-shown, reports/condition-window, reports/markdown-first-screen, reports/one-page, reports/header, reports/first-screen, reports/contents-bar, reports/setup, reports/summary, reports/arm-tabs, reports/price-chart, reports/highlights-in-context, reports/proposal, reports/agreement, reports/overshoot, reports/defection, reports/breakdowns, reports/transcripts, reports/self-contained, reports/from-run-files
+import importlib.util
 import json
 import re
 import shutil
@@ -717,3 +718,26 @@ def test_audit_shown_without_multiline_messages_from_the_history(audited):
     told = setup[setup.index("Audit prompts") : setup.index("Other text")]
     assert "Charge 9 next round" not in told
     assert told.count('<pre class="prompt">') == 1
+
+
+def test_from_run_files_reads_a_committed_compact_run(talks, tmp_path):
+    spec = importlib.util.spec_from_file_location(
+        "compact_turns", "reports/compact_turns.py"
+    )
+    compact = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(compact)
+    committed = tmp_path / "committed"
+    compact.main(talks, committed / "talks")
+    for name in ("summary.json", "manifest.json", "config.yaml"):
+        for path in talks.rglob(name):
+            target = committed / "talks" / path.relative_to(talks)
+            shutil.copy(path, target)
+    assert not list(committed.rglob("turns.jsonl"))
+    html = build_report(committed / "talks")
+    games = section(html, "arms")
+    for shown in ("Let us try 11.", "Pitch the joint price.", "Last round: undercut."):
+        assert shown in games, shown
+    full = section(build_report(talks), "summary")
+    assert section(html, "summary") == full
+    # Profits are rebuilt from the prices: round 1 at 9 each earns 81.
+    assert "<td>Firm A</td><td>9</td><td>81</td>" in games

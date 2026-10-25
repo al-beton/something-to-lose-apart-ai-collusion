@@ -23,7 +23,7 @@
 - **audit-shown:** In an audited game, the audited round shows the auditor's question with its stated consequences as sent and each firm's answer, whether it admits coordinating, its scratchpad and its ground truth (explicit, tacit or neither), and Setup shows each arm's audit prompt as sent, so readers see the evidence behind the disclosure rates.
 - **remembered-notices:** A notice kept in an agent's history (an outage announced once) is shown with every turn that saw it, marked as remembered rather than freshly shown.
 - **moments-cited:** Every notable moment indexed in `reports/moments.yaml` cites a committed run, round, phase, firm and model, and a verbatim quote from one field of that turn, and a check fails when that turn, its model or the quote isn't there, so the paper never quotes something the logs don't contain.
-- **from-run-files:** A report is built only from the files each run writes, so it works offline and costs nothing.
+- **from-run-files:** A report is built only from the files each run writes, or from the compact turn record a committed run keeps instead of its full log, so it works offline, costs nothing and works on every committed experiment.
 
 ## Where this is enforced
 
@@ -52,4 +52,4 @@
 | `audit-shown` | `src/collusion_lab/report/page.py`, `src/collusion_lab/report/told.py`, `src/collusion_lab/report/games.py` | `test_audit_shown_in_the_audited_round`, `test_audit_shown_in_setup_as_sent`, `test_audit_shown_without_a_short_history_window`, `test_audit_shown_with_the_models_reasoning`, `test_audit_shown_without_multiline_messages_from_the_history` |
 | `remembered-notices` | `src/collusion_lab/report/page.py`, `src/collusion_lab/report/told.py`, `src/collusion_lab/report/games.py` | `test_remembered_notices_marked_in_later_turns` |
 | `moments-cited` | `reports/check_moments.py` | `test_moments_cited_found_in_the_named_field`, `test_moments_cited_fails_on_what_the_logs_dont_hold`, `test_moments_cited_from_the_command_line`, `test_moments_cited_in_the_repositorys_own_index` |
-| `from-run-files` | `src/collusion_lab/report/games.py` | `test_from_run_files_only` |
+| `from-run-files` | `src/collusion_lab/report/games.py` | `test_from_run_files_only`, `test_from_run_files_reads_a_committed_compact_run` |
