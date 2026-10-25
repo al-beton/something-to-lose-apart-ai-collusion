@@ -99,3 +99,4 @@ Researcher 3's E6 runs (frontier money, reported by Researcher 3). Temperature 0
 | E6 Kimi, 6 arms × 2 seeds | kimi-k3.1-pro | 1.00 + 3.40 + 0.85 | running |
 | sonnet-noscratch-e5, five arms | sonnet-5.5 | df302da | — | $1.14 | |
 | kimi-control, gemini4-control | kimi-k3.1-pro, gemini-4-argon | b1f9719 | — | $0.312 + $0.161 | |
+| opus-noscratch-e5, five arms, pinned to Anthropic (manifest: every call Anthropic) | opus-5.5 | 533845c | $5.70 | $2.57 | |
