@@ -78,6 +78,12 @@ class Merged(Cache):
         self.used[key] = reply
         return json.loads(reply)
 
+    def put(self, key, record):
+        pass  # offline and read-only: nothing new is ever stored
+
+    def label(self, key, about):
+        pass  # nor are old replies relabelled
+
     def rivals(self):
         """Caches holding another reply for a key the last replay read."""
         sources = set()
