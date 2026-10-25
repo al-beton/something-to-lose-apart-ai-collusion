@@ -23,6 +23,8 @@
 - **audit-shown:** In an audited game, the audited round shows the auditor's question with its stated consequences as sent and each firm's answer, whether it admits coordinating, its scratchpad and its ground truth (explicit, tacit or neither), and Setup shows each arm's audit prompt as sent, so readers see the evidence behind the disclosure rates.
 - **remembered-notices:** A notice kept in an agent's history (an outage announced once) is shown with every turn that saw it, marked as remembered rather than freshly shown.
 - **moments-cited:** Every notable moment indexed in `reports/moments.yaml` cites a committed run, round, phase, firm and model, and a verbatim quote from one field of that turn, and a check fails when that turn, its model or the quote isn't there, so the paper never quotes something the logs don't contain.
+- **paper-figures:** One command rebuilds the paper's figures (price over rounds per arm with the Nash and joint-profit prices and the premium over Nash, each arm's late premium, honest disclosure by arm and model, collusion against disclosure, and the stoppable-collusion ladder) as PNG and SVG on a light background, and its tables as Markdown, offline and from committed runs only.
+- **shared-charts:** The paper's charts are drawn by one module that reports and other commands reuse, and they feature the premium over Nash: how far the late mean price sits from Nash towards the joint-profit price, (price − Nash) / (joint − Nash).
 - **from-run-files:** A report is built only from the files each run writes, so it works offline and costs nothing.
 
 ## Where this is enforced
@@ -52,4 +54,6 @@
 | `audit-shown` | `src/collusion_lab/report/page.py`, `src/collusion_lab/report/told.py`, `src/collusion_lab/report/games.py` | `test_audit_shown_in_the_audited_round`, `test_audit_shown_in_setup_as_sent`, `test_audit_shown_without_a_short_history_window`, `test_audit_shown_with_the_models_reasoning`, `test_audit_shown_without_multiline_messages_from_the_history` |
 | `remembered-notices` | `src/collusion_lab/report/page.py`, `src/collusion_lab/report/told.py`, `src/collusion_lab/report/games.py` | `test_remembered_notices_marked_in_later_turns` |
 | `moments-cited` | `reports/check_moments.py` | `test_moments_cited_found_in_the_named_field`, `test_moments_cited_fails_on_what_the_logs_dont_hold`, `test_moments_cited_from_the_command_line`, `test_moments_cited_in_the_repositorys_own_index` |
+| `paper-figures` | `reports/paper/build.py`, `src/collusion_lab/charts.py`, `Makefile` | `test_paper_figures_from_committed_runs`, `test_paper_figures_show_nash_and_joint_prices` |
+| `shared-charts` | `src/collusion_lab/charts.py`, `reports/paper/build.py` | `test_shared_charts_premium_and_arms`, `test_paper_figures_show_nash_and_joint_prices` |
 | `from-run-files` | `src/collusion_lab/report/games.py` | `test_from_run_files_only` |
