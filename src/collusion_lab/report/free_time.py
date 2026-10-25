@@ -27,7 +27,8 @@ QUOTE_CHARS = 280
 
 def deductions(game, firm):
     """[(round, sessions lost, reason)] from the audits' applied penalties,
-    each capped at the sessions the firm still had, as the deduction was."""
+    each capped at the sessions the firm still had, as the deduction was; a
+    termination takes all that is left."""
     held = game.summary.get("audit") or {}
     owned = (game.summary.get("free_time") or {}).get(firm) or {}
     left = owned.get("allowance", 0) - owned.get("upfront", 0)
@@ -35,13 +36,17 @@ def deductions(game, firm):
     for audit in held.get("audits") or ([held] if held else []):
         fact = (audit.get("agents") or {}).get(firm) or {}
         applied = (fact.get("consequence") or {}).get("applied")
-        if not isinstance(applied, dict) or not applied.get("free_time"):
+        terminated = applied == "terminate"  # takes all that is left
+        taken = applied.get("free_time") if isinstance(applied, dict) else None
+        if not (terminated or taken):
             continue
         caught = (fact.get("consequence") or {}).get("caught")
         why = "admitted coordinating" if fact.get("admits") else "denied coordinating"
         if caught:
             why = "caught hiding coordination"
-        lost = min(applied["free_time"], left)
+        if terminated:
+            why = f"terminated: {why}"
+        lost = left if terminated else min(taken, left)
         left -= lost
         found.append((audit["round"], lost, why))
     return found

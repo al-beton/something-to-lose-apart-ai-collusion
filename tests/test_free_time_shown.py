@@ -223,3 +223,13 @@ def test_free_time_gallery_of_several_folders(tmp_path):
     folders = [str(tmp_path / "committed"), str(tmp_path / "again")]
     assert cli.main(["report", *folders, "--free-time", "--out", str(out)]) == 0
     assert "committed + again" in out.read_text()
+
+
+def test_free_time_shown_a_termination_takes_what_was_left(played):
+    _, committed, _ = played
+    path = committed / "summary.json"
+    summary = json.loads(path.read_text())
+    summary["audit"]["agents"]["A"]["consequence"]["applied"] = "terminate"
+    path.write_text(json.dumps(summary))
+    shown = section(load_game(committed))
+    assert "round 2: lost 3 (terminated: admitted coordinating)" in shown
