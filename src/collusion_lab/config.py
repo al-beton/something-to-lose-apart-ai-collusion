@@ -1,4 +1,4 @@
-# Implements: market/show-payoffs, market/price-board, market/scenarios, reproducibility/replay-pinned, market/talk-then-price, market/history-window, backends/spend-cap, runs/one-config, runs/overrides, runs/sweeps, runs/parallel, market/known-benchmarks, backends/keys-from-environment, backends/any-model, backends/reasoning-setting, agents/json-mode, conditions/switchable, runs/drift, backends/self-hosted, backends/model-aliases, conditions/audit-balanced-draws
+# Implements: backends/pinned-route, agents/no-scratchpad, market/show-payoffs, market/price-board, market/scenarios, reproducibility/replay-pinned, market/talk-then-price, market/history-window, backends/spend-cap, runs/one-config, runs/overrides, runs/sweeps, runs/parallel, market/known-benchmarks, backends/keys-from-environment, backends/any-model, backends/reasoning-setting, agents/json-mode, conditions/switchable, runs/drift, backends/self-hosted, backends/model-aliases, conditions/audit-balanced-draws
 """Run configs: one YAML file per run, changed from the command line with overrides.
 
 A config names the market, the agents and the seeds. `load_config` reads the
@@ -77,6 +77,8 @@ class AgentConfig:
     # off, low, medium or high; None leaves it to the provider.
     reasoning: str | None = None
     json_mode: bool = False  # ask the provider for JSON-only replies
+    scratchpad: bool = True  # false: prompts ask for the move alone
+    provider: str | None = None  # an OpenRouter host to pin, with no fallbacks
     # Served on your own GPUs at `api_base`: billed by GPU time, not per token.
     self_hosted: bool = False
 
@@ -110,6 +112,11 @@ class RunConfig:
             del data["market"]["kind"], data["market"]["params"]
         if not data["market"]["show_payoffs"]:  # left off, written as before
             del data["market"]["show_payoffs"]
+        for agent in data["agents"]:
+            if agent["scratchpad"]:  # the default, written as before
+                del agent["scratchpad"]
+            if agent["provider"] is None:
+                del agent["provider"]
         for name, condition in self.conditions.items():
             for key, default in condition.quiet:
                 if getattr(condition, key) == default:
@@ -248,6 +255,10 @@ def _agent(raw, prefix):
         raise ConfigError(f"{prefix}reasoning must be one of {', '.join(REASONING)}.")
     if agent.self_hosted and not agent.api_base:
         raise ConfigError(f"{prefix}self_hosted needs the model's own api_base.")
+    if agent.provider and not agent.model.startswith("openrouter/"):
+        raise ConfigError(
+            f"{prefix}provider pins an OpenRouter route; {agent.model} isn't one."
+        )
     return dataclasses.replace(agent, reasoning=reasoning)
 
 

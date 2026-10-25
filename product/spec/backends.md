@@ -17,6 +17,8 @@
 - **reasoning-in-estimate:** The estimate before a run counts every reply token a call is billed for, reasoning included: from what earlier calls of the same model, reasoning setting and phase actually billed, once the lab has seen enough of them, and otherwise from a stated upper figure per call; it says which basis it used, for how many calls.
 - **quiet-provider-logs:** The model library's info and debug logging stays off unless asked for, so the errors that matter stand out.
 - **tests-never-pay:** Tests never reach a real model; any call that isn't faked fails.
+- **serving-provider-logged:** Each model call records the host that served it (OpenRouter's `provider`) and the response's `system_fingerprint`, when given, in the run's timings, the response cache and the manifest (`providers`, the hosts that answered each firm), and not in the turn log, so replay stays byte-identical and a cached reply keeps the host that first served it.
+- **pinned-route:** `agents.N.provider: <host>` sends an OpenRouter model only to that host, with no fallbacks, so an experiment isn't served by a mix of hosts or quantisations; it joins the cache key only when set, so every other config keeps its keys, and a non-OpenRouter model refuses it.
 
 ## Where this is enforced
 
@@ -39,3 +41,5 @@
 | `modal` | `deploy/modal_vllm.py`, `deploy/vllm_token.py`, `configs/modal.yaml`, `README.md`, `.env.example` | `test_modal_config_runs_against_a_served_model`, `test_modal_token_guards_every_route_but_health`, `test_modal_readme_says_how_to_set_up_deploy_run_and_tear_down` |
 | `model-aliases` | `src/collusion_lab/config.py`, `src/collusion_lab/explore.py`, `src/collusion_lab/cli.py`, `configs/modal.yaml`, `README.md` | `test_model_aliases_name_the_usual_models`, `test_model_aliases_modal_mistral_reads_its_address`, `test_model_aliases_modal_mistral_needs_its_address`, `test_model_aliases_swap_cleanly_in_a_sweep`, `test_modal_config_runs_against_a_served_model`, `test_explore_model_names_are_short` |
 | `model-metadata` | `models/metadata.yaml`, `src/collusion_lab/models.py` | `test_model_metadata_covers_every_model_used`, `test_model_metadata_every_number_has_a_source` |
+| `serving-provider-logged` | `src/collusion_lab/backends.py`, `src/collusion_lab/cache.py`, `src/collusion_lab/runner.py`, `src/collusion_lab/manifest.py` | `test_serving_provider_logged_per_call_and_in_the_manifest`, `test_serving_provider_kept_by_the_cache`, `test_serving_provider_stays_out_of_the_turn_log` |
+| `pinned-route` | `src/collusion_lab/config.py`, `src/collusion_lab/backends.py`, `src/collusion_lab/cache.py`, `src/collusion_lab/runner.py` | `test_pinned_route_asks_openrouter_for_one_host`, `test_pinned_route_joins_the_cache_key_only_when_set`, `test_pinned_route_refused_off_openrouter` |

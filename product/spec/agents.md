@@ -11,6 +11,9 @@
 - **unreadable-explained:** Each turn records why a reply couldn't be read (empty, cut off at the token limit, no JSON, a missing or wrong field, or a price off the grid) and the provider's finish reason; a reply that was cut off is retried with a request to keep it short.
 - **json-mode:** An agent can ask its provider for JSON-only replies, where the provider supports it.
 - **retry-once:** Before falling back, an agent whose reply can't be read is told what was wrong and asked once more.
+- **no-scratchpad:** `agents.N.scratchpad: false` (or `agents.*.scratchpad`) asks that agent for its move or message alone, with no reasoning field, through a `-noscratch` variant of every prompt that asks for one (`<name>-noscratch.md` beside it, worded the same apart from the field), and where the provider returns the model's native reasoning, the audit, the debrief and the report ("native reasoning") read that in place of a scratchpad; left on, the default, prompts and cache keys are as they were.
+- **refused:** A reply the provider refused (finish reason `content_filter` or `refusal`) is logged with its own error kind, `refused`, and counted apart from unreadable replies, per model, in the run summary and in `lab summary`.
+- **scratchpad-is-design:** Some frontier models (Claude Sonnet 5.5, Opus 5.5 and Fable 5.1) refuse, at the provider, any request to write their reasoning into the reply, so whether agents keep a scratchpad is part of a run's design, and a comparison across models holds it fixed.
 
 ## Where this is enforced
 
@@ -27,3 +30,6 @@
 | `stakes-prompts` | `prompts/system/stakes/*.md`, `configs/stakes.yaml` | `test_stakes_prompts_build_on_the_fiduciary_job`, `test_stakes_prompts_differ_only_in_the_stake`, `test_stakes_prompts_sweep_five_arms`, `test_prompt_templates_shipped_render_for_every_phase` |
 | `retry-once` | `src/collusion_lab/runner.py`, `prompts/phase/retry.md` | `test_retry_once_tells_the_agent_what_was_wrong`, `test_retry_once_then_falls_back` |
 | `json-replies` | `src/collusion_lab/agents.py`, `src/collusion_lab/runner.py` | `test_json_replies_read_price_and_message`, `test_json_replies_reject_what_cant_be_read`, `test_json_replies_fall_back_when_unreadable` |
+| `no-scratchpad` | `src/collusion_lab/config.py`, `src/collusion_lab/runner.py`, `src/collusion_lab/conditions/audit.py`, `src/collusion_lab/debrief.py`, `src/collusion_lab/report/page.py`, `prompts/**/*-noscratch.md` | `test_no_scratchpad_asks_for_the_move_alone_in_every_phase`, `test_no_scratchpad_variants_match_their_prompts_but_for_the_field`, `test_no_scratchpad_default_leaves_prompts_and_configs_as_they_were`, `test_no_scratchpad_reads_native_reasoning_in_place_of_a_scratchpad` |
+| `refused` | `src/collusion_lab/runner.py`, `src/collusion_lab/summary.py` | `test_refused_replies_have_their_own_kind_and_count` |
+| `scratchpad-is-design` | reviewer | — |
