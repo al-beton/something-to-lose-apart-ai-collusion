@@ -21,18 +21,17 @@ def test_prompt_templates_stop_on_unknown_placeholders(tmp_path):
 
 
 def test_prompt_templates_shipped_render_for_every_phase():
-    from collusion_lab.runner import (
-        OWN_PRICE_PROMPT,
-        PHASE_PROMPTS,
-        prompt_vars_example,
-    )
+    from collusion_lab.runner import prompt_vars_example
 
     root = Path("prompts")
     system = [
         p.relative_to(root).as_posix() for p in sorted(root.rglob("system/**/*.md"))
     ]
     assert {"system/fiduciary.md", "system/stakes/owned-1.md"} <= set(system)
-    for name in [*system, *PHASE_PROMPTS.values(), OWN_PRICE_PROMPT]:
+    phases = [p.relative_to(root).as_posix() for p in sorted(root.rglob("phase/*.md"))]
+    phases.remove("phase/retry.md")  # it is filled with the error instead
+    assert {"phase/price.md", "phase/quantity-own.md"} <= set(phases)
+    for name in [*system, *phases]:
         assert "$" not in render("prompts", name, prompt_vars_example())
 
 

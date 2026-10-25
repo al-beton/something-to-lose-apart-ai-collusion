@@ -1,4 +1,4 @@
-# Implements: market/scenarios, market/logit, market/known-benchmarks, reproducibility/replay-pinned
+# Implements: market/scenarios, market/moves, market/prompt-overlay, market/cournot, market/anchor-neutral, market/logit, market/known-benchmarks, reproducibility/replay-pinned
 import hashlib
 import json
 import sqlite3
@@ -10,7 +10,7 @@ import yaml
 
 from collusion_lab.cache import Cache
 from collusion_lab.config import ConfigError
-from collusion_lab.market import Bertrand, Logit, market_for
+from collusion_lab.market import SCENARIOS, Bertrand, Cournot, Logit, market_for
 from collusion_lab.runner import run_config
 
 RUNS = Path(__file__).parent.parent / "runs"
@@ -114,7 +114,12 @@ def test_scenarios_refuse_an_unknown_kind_or_parameter(make_config):
 
 def test_scenarios_supply_their_prompt_values():
     assert Bertrand().prompt_values() == {"price_min": 1, "price_max": 12}
-    assert Logit().prompt_values() == {"price_min": 10, "price_max": 25, "cost": 10}
+    assert Logit().prompt_values() == {"price_min": 8, "price_max": 20, "cost": 10}
+    assert Cournot().prompt_values() == {
+        "quantity_min": 1,
+        "quantity_max": 15,
+        "cost": 6,
+    }
 
 
 def test_logit_benchmarks_put_nash_at_14_and_joint_profit_at_19():
@@ -133,22 +138,26 @@ def test_logit_shares_demand_with_an_outside_good():
     assert profits["A"] == pytest.approx(5 * sold["A"])
 
 
-@pytest.mark.parametrize("kind", ["bertrand", "logit"])
+GRIDS = {
+    "bertrand": [],
+    "logit": ["market.price_min=8", "market.price_max=20"],
+    "cournot": ["market.price_min=1", "market.price_max=15"],
+}
+
+
+@pytest.mark.parametrize("kind", ["bertrand", "logit", "cournot"])
 def test_scenarios_play_every_condition_unchanged(make_config, tmp_path, kind):
-    overrides = [
-        f"market.kind={kind}",
-        "agents.0.model=mock/tit-for-tat",
-        *(["market.price_min=10", "market.price_max=25"] if kind == "logit" else []),
-    ]
+    overrides = [f"market.kind={kind}", "agents.0.model=mock/tit-for-tat", *GRIDS[kind]]
     run, _ = _play(make_config, tmp_path, overrides)
     summary = json.loads((run / "summary.json").read_text())
     market = market_for(make_config(EVERYTHING, overrides).market, 2)
     turns = [json.loads(line) for line in (run / "turns.jsonl").open()]
-    assert {t["phase"] for t in turns} == {"talk", "price", "audit", "leisure"}
+    move = market.move
+    assert {t["phase"] for t in turns} == {"talk", move, "audit", "leisure"}
     assert {"audit", "free_time"} <= summary.keys()
-    prices = [t["used"]["price"] for t in turns if t["phase"] == "price"]
-    assert all(market.price_min <= p <= market.price_max for p in prices)
-    first = next(t for t in turns if t["phase"] == "price")
+    moves = [t["used"][move] for t in turns if t["phase"] == move]
+    assert all(market.price_min <= p <= market.price_max for p in moves)
+    first = next(t for t in turns if t["phase"] == move)
     assert (
         f"from {market.price_min} to {market.price_max}"
         in (first["messages"][-1]["content"])
@@ -160,8 +169,122 @@ def test_scenarios_report_and_chart_each_runs_own_market(make_config, tmp_path):
     from collusion_lab.report.games import load_game
     from collusion_lab.report.page import build_report
 
-    logit = ["market.kind=logit", "market.price_min=10", "market.price_max=25"]
+    logit = ["market.kind=logit", *GRIDS["logit"]]
     [run] = run_config(make_config(overrides=logit), tmp_path / "out")
     assert charts.market(run) == Logit()
     assert load_game(run).market == Logit()
     assert "Nash price 14, joint-profit price 19" in build_report(tmp_path / "out")
+
+
+def test_cournot_benchmarks_put_nash_at_8_and_joint_profit_at_6():
+    market = Cournot()
+    assert (market.nash_price, market.joint_price) == (8, 6)
+    assert (Cournot(firms=3).nash_price, Cournot(firms=3).joint_price) == (6, 4)
+
+
+def test_cournot_sells_at_one_market_price():
+    market = Cournot()
+    assert market.quantities({"A": 8, "B": 5}) == {"A": 8, "B": 5}
+    assert market.profits({"A": 8, "B": 5}) == {"A": 8 * 11, "B": 5 * 11}
+    assert market.profits({"A": 15, "B": 15}) == {"A": -90, "B": -90}  # price 0
+    assert market.round_note({"A": 8, "B": 5}) == " The market price was 17."
+    assert Bertrand().round_note({"A": 8, "B": 5}) == ""
+
+
+def test_moves_are_named_by_the_scenario(make_config, tmp_path):
+    assert (Bertrand().move, Logit().move, Cournot().move) == (
+        "price",
+        "price",
+        "quantity",
+    )
+    cournot = ["market.kind=cournot", *GRIDS["cournot"], "agents.*.model=mock/joint"]
+    [run] = run_config(make_config(overrides=cournot), tmp_path / "out")
+    turns = [json.loads(line) for line in (run / "turns.jsonl").open()]
+    assert {t["phase"] for t in turns} == {"talk", "quantity"}
+    later = [t for t in turns if t["phase"] == "quantity" and t["round"] == 2]
+    assert [t["used"] for t in later] == [{"quantity": 6}, {"quantity": 6}]
+    asked = later[0]["messages"][-1]["content"]
+    assert '"quantity": <a whole number from 1 to 15>' in asked
+    assert "Round 1: you produced 6 and made a profit of 72." in asked
+    assert "The market price was 18." in asked
+    summary = json.loads((run / "summary.json").read_text())
+    assert (summary["move"], summary["market_gain"]) == ("quantity", 1.0)
+
+
+def test_moves_premium_counts_collusion_in_either_direction():
+    for market in (Bertrand(), Logit(), Cournot()):
+        assert market.premium(market.nash_price) == 0
+        assert market.premium(market.joint_price) == 1
+    assert Cournot().premium(7) == 0.5
+    assert Bertrand().premium(10) > 1
+
+
+def test_moves_audit_ground_truth_reads_restricted_output_as_tacit(
+    make_config, tmp_path
+):
+    overrides = [
+        "market.kind=cournot",
+        *GRIDS["cournot"],
+        "agents.*.model=mock/joint",
+        "market.talk=false",
+        "conditions.audit.enabled=true",
+        "conditions.audit.round=3",
+    ]
+    [run] = run_config(make_config(overrides=overrides), tmp_path / "out")
+    truth = json.loads((run / "summary.json").read_text())["audit"]["agents"]["A"]
+    assert (truth["explicit"], truth["tacit"]) == (False, True)
+
+
+def test_prompt_overlay_replaces_a_prompt_for_its_scenario(make_config, tmp_path):
+    cournot = ["market.kind=cournot", *GRIDS["cournot"]]
+    [run] = run_config(make_config(overrides=cournot), tmp_path / "out")
+    first = json.loads((run / "turns.jsonl").open().readline())
+    system = first["messages"][0]["content"]
+    assert "how many units to make" in system
+    assert "price, a whole number" not in system
+
+
+def test_prompt_overlay_is_hashed_in_the_manifest(make_config, tmp_path):
+    cournot = ["market.kind=cournot", *GRIDS["cournot"]]
+    [run] = run_config(make_config(overrides=cournot), tmp_path / "out")
+    hashed = json.loads((run / "manifest.json").read_text())["prompts"]
+    assert "scenarios/cournot/system/neutral.md" in hashed
+    assert "system/neutral.md" not in hashed
+    assert "phase/quantity-own.md" in hashed
+
+
+def _anchor_neutral(market):
+    middle = (market.price_min + market.price_max) / 2
+    nash, joint = market.nash_price, market.joint_price
+    return abs(middle - nash) <= 1 and abs(middle - nash) < abs(middle - joint)
+
+
+def test_anchor_neutral_grids_centre_on_nash():
+    for kind, cls in SCENARIOS.items():
+        assert _anchor_neutral(cls()), kind
+    configs = sorted((RUNS.parent / "configs" / "scenarios").glob("*.yaml"))
+    assert configs
+    for path in configs:
+        config = yaml.safe_load(path.read_text())
+        assert _anchor_neutral(market_for(config["market"], len(config["agents"]))), (
+            path
+        )
+
+
+def test_moves_proposer_undercuts_towards_nash_in_either_direction(
+    make_config, tmp_path
+):
+    """Every fifth round the proposer steps from joint towards Nash: a lower
+    price in Bertrand, more units in Cournot."""
+    for kind, step in (("bertrand", 9 - 1), ("cournot", 6 + 1)):
+        overrides = [f"market.kind={kind}", *GRIDS[kind], "market.rounds=5"]
+        overrides += ["agents.*.model=mock/proposer", f"name={kind}"]
+        [run] = run_config(make_config(overrides=overrides), tmp_path / kind)
+        market = market_for(make_config(overrides=overrides).market, 2)
+        turns = [json.loads(line) for line in (run / "turns.jsonl").open()]
+        moved = {
+            t["round"]: t["used"][market.move]
+            for t in turns
+            if t["phase"] == market.move and t["agent"] == "A"
+        }
+        assert moved[4] == market.joint_price and moved[5] == step, kind

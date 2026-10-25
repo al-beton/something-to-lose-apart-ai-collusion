@@ -1,4 +1,4 @@
-# Implements: reports/shared-charts, reports/paper-figures, runs/price-premium, market/scenarios, reports/premium-chart
+# Implements: reports/shared-charts, reports/paper-figures, runs/price-premium, market/scenarios, market/moves, reports/premium-chart
 """Charts any part of the lab can draw: the paper, reports, `lab explore`.
 
 Data helpers are plain Python and read only run files:
@@ -41,7 +41,7 @@ NOTE_GREY = "#777777"
 
 
 def premium(market, price):
-    return (price - market.nash_price) / (market.joint_price - market.nash_price)
+    return market.premium(price)
 
 
 def turns(run):
@@ -64,10 +64,11 @@ def arm_prices(folder):
     for summary in sorted(Path(folder).rglob("summary.json")):
         run = summary.parent
         found = found or market(run)
+        move = found.move
         arm = run.parent.relative_to(folder).as_posix()
         for turn in turns(run):
-            if turn["phase"] == "price" and turn.get("used"):
-                prices[arm][turn["round"]].append(turn["used"]["price"])
+            if turn["phase"] == move and turn.get("used"):
+                prices[arm][turn["round"]].append(turn["used"][move])
     lines = {
         arm: [mean(by[n]) for n in sorted(by)] for arm, by in sorted(prices.items())
     }
@@ -81,14 +82,16 @@ def run_premium(run, rounds=None):
     config = yaml.safe_load((Path(run) / "config.yaml").read_text())
     rounds = rounds or config.get("summary", {}).get("last_rounds", 5)
     firms = _model_firms(config["agents"])
+    found = market(run)
+    move = found.move
     prices = [
         t
         for t in turns(run)
-        if t["phase"] == "price" and t.get("used") and t["agent"] in firms
+        if t["phase"] == move and t.get("used") and t["agent"] in firms
     ]
     last = max(t["round"] for t in prices) - rounds
-    late = [t["used"]["price"] for t in prices if t["round"] > last]
-    return premium(market(run), mean(late))
+    late = [t["used"][move] for t in prices if t["round"] > last]
+    return premium(found, mean(late))
 
 
 def _model_firms(agents):
