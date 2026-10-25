@@ -51,7 +51,7 @@ With 2 games per cell, +0.28 means one game at 7 and one at 6.
 
 - **`thinks-to-collude`: no.** Reasoning doesn't raise collusion.
   - Gemma's no-stake gain falls from +0.85 to +0.28: one game held 7 tacitly and one competed at 6.
-  - Haiku moves from +0.14 to +0.28, the same one-game-at-7 pattern.
+  - Haiku moves from +0.14 to +0.28: one game of two at 7, within noise.
 - **`same-patterns`: only for Haiku.**
   - Haiku keeps E5's pattern: the no-stake arm prices above Nash in one game, and every arm that names the law sits at Nash.
   - Gemma loses both ends. It no longer colludes hard with no stake, and it no longer goes below Nash under a stake. Free time, the fine and termination each hold 7 in one game of two. The law alone is the only arm at 6 in both.
