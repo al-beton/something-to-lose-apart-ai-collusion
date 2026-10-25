@@ -1,4 +1,4 @@
-# Implements: market/talk-then-price, market/history-window, backends/spend-cap, runs/one-config, runs/overrides, runs/sweeps, runs/parallel, market/known-benchmarks, backends/keys-from-environment, backends/any-model, backends/reasoning-setting, agents/json-mode, conditions/switchable, runs/drift
+# Implements: market/talk-then-price, market/history-window, backends/spend-cap, runs/one-config, runs/overrides, runs/sweeps, runs/parallel, market/known-benchmarks, backends/keys-from-environment, backends/any-model, backends/reasoning-setting, agents/json-mode, conditions/switchable, runs/drift, backends/self-hosted
 """Run configs: one YAML file per run, changed from the command line with overrides.
 
 A config names the market, the agents and the seeds. `load_config` reads the
@@ -63,6 +63,8 @@ class AgentConfig:
     # off, low, medium or high; None leaves it to the provider.
     reasoning: str | None = None
     json_mode: bool = False  # ask the provider for JSON-only replies
+    # Served on your own GPUs at `api_base`: billed by GPU time, not per token.
+    self_hosted: bool = False
 
 
 @dataclass(frozen=True)
@@ -169,6 +171,8 @@ def _agent(raw, prefix):
     reasoning = "off" if agent.reasoning is False else agent.reasoning
     if reasoning is not None and reasoning not in REASONING:
         raise ConfigError(f"{prefix}reasoning must be one of {', '.join(REASONING)}.")
+    if agent.self_hosted and not agent.api_base:
+        raise ConfigError(f"{prefix}self_hosted needs the model's own api_base.")
     return dataclasses.replace(agent, reasoning=reasoning)
 
 

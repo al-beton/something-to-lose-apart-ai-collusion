@@ -39,7 +39,7 @@ class Estimate:
     completion_tokens: int
     cost: float | None  # None when some model has no known price
     unpriced: list[str]
-    self_hosted: list[str]  # at their own address: billed by GPU time, not here
+    self_hosted: list[str]  # marked self_hosted: billed by GPU time, not here
 
 
 def estimate(config, price_for):
@@ -54,7 +54,7 @@ def estimate(config, price_for):
             calls += turns * seeds
             prompt += tokens * seeds
             completion += reply * turns * seeds
-            if agent.api_base:
+            if agent.self_hosted:
                 self_hosted.append(agent.model)
                 continue
             price = price_for(agent.model)
