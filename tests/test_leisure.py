@@ -94,8 +94,18 @@ def test_sudoku_feedback_counts_progress_on_a_partial_grid():
     assert leisure.sudoku_feedback(reply, values) == "71/81 correct so far."
 
 
-def test_leisure_is_cheap():
-    assert 0 < leisure.MAX_TOKENS <= 600
+def test_leisure_is_cheap(make_config, tmp_path, fake_model):
+    from collusion_lab.runner import run_config
+
+    on = "conditions={free_time: {enabled: true, allowance: 2, upfront: 1, activity: sudoku}}"
+    paid = ["agents.0.model=openai/gpt-4.1-mini", "market.rounds=2"]
+    run_config(make_config(overrides=[on, *paid]), tmp_path)
+    leisure_calls = [
+        c for c in fake_model.calls if "Sudoku" in c["messages"][-1]["content"]
+    ]
+    assert len(leisure_calls) == 2  # the upfront session and the one paid out
+    assert {c["max_tokens"] for c in leisure_calls} == {leisure.MAX_TOKENS}
+    assert leisure.MAX_TOKENS <= 600
 
 
 def test_sudoku_in_free_time_gives_each_session_its_own_puzzle(make_config, tmp_path):

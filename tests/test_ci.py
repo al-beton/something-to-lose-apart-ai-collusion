@@ -1,4 +1,6 @@
 # Implements: ci/ci-minutes, ci/one-gate, ci/ci-runs-everything
+import re
+import subprocess
 from pathlib import Path
 
 import yaml
@@ -18,9 +20,12 @@ def test_ci_minutes_one_job_named_like_the_gate():
 
 
 def test_ci_minutes_one_job_runs_every_check():
-    steps = " ".join(
-        str(s.get("run", "")) for s in workflow()["jobs"]["blocking-checks"]["steps"]
-    )
+    runs = [
+        str(s["run"])
+        for s in workflow()["jobs"]["blocking-checks"]["steps"]
+        if "run" in s
+    ]
+    steps = " ".join(runs)
     for check in (
         "pr_gate.py",
         "make lint",
@@ -31,6 +36,17 @@ def test_ci_minutes_one_job_runs_every_check():
         "report_comment.py",
     ):
         assert check in steps, check
+    # Each step runs something that exists: a Makefile target make knows, and
+    # the scripts and config the steps name.
+    for run in runs:
+        if run.startswith("make "):
+            target = run.split()[1]
+            dry = subprocess.run(
+                ["make", "-n", target], capture_output=True, text=True, check=False
+            )
+            assert dry.returncode == 0, f"{run}: {dry.stderr}"
+    for path in re.findall(r"[\w./-]+\.(?:py|yaml)", steps):
+        assert Path(path).is_file(), path
 
 
 def test_ci_minutes_newer_runs_cancel_older_ones_and_drafts_wait():

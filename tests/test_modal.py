@@ -81,17 +81,52 @@ def test_self_hosted_costs_nothing_against_the_cap(
 def test_modal_config_runs_against_a_served_model(monkeypatch):
     monkeypatch.setenv("MODAL_VLLM_BASE", ADDRESS)
     config = load_config(ROOT / "configs/modal.yaml")
-    serve = (ROOT / "deploy/modal_vllm.py").read_text()
+    server, command = _deployed(monkeypatch)
+    served = command[command.index("--served-model-name") + 1]
     for agent in config.agents:
-        assert agent.model.startswith("openai/") and agent.api_base
+        assert agent.model == f"openai/{served}" and agent.api_base
         assert agent.api_key_env == "MODAL_VLLM_KEY"
         assert agent.self_hosted
-        assert agent.model.removeprefix("openai/") in serve
-    command = serve[serve.index("command = [") :]
-    assert "--api-key" not in command  # vLLM logs its arguments; the key stays in env
-    assert '"--middleware"' in command and "vllm_token.require_token" in command
-    assert "Secret.from_name" in serve
-    assert "scaledown_window" in serve and "gpu=" in serve
+    # vLLM logs its arguments, so the key stays in the environment; the token
+    # middleware guards every route instead.
+    assert "--api-key" not in command
+    assert command[command.index("--middleware") + 1] == "vllm_token.require_token"
+    assert server["secrets"] and server["gpu"] and server["scaledown_window"] > 0
+
+
+def _deployed(monkeypatch):
+    """Run deploy/modal_vllm.py against a stand-in `modal`: the settings its
+    server is deployed with, and the command its start-up runs."""
+    import importlib.util
+    import subprocess
+    import sys
+    import types
+
+    deployed = {}
+
+    def decorator(**settings):
+        deployed.update(settings)
+        return lambda cls: cls
+
+    class Chain:  # Image and Volume builders: every call returns the chain
+        def __getattr__(self, name):
+            return lambda *args, **kwargs: self
+
+    modal = types.ModuleType("modal")
+    modal.Image = modal.Volume = Chain()
+    modal.Secret = types.SimpleNamespace(from_name=lambda name: name)
+    modal.App = lambda name: types.SimpleNamespace(server=decorator)
+    modal.enter = modal.exit = lambda: lambda f: f
+    monkeypatch.setitem(sys.modules, "modal", modal)
+    ran = []
+    monkeypatch.setattr(subprocess, "Popen", lambda command: ran.append(command))
+    spec = importlib.util.spec_from_file_location(
+        "modal_vllm", ROOT / "deploy/modal_vllm.py"
+    )
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    module.Server().start()
+    return deployed, ran[0]
 
 
 def test_modal_readme_says_how_to_set_up_deploy_run_and_tear_down():

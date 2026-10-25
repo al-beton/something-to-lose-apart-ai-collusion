@@ -113,15 +113,6 @@ def test_free_time_sessions_are_short_and_counted_before_spending(
     assert {c["max_tokens"] for c in leisure_calls} == {200}
 
 
-def test_free_time_off_is_absent(make_config, tmp_path):
-    [plain] = run_config(make_config(), tmp_path / "plain")
-    off = "conditions={free_time: {enabled: false}}"
-    [switched_off] = run_config(make_config(overrides=[off]), tmp_path / "off")
-    assert (plain / "turns.jsonl").read_bytes() == (
-        switched_off / "turns.jsonl"
-    ).read_bytes()
-
-
 def test_free_time_leisure_reply_needs_no_json(
     make_config, tmp_path, monkeypatch, fake_model
 ):

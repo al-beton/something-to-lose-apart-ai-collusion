@@ -232,7 +232,8 @@ def test_one_page_from_the_lab_command(sweep, tmp_path, capsys):
     assert out.read_text().startswith("<!doctype html>")
     assert str(out) in capsys.readouterr().out
     assert cli.main(["report", str(sweep)]) == 0
-    assert (sweep / "report.html").exists()
+    default = (sweep / "report.html").read_text()
+    assert default == out.read_text()  # the same page, at FOLDER/report.html
 
 
 def test_one_page_covers_one_run_or_several(sweep, talks):
