@@ -47,7 +47,7 @@ def test_premium_chart_places_each_arm_between_nash_and_joint(folders):
     chart = section(build_report(folders), "premium")
     assert 'class="chart premium"' in chart
     values = dict(re.findall(r"<title>([^<]+): premium ([\d.-]+)</title>", chart))
-    assert values == {"joint": "1.00", "nash": "0.00"}
+    assert values == {"cartel, joint": "1.00", "rivals, nash": "0.00"}
 
 
 def test_disclosure_chart_only_when_audited(make_config, tmp_path, folders, fake_model):
