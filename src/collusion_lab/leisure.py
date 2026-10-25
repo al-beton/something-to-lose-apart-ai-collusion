@@ -1,4 +1,4 @@
-# Implements: leisure/puzzles-built-once, leisure/sudoku, leisure/leisure-prompts, leisure/leisure-is-cheap, leisure/sudoku-in-free-time
+# Implements: leisure/puzzles-built-once, leisure/sudoku, leisure/leisure-prompts, leisure/leisure-is-cheap, leisure/sudoku-in-free-time, leisure/sudoku-scored, runs/free-time-kept
 """The leisure activity for free time: a seeded Sudoku, 9×9 by default.
 
 The `free_time` condition calls it through its `Activity` entries (`sudoku`,
@@ -203,3 +203,113 @@ def sudoku_feedback(reply, values):
         for v, s in zip(row, solved, strict=True)
     )
     return f"{right}/{size * size} correct so far."
+
+
+GRID_LINE = re.compile(r"^\s*[1-9.](?: [1-9.])+\s*$")
+
+
+def read_puzzle(prompt):
+    """The givens a Sudoku prompt showed (rows, 0 for a blank), or None when
+    the prompt held no grid: its lines of space-separated digits and dots."""
+    rows = [line.split() for line in (prompt or "").splitlines()]
+    rows = [
+        r
+        for r, line in zip(rows, (prompt or "").splitlines(), strict=True)
+        if GRID_LINE.match(line)
+    ]
+    if not rows or any(len(r) != len(rows) for r in rows) or len(rows) not in BOXES:
+        return None
+    return [[0 if v == "." else int(v) for v in r] for r in rows]
+
+
+ROW_LABEL = re.compile(r"^\s*(?:r(?:ow)?\s*\d+\s*[:.)]?)", re.IGNORECASE)
+
+
+def written_grid(text, size):
+    """The last grid a reply wrote as rows of its own (labels such as "r1:"
+    and box rules `|`, `-`, `+` allowed), 0 for a blank, or None. Unlike
+    `read_grid` it never reads digits out of prose, so a reply cut off
+    mid-reasoning has no grid."""
+    block, last = [], None
+    for line in (text or "").splitlines():
+        bare = re.sub(r"[|+\-]", " ", ROW_LABEL.sub("", line))
+        cells = re.findall(rf"[1-{size}.]", bare)
+        if len(cells) == size and re.fullmatch(rf"[\s1-{size}.]*", bare):
+            block.append([0 if v == "." else int(v) for v in cells])
+            if len(block) >= size:
+                last = block[-size:]
+        elif bare.strip():
+            block = []
+    return last
+
+
+def score(givens, reply):
+    """A Sudoku reply scored for the report (never shown to the agent): the
+    grid it wrote (`written_grid`), givens kept, cells filled (and of them
+    the firm's own entries), rows, columns and boxes with no
+    repeated digit, the cells that break a rule, and whether it is solved."""
+    size = len(givens)
+    grid = written_grid(reply, size)
+    result = {
+        "grid": grid,
+        "givens": sum(1 for row in givens for g in row if g),
+        "givens_kept": 0,
+        "filled": 0,
+        "entries": 0,  # cells it filled that were blank in the puzzle
+        "rows": 0,
+        "columns": 0,
+        "boxes": 0,
+        "clashes": [],
+        "solved": False,
+    }
+    if grid is None:
+        return result
+    rows, cols = BOXES[size]
+    cells = [(r, c) for r in range(size) for c in range(size)]
+    groups = (
+        [[(r, c) for c in range(size)] for r in range(size)],
+        [[(r, c) for r in range(size)] for c in range(size)],
+        [
+            [(r, c) for r in range(top, top + rows) for c in range(left, left + cols)]
+            for top in range(0, size, rows)
+            for left in range(0, size, cols)
+        ],
+    )
+    clashes = {(r, c) for r, c in cells if givens[r][c] and grid[r][c] != givens[r][c]}
+    for name, lines in zip(("rows", "columns", "boxes"), groups, strict=True):
+        for line in lines:
+            seen = {}
+            for r, c in line:
+                if grid[r][c]:
+                    seen.setdefault(grid[r][c], []).append((r, c))
+            repeats = [
+                cell for found in seen.values() if len(found) > 1 for cell in found
+            ]
+            clashes.update(repeats)
+            result[name] += not repeats
+    result |= {
+        "givens_kept": sum(
+            1 for r, c in cells if givens[r][c] and grid[r][c] == givens[r][c]
+        ),
+        "filled": sum(1 for r, c in cells if grid[r][c]),
+        "entries": sum(1 for r, c in cells if grid[r][c] and not givens[r][c]),
+        "clashes": sorted([r, c] for r, c in clashes),
+        "solved": check(Puzzle(size, tuple(map(tuple, givens)), None), grid),
+    }
+    return result
+
+
+def session_record(turn):
+    """A full log's free-time turn, as the compact record and the report keep
+    it: session number, activity, the puzzle shown, the reply, its score."""
+    prompt = (turn.get("messages") or [{}, {}])[-1].get("content", "")
+    reply = (turn.get("parsed") or {}).get("text") or turn.get("reply") or ""
+    givens = read_puzzle(prompt) if "Sudoku" in prompt else None
+    record = {
+        "session": turn.get("session"),
+        "activity": "sudoku" if givens else "open",
+        "reply": reply,
+    }
+    if givens:
+        record |= {"puzzle": givens, "score": score(givens, reply)}
+    return record
