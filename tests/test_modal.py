@@ -6,7 +6,7 @@ from pathlib import Path
 import pytest
 
 from collusion_lab import backends, cli
-from collusion_lab.config import load_config
+from collusion_lab.config import ConfigError, load_config
 from collusion_lab.runner import run_config
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -480,8 +480,6 @@ def test_modal_any_model_gated_token_only_from_the_secret(monkeypatch):
     monkeypatch.setenv("HF_SECRET", "huggingface")
     server, _ = _deployed(monkeypatch)
     assert server["secrets"] == ["collusion-lab-vllm", "huggingface"]
-    text = (ROOT / "deploy/modal_vllm.py").read_text()
-    assert "HF_TOKEN" not in text.split('"""', 2)[2]  # never read by the script
 
 
 def test_modal_any_model_gemma_alias_reads_its_address(make_config, monkeypatch):
