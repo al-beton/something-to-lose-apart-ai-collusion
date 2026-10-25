@@ -23,5 +23,5 @@
 | `docs-next-to-code` | `.agents/skills/build-issue/SKILL.md`, `.agents/skills/review-pr/SKILL.md` | — |
 | `no-history` | `.agents/skills/review-pr/SKILL.md` | — |
 | `prompts-are-verbatim` | `.github/scripts/spec_check.py` | `test_prompts_are_verbatim_and_homed_by_a_table_row`, `test_prompts_are_verbatim_so_they_never_carry_implements_lines` |
-| `runs-are-evidence` | `.github/scripts/spec_check.py`, `.gitignore`, `reports/compact_turns.py`, `reports/backfill_free_time.py` | `test_runs_are_evidence_homed_by_a_table_row`, `test_runs_are_evidence_so_they_never_carry_implements_lines`, `test_runs_are_evidence_jsonl_never_asked_for_implements_lines`, `test_runs_are_evidence_scratch_and_smoke_runs_stay_ignored` |
+| `runs-are-evidence` | `.github/scripts/spec_check.py`, `.gitignore`, `reports/compact_turns.py`, `reports/backfill_free_time.py` | `test_runs_are_evidence_homed_by_a_table_row`, `test_runs_are_evidence_so_they_never_carry_implements_lines`, `test_runs_are_evidence_jsonl_never_asked_for_implements_lines`, `test_runs_are_evidence_compressed_files_never_asked_for_implements_lines`, `test_runs_are_evidence_scratch_and_smoke_runs_stay_ignored` |
 | `short-specs` | `.github/scripts/spec_check.py` | `test_spec_length_warns_over_300_lines` |

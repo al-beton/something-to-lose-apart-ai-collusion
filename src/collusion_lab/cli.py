@@ -1,4 +1,4 @@
-# Implements: runs/digest, runs/analyse, backends/reasoning-in-estimate, reproducibility/provenance-log, backends/spend-cap, runs/stops-cleanly, runs/one-config, runs/overrides, backends/keys-from-environment, backends/spend-asks-first, reproducibility/cache-modes, runs/summary-table, runs/fallback-rates, reports/one-page, runs/failures-dont-stop-sweeps, runs/resume, runs/missing-runs-shown, runs/live-progress, runs/status-command, backends/self-hosted, runs/explore, backends/model-aliases, reports/many-folders, reports/written-summary, reports/picked-highlights, runs/debrief, reports/free-time-gallery, runs/spread
+# Implements: runs/digest, runs/analyse, backends/reasoning-in-estimate, reproducibility/provenance-log, backends/spend-cap, runs/stops-cleanly, runs/one-config, runs/overrides, backends/keys-from-environment, backends/spend-asks-first, reproducibility/cache-modes, runs/summary-table, runs/fallback-rates, reports/one-page, runs/failures-dont-stop-sweeps, runs/resume, runs/missing-runs-shown, runs/live-progress, runs/status-command, backends/self-hosted, runs/explore, backends/model-aliases, reports/many-folders, reports/written-summary, reports/picked-highlights, runs/debrief, reports/free-time-gallery, runs/spread, reproducibility/cache-archive
 """The `lab` command.
 
 - `lab run CONFIG [--set path=value ...] [--out DIR] [-y]` plays a config,
@@ -26,7 +26,11 @@
   checks the numbers their notes mark (digest.py);
 - `lab debrief FOLDER [-y] [--max-cost DOLLARS]` asks each model firm in
   every finished game under the folder what it did and why (debrief.py),
-  saying first what that will cost, and saves the replies beside each run.
+  saying first what that will cost, and saves the replies beside each run;
+- `lab archive pack ROOT --caches PATH ... [--out PATH]` gathers the cached
+  replies behind every committed run under ROOT into one archive, replaying
+  each offline, and says which runs it reproduces (archive.py);
+  `lab archive replay RUN --archive PATH [--out DIR]` plays one again from it.
 
 Model replies are cached in `.cache/responses.sqlite` (`--cache use`), so a
 rerun replays for free; `--cache refresh` calls again, `--cache off` skips it.
@@ -50,7 +54,7 @@ from pathlib import Path
 
 from dotenv import load_dotenv
 
-from collusion_lab import analysis, digest, explore, provenance
+from collusion_lab import analysis, archive, digest, explore, provenance
 from collusion_lab import debrief as debriefs
 from collusion_lab import status as run_status
 from collusion_lab.cache import DEFAULT_PATH, MODES, Cache
@@ -104,10 +108,14 @@ def main(argv=None):
     status = commands.add_parser("status", help="where every run in a folder stands")
     status.add_argument("folder")
     _report_parser(commands)
-    _explore_parser(commands)
-    _debrief_parser(commands)
-    _analyse_parser(commands)
-    _digest_parser(commands)
+    for add in (
+        _explore_parser,
+        _debrief_parser,
+        _analyse_parser,
+        _digest_parser,
+        _archive_parser,
+    ):
+        add(commands)
     args = parser.parse_args(argv)
     if args.command == "explore":
         load_dotenv(Path.cwd() / ".env")
@@ -119,6 +127,7 @@ def main(argv=None):
         "debrief": lambda: _debrief(args, argv),
         "analyse": lambda: _analyse(args),
         "digest": lambda: _digest(args),
+        "archive": lambda: _archive(args),
     }
     if args.command in reads:
         return reads[args.command]()
@@ -287,6 +296,38 @@ def _report_parser(commands):
         action="store_true",
         help="write the free-time gallery instead (FOLDER/free-time.html)",
     )
+
+
+def _archive_parser(commands):
+    archive_ = commands.add_parser("archive", help="the replies behind runs")
+    actions = archive_.add_subparsers(dest="action", required=True)
+    pack = actions.add_parser("pack", help="archive every committed run's replies")
+    pack.add_argument("root", nargs="?", default="runs")
+    pack.add_argument("--caches", nargs="+", required=True, metavar="PATH")
+    pack.add_argument("--out", default="archive")
+    replay = actions.add_parser("replay", help="play a run again from an archive")
+    replay.add_argument("run")
+    replay.add_argument("--archive", required=True, metavar="PATH")
+    replay.add_argument("--out", default="replayed")
+
+
+def _archive(args):
+    if args.action == "replay":
+        print(archive.replay(args.run, args.archive, args.out))
+        return 0
+    results = archive.pack(args.root, args.caches, args.out)
+    count = {state: 0 for state in archive.STATES}
+    for result in results:
+        count[result.state] += 1
+        if result.state != "reproduced":
+            print(f"{result.state}: {result.run}")
+    replies = sum(r.keys for r in results)
+    print(
+        f"{len(results)} runs: "
+        + ", ".join(f"{n} {state}" for state, n in count.items())
+        + f"; {replies} replies read, archived at {args.out}."
+    )
+    return 0
 
 
 def _analyse_parser(commands):
