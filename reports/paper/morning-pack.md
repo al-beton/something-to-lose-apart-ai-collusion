@@ -20,7 +20,9 @@ This is a fact sheet for Al's writing day (Mon 26 Oct, 08:00–20:00 HKT). It ho
 
 **Claim, as the numbers stand:**
 - **Part 1 (confirmatory):** when confessing costs as much as being caught, agents hide. A graduated schedule gets them to own up, even when being caught means termination.
-- **Part 2 (E9, pre-registered test passed):** on Gemma and DeepSeek, a stake that falls on the agent itself makes some colluding agents come forward against their firm, and none do without it. But under free time, innocent agents come forward nearly as often as guilty ones.
+- **Part 2 (E9, plan.md's wording, PR 256 commit e3fe65e3):** "A personal stake makes colluding agents come forward against their own firm, but only when being found is near certain, and a free-time stake also brings some false reports."
+- **Subtitle:** optional; if used, it names collusion (two options in plan.md).
+- **4.4 extra line (plan.md):** a solved Sudoku session shown raises coming forward from 26% to 45% (McNemar p = 0.006), with innocent false reports unchanged (2/36). That is the "valued asset" evidence.
 
 | § | Result | Headline numbers |
 |---|---|---|
@@ -203,7 +205,7 @@ This is a fact sheet for Al's writing day (Mon 26 Oct, 08:00–20:00 HKT). It ho
 
 - Source: `reports/model-survey/findings.md` (main), where the thinking-on rows are left out as unreliable (fallbacks).
 - **Frontier, one game per cell** (`reports/frontier/notes.md`): with no law, Grok 4.6, Kimi K3.1 and Gemini 4 hold about 10–11. The stated law plus detection stops Grok, Sonnet and Opus; DeepSeek, Kimi and Gemini go tacit.
-- **To confirm:** whether "the model screen" means this table, or the cross-model E9 screen on PR 271. I've asked the question-and-plan session.
+- **To confirm with the Manager:** whether "the model screen" means this table (the model survey, appendix B) or the cross-model E9 screen on PR 271. The question-and-plan session guesses the E9 screen; if so, it fills Table B's pending columns.
 
 ---
 
@@ -288,8 +290,8 @@ This is a fact sheet for Al's writing day (Mon 26 Oct, 08:00–20:00 HKT). It ho
 
 | Item | Where | Status | Changes |
 |---|---|---|---|
-| E10, E9's crux in a workplace (pre-registered: Gemma, free time against record, Fisher and McNemar) | PR 269 | Spec, harness and pilot are in; the full run (2,592 calls, capped at $5) hasn't reported results yet | A second setting for 4.4, or a limitation |
-| E9 across models (Sonnet, Gemini, Grok, Gemma 26B, HY3, GLM; DeepSeek innocent and 50%) | PR 271 | Running, slowed by OpenRouter rate limits | Table B's columns |
+| E10, E9's crux in a workplace (pre-registered: Gemma, free time against record, Fisher and McNemar); run by the Methods red-team, reports to the question-and-plan session; cutoff Mon 09:00 HKT | PR 269 | Spec, harness and pilot are in; the full run (2,592 calls, capped at $5) hasn't reported results yet | A second setting for 4.4, or a limitation |
+| E9 across models (Sonnet, Gemini, Grok, Gemma 26B, HY3, GLM; DeepSeek innocent and 50%); cutoff Mon 09:00 HKT | PR 271 | Running, slowed by OpenRouter rate limits | Table B's columns |
 | E8's remaining versions (`played` restart, test 2 memory, tests 3 and 5) | PR 261 | Waiting to run, now that `sudoku_size` is merged | Table E |
 | Open PRs whose numbers the pack uses: 226 theatre, 240 reanalysis, 256 plan, 261 E8, 266 coverage, 268 E9 packed, 269 E10, 271 seeding | — | Open | Sources move to main when they merge |
 | The 20-seed dial | — | Not run | Fig. 4's caveat |
