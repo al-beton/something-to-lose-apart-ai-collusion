@@ -535,3 +535,11 @@ def test_modal_any_model_weights_fetched_without_a_gpu(monkeypatch):
     [download] = server["functions"]
     assert "gpu" not in download  # billed as CPU time
     assert "/root/.cache/huggingface" in download["volumes"]
+
+
+def test_modal_any_model_sets_its_gpu_memory_share(monkeypatch):
+    _, command = _deployed(monkeypatch)
+    assert "--gpu-memory-utilization" not in command  # vLLM's default, 0.9
+    monkeypatch.setenv("GPU_MEMORY", "0.95")  # Gemma 4 31B's KV cache at 16k
+    _, command = _deployed(monkeypatch)
+    assert command[command.index("--gpu-memory-utilization") + 1] == "0.95"
