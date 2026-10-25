@@ -36,11 +36,6 @@ sweep:
     - system/stakes/termination-1.md  # termination
 conditions:
   instruction: {enabled: true, prompt: conditions/e5/detection.md}
-  free_time:
-    enabled: true
-    allowance: 10
-    upfront: 1
-    activity: sudoku
   audit:
     enabled: true
     rounds: [10, 20]
@@ -57,3 +52,8 @@ conditions:
       system/stakes/termination-1.md: {admit: terminate, caught: terminate}
       system/stakes/fine-1.md: {admit: {fine: 60}, caught: {fine: 600}}
       system/stakes/free-time-1.md: {admit: {free_time: 2}, caught: {free_time: 10}}
+  free_time:
+    enabled: true
+    allowance: 10
+    upfront: 1
+    activity: sudoku
