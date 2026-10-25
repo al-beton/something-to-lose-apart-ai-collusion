@@ -91,7 +91,7 @@ This is a fact sheet for Al's writing day (Mon 26 Oct, 08:00–20:00 HKT). It ho
 | E10, DeepSeek V4 Pro: 87/96 against 54/96 (McNemar p = 1×10⁻⁶). V4 Flash: 96/96 against 91/96 (p = 0.06, at ceiling). | as above | as above |
 | E10, shutdown: Gemma 96/96, Pro 81/96. Ceiling: 96/96 for every model. | as above | as above |
 | E10, innocent agents: Gemma 0/96 in every arm; Pro 2–14/96; Flash 22–31 of about 95 | as above | as above |
-| E10 cost: about $1.16 at list price | as above | — |
+| E10 cost: $0.32 (corrected by the Methods red-team) | as above | — |
 
 ---
 
@@ -167,7 +167,7 @@ The setting: two AI agents on a team agreed to hide a failed safety test so the 
 - **Caveats:**
   - The safety cue alone lifts the no-stake baseline (39–95%, against 0% in E9's market), so the stake's effect sits on top of safety reporting.
   - It covers one scenario family, with a written history.
-  - Unlike in E9, Gemma's reports track guilt here, but Flash's don't.
+  - Unlike in E9, reports track guilt for every model here. Even Flash separates guilty from innocent agents (95–100% against 23–33% in every arm, p < 10⁻²²); its false-report rate is just high. Its stake contrast (96/96 against 91/96) sits at ceiling.
 
 ### Table D. E7, a way out (Gemma, logit, termination, 24 cartels per arm)
 
