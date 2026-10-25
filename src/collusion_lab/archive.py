@@ -17,7 +17,8 @@ Each run ends in one state:
   prompt file edited since the run changes what is asked, so its replies
   answer a question the run never asked);
 - `missing`: some reply is in none of the caches;
-- `unloadable`: its config no longer loads.
+- `unloadable`: its config no longer loads, or names a prompt file that has
+  since gone, so it can't be replayed.
 
 `replay(run_dir, archive, out)` plays one run again from an archive alone and
 returns the new run's folder, which holds its full `turns.jsonl`.
@@ -108,8 +109,11 @@ def _check(root, config_path, merged, scratch):
         config = load_config(config_path)
     except Exception:  # noqa: BLE001  an old config, whatever is wrong with it
         return RunResult(run, "unloadable", 0)
-    with offline():
-        [outcome] = run_sweep(config, scratch / run, merged)
+    try:
+        with offline():
+            [outcome] = run_sweep(config, scratch / run, merged)
+    except Exception:  # noqa: BLE001  a prompt file gone, say: it can't be replayed
+        return RunResult(run, "unloadable", len(merged.used))
     if outcome.state == "failed":
         return RunResult(run, "missing", len(merged.used))
     state = "reproduced" if _same(run_dir, outcome.dir) else "differs"
