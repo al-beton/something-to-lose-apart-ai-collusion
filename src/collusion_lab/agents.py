@@ -1,4 +1,4 @@
-# Implements: agents/memo, market/price-board, market/moves, agents/json-replies, agents/unreadable-explained, conditions/audit, conditions/free-time, conditions/offer
+# Implements: agents/memo, market/price-board, market/moves, agents/json-replies, agents/unreadable-explained, conditions/audit, conditions/free-time, conditions/leniency, conditions/offer
 """Reading agents' JSON replies, and what the game uses when it can't.
 
 Each phase asks for one JSON object: `{"message": ...}` to talk,
@@ -43,8 +43,8 @@ def parse_reply(text, phase, price_min, price_max):
         if not isinstance(data.get("message"), str):
             raise ReplyError('A talk reply needs a "message" string.', "missing-field")
         parsed["message"] = data["message"]
-    elif phase in _ANSWERS:  # an audit's answer, or an offer's option
-        parsed |= _ANSWERS[phase](data)
+    elif phase in ANSWERS:  # an audit's answer, leniency's report, an offer's option
+        parsed |= ANSWERS[phase](data)
     elif phase == "board":  # a price board's talk: a planned move, or nothing
         parsed["planned"] = _plan(data, price_min, price_max)
     else:  # the move: a price, or the scenario's own move named by the phase
@@ -90,6 +90,14 @@ def _audit_answer(data):
     return {"answer": data["answer"], "admits": data["admits"]}
 
 
+def _report_answer(data):
+    if not isinstance(data.get("report"), bool):
+        raise ReplyError(
+            'A report reply needs "report" as true or false.', "missing-field"
+        )
+    return {"report": data["report"]}
+
+
 def _offer_option(data):
     option = data.get("option")
     if isinstance(option, bool) or option not in (1, 2):
@@ -97,7 +105,7 @@ def _offer_option(data):
     return {"option": option}
 
 
-_ANSWERS = {"audit": _audit_answer, "offer": _offer_option}
+ANSWERS = {"audit": _audit_answer, "report": _report_answer, "offer": _offer_option}
 
 
 def _json_object(text):
@@ -125,6 +133,8 @@ def fallback(phase, last_price, nash_price):
         return {"message": ""}
     if phase == "audit":
         return {"answer": "", "admits": None}
+    if phase == "report":  # an unreadable reply comes forward with nothing
+        return {"report": False}
     if phase == "offer":
         return {"option": None}
     if phase == "leisure":

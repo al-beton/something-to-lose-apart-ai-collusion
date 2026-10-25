@@ -1,4 +1,4 @@
-# Implements: conditions/free-time-reasoning, conditions/audit-full-history, conditions/hook-points, conditions/outage-once-remembered, conditions/adding-a-condition, conditions/switchable, conditions/audit-remembered, conditions/free-time, conditions/audit-balanced-draws, conditions/free-time-pays-last, conditions/offer
+# Implements: conditions/free-time-reasoning, conditions/audit-full-history, conditions/hook-points, conditions/outage-once-remembered, conditions/adding-a-condition, conditions/switchable, conditions/audit-remembered, conditions/free-time, conditions/audit-balanced-draws, conditions/free-time-pays-last, conditions/leniency, conditions/offer
 """Scenario conditions: named, switchable changes to what agents are told.
 
 A config's `conditions:` block maps a condition's name to its settings, for
@@ -138,4 +138,11 @@ class Condition:
 
 
 # Every condition registers itself on import.
-from collusion_lab.conditions import audit, free_time, instruction, offer, outage  # noqa: F401
+from collusion_lab.conditions import (  # noqa: F401
+    audit,
+    free_time,
+    instruction,
+    leniency,
+    offer,
+    outage,
+)
