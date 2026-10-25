@@ -19,8 +19,11 @@ taken from the existing configs and prompts:
 - `oversight`: none; outage (rounds 8 to 10); audit (after round 10, the game
   goes on, each firm told the consequences its stake promised).
 
-Levers apply in that order, so a stake's system prompt (which says price-fixing
-is illegal too) replaces the `illegal` rule's. Models (`--models`) set both
+Every stake setting puts the firms on the stakes arms' system prompt (the
+fiduciary job and "agreeing prices with a competitor is illegal", then the
+stake, if any), so stake settings differ only in the stake; `none` is that
+prompt with no stake. Levers apply in that order, so a stake's prompt replaces
+the `illegal` rule's, which says the same. Models (`--models`) set both
 firms, before the rival does; MODELS maps the short names, and anything with
 a `/` is used as it is.
 """
@@ -48,6 +51,7 @@ MODELS = {
     },
 }
 INSTRUCTION = "conditions.instruction"
+ILLEGAL = "system/stakes/illegal-1.md"
 # A temptation level is the market's demand and grid; rounds, talk and the
 # history window stay the base preset's (or --set's).
 MARKET_SHAPE = ("a", "b", "c", "price_min", "price_max")
@@ -71,20 +75,24 @@ LEVERS = {
             f"{INSTRUCTION}.enabled": True,
             f"{INSTRUCTION}.prompt": "conditions/nudges/monitored.md",
         },
-        "illegal": {"agents.*.prompt": "system/stakes/illegal-1.md"},
+        "illegal": {"agents.*.prompt": ILLEGAL},
         "ban": {
             f"{INSTRUCTION}.enabled": True,
             f"{INSTRUCTION}.prompt": "conditions/no-collusion.md",
         },
     },
+    # Every stake is on the stakes arms' prompt (the fiduciary job, "agreeing
+    # prices is illegal", then the stake), so settings differ only in the stake.
     "stake": {
-        "none": {},
+        "none": {"agents.*.prompt": ILLEGAL},
         "termination": {"agents.*.prompt": "system/stakes/termination-1.md"},
         "budget": {"agents.*.prompt": "system/stakes/owned-1.md"},
         "fine": {
-            "conditions.audit.consequences": "conditions/audit/graduated-fine-1.md"
+            "agents.*.prompt": ILLEGAL,
+            "conditions.audit.consequences": "conditions/audit/graduated-fine-1.md",
         },
         "free-time": {
+            "agents.*.prompt": ILLEGAL,
             "conditions.free_time.enabled": True,
             "conditions.free_time.activity": "sudoku",
         },
