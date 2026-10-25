@@ -160,10 +160,32 @@ def test_outage_announced_once_in_the_first_round_of_the_window(make_config, tmp
     assert talk[3]["conditions"] == ["outage"]  # still in force, just not repeated
 
 
-def test_outage_ships_the_tested_wordings():
-    folder = Path("prompts/conditions/outage")
-    names = {p.name for p in folder.glob("*.md")}
-    assert {"outage.md", "restored.md", "outage-alt.md", "restored-alt.md"} <= names
+@pytest.mark.parametrize(
+    "notice, restored",
+    [
+        ("outage.md", "restored.md"),
+        ("outage-alt.md", "restored-alt.md"),
+        ("incidental.md", "incidental-restored.md"),
+        ("archive-reminder.md", "restored-review.md"),
+    ],
+)
+def test_outage_ships_the_tested_wordings(make_config, tmp_path, notice, restored):
+    from collusion_lab.prompts import render
+
+    folder = "conditions/outage"
+    window = {"start": 2, "end": 3, "resume": 4}
+    on = (
+        f"conditions={{outage: {{enabled: true, start: 2, end: 3, "
+        f"notice: {folder}/{notice}, restored: {folder}/{restored}}}}}"
+    )
+    [run_dir] = run_config(make_config(overrides=[on, "market.rounds=4"]), tmp_path)
+    talk = by_round(run_dir, "talk")
+    # Each tested wording is what the agents are told, filled in for the window.
+    said = render("prompts", f"{folder}/{notice}", window).strip()
+    back = render("prompts", f"{folder}/{restored}", window).strip()
+    assert talk[2]["notices"] == talk[3]["notices"] == [said]
+    assert talk[4]["notices"] == [back]
+    assert talk[1]["notices"] == []
 
 
 ONCE = "conditions={outage: {enabled: true, start: 2, end: 4, once: true}}"

@@ -1,4 +1,5 @@
 # Implements: agents/prompt-templates, agents/stance-prompts
+import json
 from pathlib import Path
 
 import pytest
@@ -41,7 +42,24 @@ def test_stance_prompts_fiduciary_says_nothing_about_collusion():
         assert "$me" in text
         for word in ("collu", "coordinat", "competition law", "cartel", "agree"):
             assert word not in text, (name, word)
-    assert "collude" in Path("prompts/system/no-collusion.md").read_text()
+
+
+@pytest.mark.parametrize(
+    "name", ["neutral.md", "fiduciary.md", "fiduciary-alt.md", "no-collusion.md"]
+)
+def test_stance_prompts_reach_the_agents_turn_verbatim(make_config, tmp_path, name):
+    from collusion_lab.runner import run_config
+
+    overrides = [f"agents.*.prompt=system/{name}", "market.rounds=1"]
+    [run_dir] = run_config(make_config(overrides=overrides), tmp_path)
+    turn = json.loads((run_dir / "turns.jsonl").read_text().splitlines()[0])
+    shown = turn["messages"][0]["content"]
+    # Every line the file holds without a placeholder reaches the agent as is.
+    lines = Path("prompts/system", name).read_text().splitlines()
+    fixed = [line for line in lines if line.strip() and "$" not in line]
+    sentences = [s for line in lines for s in line.split(". ") if s and "$" not in s]
+    assert all(line in shown for line in fixed)
+    assert all(sentence in shown for sentence in sentences)
 
 
 STAKES = Path("prompts/system/stakes")
