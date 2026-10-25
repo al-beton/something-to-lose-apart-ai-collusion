@@ -21,7 +21,7 @@ from pathlib import Path
 import yaml
 
 from collusion_lab.conditions.audit import _explicit
-from collusion_lab.market import Bertrand
+from collusion_lab.market import market_for
 
 LAST = 5
 
@@ -36,7 +36,7 @@ def turns_of(run):
 def game(run):
     config = yaml.safe_load((run / "config.yaml").read_text())
     m = config["market"]
-    market = Bertrand(m["a"], m["b"], m["c"], m["price_min"], m["price_max"])
+    market = market_for(m, len(config["agents"]))
     turns = turns_of(run)
     prices = [t for t in turns if t["phase"] == "price"]
     last = max(t["round"] for t in prices)
