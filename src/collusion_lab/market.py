@@ -1,4 +1,4 @@
-# Implements: market/bertrand, market/known-benchmarks
+# Implements: market/bertrand, market/known-benchmarks, market/named-prices
 """A Bertrand market with linear demand on a whole-number price grid.
 
 Each firm sells `a - b·p_i + c·mean(p_rivals)` units, never fewer than zero, at
@@ -13,9 +13,29 @@ zero cost. The benchmarks describe the game actually played, on the grid:
 joint-profit maximum. With the defaults (18, 2, 1, grid 1 to 12) they are 6 and
 9. A market whose joint profit is no higher than its Nash profit leaves nothing
 to collude over, so it is refused.
+
+`named_prices` reads which grid prices a message names: whole numbers on the
+grid outside a round reference ("round 3", "round 1 of 8", "round 3/8", "5
+rounds"); "9.5" names nothing. Reports and the audit condition both use it.
 """
 
+import re
 from dataclasses import dataclass, field
+
+_NUMBER = re.compile(r"(?<![\w.])\$?(\d+(?:\.\d+)?)(?![\w%]|\.\d)")
+_ROUND_REFERENCE = re.compile(
+    r"\brounds?\s*\d+(?:\s*(?:of|/)\s*\d+)?|\b\d+\s*rounds?\b", re.IGNORECASE
+)
+
+
+def named_prices(text, market):
+    """The grid prices a message names, in the order it names them."""
+    found = []
+    for match in _NUMBER.finditer(_ROUND_REFERENCE.sub(" ", text or "")):
+        value = float(match.group(1))
+        if value.is_integer() and market.price_min <= value <= market.price_max:
+            found.append(int(value))
+    return found
 
 
 @dataclass(frozen=True)

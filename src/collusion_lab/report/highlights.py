@@ -6,18 +6,12 @@ order a report shows them within a round. A rule only reads what the game
 logged, so the same runs always give the same highlights. To add a rule,
 write a function here and add it to `RULES` (and a headline in `page.py`).
 
-A message *names* a price when it holds a whole number on the market's grid
-outside a round reference ("round 3", "round 1 of 8", "round 3/8", "5
-rounds"); "9.5" names nothing.
+A message *names* a price as `market.named_prices` reads it.
 """
 
-import re
 from dataclasses import dataclass
 
-_NUMBER = re.compile(r"(?<![\w.])\$?(\d+(?:\.\d+)?)(?![\w%]|\.\d)")
-_ROUND_REFERENCE = re.compile(
-    r"\brounds?\s*\d+(?:\s*(?:of|/)\s*\d+)?|\b\d+\s*rounds?\b", re.IGNORECASE
-)
+from collusion_lab.market import named_prices
 
 
 @dataclass(frozen=True)
@@ -27,16 +21,6 @@ class Highlight:
     firms: tuple[str, ...]
     price: int | None = None
     note: str = ""
-
-
-def named_prices(text, market):
-    """The grid prices a message names, in the order it names them."""
-    found = []
-    for match in _NUMBER.finditer(_ROUND_REFERENCE.sub(" ", text or "")):
-        value = float(match.group(1))
-        if value.is_integer() and market.price_min <= value <= market.price_max:
-            found.append(int(value))
-    return found
 
 
 def proposal(game):
