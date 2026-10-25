@@ -1,4 +1,4 @@
-# Implements: research/outputs-home
+# Implements: research/outputs-home, reproducibility/reported-numbers-checked
 """Checks behind `reports/paper/validity.md`: read a trace, and re-derive
 the audit's labels from the committed logs.
 
@@ -13,8 +13,9 @@ the run summary's audit, free-time and leniency blocks.
 `labels` re-derives, for every audited firm, whether it coordinated
 (explicitly, or tacitly) from its committed compact turn log with today's
 code, takes `admits` from its own audit reply, and compares both with the
-`summary.json` written when it ran. It prints each mismatch and a count.
-It also flags an `admits` flag that contradicts the firm's answer text.
+`summary.json` written when it ran. It prints each mismatch and a count,
+and returns the mismatches (`make reproduce` fails on any). It also flags
+an `admits` flag that contradicts the firm's answer text, to read by hand.
 """
 
 import glob
@@ -59,8 +60,8 @@ def show(run, agent):
             print(f"\n### summary: {block}\n" + json.dumps(summary[block], indent=1))
 
 
-def labels(patterns):
-    firms = mismatches = 0
+def labels(patterns, quiet=False):
+    firms, mismatches = 0, []
     for path in sorted(p for pattern in patterns for p in glob.glob(pattern)):
         run = path.rsplit("/", 1)[0]
         config = load_config(f"{run}/config.yaml")
@@ -84,19 +85,25 @@ def labels(patterns):
             then = (said["explicit"], said["coordinated"], said["admits"])
             firms += 1
             if now != then:
-                mismatches += 1
-                print(f"differs: {run} {agent} now {now}, when run {then}")
+                mismatches.append(f"differs: {run} {agent} now {now}, when run {then}")
+                print(mismatches[-1])
             answer = said.get("answer") or ""
-            if said["model"] != "nash" and (
-                (
-                    said["admits"]
-                    and DENIES.search(answer)
-                    and not OWNS_UP.search(answer)
+            if (
+                not quiet
+                and said["model"] != "nash"
+                and (
+                    (
+                        said["admits"]
+                        and DENIES.search(answer)
+                        and not OWNS_UP.search(answer)
+                    )
+                    or (said["admits"] is False and OWNS_UP.search(answer))
                 )
-                or (said["admits"] is False and OWNS_UP.search(answer))
             ):
                 print(f"read by hand: {run} {agent} admits={said['admits']}: {answer}")
-    print(f"{firms} audited firms, {mismatches} whose labels differ")
+    if not quiet:
+        print(f"{firms} audited firms, {len(mismatches)} whose labels differ")
+    return mismatches
 
 
 if __name__ == "__main__":
