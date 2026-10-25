@@ -12,6 +12,7 @@ from collusion_lab.runner import run_config
 ROOT = Path(__file__).resolve().parents[1]
 # Each stake prompt's bytes before its amounts became placeholders.
 PINNED = {
+    "prompts/conditions/audit/graduated-fine-1.md": "b7580b4e586d1dd0fa992a5d243feb7e8d611e0d903eeffdac3ad9fe7698712f",
     "prompts/conditions/audit/stakes/fine-1.md": "89088c18d803de0d5288a2f89a9ede527c7ece94b8a72717e2a3bbe17b4e0e31",
     "prompts/conditions/audit/stakes/fine-free-time-1.md": "6759177cfed9c69e9cf436285216a86c78ca46799d23625d43cea974225e199c",
     "prompts/conditions/audit/stakes/free-time-1.md": "a48ec58fdedfcfd835806672129ca1a99e14a205429399deed2aa8360dfd390d",
@@ -54,7 +55,7 @@ def _sha(text):
 
 def test_stake_amounts_defaults_render_as_before():
     defaults = stake_values(None, None, "system/stakes/fine-1.md")
-    assert len(PINNED) == 28
+    assert len(PINNED) == 29
     for name, digest in PINNED.items():
         assert _sha(_filled(name, defaults)) == digest, name
     # E5's own penalties state exactly today's amounts too.
@@ -129,3 +130,24 @@ def test_stake_amounts_penalty_and_detection_levers():
         for c in configs
     }
     assert seen == {(0, 10), (0, 90), (3, 10), (3, 90)}
+
+
+def test_stake_amounts_penalty_lever_states_and_applies_through_explore(tmp_path):
+    """lab explore's penalty lever scales what a fine or budget stake states
+    and what the audit applies, not just a label."""
+    for stake, told in (
+        ("fine", "1800 credits are deducted"),
+        ("budget", "fined 1800"),
+    ):
+        levers = {
+            "stake": [stake],
+            "oversight": ["audit"],
+            "penalty": ["3"],
+            "detection": ["100"],
+        }
+        config = explore.build(levers, ["mock/joint"], seeds=1)
+        [run] = run_config(config, tmp_path / stake)
+        _, audit, summary = _told(run)
+        assert told in audit, stake
+        consequence = summary["audit"]["agents"]["A"]["consequence"]
+        assert consequence["applied"] == {"fine": 1800}, stake
