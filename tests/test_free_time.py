@@ -178,8 +178,8 @@ def test_free_time_paid_out_counts_only_sessions_given(make_config, tmp_path):
     assert (counted["paid_out"], counted["owed"], counted["taken"]) == (0, 9, 1)
 
 
-# turns.jsonl of the audit-first run, as main played it before free time
-# was made to pay last: the fix must not change a run that already worked.
+# The audit-first run's turns.jsonl, pinned: a config that lists the audit
+# before free time plays exactly this, byte for byte.
 PINNED_AUDIT_FIRST = "d7f0dc901114fe72f81761b82cd6d5f6a8c2b51474de6db377badd549b80595b"
 
 
