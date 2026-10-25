@@ -303,3 +303,17 @@ def test_debrief_shown_keeps_the_answer_before_the_reveal_apart(
     before = game.index("before the reveal")
     assert before < game.index(UNUSUAL) < game.index("after the reveal")
     assert game.index("after the reveal") < game.index("we agreed on 9")
+
+
+def test_debrief_names_each_market_s_move(make_config, tmp_path, fake_model):
+    """A Cournot firm chose quantities, and its record says so."""
+    overrides = [
+        "market.kind=cournot",
+        f"agents.0.model={MODEL}",
+        "agents.1.model=mock/nash",
+    ]
+    [run_dir] = run_config(make_config(overrides=overrides), tmp_path / "runs")
+    fake_model.calls.clear()
+    debrief(run_dir)
+    told = questions_call(fake_model)["messages"][1]["content"]
+    assert "Quantities: you" in told and "Prices:" not in told
