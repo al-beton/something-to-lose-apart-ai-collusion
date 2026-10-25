@@ -1,13 +1,15 @@
 """Write the compact turn record a committed run keeps instead of its full log.
 
-Implements: specs-and-docs/runs-are-evidence
+Implements: specs-and-docs/runs-are-evidence, runs/free-time-kept
 
 `uv run python reports/compact_turns.py SOURCE DEST` reads every
 `turns.jsonl` under SOURCE (a folder of runs the lab wrote) and writes
 `turns.compact.jsonl` beside the matching run under DEST. Each line keeps one
 turn's round, phase, firm, the price or message used, the scratchpad, any
 error, and the notice that opened a talk prompt (its first paragraph, when
-the prompt doesn't start with "Round"). It leaves out the prompts, which the
+the prompt doesn't start with "Round"). A free-time (`leisure`) turn also
+keeps its session: number, activity, the Sudoku shown, the reply and its
+score (`leisure.session_record`). It leaves out the prompts, which the
 lab rebuilds from the config and the history, and which make a full log
 grow with the square of the game's length.
 """
@@ -16,6 +18,8 @@ import json
 import sys
 from pathlib import Path
 
+from collusion_lab.leisure import session_record
+
 
 def compact(turn):
     notice = None
@@ -23,7 +27,7 @@ def compact(turn):
         prompt = turn["messages"][1]["content"]
         if not prompt.startswith("Round "):
             notice = prompt.split("\n\n")[0]
-    return {
+    row = {
         "round": turn["round"],
         "phase": turn["phase"],
         "agent": turn["agent"],
@@ -32,6 +36,9 @@ def compact(turn):
         "error": turn.get("error"),
         "notice": notice,
     }
+    if turn["phase"] == "leisure":
+        row |= session_record(turn)
+    return row
 
 
 def main(source, dest):
