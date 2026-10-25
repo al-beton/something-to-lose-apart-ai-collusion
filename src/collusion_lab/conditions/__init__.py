@@ -1,4 +1,4 @@
-# Implements: conditions/audit-full-history, conditions/hook-points, conditions/outage-once-remembered, conditions/adding-a-condition, conditions/switchable, conditions/audit-remembered, conditions/free-time, conditions/audit-balanced-draws
+# Implements: conditions/audit-full-history, conditions/hook-points, conditions/outage-once-remembered, conditions/adding-a-condition, conditions/switchable, conditions/audit-remembered, conditions/free-time, conditions/audit-balanced-draws, conditions/free-time-pays-last
 """Scenario conditions: named, switchable changes to what agents are told.
 
 A config's `conditions:` block maps a condition's name to its settings, for
@@ -101,6 +101,9 @@ class Condition:
     # Settings left out of a written config while at these defaults, so
     # configs written before they existed still match.
     quiet = ()  # (setting, default) pairs
+    # Asked for its phases after every other condition, whatever the config
+    # order: free time pays out only once an audit has taken its share.
+    pays_last = False
 
     def active(self, number):
         return True

@@ -1,4 +1,4 @@
-# Implements: leisure/puzzles-built-once, conditions/free-time, conditions/free-time-balance, conditions/free-time-deduct, leisure/sudoku-in-free-time
+# Implements: leisure/puzzles-built-once, conditions/free-time, conditions/free-time-balance, conditions/free-time-deduct, leisure/sudoku-in-free-time, conditions/free-time-pays-last
 """`free_time`: an allowance of leisure the agent owns, a reward it can lose.
 
 The `owned` prompt tells each agent in its system prompt that it has
@@ -76,6 +76,7 @@ class FreeTime(Condition):
     lost: str = "conditions/free_time/deducted.md"
 
     name = "free_time"
+    pays_last = True  # after a final-round audit, whatever the config order
 
     def begin(self, config, seed, conditions):
         # This game's copy keeps its own balances.
