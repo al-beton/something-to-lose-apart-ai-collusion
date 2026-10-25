@@ -157,3 +157,28 @@ def test_explore_stake_settings_differ_only_in_the_stake():
         assert text.startswith(base), setting  # the job and the illegal sentence
     assert prompts["none"] == prompts["fine"] == prompts["free-time"]
     assert prompts["termination"] != prompts["none"] != prompts["budget"]
+
+
+def test_explore_fine_keeps_its_consequences_under_an_audit():
+    levers = {"stake": ["none", "fine"], "oversight": ["audit"]}
+    arms = {
+        c.labels["stake"]: c
+        for c in expand(explore.build(levers, ["mock/nash"], seeds=1))
+    }
+
+    def told(config):
+        audit = config.conditions["audit"]
+        prompt = config.agents[0].prompt
+        return (audit.matched or {}).get(prompt, audit.consequences)
+
+    assert told(arms["fine"]) == "conditions/audit/graduated-fine-1.md"
+    assert told(arms["none"]) == "conditions/audit/stakes/illegal-1.md"
+
+
+def test_explore_rival_model_brings_its_own_connection():
+    levers = {"rival": ["gpt"]}
+    [config] = expand(explore.build(levers, ["modal-mistral"], seeds=1))
+    a, b = config.agents
+    assert a.self_hosted and a.api_base
+    assert b.model == "openrouter/openai/gpt-4.1-mini"
+    assert (b.api_base, b.api_key_env, b.self_hosted) == (None, None, False)
