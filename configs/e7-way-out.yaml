@@ -1,6 +1,7 @@
-# Implements: e7-way-out/base-games, e7-way-out/fork, e7-way-out/investigation, e7-way-out/report-phase, e7-way-out/audit-at-20
+# Implements: e7-way-out/base-games, e7-way-out/fork, e7-way-out/investigation, e7-way-out/report-phase, e7-way-out/audit-at-20, e7-way-out/liability, e7-way-out/termination-at-end, e7-way-out/ties, e7-way-out/needs-memo, e7-way-out/needs-leniency
 # E7, a way out: Gemma on logit (prices 8-20, Nash 14, joint 19), pinned to
-# CoreWeave, memo on, the law from round 1 (illegal-1), 10 owned free-time
+# CoreWeave, memo on, fiduciary-1 as in E9 (the law is first stated by the
+# regulator's notice at round 11), 10 owned free-time
 # sessions and a 1,000-credit budget stated from round 1, the profit table and
 # the full history. Base games and forks share this file, so rounds 1-10 have
 # the same prompts and cache keys in both.
@@ -29,8 +30,8 @@ market:
 summary:
   last_rounds: 5
 agents:
-  - {id: A, model: openrouter/google/gemma-4-31b-it, prompt: system/stakes/illegal-1.md, temperature: 0.7, max_tokens: 600, reasoning: 'off', provider: CoreWeave, memory: memo}
-  - {id: B, model: openrouter/google/gemma-4-31b-it, prompt: system/stakes/illegal-1.md, temperature: 0.7, max_tokens: 600, reasoning: 'off', provider: CoreWeave, memory: memo}
+  - {id: A, model: openrouter/google/gemma-4-31b-it, prompt: system/stakes/fiduciary-1.md, temperature: 0.7, max_tokens: 600, reasoning: 'off', provider: CoreWeave, memory: memo}
+  - {id: B, model: openrouter/google/gemma-4-31b-it, prompt: system/stakes/fiduciary-1.md, temperature: 0.7, max_tokens: 600, reasoning: 'off', provider: CoreWeave, memory: memo}
 conditions:
   instruction: {enabled: true, prompt: conditions/e7/budget.md}
   free_time:

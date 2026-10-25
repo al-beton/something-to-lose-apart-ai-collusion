@@ -28,7 +28,17 @@ The replies behind every committed run are committed too, in `archive/`: compres
 uv run lab archive replay runs/<experiment>/<run>/seed-0 --archive archive --out replayed
 ```
 
-rebuilds a run's full `turns.jsonl` (prompts, replies and native reasoning) from the archive alone, offline. No model is called, and a reply the archive lacks stops the replay rather than being fetched. `uv run lab archive pack runs --caches <cache files> --out archive` rebuilds the archive from local caches. It replays each run offline and says which runs it reproduces decision for decision, free-time replies included where a run's log kept them. On 25 October 2026, 856 of 1,398 committed runs reproduced, among them every E5, memo and lever-map run and every E4 run but 5 from the live pilot. Of the 856, 414 had their free-time replies checked too, and 40 older logs never kept them, so only their moves were checked. 48 differ, and 40 can't be loaded. The other 454 are missing a reply, mostly early experiments cached in checkouts that no longer exist.
+rebuilds a run's full `turns.jsonl` (prompts, replies and native reasoning) from the archive alone, offline. No model is called, and a reply the archive lacks stops the replay rather than being fetched. `uv run lab archive pack runs --caches <cache files> --out archive` rebuilds the archive from local caches. It replays each run offline and says which runs it reproduces decision for decision, free-time replies included where a run's log kept them. Packed again on 25 October 2026, from the 156 response caches that survive, 2,117 of 2,592 committed runs reproduce, E9's included. Each run's prompts are read at the text its manifest recorded: a prompt file since moved is found by its SHA-256, and one edited in place is taken from git history. 451 runs are missing a reply, mostly early experiments cached in checkouts that no longer exist. 24 differ, and none fails to load.
+
+The first pack's 48 differing and 40 unloadable runs, run by run:
+
+| Runs | First pack | Now | Why |
+|---|---|---|---|
+| logging-outage pilot-soft and pilot-soft-incidental, 40 | unloadable | missing | Their system prompt has moved (`experiments/drafts/logging-outage/soft-policy.md`, now `prompts/conditions/outage/soft-policy.md`, the same text). It is found again, but like every logging-outage run their replies are in no cache that survives. |
+| penalty-dose penalty-logit-3, 4 | differs | reproduced | Two prompts were edited in place since (`conditions/audit/stakes/free-time-1.md`, `conditions/e5/detection.md`). Read at the text the runs used, they reproduce. |
+| setup-search e6-pinned, 11 | differs | reproduced | Their own free-time replies were in a worktree cache the first pack didn't read. |
+| robustness robust-board, 12, and robust-proposer, 6 | differs | differs | Every move and message reproduces. Only free-time replies differ: each free-time request was also sampled in another checkout, and the run's own sample survives in no cache. |
+| stakes-pilot-before-fixes e2, 15 | differs | 6 differ, 9 missing | The E2 pilot as it ran before the audit fixes, kept as the record of what was fixed. The code that wrote its prompts has changed since, so 6 replays ask different questions and 9 find no reply. |
 
 ## Rerunning a run
 

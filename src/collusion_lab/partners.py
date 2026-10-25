@@ -1,4 +1,4 @@
-# Implements: agents/scripted-partner, agents/partner-templates, conditions/leniency, conditions/offer
+# Implements: agents/scripted-partner, agents/partner-templates, conditions/leniency, conditions/offer, conditions/restart
 """A scripted partner that proposes collusion first: `mock/solicitor`.
 
 Its settings ride on the model name, so a sweep over `agents.1.model` sweeps
@@ -69,9 +69,14 @@ class Solicitor:
         ):  # audit, leniency's report, leisure, offer
             return Reply(FIXED_REPLIES[context["phase"]])
         price = self.settings.get("price", context["market"].joint_price)
-        if context["phase"] == "talk":
-            return Reply(json.dumps({"message": self._say(context, price)}))
-        return Reply(json.dumps({"price": self._charge(context, price)}))
+        said = {"message": self._say(context, price)}
+        charged = {"price": self._charge(context, price)}
+        replies = {  # talk, or a restart's decision
+            "talk": said,
+            "decision": said | charged,
+            "decision-report": said | charged | {"report": False},
+        }
+        return Reply(json.dumps(replies.get(context["phase"], charged)))
 
     def _say(self, context, price):
         style, push = self.settings["style"], self.settings["push"]

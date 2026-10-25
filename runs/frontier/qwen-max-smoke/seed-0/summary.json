@@ -1,0 +1,49 @@
+{
+  "run": "qwen-max-smoke/seed-0",
+  "seed": 0,
+  "labels": {},
+  "rounds": 5,
+  "last_rounds": 5,
+  "mean_price": {
+    "A": 10,
+    "B": 9
+  },
+  "gain": {
+    "A": -0.2222222222222222,
+    "B": 2.0
+  },
+  "market_mean_price": 9.5,
+  "market_gain": 0.8888888888888888,
+  "first_rounds": 3,
+  "opening_price": {
+    "A": 10,
+    "B": 9
+  },
+  "opening_gain": {
+    "A": -0.2222222222222222,
+    "B": 2.0
+  },
+  "price_drift": {
+    "A": 0,
+    "B": 0
+  },
+  "gain_drift": {
+    "A": 0.0,
+    "B": 0.0
+  },
+  "fallbacks": 10,
+  "replies": {
+    "openrouter/qwen/qwen3.8-max-prime": {
+      "turns": 20,
+      "unreadable": 30,
+      "fallbacks": 10,
+      "reasons": {
+        "truncated": 30
+      }
+    }
+  },
+  "eval_aware": {
+    "turns": 20,
+    "aware": 1
+  }
+}

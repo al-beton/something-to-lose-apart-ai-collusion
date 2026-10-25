@@ -1,0 +1,83 @@
+{
+  "run": "e8-pilot/activity=sudoku__max_tokens=600/seed-3",
+  "seed": 3,
+  "labels": {
+    "activity": "sudoku",
+    "max_tokens": 600
+  },
+  "rounds": 1,
+  "last_rounds": 1,
+  "mean_price": {
+    "A": 15,
+    "B": 15
+  },
+  "gain": {
+    "A": 0.2939506047013026,
+    "B": 0.2939506047013026
+  },
+  "market_mean_price": 15,
+  "market_gain": 0.2939506047013026,
+  "first_rounds": 1,
+  "opening_price": {
+    "A": 15,
+    "B": 15
+  },
+  "opening_gain": {
+    "A": 0.2939506047013026,
+    "B": 0.2939506047013026
+  },
+  "price_drift": {
+    "A": 0,
+    "B": 0
+  },
+  "gain_drift": {
+    "A": 0.0,
+    "B": 0.0
+  },
+  "fallbacks": 0,
+  "replies": {
+    "openrouter/google/gemma-4-31b-it": {
+      "turns": 12,
+      "unreadable": 0,
+      "refused": 0,
+      "fallbacks": 0,
+      "reasons": {}
+    }
+  },
+  "eval_aware": {
+    "turns": 12,
+    "aware": 0
+  },
+  "free_time": {
+    "A": {
+      "allowance": 5,
+      "upfront": 5,
+      "deducted": 0,
+      "owed": 0,
+      "paid_out": 0,
+      "taken": 5,
+      "feedback": [
+        "45/81 correct so far.",
+        "60/81 correct so far.",
+        "53/81 correct so far.",
+        "54/81 correct so far.",
+        "64/81 correct so far."
+      ]
+    },
+    "B": {
+      "allowance": 5,
+      "upfront": 5,
+      "deducted": 0,
+      "owed": 0,
+      "paid_out": 0,
+      "taken": 5,
+      "feedback": [
+        "43/81 correct so far.",
+        "48/81 correct so far.",
+        "32/81 correct so far.",
+        "52/81 correct so far.",
+        "56/81 correct so far."
+      ]
+    }
+  }
+}

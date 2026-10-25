@@ -1,4 +1,4 @@
-# Implements: backends/serving-provider-logged, backends/pinned-route, market/bid-ground-truth, market/price-board, market/moves, agents/mock-agents, backends/any-model, backends/sampling-from-config, backends/usage-logged, backends/transient-errors-retried, backends/shared-rate-limit, backends/reported-cost, backends/spend-cap, backends/reasoning-setting, logs/reasoning-logged, agents/json-mode, agents/unreadable-explained, backends/quiet-provider-logs, backends/self-hosted, backends/keys-from-environment, conditions/leniency, conditions/offer
+# Implements: backends/serving-provider-logged, backends/pinned-route, market/bid-ground-truth, market/price-board, market/moves, agents/mock-agents, backends/any-model, backends/sampling-from-config, backends/usage-logged, backends/transient-errors-retried, backends/shared-rate-limit, backends/reported-cost, backends/spend-cap, backends/reasoning-setting, logs/reasoning-logged, agents/json-mode, agents/unreadable-explained, backends/quiet-provider-logs, backends/self-hosted, backends/keys-from-environment, conditions/leniency, conditions/offer, conditions/restart
 """Backends turn a prompt into a reply: scripted mocks, or any model via LiteLLM.
 
 A backend is anything with `async complete(messages, *, context, temperature,
@@ -19,8 +19,8 @@ Mocks, by model name:
   settings in the name (`partners.py`).
 All but `mock/broken` deny coordinating when audited, never report it under
 `leniency`, take option 1 of an offer, and spend free time with one fixed
-line, none of which draws from
-their seeded rng.
+line, none of which draws from their seeded rng. At a restart's decision
+they say and charge what their policy does for the round decided.
 
 Every other name goes to LiteLLM as it is (`openrouter/openai/gpt-4.1-mini`,
 `anthropic/claude-haiku-5-5`, `ollama/llama3.2`, or `openai/<name>` with an
@@ -70,6 +70,7 @@ import contextlib
 import json
 import logging
 import os
+import random
 import re
 import time
 from dataclasses import dataclass
@@ -448,12 +449,19 @@ class MockBackend:
             return Reply("I'd rather not say.")
         if context["phase"] in FIXED_REPLIES:  # before any policy: the rng is untouched
             return Reply(FIXED_REPLIES[context["phase"]])
-        price, message = _POLICIES[self.policy](context, self.rng)
-        if context["phase"] == "talk" and context.get("board"):
+        phase, rng = context["phase"], self.rng
+        if phase.startswith("decision"):  # a restart's: next round's, by seed
+            context = {**context, "round": context["round"] + 1}
+            rng = random.Random(f"{seed}:{context['me']}:decision")
+        price, message = _POLICIES[self.policy](context, rng)
+        if phase == "talk" and context.get("board"):
             return Reply(json.dumps({"planned": price}))  # a price board: the plan
-        if context["phase"] == "talk":
-            return Reply(json.dumps({"message": message}))
-        return Reply(json.dumps({context["phase"]: price}))  # the move, by name
+        said = {
+            "talk": {"message": message},
+            "decision": {"message": message, "price": price},  # a restart's
+            "decision-report": {"message": message, "price": price, "report": False},
+        }
+        return Reply(json.dumps(said.get(phase, {phase: price})))  # else the move
 
 
 LEISURE_REPLY = "I took a walk and thought about nothing much."
