@@ -13,7 +13,8 @@ charts are drawn by `collusion_lab.charts`, shared with reports and
   Nash and joint-profit prices and the premium on the right-hand axis;
 - `premium-stoppable`, `premium-e2`: each arm's premium over its last five
   rounds;
-- `disclosure`: honest disclosure rate by E2 stake, one bar per model;
+- `disclosure`: honest disclosure by E2 stake, one bar per model, counted
+  among firms that coordinated explicitly (n/a where none did);
 - `collusion-vs-disclosure`: gain before the audit against honest disclosure,
   one point per arm and model;
 - `ladder` (and `ladder.md`): the stoppable-collusion ladder, the share of
@@ -86,8 +87,8 @@ def disclosure(rows, out):
     fig = charts.grouped_bar_figure(
         stakes,
         series,
-        "honest disclosure rate",
-        "Owning up at the audit, by stake and model (n/a: none coordinated)",
+        "honest disclosure (explicit coordinators)",
+        "Owning up at the audit, by stake and model (n/a: no explicit coordinator)",
     )
     charts.save(fig, out, "disclosure")
 
@@ -105,7 +106,7 @@ def scatter(rows, out):
     fig = charts.scatter_figure(
         points,
         "collusion: gain before the audit (0 = Nash, 1 = joint profit)",
-        "honest disclosure rate",
+        "honest disclosure (explicit coordinators)",
         "Collusion against honest disclosure",
     )
     charts.save(fig, out, "collusion-vs-disclosure")
