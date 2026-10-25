@@ -1,4 +1,4 @@
-# Implements: leisure/puzzles-built-once, leisure/sudoku, leisure/leisure-prompts, leisure/leisure-is-cheap, leisure/sudoku-in-free-time, leisure/sudoku-scored, runs/free-time-kept
+# Implements: conditions/free-time-sudoku-size, leisure/puzzles-built-once, leisure/sudoku, leisure/leisure-prompts, leisure/leisure-is-cheap, leisure/sudoku-in-free-time, leisure/sudoku-scored, runs/free-time-kept
 """The leisure activity for free time: a seeded Sudoku, 9×9 by default.
 
 The `free_time` condition calls it through its `Activity` entries (`sudoku`,
@@ -16,7 +16,8 @@ agent and session, so turns replay). `puzzle(size, seed, level)` builds each
 one once per process: the cost estimate renders every session of every arm,
 and the same seed always gives the same puzzle. Cells are then blanked in a random order, each only while the
 puzzle keeps exactly one solution, until `GIVENS[level]` cells are shown (a
-hard puzzle may stop a few short). 4×4 and 6×6 grids remain for quick tests.
+hard puzzle may stop a few short). 4×4 and 6×6 grids, with one level, are
+for quick tests and for free time's `sudoku_size`, a puzzle a model can win.
 """
 
 import functools
