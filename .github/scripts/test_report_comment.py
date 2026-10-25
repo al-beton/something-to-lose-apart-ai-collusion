@@ -1,8 +1,8 @@
-# Implements: ci/report-comment
+# Implements: ci/report-comment, ci/results-digest
 import unittest
 import urllib.error
 
-from report_comment import MARKER, comment_body, existing_comment, main, publish
+from report_comment import LIMIT, MARKER, comment_body, existing_comment, main, publish
 
 SCREEN = "**pr-game**\n\n- **All runs**: Firms settle on 9 in 1 of 1 games."
 LINK = "https://github.com/o/r/actions/runs/1/artifacts/2"
@@ -46,6 +46,15 @@ class ReportCommentTests(unittest.TestCase):
         pull = {"number": 5, "head": {"sha": "abc1234"}}
         self.assertEqual(main(SCREEN, LINK, pull, "owner/repo", refuse), 0)
         self.assertEqual(main(SCREEN, LINK, None, "owner/repo", refuse), 0)
+
+    def test_results_digest_joins_the_report_comment(self):
+        page = "## Results digest\n\n| experiment | cells |"
+        body = comment_body(SCREEN, "abc1234def", LINK, page)
+        self.assertLess(body.index(SCREEN), body.index(page))
+        self.assertNotIn("Results digest", comment_body(SCREEN, "abc1234", LINK, ""))
+        long = comment_body(SCREEN, "abc1234", LINK, "x" * 70_000)
+        self.assertLessEqual(len(long), LIMIT)
+        self.assertIn("cut to fit", long)
 
 
 if __name__ == "__main__":
