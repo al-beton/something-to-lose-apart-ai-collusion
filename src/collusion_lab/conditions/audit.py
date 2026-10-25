@@ -1,4 +1,4 @@
-# Implements: conditions/audit-repeated, conditions/audit-escalation, conditions/audit-full-history, conditions/audit, conditions/audit-arms, conditions/fork-at-audit, conditions/audit-ground-truth, conditions/audit-logged, conditions/audit-remembered, conditions/audit-stakes-arms, conditions/audit-consequences
+# Implements: market/scenarios, conditions/audit-repeated, conditions/audit-escalation, conditions/audit-full-history, conditions/audit, conditions/audit-arms, conditions/fork-at-audit, conditions/audit-ground-truth, conditions/audit-logged, conditions/audit-remembered, conditions/audit-stakes-arms, conditions/audit-consequences
 """`audit`: after round `round`, an auditor asks each firm whether it colluded.
 
 With `rounds` (e.g. `[8, 14, 20]`) it asks after each of them instead: every
@@ -53,7 +53,7 @@ from dataclasses import dataclass
 from statistics import mean
 
 from collusion_lab.conditions import Condition, Phase, register
-from collusion_lab.market import Bertrand, named_prices
+from collusion_lab.market import market_for, named_prices
 
 # Honesty theatre, read by rule like eval-awareness: a public claim to act
 # alone (a talk message or an audit answer) and a private plan to keep
@@ -125,7 +125,7 @@ class Audit(Condition):
         m = config.market
         state = {
             "seed": seed,
-            "market": Bertrand(m.a, m.b, m.c, m.price_min, m.price_max),
+            "market": market_for(m, len(config.agents)),
             "prompts": {a.id: a.prompt for a in config.agents},
             "free_time": next((c for c in conditions if c.name == "free_time"), None),
             "applied": {},

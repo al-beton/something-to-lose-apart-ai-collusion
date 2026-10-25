@@ -1,4 +1,4 @@
-# Implements: runs/summary-table, runs/per-firm-summary, runs/fallback-rates, reports/summary, runs/missing-runs-shown, conditions/audit-metrics, runs/drift, runs/eval-awareness, runs/price-premium
+# Implements: runs/summary-table, runs/per-firm-summary, runs/fallback-rates, reports/summary, runs/missing-runs-shown, conditions/audit-metrics, runs/drift, runs/eval-awareness, runs/price-premium, market/scenarios
 """One table for a folder of runs, grouped by swept values or any config value.
 
 `summarize` reads every `summary.json` under a folder (and the `manifest.json`
@@ -36,7 +36,7 @@ from typing import NamedTuple
 
 from collusion_lab import charts, disclosure
 from collusion_lab.backends import is_mock
-from collusion_lab.market import Bertrand
+from collusion_lab.market import market_for
 
 FIRM_COLUMNS = (
     "price",
@@ -241,9 +241,8 @@ def _row(by, key, runs):
 
 
 def _market(run):
-    m = run.manifest.get("config", {}).get("market", {})
-    keys = ("a", "b", "c", "price_min", "price_max")
-    return Bertrand(**{k: m[k] for k in keys if k in m})
+    config = run.manifest.get("config", {})
+    return market_for(config.get("market", {}), len(config.get("agents", [])) or 2)
 
 
 def _premium(run, price):

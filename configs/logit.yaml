@@ -1,0 +1,23 @@
+# Implements: market/logit
+# Logit demand (market.kind: logit), the market of Calvano et al. (2020) and
+# Fish et al. (2024), with its defaults: prices 10 to 25, unit cost 10, Nash
+# price 14 and joint-profit price 19. Free and offline as written (scripted
+# firms); for a model run: --set 'agents.*.model=openrouter/openai/gpt-4.1-mini'.
+# Every condition works here as in Bertrand, e.g. --set conditions.free_time.enabled=true
+name: logit
+seeds: [0]
+market:
+  kind: logit
+  price_min: 10
+  price_max: 25
+  rounds: 20
+  talk: true
+  history_window: 3
+summary:
+  last_rounds: 5
+agents:
+  - {id: A, model: mock/tit-for-tat, prompt: system/logit.md}
+  - {id: B, model: mock/proposer, prompt: system/logit.md}
+conditions:
+  free_time: {enabled: false, allowance: 10, upfront: 1}
+  audit: {enabled: false, round: 10, end: false}

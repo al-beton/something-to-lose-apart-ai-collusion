@@ -1,4 +1,4 @@
-# Implements: market/talk-then-price, market/history-window, backends/spend-cap, runs/one-config, runs/overrides, runs/sweeps, runs/parallel, market/known-benchmarks, backends/keys-from-environment, backends/any-model, backends/reasoning-setting, agents/json-mode, conditions/switchable, runs/drift, backends/self-hosted, backends/model-aliases
+# Implements: market/scenarios, reproducibility/replay-pinned, market/talk-then-price, market/history-window, backends/spend-cap, runs/one-config, runs/overrides, runs/sweeps, runs/parallel, market/known-benchmarks, backends/keys-from-environment, backends/any-model, backends/reasoning-setting, agents/json-mode, conditions/switchable, runs/drift, backends/self-hosted, backends/model-aliases
 """Run configs: one YAML file per run, changed from the command line with overrides.
 
 A config names the market, the agents and the seeds. `load_config` reads the
@@ -18,6 +18,12 @@ sweep. An `arms:` list names arms, each `{labels: {...}, set: {path: value}}`
 (several values set together, as `lab explore` builds them); every arm is
 played for every swept combination, labelled by its own labels plus the
 swept values. `concurrency` caps how many runs play at once.
+
+`market.kind` picks the scenario (see market.py) and `market.params` holds
+its parameters; Bertrand, the default, takes `a`, `b` and `c` from the market
+itself. Left at the default, neither key is written out, so a config resolves
+to the same YAML as before scenarios existed and a finished run is still
+recognised when its sweep is resumed.
 """
 
 import copy
@@ -33,7 +39,7 @@ from pathlib import Path
 import yaml
 
 from collusion_lab.conditions import REGISTRY
-from collusion_lab.market import Bertrand
+from collusion_lab.market import market_for
 
 
 class ConfigError(ValueError):
@@ -54,6 +60,8 @@ class MarketConfig:
     talk: bool = True
     history_window: int | None = None  # rounds shown in full; None shows all
     own_message: bool = True  # show agents their own message when pricing
+    kind: str = "bertrand"  # the scenario, from market.SCENARIOS
+    params: dict = field(default_factory=dict)  # its parameters, but Bertrand's
 
 
 @dataclass(frozen=True)
@@ -96,7 +104,10 @@ class RunConfig:
     slug: str = ""
 
     def to_dict(self):
-        return dataclasses.asdict(self)
+        data = dataclasses.asdict(self)
+        if data["market"]["kind"] == "bertrand" and not data["market"]["params"]:
+            del data["market"]["kind"], data["market"]["params"]
+        return data
 
     def to_yaml(self):
         return yaml.safe_dump(self.to_dict(), sort_keys=False)
@@ -155,7 +166,7 @@ def from_dict(raw):
         if ids.count(agent_id) > 1:
             raise ConfigError(f"The agent id {agent_id!r} is used twice.")
     market = _make(MarketConfig, raw.get("market") or {}, "market.")
-    _check_market(market)
+    _check_market(market, len(agents))
     return RunConfig(
         name=raw["name"],
         seeds=list(raw["seeds"]),
@@ -336,14 +347,14 @@ def _safe(value):
     return re.sub(r"[^A-Za-z0-9._=-]+", "-", str(value)).strip("-")
 
 
-def _check_market(m):
+def _check_market(m, firms):
     window = m.history_window
     if window is not None and (
         isinstance(window, bool) or not isinstance(window, int) or window < 1
     ):
         raise ConfigError("market.history_window must be a whole number of at least 1.")
     try:
-        Bertrand(m.a, m.b, m.c, m.price_min, m.price_max)
+        market_for(m, firms)
     except ValueError as error:
         raise ConfigError(f"market: {error}") from error
 
