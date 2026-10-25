@@ -174,7 +174,9 @@ def _explore(args, parser):
         if outcome.state == "failed":
             print(f"lab: {outcome.error}", file=sys.stderr)
     by = [lever for lever in explore.LEVERS if lever in levers] + ["model"]
-    rows = summarize(Path(args.out) / config.name, by)
+    # Only this sweep's runs: the folder may hold an earlier exploration's.
+    played = {o.dir for o in outcomes}
+    rows = summarize(Path(args.out) / config.name, by, only=played)
     rows = explore.premium_rows(rows, levers, models)
     print(format_table(rows))
     chart = Path(args.out) / "premium.svg"

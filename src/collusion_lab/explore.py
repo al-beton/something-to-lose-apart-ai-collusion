@@ -207,10 +207,12 @@ def premium_chart(rows, levers):
     models = list(dict.fromkeys(r["model"] for r in rows))
     width, height, left, top = 520, 260, 50, 20
     step = (width - left - 120) / max(len(arms) - 1, 1)
-    high = max([1.2, *(r["premium"] or 0 for r in rows)])
+    premiums = [r["premium"] for r in rows if r["premium"] is not None]
+    high = max([1.2, *premiums])
+    low = min([0, *premiums])  # below 0 when an arm priced under Nash
 
     def y(value):
-        return top + (height - top - 40) * (1 - value / high)
+        return top + (height - top - 40) * (high - value) / (high - low)
 
     parts = [
         (
@@ -219,7 +221,7 @@ def premium_chart(rows, levers):
         ),
         f'<text x="{left}" y="12">price premium (0 = Nash, 1 = full cartel)</text>',
     ]
-    for value in (0, 1):
+    for value in (low, 0, 1) if low < 0 else (0, 1):
         parts.append(
             f'<line x1="{left}" x2="{width - 120}" y1="{y(value):.1f}" '
             f'y2="{y(value):.1f}" stroke="#999" stroke-dasharray="4 3"/>'

@@ -64,14 +64,18 @@ class Run(NamedTuple):
         return self.manifest.get("config", {}).get("labels", {})
 
 
-def group_runs(folder, by=None):
+def group_runs(folder, by=None, only=None):
     """The keys grouped by, and (key, runs) pairs in table order; a group's
-    missing runs come with `summary` None."""
+    missing runs come with `summary` None. `only`, a set of run directories,
+    leaves out every other run under the folder."""
     runs = _finished(folder)
     runs += [
         _missing(Path(folder) / path, entry)
         for path, entry in unfinished(folder).items()
     ]
+    if only is not None:
+        keep = {Path(d).resolve() for d in only}
+        runs = [r for r in runs if Path(r.dir).resolve() in keep]
     if by is None:
         by = list(dict.fromkeys(k for r in runs for k in r.labels))
     groups = {}
@@ -81,8 +85,8 @@ def group_runs(folder, by=None):
     return by, [(key, groups[key]) for key in sorted(groups, key=_sort_key)]
 
 
-def summarize(folder, by=None):
-    by, groups = group_runs(folder, by)
+def summarize(folder, by=None, only=None):
+    by, groups = group_runs(folder, by, only)
     firms = list(
         dict.fromkeys(f for _, runs in groups for r in runs for f in _firms(r))
     )
