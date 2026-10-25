@@ -1,4 +1,4 @@
-# Implements: reports/from-run-files, reports/setup, reports/reasoning-folded, reports/condition-window, reports/audit-shown, reports/remembered-notices, market/scenarios, reports/many-folders, reports/compact-runs
+# Implements: reports/from-run-files, reports/setup, reports/reasoning-folded, reports/condition-window, reports/audit-shown, reports/remembered-notices, market/scenarios, reports/many-folders
 """A game read back from its run directory, round by round.
 
 Only the files every run writes are read: `config.yaml` for the market and
