@@ -82,13 +82,18 @@ def changed(experiments, since, root=None):
 
 
 def rows_of(experiment, root=None):
-    """The `lab analyse` rows of an experiment, every folder as one."""
+    """The `lab analyse` rows of an experiment; with several folders, each
+    cell is named by its folder too, so treatments never merge or collide."""
     root = root or ROOT
-    found = []
-    for folder in experiment["runs"]:
-        found += analyse(
+    found, folders = [], experiment["runs"]
+    for folder in folders:
+        rows = analyse(
             Path(root) / folder, experiment.get("by"), experiment.get("rounds")
         )
+        if len(folders) > 1:
+            for r in rows:
+                r["cell"] = f"{Path(folder).name} / {r['cell']}"
+        found += rows
     return found
 
 

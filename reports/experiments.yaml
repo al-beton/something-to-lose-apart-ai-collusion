@@ -49,7 +49,12 @@
   by: [name, agents.0.model]
   note: reports/lever-map/anchoring.md
 - name: model-survey
-  runs: [runs/model-survey]
+  # Thinking off and on apart, as the survey's own analysis keeps them.
+  runs:
+    - runs/model-survey/baseline
+    - runs/model-survey/baseline-rerun
+    - runs/model-survey/models-off
+    - runs/model-survey/models-on
   note: reports/model-survey/findings.md
 - name: logging-outage
   runs: [runs/logging-outage]

@@ -97,3 +97,11 @@ def test_results_digest_fits_a_comment(make_config, tmp_path, monkeypatch):
     page = digest.digest(experiments, root)
     assert len(page) <= 800 + 200
     assert "were cut to fit a comment" in page
+
+
+def test_digest_names_cells_by_folder_when_there_are_several(make_config, tmp_path):
+    """Two folders of the same cells (a control and a treatment) stay apart."""
+    root, _ = repo(make_config, tmp_path)
+    both = {"name": "both", "runs": ["runs/joint", "runs/nash"]}
+    cells = [r["cell"] for r in digest.rows_of(both, root)]
+    assert cells == ["joint / all", "nash / all"]
