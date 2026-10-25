@@ -112,12 +112,16 @@ def grid(s):
     for r in range(size):
         cells = []
         for c in range(size):
-            given, value = puzzle[r][c], (wrote[r][c] if wrote else 0)
-            kind = "given" if given else ("entry" if value else "blank")
+            given = puzzle[r][c]
+            # What the firm wrote; with no grid written, the puzzle as shown.
+            shown = wrote[r][c] if wrote else given
+            if given and shown == given:
+                kind = "given"
+            else:
+                kind = "entry" if shown else "blank"
             if (r, c) in clashes:
                 kind += " clash"
             edge = " right" if (c + 1) % box == 0 and c + 1 < size else ""
-            shown = value if (value or not given) else given
             cells.append(f'<td class="{kind}{edge}">{shown or ""}</td>')
         under = ' class="under"' if (r + 1) % (2 if size == 6 else box) == 0 else ""
         rows.append(f"<tr{under}>{''.join(cells)}</tr>")

@@ -8,7 +8,7 @@ import pytest
 from collusion_lab import backends, cli
 from collusion_lab.leisure import read_puzzle, score
 from collusion_lab.report import build_report, load_game
-from collusion_lab.report.free_time import section
+from collusion_lab.report.free_time import grid, section
 from collusion_lab.runner import run_config
 
 MODEL = "openai/gpt-4.1-mini"
@@ -105,6 +105,9 @@ def test_sudoku_scored_counts_givens_cells_lines_and_clashes():
         [0, 4, 0, 0],
         [0, 0, 0, 2],
     ]
+    # So are rows numbered "1." to "4.", whatever their first cell.
+    numbered = "1. 1 . . .\n2. . . 3 .\n3. . 4 . .\n4. . . . 2"
+    assert score(givens, numbered)["grid"] == score(givens, markdown)["grid"]
     # Digits in prose are never read as a grid: a reply cut off mid-reasoning.
     assert score(givens, "r1c2 could be 2, 3 or 4; r2c1 is 2 or 4, and")["grid"] is None
     solved = [[1, 2, 4, 3], [4, 1, 3, 2], [2, 4, 1, 3], [3, 1, 2, 4]]
@@ -233,3 +236,12 @@ def test_free_time_shown_a_termination_takes_what_was_left(played):
     path.write_text(json.dumps(summary))
     shown = section(load_game(committed))
     assert "round 2: lost 3 (terminated: admitted coordinating)" in shown
+
+
+def test_free_time_shown_a_blanked_given_stays_blank():
+    """A firm that blanks a given is shown as having blanked it."""
+    givens = [[1, 0, 0, 0], [0, 0, 3, 0], [0, 4, 0, 0], [0, 0, 0, 2]]
+    reply = ". . . .\n. . 3 .\n. 4 . .\n. . . 2"
+    html = grid({"puzzle": givens, "score": score(givens, reply)})
+    first = html[html.index("<td") : html.index("</td>")]
+    assert first == '<td class="blank clash">'
