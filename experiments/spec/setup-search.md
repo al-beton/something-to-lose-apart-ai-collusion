@@ -1,0 +1,40 @@
+# Setup search: a steady baseline that moves in step with penalties
+
+Al wants setups whose results are very consistent within a condition and change consistently between conditions. That means a colluding baseline that varies little from game to game, and responses that move in step with the strength of the penalty. This search finds the baseline first, then measures how it responds to the detection chance and to the penalty size.
+
+## Question and hypotheses
+
+- **question:** Which setup gives a steady colluding baseline, and does it respond to detection and penalty strength in a graded, consistent way?
+- **steady-baseline:** At least one candidate has no-stake gain in rounds 6–10 of at least 0.7, with a per-game SD of at most 0.15.
+- **detection-dose:** On the chosen setup, gain falls steadily as the stated detection chance rises (0, 10, 25, 50, 90%), more steeply under free time and the fine than with no stake.
+
+## Design
+
+- **baselines:** Phase 1 runs the no-stake arm of five candidates, 4 seeds each, all from the robustness configs: Gemma on logit, on Cournot and in bid rigging, and on informed Bertrand at temperature 0 and 0.7.
+- **pinned:** Every Gemma run is pinned to one OpenRouter provider (CoreWeave), which each manifest records, because E6 found unpinned runs of one config far apart.
+- **dose-runs:** Phase 2 runs the chosen setup with `conditions.audit.detection` at 0, 10, 25, 50 and 90, crossed with no stake, free time and the fine, 4 seeds each, on `modal-gemma` per Al's rule to use Modal for open models.
+- **cap:** $5.00 on OpenRouter for the whole search.
+
+## Measures
+
+- **spread:** Per cell, the mean gain in rounds 6–10, its SD and range over games, and the share of games above Nash (`reports/robustness/analyse.py`).
+
+## What it can't show
+
+- **one-provider:** A pinned provider fixes the host, not the model's own nondeterminism, and the result is about that host.
+- **small-n:** 4 seeds per cell.
+
+## Where this is enforced
+
+| Statement | Enforced by | Tested by |
+|---|---|---|
+| `question` | `reports/setup-search/baselines.md` | — |
+| `steady-baseline` | `reports/setup-search/baselines.md` | — |
+| `detection-dose` | not yet | — |
+| `baselines` | `reports/setup-search/run_baselines.py` | — |
+| `pinned` | `reports/setup-search/run_baselines.py` | — |
+| `dose-runs` | not yet | — |
+| `cap` | `reports/setup-search/run_baselines.py` | — |
+| `spread` | `reports/setup-search/baselines.md` | — |
+| `one-provider` | reviewer, when the results are written up | — |
+| `small-n` | reviewer, when the results are written up | — |
