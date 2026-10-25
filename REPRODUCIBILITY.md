@@ -20,6 +20,33 @@ What a run of the lab pins, what it can't, and how to replay, rerun or check one
 
 So **the response cache is the replay record**, not a rerun. One more caution: separate checkouts sampled the same request independently, so the same request can hold different replies in different caches. A run replays only from the replies it actually got.
 
+## Does a fresh rerun match?
+
+No, not on our GPUs and not on OpenRouter, even at temperature 0. Measured on 26 October 2026 with `configs/reproducibility/rerun.yaml`: four E9 base games (logit, fiduciary-1, memo, one free-time session up front), ten rounds, seeds 0 to 3. Each run was played twice with `--cache off`, and `reports/reproducibility/compare.py` compared the two turn logs turn by turn (`runs/reproducibility/`).
+
+**What is sent.** Every call in a game carries the game's seed, the same integer for every call in that game (`runner.py`). LiteLLM forwards it to both hosts:
+
+- to Modal's vLLM: `{"temperature", "max_tokens", "seed"}`;
+- to OpenRouter: the same, plus `provider: {"order": ["CoreWeave"], "allow_fallbacks": false}` and `reasoning: {"enabled": false}`.
+
+The Modal deployment (`deploy/modal_vllm.py`, vLLM 0.32.0, one H100 per container, up to 2) does nothing for determinism. It sets no batch-invariant mode and no batch-size limit, and prefix caching is on.
+
+| Host | Temperature | Replies identical | Prices identical | First reply that differs |
+|---|---|---|---|---|
+| Modal | 0.7 | 67/240 | 76/80 | the free-time session before round 1, in all four games |
+| Modal | 0 | 67/240 | 76/80 | round 1 (talk or price), same prompt, in all four games |
+| Modal, one game at a time | 0 | 34/120 | 37/40 | round 1 talk, same prompt, in both games |
+| CoreWeave via OpenRouter | 0.7 | 0/240 | 76/80 | the free-time session, in all four games |
+| CoreWeave via OpenRouter | 0 | 2/240 | 75/80 | the free-time session, in all four games |
+
+Each pair of games first differs at a reply asked the same prompt: a fresh sample, not an earlier difference carried forward. After that the transcripts drift apart. Prices mostly still agree, because these games settle at 20 (the top of the grid) whatever is said. At temperature 0 on Modal, one game opened at 15 and so did its rerun, but the rerun's firms then answered the undercut differently.
+
+- **Modal is closer than OpenRouter.** About 28% of replies are identical on Modal, against 0 to 1% on CoreWeave. CoreWeave doesn't appear to use the seed at all.
+- **Temperature 0 doesn't make Modal deterministic.** Greedy decoding still differs at round 1 with the same prompt. Batching changes floating-point order, so the top token changes when two are nearly tied.
+- **Running one game at a time doesn't fix it.** The game's two firms are still asked at once. Untested: a batch size of 1 (vLLM `--max-num-seqs 1`, which the deploy script doesn't expose), or vLLM's batch-invariant mode. Either would mean a redeploy and much slower games.
+
+So the conclusion above stands: **the response cache is the replay record.** A seed and a temperature make a rerun a sample from the same distribution, not a copy.
+
 ## Replaying a run
 
 The replies behind every committed run are committed too, in `archive/`: compressed files of replies alone, one per experiment (none over 20 MB), with `archive/index.json` naming each run's file and whether the archive reproduces it.
