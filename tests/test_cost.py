@@ -110,7 +110,7 @@ def test_spend_asks_first_with_an_estimated_cost(
     out = capsys.readouterr().out
     # Nothing cached yet: every reply is taken at its max_tokens, the most.
     assert "20 calls" in out and "estimated $0.0397" in out
-    assert "max_tokens, plus a reasoning allowance with reasoning on, for 20" in out
+    assert "a typical reply for its reasoning level, for 20 calls" in out
 
 
 def test_spend_asks_first_says_when_a_price_is_unknown(tmp_path, monkeypatch, capsys):

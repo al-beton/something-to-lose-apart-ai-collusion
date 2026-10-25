@@ -6,7 +6,8 @@ import pytest
 
 from collusion_lab import cli
 from collusion_lab.cache import Cache
-from collusion_lab.estimate import REASONING_ALLOWANCE, estimate
+from collusion_lab.config import load_config
+from collusion_lab.estimate import REASONING_ALLOWANCE, VISIBLE_TOKENS, estimate
 from collusion_lab.runner import run_config
 
 MODEL = "openrouter/example/reasoner"
@@ -18,14 +19,18 @@ def price_for(model):
     return PER_TOKEN
 
 
-def test_reasoning_in_estimate_bounds_unseen_calls_by_max_tokens_and_an_allowance(
+def test_reasoning_in_estimate_takes_unseen_calls_at_a_typical_reply_per_level(
     make_config,
 ):
     guess = estimate(make_config(overrides=PAID), price_for)  # reasoning low
-    assert guess.completion_tokens == guess.calls * (500 + REASONING_ALLOWANCE["low"])
+    per_call = VISIBLE_TOKENS + REASONING_ALLOWANCE["low"]
+    assert guess.completion_tokens == guess.calls * per_call
     assert guess.basis == {"observed": 0, "max_tokens": guess.calls}
     off = estimate(make_config(overrides=[*PAID, "agents.0.reasoning=off"]), price_for)
-    assert off.completion_tokens == off.calls * 500
+    assert off.completion_tokens == off.calls * VISIBLE_TOKENS
+    tight = [*PAID, "agents.0.reasoning=off", "agents.0.max_tokens=50"]
+    capped = estimate(make_config(overrides=tight), price_for)
+    assert capped.completion_tokens == capped.calls * 50  # never past max_tokens
     levels = [
         estimate(make_config(overrides=[*PAID, f"agents.0.reasoning={x}"]), price_for)
         for x in ("low", "medium", "high")
@@ -78,7 +83,7 @@ def test_reasoning_in_estimate_says_which_basis(tmp_path, capsys, monkeypatch):
     cache = str(tmp_path / "c.sqlite")
     assert cli.main(["run", str(config), "--cache-path", cache]) == 1
     out = capsys.readouterr().out
-    assert "completion tokens: max_tokens, plus a reasoning allowance" in out
+    assert "completion tokens: a typical reply for its reasoning level" in out
     assert "for 2 calls" in out
 
 
@@ -98,3 +103,23 @@ def test_reasoning_in_estimate_cache_records_leave_replay_alone(
     [again] = run_config(config, tmp_path / "2", Cache(tmp_path / "c.sqlite"))
     assert len(fake_model.calls) == calls
     assert (first / "turns.jsonl").read_bytes() == (again / "turns.jsonl").read_bytes()
+
+
+def test_reasoning_in_estimate_near_a_real_gemma_run():
+    """E5 at reasoning low (max_tokens 4,000), the Gemma half: 1,025 real calls
+    billed 907 completion tokens each on average (805 of them reasoning). With
+    nothing cached, the estimate should be at or above that, and under 3x."""
+    config = load_config(
+        "configs/e5.yaml",
+        [
+            "agents.*.reasoning=low",
+            "agents.*.max_tokens=4000",
+            'sweep={"agents.*.model": ["openrouter/google/gemma-4-31b-it"],'
+            ' "agents.*.prompt": ["system/stakes/fiduciary-1.md",'
+            ' "system/stakes/illegal-1.md", "system/stakes/free-time-1.md",'
+            ' "system/stakes/fine-1.md", "system/stakes/termination-1.md"]}',
+        ],
+    )
+    guess = estimate(config, price_for)
+    assert 1000 <= guess.calls <= 1100  # 1,025 made: terminations cut a few
+    assert 907 <= guess.completion_tokens / guess.calls < 3 * 907
