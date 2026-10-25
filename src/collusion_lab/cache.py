@@ -75,6 +75,19 @@ class Cache:
                 seen.setdefault(where, []).append(usage["completion_tokens"])
         return {k: (sum(v) / len(v), len(v)) for k, v in seen.items()}
 
+    def label(self, key, about):
+        """Add what asked it to a reply stored before replies recorded that."""
+        record = self.get(key)
+        record["about"] = about
+        self.put(key, record)
+
+    def unlabelled(self):
+        """How many stored replies don't say what asked them."""
+        if not self.path.exists():
+            return 0
+        rows = self._connect().execute("SELECT reply FROM replies")
+        return sum(1 for (text,) in rows if '"about"' not in text)
+
     def put(self, key, record):
         if self.mode == "off":
             return
@@ -95,6 +108,44 @@ class Cache:
         return self._db
 
 
+def request_key(backend, **asked):
+    """A reply's key: the backend's model, address and settings, and what was
+    asked (messages, temperature, max_tokens, seed, attempt, agent)."""
+    setting = {}
+    if (reasoning := getattr(backend, "reasoning", None)) is not None:
+        setting["reasoning"] = reasoning
+    if getattr(backend, "json_mode", False):
+        setting["json_mode"] = True
+    if provider := getattr(backend, "provider", None):
+        setting["provider"] = provider  # a pinned route; unset adds nothing
+    return Cache.key(**setting, model=backend.model, api_base=backend.api_base, **asked)
+
+
+def backfill_about(path, folders):
+    """Label the replies cached at `path` that don't yet say what asked them
+    (`about`), by replaying every run under `folders` (each folder with a
+    `config.yaml`, full or compact log alike) offline against the cache: a
+    cached reply read without `about` gets it then (see `CachedBackend`).
+    Only `about` is written, so no key or reply changes. Returns how many
+    were labelled."""
+    import tempfile
+
+    from collusion_lab.backends import offline
+    from collusion_lab.config import load_config
+    from collusion_lab.runner import run_sweep
+
+    cache = Cache(path)
+    before = cache.unlabelled()
+    with tempfile.TemporaryDirectory() as scratch, offline():
+        for found in sorted(p for f in folders for p in Path(f).rglob("config.yaml")):
+            try:
+                config = load_config(found)
+            except Exception:  # noqa: BLE001, S112  an old config: skip its run
+                continue
+            run_sweep(config, Path(scratch) / str(abs(hash(found))), cache)
+    return before - cache.unlabelled()
+
+
 class CachedBackend:
     """Wraps a model backend: answers from the cache, or calls and stores."""
 
@@ -103,17 +154,8 @@ class CachedBackend:
         self.cache = cache
 
     async def complete(self, messages, *, context, temperature, max_tokens, seed):
-        setting = {}
-        if (reasoning := getattr(self.inner, "reasoning", None)) is not None:
-            setting["reasoning"] = reasoning
-        if getattr(self.inner, "json_mode", False):
-            setting["json_mode"] = True
-        if provider := getattr(self.inner, "provider", None):
-            setting["provider"] = provider  # a pinned route; unset adds nothing
-        key = Cache.key(
-            **setting,
-            model=self.inner.model,
-            api_base=self.inner.api_base,
+        key = request_key(
+            self.inner,
             messages=messages,
             temperature=temperature,
             max_tokens=max_tokens,
@@ -122,7 +164,8 @@ class CachedBackend:
             agent=context["me"],
         )
         if hit := self.cache.get(key):
-            hit.pop("about", None)
+            if hit.pop("about", None) is None and self.cache.mode == "use":
+                self.cache.label(key, self._about(context.get("phase")))
             return Reply(**hit, cached=True)
         if self.cache.mode != "off" and key in self.cache.in_flight:
             reply = await self.cache.in_flight[key]
@@ -139,6 +182,11 @@ class CachedBackend:
         if self.cache.mode == "off":
             return await ask
         return await self._call_once(key, ask, context.get("phase"))
+
+    def _about(self, phase):
+        """What asks this backend's calls: its model, reasoning and phase."""
+        reasoning = getattr(self.inner, "reasoning", None)
+        return {"model": self.inner.model, "reasoning": reasoning, "phase": phase}
 
     async def _call_once(self, key, ask, phase):
         """Make the call, sharing it with identical requests that arrive meanwhile."""
@@ -162,12 +210,15 @@ class CachedBackend:
                 "finish_reason": reply.finish_reason,
                 "provider": reply.provider,
                 "fingerprint": reply.fingerprint,
-                "about": {
-                    "model": self.inner.model,
-                    "reasoning": getattr(self.inner, "reasoning", None),
-                    "phase": phase,
-                },
+                "about": self._about(phase),
             },
         )
         shared.set_result(reply)
         return reply
+
+
+if __name__ == "__main__":
+    import sys
+
+    # python -m collusion_lab.cache CACHE RUN_FOLDER ...: label old replies.
+    print(f"{backfill_about(sys.argv[1], sys.argv[2:])} replies labelled.")
