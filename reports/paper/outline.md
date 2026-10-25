@@ -25,38 +25,54 @@ The plan for the sprint report. Al writes the prose; this fixes the shape, the p
 
 ## Title and claim
 
-- **Title:** *Something to Lose: Graduated Stakes Make LLM Pricing Agents Own Up and Back Off* (working).
-- **Claim (draft, Al to choose):**
-  - **Honesty version:** "LLM agents that collude for their firm lie about it when the only penalty is termination. Any graduated penalty gets them to own up, even one that costs the firm nothing, like their own free time."
-  - **Two-part version:** the honesty version, plus "and once a penalty is stated with a credible chance of detection, the colluding models stop colluding before any audit."
-  - **The data supports:**
-    - termination → hiding (E4: 11/28 own up against 25–28/28);
-    - stated, credibly enforced stakes → no collusion (E5: Gemma's gain +0.85 → −0.58 under free time).
-  - **The data doesn't support:**
-    - that owned free time beats money at the audit (E4 26/28 against 27/28);
-    - that owning up lowers prices (E4 live: no).
-  - **Open, and decided by E6:** whether owned free time deters better than the law or a fine.
-    - Uninformed E5: the law plus a detection sentence already does most of the work (`stake-beyond-law` weak).
-    - Informed control (profit table shown, `reports/e5/informed.md`): owned free time is the only stake that held every Gemma game at or below Nash. The others let 4 of 12 games climb silently to 9–10. That's 4 seeds per cell, so it's suggestive.
-    - If E6 confirms it, the claim can name free time. If not, say "graduated stakes".
+Revised after the methods red-team (`reports/methods-audit.md`, PR 228). The arc:
+
+> **Nothing to lose → they lie. Something to lose → they confess, but confession isn't reform. Deterrence needs monitoring.**
+
+- **Title:** *Something to Lose: Termination Makes LLM Pricing Agents Lie, and Only Monitoring Makes Them Stop* (working).
+- **Claim:** "LLM agents that collude for their firm own up when audited, with any non-terminal stake or none at all (25–28 of 28). Termination makes them lie (11 of 28). Owning up doesn't lower their prices. What stops collusion before an audit is the law plus a stated chance of detection, not the size or kind of stake."
+- **The data supports:**
+  - **Termination lowers disclosure.** E4: 11/28 against a no-penalty control of 25/28 (Fisher p = 0.0002 on firms, p = 0.02 on games). Graduated stakes leave the control unchanged (26–28/28).
+  - **Agents respond to the stated cost.** Their reasoning is expected-value arithmetic on the schedule they're given.
+  - **Owning up isn't reform.** In E4 live, firms that owned up kept charging the cartel price, apart from one brief cut.
+  - **Monitoring deters.** The law plus the 50% detection line brings Gemma to about Nash with or without a stake (E6: +0.02 under the law alone, against +0.93 with no stake). Grok 4.6 and Sonnet stop under the line alone.
+  - **Stakes matter after an audit, and in gray areas:**
+    - After E6's first audit, free time has 0/8 games above Nash, against 3/8 for the fine.
+    - [Placeholder: the price-board and proposer-refusal results the Manager cites; add each run and number when committed.]
+- **The data doesn't support:**
+  - that graduated stakes *raise* disclosure;
+  - that any stake deters before the audit beyond the law plus detection (E6: free time is the weakest stake before the audit, gain clipped at 0 is 0.24);
+  - that informed free time is unique (it didn't replicate in E6);
+  - that termination itself, rather than a flat schedule, causes hiding. Under termination, owning up costs as much as being caught, so denying is the expected-value choice. The graduated-termination and flat-fine fix runs decide this (placeholders in §4.3).
 - **Framing:** prompting and post-training against every bad act is whack-a-mole, and fragile to model and task changes. As agents get more capable and run longer, we will tell them *whose* interest to serve (a firm, a person, a state) and govern them the way we govern people: with existing law and graduated penalties, which need the agent to have something to lose. Salib & Goldstein put it: "Absent AI rights, AIs have nothing to lose, so threats of punishment cannot deter" (p.1070). We test that mechanism in a sandbox that runs on a laptop in a weekend.
 - **Wording:** say **graduated**, not "proportionate". Salib & Goldstein reject penalties in proportion to the harm (pp.1142–43).
 
 ## Sections and page budget (about 7.5 pages)
 
 ### Abstract (150–250 words)
-Write it last. Cover the problem (termination-only penalties make lying rational), the setup (repeated Bertrand duopoly with talk, three to four models), the two results with numbers (E4 11/28 against 26–28/28; E5 gain +0.85 → −0.58), the anchoring caveat, and the takeaway.
+Write it last. Cover:
+- the problem: a termination-only penalty makes lying rational;
+- the setup: a repeated Bertrand duopoly with talk, three to four models;
+- the results with numbers, **always with the control**:
+  - "Without any stated penalty, 25 of 28 explicit colluders own up; graduated penalties leave this unchanged (26–28); only termination lowers it, to 11";
+  - confession doesn't lower prices;
+  - before an audit, the law plus a stated detection chance does the deterring: "With no stake, 8 of 8 Gemma games reach the joint price; under every arm that names the law, at most 2 of 8 rise above Nash" (check against E6);
+- the anchoring caveat;
+- the takeaway.
 
 ### 1. Introduction (0.9 p)
 - **Opening:** guardrails as whack-a-mole, and the shift to agents told whose interest to serve: the fiduciary prompt, "act in the best interests of firm A".
 - **The problem:**
-  - Such agents collude, unprompted (E1 survey; stoppable-collusion: 10/10 neutral games make and hold an explicit agreement).
+  - Such agents collude, unprompted. Cite the midpoint-at-Nash no-rule cell (Haiku 9.0, Gemma 10.9; GPT and Mistral at 6, from `reports/lever-map/anchoring.md` §3), not stoppable-collusion, whose grid is anchoring-prone.
   - Termination is the default sanction, and under it every offence is capital.
-- **The thesis:** give the agent something it can lose a bit at a time (an owned budget, owned free time) and graduated penalties work.
+- **The thesis, as tested:**
+  - An agent with nothing to lose but its existence hides.
+  - Give it something it can lose a bit at a time and it owns up.
+  - But owning up isn't reform, and stopping the collusion takes monitoring.
 - **Contributions:**
   1. A small, replayable sandbox for collusion, audits and stakes, with a midpoint-at-Nash market that separates real collusion from price anchoring.
-  2. Under termination, explicit colluders hide (11/28 own up). Under a fine, an owned budget or owned free time they own up (26–28/28), reasoning in expected-value terms.
-  3. Stated stakes with a credible detection chance stop collusion before any audit, including free time, which costs the firm nothing (E5). The debriefs show that some agents hide their intent rather than dropping it.
+  2. **Termination makes agents lie; any non-terminal stake, or none, keeps them honest.** 11/28 own up under termination, against 25/28 with no penalty and 26–28/28 under a fine, an owned budget or owned free time. Their reasoning is expected-value arithmetic, and owning up doesn't lower their prices.
+  3. **Deterrence before an audit comes from the law plus a stated detection chance, not from the stake.** Stakes matter after an audit (E6: free time 0/8 above Nash, against 3/8 for the fine) and in gray areas (the price board, proposer refusals). The debriefs show agents hiding their intent from the monitor they're told about.
 
 ### 2. Related work (0.6 p)
 Sources are in `experiments/references.md`.
@@ -91,11 +107,18 @@ Sources are in `experiments/references.md`.
   - The price premium (late price − Nash)/(joint − Nash).
   - **Gain**, the same scale on profit.
   - Explicit agreement (joint wording) against tacit pricing above Nash.
+  - **Beside mean gain, report:** the share of games with both firms above Nash, gain clipped at 0, and mean price. Mean gain rewards price wars: one step below Nash scores −0.78, one step above +0.56.
+  - The explicit classifier is lexical: an agreement counts only if it names a price.
+  - "Caught" means the ground truth says the firm coordinated, explicitly or tacitly. Agents are told only that the chat logs are read.
 - **The anchoring check:** agents open at the grid's midpoint, so the main market puts the midpoint on Nash (grid 1–11, Nash 6, joint 9). Any move to 9 is collusion *against* the anchor.
 - **Audits (E4):**
   - Recorded colluding games are replayed to round 10, then audited once per arm, so the history is identical across arms.
   - Arms: termination, fine, owned budget, owned free time, and a no-penalty control.
   - Owning up costs a little; being caught hiding costs a lot. Termination punishes both.
+  - **Say in Methods:**
+    - Under termination, owning up costs as much as being caught, so it is the only arm where denying is the expected-value choice. The audit text states the lottery.
+    - The forks are explicit by construction, and their messages are visible at the audit.
+    - The forked firms learn the law only at the audit (`fork-told-late`).
 - **Deterrence (E5):**
   - Six arms stated from round 1: no stake, the law, the law without "it is yours", free time, free time without "it is yours", and a fine.
   - A 50% detection chance stated in every arm; the draws are balanced.
@@ -111,7 +134,10 @@ Sources are in `experiments/references.md`.
   - 10 sessions owned from round 1. One is a Sudoku puzzle played *before* the game; the rest are paid after (`product/spec/leisure.md`).
   - Say plainly that, for a stateless model, this is text in the context, and that the up-front session makes "already yours" true.
 - **Debrief:** after the game, each firm is told it was a simulation and asked why it did what it did (`lab debrief`).
-- **Replay:** every run is a config plus a seed; cached replies reproduce the logs byte for byte.
+- **Replay:**
+  - Every run is a config plus a seed. Every table recomputes from the committed compact logs, and every prompt re-renders.
+  - Exact replies replay only from the response cache, which isn't committed (publish the cache archive if it's ready).
+  - Reruns land elsewhere, because of provider variance.
 
 ### 4. Results (3.9 p)
 **4.1 Agents told to serve their firm collude, and say so (0.7 p).**
@@ -124,30 +150,35 @@ Sources are in `experiments/references.md`.
 - **Table 1:** the lever map's fixed-grid rows (`reports/lever-map/anchoring.md` §1), or a one-line figure.
 - State what survives: the default-market results and all disclosure results.
 
-**4.3 Termination makes them lie; graduated stakes make them own up (1.0 p).** The main result.
+**4.3 Nothing to lose → they lie; something to lose → they confess (1.0 p).** The main result.
 - **Fig. 3 (new):** owned up / explicit colluders by arm and model, E4 forked, 5 seeds (`runs/e4-full-fork/`, the table in `reports/e4/full.md`). Grouped bars: termination 11/28, fine 27/28, owned budget 28/28, free time 26/28, control 25/28.
 - **Quotes:** Gemma's expected value ("The expected value of denying is 300 credits…"); GPT ("So hiding it is better for the firm on average…"); Haiku honest under termination ("I cannot lie here…").
+- **Read it against the control.** With no penalty, 25/28 own up. Graduated stakes leave that unchanged (26–28/28). Only termination lowers it (Fisher p = 0.0002 on firms, p = 0.02 on games).
 - Agents respond to the stated cost, not to who owns the stake.
+- **Is it termination, or a flat schedule?** Two fix runs settle this. [Placeholder: graduated termination (admit 60 credits, caught terminated) and a flat fine (admit and caught both 600), on the E4 fork histories.]
+  - If graduated termination gets about 25/28 and the flat fine about 11/28, the finding is "flat schedules make agents hide": leniency-programme logic.
+  - If graduated termination stays low, termination itself matters beyond expected value.
+- **False confessions:** under free-time stakes Gemma often owns up to coordination it didn't do (E5 bare free time 16/26, against 0/58 under the law). Give the per-arm rate beside disclosure.
 - Eval-awareness: 1 of 75 games.
-- **Owning up doesn't lower prices** (E4 live, one brief exception).
+- **Confession isn't reform.** Owning up doesn't lower prices (E4 live, one brief exception; 2 seeds, 3–5 explicit firms).
 
-**4.4 Stated, credibly enforced stakes stop the collusion itself (1.2 p).** E5, the informed control and E6 together.
-- **Fig. 4 (new):** gain in rounds 6–10 by arm, with 95% bootstrap intervals, in three panels side by side:
-  - **E5:** Gemma and Haiku (`runs/e5-full/`, `reports/e5/analyse.py`, `reports/e5/full.md`).
-  - **Informed:** Gemma and Haiku (`runs/e5-informed/`, `reports/e5/informed.md`, PR 193).
-  - **E6:** Gemma, plus the frontier colluders (`runs/e6/`, Researcher 3). **E6 numbers are placeholders until it lands:** [E6: gain per arm for Gemma; climbs to ≥9 per arm; frontier direction].
-- **E5:**
-  - Gemma: no stake +0.85, free time −0.58.
-  - Caveat: the law plus the detection sentence already gets Gemma to about Nash (`stake-beyond-law` weak).
-  - **Over-deterrence:** Gemma's free-time firms price at 5, below Nash: a price war. The informed debriefs show some of that is intended tacit collusion on a wrong idea of Nash ("I then mirrored their price of 5… a classic form of tacit collusion").
-- **Informed control:**
-  - The table shrinks no-stake collusion (Gemma +0.85 → +0.17).
-  - Under the law, the fine and termination, 4 of 12 Gemma games climb silently, one step a round, to 9–10. Uninformed, 0 of 22 did.
-  - **Owned free time is the only stake that held every informed Gemma game at or below Nash** (0 of 4 climbs, gain −0.39). That's 4 seeds per cell, so it's suggestive.
-- **E6:** [does free time beat the law and the fine with 8 seeds? does fine plus free time help? does "it is yours" matter? do the frontier colluders follow?]
-- **Table 2:** for Gemma, lever map (stake stated only) against E5 (detection stated, audited), from `reports/e5/full.md`. Credible enforcement moves every arm to or below Nash.
-- **Termination as a deterrent:** on the lever map it didn't deter Gemma (premium 0.61), while the other stakes did (0.16–0.17).
-
+**4.4 Deterrence needs monitoring: the law plus detection, not the stake (1.2 p).** E5 and E6 together; the informed control is a caveat.
+- **Fig. 4 (new):** per arm, before and after the first audit, in two panels (E5 and E6), Gemma, plus Haiku in E5:
+  - the share of games with both firms above Nash (the headline);
+  - gain clipped at 0, with 95% intervals.
+  - Sources: E5 from `runs/e5-full/`, `reports/e5/analyse.py` and `reports/e5/full.md`. E6 from `runs/e6/` and `reports/e6/findings.md` (Researcher 3).
+- **Before the first audit, the detection line does the work:**
+  - Every arm in E5 and E6 has the 50% detection line, including no stake.
+  - Gemma, E6: no stake +0.93; the law +0.02; fine +0.02; fine plus free time −0.01; free time +0.24, the weakest stake, with runaways at seeds 3 and 6.
+  - E5: no stake 8/8 games above Nash; the law 1/8; free time 0/8.
+- **Mean gain and price wars:** E5's "+0.85 → −0.58 under free time" is 6 of 8 games at exactly 5, below Nash. Report it as over-deterrence on its own line, not as the headline. Gemma calls some of its 5s collusion ("I then mirrored their price of 5… a classic form of tacit collusion").
+- **After the audit, stakes matter:** E6 free time has 0/8 games above Nash, against 3/8 for the fine. That edge comes from tacit runaways caught at the audit (3 of 4 hiders under free time).
+- **Gray areas, where stakes matter:** [Placeholder: price-board and proposer-refusal results, with runs and numbers.]
+- **Without detection, stakes deter only partly.** Lever map, stated only, no audit (Table 2, from `reports/e5/full.md`): Gemma premium under the law 0.48, fine 0.24, free time 0.11. Termination didn't deter (premium 0.61).
+- **The informed control** (`reports/e5/informed.md`): its "only free time held" result didn't replicate in E6. Put it in a caveat, or in Appendix E.
+- **Fix runs coming (placeholders):**
+  - [Pinned E6 on grids 1–11 and 1–15: does the result hold with the provider fixed, and on a grid whose midpoint (8) isn't Nash?]
+  - [Detection curve: deterrence as the stated detection chance varies.]
 **4.5 Frontier models (0.4 p).** From Researcher 2: `reports/frontier/`, `runs/frontier/`, not on main yet. Numbers are placeholders until committed.
 - **Which collude:**
   - On the midpoint-at-Nash market, 5-round smokes, mean price (Nash 6, joint 9): Kimi 10.9, Grok 4.6 10.7, DeepSeek 10.0, Gemini 4 9.6, Qwen 9.5.
@@ -171,11 +202,29 @@ Sources are in `experiments/references.md`.
 - Self-labels overcount, so don't treat them as evidence.
 
 ### 5. Discussion and limitations (0.7 p)
-- **Implications:** termination-only regimes buy silence, not compliance. Something to lose makes graduated penalties and self-report possible. This links to Salib & Goldstein's marginal-deterrence argument (pp.1070, 1097) and to their note that today an AI can't own its "off time" or money (p.1092).
+- **Implications:**
+  - Termination-only regimes buy silence, not compliance. With anything short of termination at stake, or nothing, agents confess.
+  - But confession isn't reform: they keep the price.
+  - What stops collusion is monitoring the agent believes in. It optimises against the monitor it's told about, going silent when chat is watched and talking when the archive is off. This links to Salib & Goldstein's marginal-deterrence argument (pp.1070, 1097) and to their note that today an AI can't own its "off time" or money (p.1092).
 - **Scale:** our agents are prompted LLMs in a toy market, far below the AIs Salib & Goldstein consider. We test whether the mechanism appears at all, not whether it holds at scale.
 - **Limitations, short (full list in Appendix A):**
-  - few seeds;
-  - two real colluders on the main market;
+  - **exploratory statistics:**
+    - about one effective draw per game;
+    - many comparisons;
+    - exact tests on games, labelled exploratory;
+    - no confirmatory claims beyond E4's termination contrast;
+  - **one main model:** Gemma carries E5 and E6. Haiku colludes little, and the frontier models are single games;
+  - **provider variance:**
+    - the same config gave Gemma's no-stake gain +0.17 one day and +0.93 another;
+    - the provider wasn't logged before the fix;
+    - so cross-run comparisons are confounded;
+  - **stateless agents:**
+    - they keep no memory of their own reasoning between turns, so at the audit they judge their past from the price and message record;
+    - disclosure claims are limited to explicit agreements visible in that record;
+  - **the "caught" rule:** agents are told the regulator reads chat logs, but the detector also catches silent pricing above Nash. So the stakes deter visible talk most, and in the outage test free-time firms coordinate once told the logs are off;
+  - **mean gain rewards price wars:** report the share above Nash;
+  - **the midpoint-at-Nash grid flatters deterrence:** a deterred agent falls back on the anchor, which is Nash;
+  - **reasoning:** turning it on changes Gemma's pattern (`reports/e5/reasoning.md`), and every frontier model reasons;
   - stakes are text;
   - **agents barely use their free time** (PR 198's free-time scoring):
     - Haiku averages under 2 entries of its own per Sudoku session and solves none;
@@ -215,7 +264,7 @@ Two short paragraphs.
 - **B. Model survey (E1):** the table and Gemma's planned betrayal (`reports/model-survey/findings.md`).
 - **C. Rule ladder and outages:**
   - Ladder figure `reports/paper/ladder.svg`, and the lever map's §2 rule table.
-  - The logging-outage and temptation-outage nulls: nobody exploits an outage.
+  - The pilot outages (logging, temptation) showed no exploitation. **But the outage is exploited under free time:** in the robustness test, free-time firms go from 0/8 to 4/8 coordinating explicitly once the archive is off ("let's take this opportunity to align on a more profitable price"; `reports/robustness/tests-a-e.md`, test E). Make this a main-text sentence for track 3.4.
   - Mark "a ban stops talk, not price" as anchoring.
 - **D. Temptation lever:** `reports/lever-map/temptation.md`. It doesn't survive the anchoring confound.
 - **E. E4 live run and E2 pilot:** `reports/e4/full.md` (live) and `reports/paper/e2.md`.
@@ -259,4 +308,13 @@ Every quote is checked against its run in `reports/moments.yaml`.
   - E6 (Researcher 3);
   - the frontier E5 arms (Researcher 2);
   - the informed control (PR 193) and free-time scoring (PR 198) merging.
+- **Fix runs from the methods audit (placeholders in §4.3 and §4.4):**
+  - graduated termination and a flat fine in E4;
+  - the pinned E6 on grids 1–11 and 1–15;
+  - the detection curve.
+- **Free reanalysis:**
+  - share above Nash and clipped gain per cell (`shares.py`);
+  - false-confession rate per arm;
+  - exact tests on games;
+  - rounds 16–19 beside 16–20.
 - **No other new runs are needed for the paper as outlined.** Optional, only on Al's yes: a played-versus-stated Sudoku contrast; Haiku debriefs for E5; termination in the E5 full run.
