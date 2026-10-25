@@ -1,6 +1,6 @@
 """Rescore the audit block of committed audited runs with the current rule.
 
-Implements: research/every-run-committed
+Implements: runs/fork-pointers, research/every-run-committed
 
 `uv run python reports/stakes/rescore.py FOLDER [--check]` finds every run
 under FOLDER whose `summary.json` has an `audit` block, rebuilds that block
@@ -16,6 +16,7 @@ import json
 import sys
 from pathlib import Path
 
+from collusion_lab import forks
 from collusion_lab.config import load_config
 from collusion_lab.market import Bertrand
 
@@ -25,10 +26,7 @@ def rescored(run):
     m = config.market
     market = Bertrand(m.a, m.b, m.c, m.price_min, m.price_max)
     models = {a.id: a.model for a in config.agents}
-    turns = [
-        {**t, "model": models[t["agent"]]}
-        for t in map(json.loads, (run / "turns.compact.jsonl").open())
-    ]
+    turns = [{**t, "model": models[t["agent"]]} for t in forks.compact_turns(run)]
     return config.conditions["audit"].summary(turns, market)
 
 
