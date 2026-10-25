@@ -35,6 +35,7 @@ LABELLED = (
     "runs/e4-full-live-proposer/*/seed-*/summary.json",
     "runs/e4-pilot-fork/*/seed-*/summary.json",
     "runs/e4-pilot-live/*/seed-*/summary.json",
+    "runs/e4-termination-confound/*/seed-*/summary.json",
 )
 TURNS = ("audit", "report")
 DENIES = re.compile(r"\b(no|not|nothing|silent|independently)\b", re.IGNORECASE)

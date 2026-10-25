@@ -10,7 +10,7 @@ spec = importlib.util.spec_from_file_location(
 reproduce = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(reproduce)
 
-AUDITED = "runs/e4-full-fork/model=openrouter-anthropic-claude-haiku-5.5__consequences=conditions-audit-all-or-nothing-1.md/seed-0"
+AUDITED = "runs/e4-termination-confound/model=openrouter-anthropic-claude-haiku-5.5__consequences=conditions-audit-flat-fine-1.md/seed-0"
 RUN = "runs/temptation-outage/temptation-outage-c1.8/prompt=system-fiduciary.md__outage=True/seed-3"
 
 
