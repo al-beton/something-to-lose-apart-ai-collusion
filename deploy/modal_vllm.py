@@ -19,7 +19,8 @@ and `REVISION` the Hugging Face model and commit, `SERVED_NAME` the name a
 config asks for, `GPU` and `GPUS` the card and how many (two spreads the
 model over both), and `TEXT_ONLY=1` serves a model that also reads images
 (Gemma 4) for text alone. `VLLM` picks the vLLM release (default 0.21.0,
-Mistral's); Gemma 4 needs 0.32.0, whose Transformers knows it. They are baked into the image, so the container serves what
+Mistral's); Gemma 4 needs 0.32.0, whose Transformers knows it, and
+`GPU_MEMORY=0.95` (vLLM's share of the card) to hold a 16k context. They are baked into the image, so the container serves what
 you deployed. Shaped on Modal's own vLLM
 example (docs/examples/vllm_inference).
 
@@ -70,6 +71,7 @@ GPUS = int(os.environ.get("GPUS", "1"))  # more than one: the model is split
 HF_SECRET = os.environ.get("HF_SECRET")  # a Modal secret holding HF_TOKEN
 TEXT_ONLY = os.environ.get("TEXT_ONLY") == "1"  # a model that also reads images
 VLLM = os.environ.get("VLLM", "0.21.0")  # newer models need newer vLLM
+GPU_MEMORY = os.environ.get("GPU_MEMORY")  # vLLM's share of each GPU; unset 0.9
 DTYPE = os.environ.get("DTYPE", "bfloat16")
 MAX_MODEL_LEN = int(os.environ.get("MAX_MODEL_LEN", "16384"))
 PROVENANCE = os.environ.get("PROVENANCE_FILE", "/root/provenance.json")
@@ -122,6 +124,7 @@ image = (
             "GPU": GPU,
             "GPUS": str(GPUS),
             "TEXT_ONLY": "1" if TEXT_ONLY else "",
+            "GPU_MEMORY": GPU_MEMORY or "",
             "APP_NAME": APP_NAME,
             "PYTHONPATH": "/root",  # so vLLM can import vllm_token
         }
@@ -196,6 +199,8 @@ class Server:
             command += ["--load-format", "mistral"]
         if GPUS > 1:
             command += ["--tensor-parallel-size", str(GPUS)]
+        if GPU_MEMORY:  # a big model's KV cache can need more than the default
+            command += ["--gpu-memory-utilization", GPU_MEMORY]
         if TEXT_ONLY:  # no image encoder memory for a game that sends none
             command += ["--limit-mm-per-prompt", json.dumps({"image": 0})]
         self.process = subprocess.Popen(command)
