@@ -353,9 +353,9 @@ def _picked(highlights, games):
         return ""
     items = []
     for pick in highlights.picks:
-        game = next((g for g in games if pick["run"].endswith(g.run)), None)
+        game = _game_named(pick["run"], games)
         firm = f", Firm {pick['firm']}" if pick.get("firm") else ""
-        where = f"Round {pick['round']}{firm}, {game.run if game else pick['run']}"
+        where = f"Round {pick['round']}{firm}, {pick['run']}"
         context = (
             [game.round(pick["round"] - 1), game.round(pick["round"])] if game else []
         )
@@ -370,6 +370,15 @@ def _picked(highlights, games):
         f'<p class="tag">{escape(highlights.by)}</p>'
         f"{''.join(items) or '<p>None.</p>'}</section>"
     )
+
+
+def _game_named(run, games):
+    """The game a pick names: by its folder path when the pick gives one (two
+    folders can hold the same run id), else by run id."""
+    named = Path(run).parts
+    matches = [g for g in games if g.dir and g.dir.parts[-len(named) :] == named]
+    matches = matches or [g for g in games if run.endswith(g.run)]
+    return matches[0] if len(matches) == 1 else None
 
 
 def _premium(arms):

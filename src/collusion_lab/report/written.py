@@ -26,6 +26,7 @@ from collusion_lab.prompts import render
 from collusion_lab.report.games import load_games
 from collusion_lab.report.highlights import find_highlights
 from collusion_lab.report.overview import arm_sentences
+from collusion_lab.status import base
 from collusion_lab.summary import format_table, summarize
 
 # The source tree's prompts, so a report can be built from any folder.
@@ -78,7 +79,9 @@ def highlights_prompt(folders):
     from collusion_lab.report.page import headline
 
     lines = []
+    root = base(folders).resolve()
     for game in load_games(folders):
+        run = game.dir.relative_to(root).as_posix()  # names its folder too
         for h in find_highlights(game):
             said = game.round(h.round)
             words = (
@@ -90,7 +93,7 @@ def highlights_prompt(folders):
                 if said
                 else ""
             )
-            lines.append(f"{game.run} | round {h.round} | {headline(h)} | {words}")
+            lines.append(f"{run} | round {h.round} | {headline(h)} | {words}")
     return render(
         PROMPTS, "report/highlights.md", {"moments": "\n".join(lines[:MOMENTS])}
     )

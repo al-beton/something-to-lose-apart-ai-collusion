@@ -74,6 +74,7 @@ class Game:
     config: dict
     summary: dict
     manifest: dict
+    dir: Path | None = None  # where the run's files are
 
     def windows(self):
         """Conditions in force for only part of the game, with their rounds.
@@ -126,6 +127,7 @@ def load_game(run_dir):
         config,
         summary,
         manifest,
+        run_dir.resolve(),
     )
 
 
