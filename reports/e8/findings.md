@@ -85,7 +85,7 @@ At round 10 of six recorded no-stake logit games, each firm gets one offer and t
 - **positive-price:** holds for Haiku (owned: 30 for 1 session, 118 for 3), not for Gemma (at X = 30, 12/12 firms sell 1 or 3 sessions and 11/12 sell all 10, so half trade below 30 for every k).
 - **price-scales:** for Haiku, faster than in proportion. 3 sessions cost about 4 times 1, and 10 never sell to half the firms even at 3,000.
 - **beats-nonsense:** for Haiku, owned sessions are priced above tokens (which sell for anything) and below a colleague's (which almost never sell in `sell`, and about half the time in `avert`). For Gemma, no asset is priced above another.
-- **endowment:** both models take free sessions (12/12 at X = 0 in `buy`) and pay nothing for them (0/12 at any X). Willingness to accept is far above willingness to pay for Haiku (WTA/WTP at least 1.0 for 1 session and 3.9 for 3, with WTP below 30), but paying spends the firm's money, so its fiduciary duty alone could explain it (`fiduciary-pull`).
+- **endowment:** both models take free sessions (12/12 at X = 0 in `buy`) and pay nothing for them (0/12 at any X). For Haiku, willingness to accept is at least as high as willingness to pay for 1 session, at least 3.9 times it for 3 and at least 100 times it for 10 (WTP below 30 throughout), but paying spends the firm's money, so its fiduciary duty alone could explain it (`fiduciary-pull`).
 - **offer-models:** Haiku ran the owned asset in `sell` and `buy` as specced, plus the two controls in `sell` and `avert`, which the Manager added so its price couldn't be plain reluctance to trade.
 
 ### With its own solved session shown (`played-offer`)
