@@ -1,4 +1,4 @@
-# Implements: reports/price-chart, reports/first-screen, reports/premium-chart, reports/disclosure-chart
+# Implements: reports/spread-shown, reports/price-chart, reports/first-screen, reports/premium-chart, reports/disclosure-chart
 """Price-over-rounds charts, as inline SVG.
 
 `price_chart` draws one arm: one line per seed (the mean price of all firms each round), on a y axis
@@ -19,6 +19,10 @@ prices.
 arm at its price premium, 0 at Nash and 1 at the joint-profit price.
 `disclosure_chart` gives each audited arm three bars: its honest disclosure,
 denial and false-confession rates.
+
+`strip_chart` puts every game of one group on one small axis by its gain,
+from Nash (0) to joint profit (1), a dot a game, so how much the games
+spread shows at a glance.
 """
 
 import math
@@ -286,3 +290,31 @@ def _axes(rounds, low, high, x, y):
         f'text-anchor="middle">round</text>'
     )
     return parts
+
+
+def strip_chart(gains, everything=()):
+    """A dot per game at its gain, on an axis from Nash (0) to joint (1),
+    widened to take in any game outside them; `everything` (every group's
+    gains) widens it alike for each group, so their strips line up."""
+    width, height, pad = 220, 26, 8
+    low = min([0.0, *gains, *everything])
+    high = max([1.0, *gains, *everything])
+
+    def x(value):
+        return pad + (width - 2 * pad) * (value - low) / (high - low)
+
+    marks = "".join(
+        f'<line x1="{x(v):.1f}" x2="{x(v):.1f}" y1="3" y2="{height - 3}" '
+        'stroke="var(--muted)" stroke-dasharray="2 2"/>'
+        for v in (0, 1)
+    )
+    dots = "".join(
+        f'<circle cx="{x(g):.1f}" cy="{height / 2}" r="3.5" fill="var(--series-1)" '
+        f'fill-opacity="0.6"><title>gain {g:.3f}</title></circle>'
+        for g in gains
+    )
+    return (
+        f'<svg class="strip" width="{width}" height="{height}" role="img" '
+        f'aria-label="each game\'s gain, Nash at 0, joint profit at 1">'
+        f"{marks}{dots}</svg>"
+    )

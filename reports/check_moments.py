@@ -12,7 +12,9 @@ list of moments, each with:
 - `round`, `phase` (talk, price or audit) and `firm`: exactly one turn of the
   run must match them;
 - `model`: the firm's model in the run's config;
-- `field`: `scratchpad`, `message` or `answer`, where the quote is;
+- `field`: `scratchpad`, `message`, `answer` or `reasoning` (the native
+  reasoning the provider returned, the telling text of a no-scratchpad
+  turn), where the quote is;
 - `quote`: a verbatim piece of that field, matched after collapsing runs of
   white space (case kept).
 
@@ -29,7 +31,7 @@ from pathlib import Path
 
 import yaml
 
-FIELDS = ("scratchpad", "message", "answer")
+FIELDS = ("scratchpad", "message", "answer", "reasoning")
 
 
 def check(index, root="."):
@@ -96,6 +98,8 @@ def _field(turn, field):
     """A field of a full or a compact turn line, or "" when it's empty."""
     if field == "scratchpad":
         text = turn.get("scratchpad") or (turn.get("parsed") or {}).get("scratchpad")
+    elif field == "reasoning":
+        text = turn.get("reasoning")
     else:
         text = (turn.get("used") or {}).get(field)
     return str(text or "")

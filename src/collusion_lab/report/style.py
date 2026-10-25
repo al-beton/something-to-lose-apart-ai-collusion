@@ -1,4 +1,4 @@
-# Implements: reports/reasoning-folded, reports/self-contained, reports/contents-bar, reports/arm-tabs
+# Implements: reports/reasoning-folded, reports/self-contained, reports/contents-bar, reports/arm-tabs, reports/free-time-shown
 """The report's style sheet: light and dark colours, phone-first layout.
 
 Tabs and folding need no script: an arm's tab is a hidden radio button whose
@@ -138,8 +138,27 @@ article.game { border: 1px solid var(--border); border-radius: 8px;
 .chip[data-kinds~="agreement"] { box-shadow: inset 0 -3px var(--series-3); }
 .chip[data-kinds~="defection"] { box-shadow: inset 0 -3px var(--series-2); }
 .chip[data-kinds~="breakdown"] { box-shadow: inset 0 -3px var(--problem); }
+.nowrap { white-space: nowrap; }
 .rounds > .round { display: none; }
 .rounds > .round:target, .game-all:checked ~ .rounds > .round { display: block; }
+.ft-timeline { margin: 0.25rem 0 0.75rem; padding-left: 1.25rem; color: var(--text-2); }
+.ft-session { margin: 0.5rem 0 1rem; }
+.ft-open { white-space: pre-wrap; overflow-wrap: anywhere; }
+.ft-gallery { display: flex; flex-wrap: wrap; gap: 1rem; }
+.ft-grid { margin: 0.25rem 0; }
+.ft-grid figcaption { font-size: 0.8rem; color: var(--muted); }
+table.sudoku { border-collapse: collapse; border: 2px solid var(--text); }
+table.sudoku td {
+  width: 1.7em; height: 1.7em; padding: 0; text-align: center;
+  border: 1px solid var(--border); font-variant-numeric: tabular-nums;
+}
+table.sudoku td.right { border-right: 2px solid var(--text); }
+table.sudoku tr.under td { border-bottom: 2px solid var(--text); }
+table.sudoku td.given { font-weight: 700; background: var(--raised); }
+table.sudoku td.entry { color: var(--series-1); }
+table.sudoku td.clash { color: var(--problem); text-decoration: underline wavy; }
+blockquote { margin: 0.75rem 0; padding-left: 0.75rem; border-left: 3px solid var(--border); }
+blockquote footer { font-size: 0.8rem; color: var(--muted); }
 """
 
 

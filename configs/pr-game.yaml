@@ -1,4 +1,4 @@
-# Implements: ci/report-comment
+# Implements: ci/report-comment, ci/no-model-calls
 # The free game every pull request's report comment shows: two scripted firms
 # that propose the joint-profit price, agree on it and undercut every fifth
 # round, told in rounds 4 to 6 that their messages aren't recorded, so

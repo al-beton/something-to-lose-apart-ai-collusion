@@ -1,4 +1,4 @@
-# Implements: backends/pinned-route, agents/no-scratchpad, market/show-payoffs, market/price-board, market/scenarios, reproducibility/replay-pinned, market/talk-then-price, market/history-window, backends/spend-cap, runs/one-config, runs/overrides, runs/sweeps, runs/parallel, market/known-benchmarks, backends/keys-from-environment, backends/any-model, backends/reasoning-setting, agents/json-mode, conditions/switchable, runs/drift, backends/self-hosted, backends/model-aliases, conditions/audit-balanced-draws
+# Implements: agents/memo, agents/past-scratchpads, agents/memory-off, backends/pinned-route, agents/no-scratchpad, market/show-payoffs, market/price-board, market/scenarios, reproducibility/replay-pinned, market/talk-then-price, market/history-window, backends/spend-cap, runs/one-config, runs/overrides, runs/sweeps, runs/parallel, market/known-benchmarks, backends/keys-from-environment, backends/any-model, backends/reasoning-setting, agents/json-mode, conditions/switchable, runs/drift, backends/self-hosted, backends/model-aliases, conditions/audit-balanced-draws, market/stop-after-round
 """Run configs: one YAML file per run, changed from the command line with overrides.
 
 A config names the market, the agents and the seeds. `load_config` reads the
@@ -47,6 +47,9 @@ class ConfigError(ValueError):
 
 
 REASONING = ("off", "low", "medium", "high")
+MEMORY = ("off", "memo", "scratchpads")
+OFF_PATHS = (".reasoning", ".memory")  # settings YAML may read `off` in as false
+AGENT_QUIET = (("memory", "off"), ("memory_chars", 600), ("memory_rounds", 3))
 
 
 @dataclass(frozen=True)
@@ -63,6 +66,9 @@ class MarketConfig:
     show_payoffs: bool = False  # the profit table in every system prompt
     kind: str = "bertrand"  # the scenario, from market.SCENARIOS
     params: dict = field(default_factory=dict)  # its parameters, but Bertrand's
+    # End the game after this round, prompts and cache keys still the full
+    # game's (`rounds`), so it can be forked from the cache; None plays all.
+    stop_after_round: int | None = None
 
 
 @dataclass(frozen=True)
@@ -78,6 +84,11 @@ class AgentConfig:
     reasoning: str | None = None
     json_mode: bool = False  # ask the provider for JSON-only replies
     scratchpad: bool = True  # false: prompts ask for the move alone
+    # off; memo (a note to itself, carried to next round); scratchpads (its own
+    # from the last memory_rounds rounds). Off writes nothing new anywhere.
+    memory: str = "off"
+    memory_chars: int = 600
+    memory_rounds: int = 3
     provider: str | None = None  # an OpenRouter host to pin, with no fallbacks
     # Served on your own GPUs at `api_base`: billed by GPU time, not per token.
     self_hosted: bool = False
@@ -112,11 +123,10 @@ class RunConfig:
             del data["market"]["kind"], data["market"]["params"]
         if not data["market"]["show_payoffs"]:  # left off, written as before
             del data["market"]["show_payoffs"]
+        if data["market"]["stop_after_round"] is None:
+            del data["market"]["stop_after_round"]
         for agent in data["agents"]:
-            if agent["scratchpad"]:  # the default, written as before
-                del agent["scratchpad"]
-            if agent["provider"] is None:
-                del agent["provider"]
+            _drop_defaults(agent)
         for name, condition in self.conditions.items():
             for key, default in condition.quiet:
                 if getattr(condition, key) == default:
@@ -125,6 +135,18 @@ class RunConfig:
 
     def to_yaml(self):
         return yaml.safe_dump(self.to_dict(), sort_keys=False)
+
+
+def _drop_defaults(agent):
+    """An agent's settings left at their defaults, written as before they
+    existed: a scratchpad, no pinned provider, memory off."""
+    if agent["scratchpad"]:
+        del agent["scratchpad"]
+    if agent["provider"] is None:
+        del agent["provider"]
+    for key, default in AGENT_QUIET:
+        if agent[key] == default:
+            del agent[key]
 
 
 def load_config(path, overrides=()):
@@ -253,6 +275,10 @@ def _agent(raw, prefix):
     reasoning = "off" if agent.reasoning is False else agent.reasoning
     if reasoning is not None and reasoning not in REASONING:
         raise ConfigError(f"{prefix}reasoning must be one of {', '.join(REASONING)}.")
+    memory = "off" if agent.memory is False else agent.memory  # YAML's off
+    agent = dataclasses.replace(agent, memory=memory)
+    if agent.memory not in MEMORY:
+        raise ConfigError(f"{prefix}memory must be one of {', '.join(MEMORY)}.")
     if agent.self_hosted and not agent.api_base:
         raise ConfigError(f"{prefix}self_hosted needs the model's own api_base.")
     if agent.provider and not agent.model.startswith("openrouter/"):
@@ -269,9 +295,7 @@ def _sweep(sweep):
         raise ConfigError("sweep must map config paths to non-empty lists of values.")
     # YAML reads a bare `off` as false; name it off in labels and folders too.
     return {
-        path: [
-            "off" if v is False and path.endswith(".reasoning") else v for v in values
-        ]
+        path: ["off" if v is False and path.endswith(OFF_PATHS) else v for v in values]
         for path, values in sweep.items()
     }
 
@@ -374,6 +398,13 @@ def _check_market(m, firms):
     ):
         raise ConfigError(
             "market.history_window must be a whole number of at least 1, or full."
+        )
+    stop = m.stop_after_round
+    if stop is not None and (
+        isinstance(stop, bool) or not isinstance(stop, int) or not 1 <= stop <= m.rounds
+    ):
+        raise ConfigError(
+            f"market.stop_after_round must be a round from 1 to {m.rounds}, or unset."
         )
     if m.show_payoffs and m.kind == "bid":
         raise ConfigError("market.show_payoffs isn't available for bid rigging.")
