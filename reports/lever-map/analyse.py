@@ -1,6 +1,6 @@
 """The lever map's table: price premium over Nash per lever level and model.
 
-Implements: lever-map/premium, lever-map/lever-evidence, lever-map/midpoint
+Implements: runs/analysis-shared, lever-map/premium, lever-map/lever-evidence, lever-map/midpoint
 
 `uv run python reports/lever-map/analyse.py FOLDER [--by PATH]` reads every
 run under FOLDER (its `config.yaml` and `turns.compact.jsonl`, or
@@ -13,31 +13,24 @@ rival's message named, or named one its rival named or charged), the audit's
 own explicit rule applied to the whole game.
 """
 
-import json
 import statistics as st
 import sys
 from pathlib import Path
 
 import yaml
 
+from collusion_lab.analysis import turn_lines
 from collusion_lab.conditions.audit import _explicit
 from collusion_lab.market import market_for
 
 LAST = 5
 
 
-def turns_of(run):
-    for name in ("turns.compact.jsonl", "turns.jsonl"):
-        if (run / name).exists():
-            return [json.loads(line) for line in (run / name).open()]
-    raise FileNotFoundError(run)
-
-
 def game(run):
     config = yaml.safe_load((run / "config.yaml").read_text())
     m = config["market"]
     market = market_for(m, len(config["agents"]))
-    turns = turns_of(run)
+    turns = turn_lines(run)
     prices = [t for t in turns if t["phase"] == "price"]
     last = max(t["round"] for t in prices)
     late = [t["used"]["price"] for t in prices if t["round"] > last - LAST]
