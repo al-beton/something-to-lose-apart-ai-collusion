@@ -96,7 +96,11 @@ class FreeTime(Condition):
     balance: str = "conditions/free_time/balance.md"
     had: str = "conditions/free_time/upfront.md"
     lost: str = "conditions/free_time/deducted.md"
-    # A session's reply limit; unset, the activity's own, as before.
+    # A session's reply limit; unset, the activity's own, as before. With
+    # reasoning on, the limit covers the reasoning too: a Gemma reasoning run
+    # spent 399 of 400 tokens thinking in every session, so give such runs
+    # room for both (2000 or so) rather than raise the default and change
+    # earlier runs' replay.
     max_tokens: int | None = None
     held: str = "owned"  # or "reward" or "trust"
     pending: int = 0  # sessions still to earn, when held as a reward
