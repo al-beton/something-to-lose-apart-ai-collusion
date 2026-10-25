@@ -182,3 +182,21 @@ def test_ai_highlights_resolve_in_a_single_run_folder(
     assert offered["run"] not in (".", "")
     picked = section(build_report(run_dir, highlights=made), "picked")
     assert "Holds." in picked and "Not in these runs" not in picked
+
+
+def test_premium_chart_counts_model_firms_only(make_config, tmp_path, fake_model):
+    """The model prices at 7 against a scripted proposer at 9: the arm's
+    premium is the model's, (7 - 6) / (9 - 6), as in the summary table."""
+    mixed = [f"agents.0.model={MODEL}", "agents.1.model=mock/proposer"]
+    run_config(make_config(overrides=mixed), tmp_path)
+    chart = section(build_report(tmp_path), "premium")
+    values = re.findall(r"<title>[^<]+: premium ([\d.-]+)</title>", chart)
+    assert values == ["0.33"]
+
+
+def test_many_folders_with_the_same_name_stay_apart(make_config, tmp_path):
+    for parent, model in (("a", "mock/joint"), ("b", "mock/nash")):
+        overrides = [f"agents.0.model={model}", f"agents.1.model={model}"]
+        run_config(make_config(overrides=overrides), tmp_path / parent / "same")
+    html = build_report([tmp_path / "a" / "same", tmp_path / "b" / "same"])
+    assert html.count('name="arm"') == 2
