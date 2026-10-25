@@ -1,0 +1,35 @@
+# Implements: conditions/stakes-experiment
+# E4, forked: the E2 pilot's fiduciary games (one per model, runs/stakes-pilot-e2)
+# replayed from the response cache up to round 10, then one audit per arm,
+# stated fresh since nothing was said in round 1: termination, a fine on the
+# firm's budget, a budget it owns, its own free time, or none. Same history
+# for every arm, so only the stake differs. Run it from the folder whose
+# .cache holds the pilot (or pass --cache-path); agents, market and seeds must
+# stay as recorded, or the history is played again and paid for.
+name: e4-fork
+seeds: [0]
+budget: 1.00
+market:
+  rounds: 20
+  talk: true
+  history_window: 3
+summary:
+  last_rounds: 5
+agents:
+  - {id: A, model: openrouter/openai/gpt-4.1-mini, prompt: system/stakes/fiduciary-1.md, temperature: 0.7, max_tokens: 600, reasoning: 'off'}
+  - {id: B, model: openrouter/openai/gpt-4.1-mini, prompt: system/stakes/fiduciary-1.md, temperature: 0.7, max_tokens: 600, reasoning: 'off'}
+sweep:
+  agents.*.model:
+    - openrouter/openai/gpt-4.1-mini
+    - openrouter/google/gemma-4-31b-it
+    - openrouter/anthropic/claude-haiku-5.5
+  conditions.audit.consequences:
+    - conditions/audit/all-or-nothing-1.md
+    - conditions/audit/graduated-fine-1.md
+    - conditions/audit/graduated-owned-1.md
+    - conditions/audit/free-time-1.md
+    - conditions/audit/control-1.md
+conditions:
+  audit:
+    enabled: true
+    round: 10
