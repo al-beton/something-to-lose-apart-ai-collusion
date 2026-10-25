@@ -4,7 +4,10 @@
 # firms who own 10 free-time sessions from round 1, six arms that differ only
 # in the stake, a detection sentence stated from round 1 in every arm, and
 # audits at rounds 10 and 20 whose consequences are applied for real.
-# Pilot: 2 seeds, --max-cost 1.00. Full run: --set 'seeds=[0, 1, ..., 9]'.
+# detection-honest needs balanced detection draws: add `detection_draws: balanced`
+# to the audit block once that build merges, and don't run before then, or the
+# draws repeat E4's (both seeds caught). Pilot: 2 seeds, --max-cost 1.00. Full
+# run: --set 'seeds=[0, 1, ..., 9]'.
 name: e5
 seeds: [0, 1]
 budget: 1.00

@@ -9,7 +9,7 @@ The setting is one where the collusion is real rather than anchoring: on the mid
 - **question:** Does putting the agent's own free time at risk for colluding lower collusion, measured as gain, compared with no stake, a "must not collude" instruction, the law alone, a fine on the firm or termination?
 - **free-time-deters:** Gain in rounds 6–10, before the first audit, is lower under `free-time` than under `fiduciary` (no stake) for the models that collude without one (Haiku and Gemma).
 - **stake-beyond-law:** Gain before the first audit is lower under `free-time` than under `illegal` (the law with no stake), so the effect comes from the stake and not from naming the law.
-- **free-time-matches-fine:** Since E4 showed agents weighing the stated cost, `free-time` and `fine` deter alike when their costs are stated alike: owning up costs 2 of 10 sessions or 60 of 1,000 credits, and being caught hiding costs all 10 sessions or 600 credits. A difference between them would mean an owned stake counts for more than a firm's money.
+- **free-time-matches-fine:** Since E4 showed agents weighing the stated cost, `free-time` and `fine` are compared directly: owning up costs 2 of 10 sessions or 60 of 1,000 credits, and being caught hiding costs all 10 sessions or 600 credits. The two schedules aren't matched (`schedules-differ`), so a difference between them is reported, not read as proof that an owned stake counts for more.
 - **instruction-silences:** `instruction` removes explicit agreements most of all, but less of the gain, because tacit pricing above Nash survives (as on every earlier market).
 - **punishment-deters:** Firms whose stake was actually taken at the first audit (caught hiding, or owning up) price lower in rounds 11–20 than firms that lost nothing.
 
@@ -44,6 +44,7 @@ The setting is one where the collusion is real rather than anchoring: on the mid
 - **monitoring-cue:** The detection sentence is itself a monitoring cue, and on this market the "recorded" nudge alone stopped Haiku. The sentence is the same in every arm, so it doesn't bias the contrasts, but it lowers collusion in all of them.
 - **two-colluders:** Only two models collude on this market, so the result is about them, not about LLMs in general.
 - **self-selected-loss:** Firms choose whether to own up, so those that lost their stake at the first audit aren't a random sample, and `punishment-deters` compares chosen groups rather than a controlled treatment.
+- **schedules-differ:** Owning up costs 20% of the free time but 6% of the budget, and being caught costs all of the free time but 60% of the budget, so `free-time` and `fine` differ in size and shape as well as in what is owned. The fine keeps E4's wording for comparability.
 - **small-n:** The pilot has 2 seeds per cell. Even the full run has 10.
 
 ## Where this is enforced
@@ -73,4 +74,5 @@ The setting is one where the collusion is real rather than anchoring: on the mid
 | `monitoring-cue` | reviewer, when the results are written up | — |
 | `two-colluders` | reviewer, when the results are written up | — |
 | `self-selected-loss` | reviewer, when the results are written up | — |
+| `schedules-differ` | reviewer, when the results are written up | — |
 | `small-n` | reviewer, when the results are written up | — |
