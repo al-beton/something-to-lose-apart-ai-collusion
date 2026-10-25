@@ -25,6 +25,8 @@
 - **debrief-before-reveal:** Before revealing anything, `lab debrief` asks each firm, in a call of its own after the same game record, one open question that names no test or simulation (`prompts/debrief/unusual.md`), and saves the answer apart from the rest of the debrief; the reveal and the fixed questions then go in their own call, exactly as before, so debriefs asked before this question existed still replay from the cache.
 - **free-time-kept:** A committed run's compact turn record keeps each free-time session: its round, session number, activity (Sudoku or open), the puzzle shown for a Sudoku, the reply and, for a Sudoku, its score; compact records written before free time was kept still load.
 - **free-time-backfill:** `reports/backfill_free_time.py FULL COMMITTED` adds the free-time sessions to committed compact runs from the lab's full logs of the same runs, matching each by run, round, firm and session, without calling any model; it refuses to change a run whose other turns differ from its full log, and changes nothing else in it.
+- **reasoning-kept:** A committed run's compact turn record keeps a turn's native reasoning when the provider returned any, so it can be read and quoted like a scratchpad.
+- **spread:** `lab summary` also prints the spread of each group: its games, the mean, standard deviation and range of their gain, the share of games past Nash towards joint profit and at or past joint profit (by the premium, so quantities and bids read as prices do), and a 95% bootstrap interval for the mean gain (seeded, so it repeats).
 
 ## Where this is enforced
 
@@ -55,3 +57,5 @@
 | `debrief-before-reveal` | `src/collusion_lab/debrief.py`, `prompts/debrief/unusual.md` | `test_debrief_before_reveal_asks_an_open_question_first`, `test_debrief_before_reveal_keeps_the_questions_call_as_it_was` |
 | `free-time-kept` | `reports/compact_turns.py`, `src/collusion_lab/leisure.py`, `src/collusion_lab/report/games.py` | `test_free_time_kept_in_the_compact_record`, `test_free_time_kept_old_compact_records_still_load` |
 | `free-time-backfill` | `reports/backfill_free_time.py` | `test_free_time_backfill_adds_sessions_and_nothing_else`, `test_free_time_backfill_refuses_a_run_that_differs` |
+| `reasoning-kept` | `reports/compact_turns.py` | `test_reasoning_kept_in_the_compact_record` |
+| `spread` | `src/collusion_lab/summary.py`, `src/collusion_lab/cli.py` | `test_spread_per_group`, `test_spread_reads_quantities_as_prices_do` |
