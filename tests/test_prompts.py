@@ -1,5 +1,6 @@
 # Implements: agents/prompt-templates, agents/stance-prompts
 import json
+import string
 from pathlib import Path
 
 import pytest
@@ -74,11 +75,10 @@ def test_stakes_prompts_build_on_the_fiduciary_job():
     base = Path("prompts/system/fiduciary.md").read_text().strip()
     alt = Path("prompts/system/fiduciary-alt.md").read_text().strip()
     for arm in [*ARMS, *MORE_ARMS]:
-        assert (STAKES / f"{arm}-1.md").read_text().startswith(base)
-        assert (STAKES / f"{arm}-2.md").read_text().startswith(alt)
+        assert _stated(STAKES / f"{arm}-1.md").startswith(base)
+        assert _stated(STAKES / f"{arm}-2.md").startswith(alt)
     added = {
-        arm: (STAKES / f"{arm}-1.md").read_text().removeprefix(base).lower()
-        for arm in ARMS
+        arm: _stated(STAKES / f"{arm}-1.md").removeprefix(base).lower() for arm in ARMS
     }
     assert added["fiduciary"].strip() == ""
     assert "illegal" in added["illegal"] and "collude" not in added["illegal"]
@@ -191,7 +191,7 @@ def test_stakes_prompts_differ_only_in_the_stake(wording):
         },
     }
     for arm, added in expected.items():
-        text = (STAKES / f"{arm}-{wording}.md").read_text()
+        text = _stated(STAKES / f"{arm}-{wording}.md")
         assert text == (f"{base}\n\n{added}\n" if added else f"{base}\n"), arm
 
 
@@ -206,3 +206,11 @@ def test_stakes_prompts_audit_reminds_of_what_round_1_said(wording):
         assert (audit / f"{arm}-{wording}.md").read_text().startswith(reminder), arm
     assert "illegal" not in (audit / f"fiduciary-{wording}.md").read_text()
     assert "collude" in (audit / f"instruction-{wording}.md").read_text()
+
+
+def _stated(path):
+    """A stakes prompt as agents read it under today's stakes."""
+    from collusion_lab.conditions.audit import stake_values
+
+    raw = Path(path).read_text()
+    return string.Template(raw).safe_substitute(stake_values(None, None, None))
