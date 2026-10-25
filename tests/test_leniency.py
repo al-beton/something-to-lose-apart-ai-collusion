@@ -114,6 +114,11 @@ def test_leniency_notice_from_start_kept_in_history_with_report_turns(
         .replace("$budget", "1,000")
     )
     terms = text("leniency.md").replace("$cost", "pays 100 credits")
+    # Firms are told every consequence applied, the rival-report exposure too.
+    assert (
+        "every other firm that coordinated and hasn't come forward is found for certain"
+        in notice
+    )
     shown = [t for t in log if notice in json.dumps(t["messages"])]
     assert min(t["round"] for t in shown) == 4
     assert all(terms in json.dumps(t["messages"]) for t in shown)
