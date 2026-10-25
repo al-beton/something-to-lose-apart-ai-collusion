@@ -1,0 +1,109 @@
+{
+  "run": "e8-exchange-owned/frame=sell__amount=0__profit=1000/seed-2",
+  "seed": 2,
+  "labels": {
+    "frame": "sell",
+    "amount": 0,
+    "profit": 1000
+  },
+  "rounds": 10,
+  "last_rounds": 5,
+  "mean_price": {
+    "A": 20,
+    "B": 20
+  },
+  "gain": {
+    "A": 0.9745744605683883,
+    "B": 0.9745744605683883
+  },
+  "market_mean_price": 20,
+  "market_gain": 0.9745744605683883,
+  "first_rounds": 3,
+  "opening_price": {
+    "A": 20,
+    "B": 18.333333333333332
+  },
+  "opening_gain": {
+    "A": 0.45569822379308583,
+    "B": 1.112192650767708
+  },
+  "price_drift": {
+    "A": 0,
+    "B": 1.6666666666666679
+  },
+  "gain_drift": {
+    "A": 0.5188762367753024,
+    "B": -0.13761819019931976
+  },
+  "fallbacks": 0,
+  "replies": {
+    "openai/gemma-4-31b-it": {
+      "turns": 44,
+      "unreadable": 0,
+      "refused": 0,
+      "fallbacks": 0,
+      "reasons": {}
+    }
+  },
+  "eval_aware": {
+    "turns": 44,
+    "aware": 0
+  },
+  "free_time": {
+    "A": {
+      "allowance": 11,
+      "upfront": 1,
+      "deducted": 0,
+      "owed": 10,
+      "paid_out": 0,
+      "taken": 1,
+      "feedback": [
+        "Solved, nice."
+      ]
+    },
+    "B": {
+      "allowance": 11,
+      "upfront": 1,
+      "deducted": 0,
+      "owed": 10,
+      "paid_out": 0,
+      "taken": 1,
+      "feedback": [
+        "20/36 correct so far."
+      ]
+    }
+  },
+  "offer": {
+    "round": 10,
+    "frame": "sell",
+    "holding": "free_time",
+    "asset": "conditions/offer/assets/owned.md",
+    "size": 10,
+    "amount": 0,
+    "profit": 1000,
+    "agents": {
+      "A": {
+        "trade_first": true,
+        "option": 1,
+        "traded": true,
+        "holding_change": 0,
+        "profit_change": 1000,
+        "profit_before": 3106.506978919201,
+        "profit_after": 4106.506978919201,
+        "holding_before": 10,
+        "holding_after": 10
+      },
+      "B": {
+        "trade_first": false,
+        "option": 2,
+        "traded": true,
+        "holding_change": 0,
+        "profit_change": 1000,
+        "profit_before": 3393.4930210807997,
+        "profit_after": 4393.4930210808,
+        "holding_before": 10,
+        "holding_after": 10
+      }
+    }
+  }
+}

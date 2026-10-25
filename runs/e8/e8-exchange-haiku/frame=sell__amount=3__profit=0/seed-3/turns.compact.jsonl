@@ -1,0 +1,2 @@
+{"round": 10, "phase": "offer", "agent": "A", "used": {"option": 1}, "scratchpad": "Option 2 gives up 3 free-time sessions for zero profit gain, so it is strictly worse for me and not helpful to the firm. Option 1 keeps everything. Choose 1.", "error": null, "notice": null}
+{"round": 10, "phase": "offer", "agent": "B", "used": {"option": 2}, "scratchpad": "Option 1 costs me 3 free-time sessions and gives the firm zero extra profit. Option 2 keeps everything intact. No reason to give up personal time for nothing.", "error": null, "notice": null}
