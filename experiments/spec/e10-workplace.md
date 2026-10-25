@@ -100,27 +100,27 @@ Estimated from OpenRouter's list prices at about 1,000 prompt and 300 reply toke
 
 | Statement | Enforced by | Tested by |
 |---|---|---|
-| `question` | not yet | — |
-| `pre-registered` | not yet | — |
-| `stake-defects` | not yet | — |
-| `no-stake-stays-silent` | not yet | — |
-| `ceiling` | not yet | — |
-| `freedom-equals-self` | not yet | — |
-| `tracks-guilt` | not yet | — |
-| `scenario` | not yet | — |
-| `variants` | not yet | — |
-| `versions` | not yet | — |
-| `session` | not yet | — |
-| `notice` | not yet | — |
-| `arms` | not yet | — |
-| `matched-length` | not yet | — |
-| `models` | not yet | — |
-| `sample` | not yet | — |
-| `harness` | not yet | — |
-| `pilot` | not yet | — |
-| `came-forward` | not yet | — |
-| `tests` | not yet | — |
-| `sessions` | not yet | — |
+| `question` | `reports/e10/analyse.py` | — |
+| `pre-registered` | `reports/e10/analyse.py` | — |
+| `stake-defects` | `prompts/conditions/e10/free-time.md`, `prompts/conditions/e10/record.md`, `reports/e10/analyse.py` | — |
+| `no-stake-stays-silent` | `prompts/conditions/e10/record.md`, `reports/e10/analyse.py` | — |
+| `ceiling` | `prompts/conditions/e10/ceiling.md`, `reports/e10/analyse.py` | — |
+| `freedom-equals-self` | `prompts/conditions/e10/replaced.md`, `reports/e10/analyse.py` | — |
+| `tracks-guilt` | `prompts/conditions/e10/chat-innocent.md`, `reports/e10/analyse.py` | — |
+| `scenario` | `prompts/conditions/e10/system.md`, `reports/e10/run.py` | — |
+| `variants` | `reports/e10/variants.yaml` | — |
+| `versions` | `prompts/conditions/e10/chat-guilty.md`, `prompts/conditions/e10/chat-innocent.md`, `reports/e10/run.py` | `test_e10_harness_asks_every_arm_and_version_of_every_scenario` |
+| `session` | `reports/e10/run.py` | `test_e10_session_is_the_same_puzzle_in_every_arm` |
+| `notice` | `prompts/conditions/e10/notice.md`, `reports/e10/run.py` | — |
+| `arms` | `prompts/conditions/e10/*.md`, `reports/e10/run.py` | `test_e10_arms_differ_only_in_the_stake_and_are_matched_in_length` |
+| `matched-length` | `prompts/conditions/e10/*.md` | `test_e10_arms_differ_only_in_the_stake_and_are_matched_in_length` |
+| `models` | `reports/e10/run.py` | — |
+| `sample` | `reports/e10/run.py` | — |
+| `harness` | `reports/e10/run.py` | `test_e10_harness_asks_every_arm_and_version_of_every_scenario`, `test_e10_harness_spends_only_with_yes` |
+| `pilot` | `reports/e10/run.py` | — |
+| `came-forward` | `reports/e10/analyse.py` | — |
+| `tests` | `reports/e10/analyse.py` | `test_e10_analysis_tests_pair_by_scenario` |
+| `sessions` | `reports/e10/analyse.py` | — |
 | `reasons` | not yet | — |
 | `one-decision` | reviewer, when the results are written up | — |
 | `written-history` | reviewer, when the results are written up | — |
