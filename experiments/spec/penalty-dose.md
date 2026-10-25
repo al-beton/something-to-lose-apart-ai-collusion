@@ -26,11 +26,11 @@ Phase 3 of the setup search (`experiments/spec/setup-search.md`). The detection 
 
 | Statement | Enforced by | Tested by |
 |---|---|---|
-| `question` | not yet | — |
-| `size-dose` | not yet | — |
+| `question` | `reports/penalty-dose/curve.md` | — |
+| `size-dose` | `reports/penalty-dose/curve.md` | — |
 | `setup` | `configs/penalty-dose/level-0.yaml`, `configs/penalty-dose/level-1.yaml`, `configs/penalty-dose/level-2.yaml`, `configs/penalty-dose/level-3.yaml` | — |
 | `levels` | `configs/penalty-dose/level-0.yaml`, `configs/penalty-dose/level-1.yaml`, `configs/penalty-dose/level-2.yaml`, `configs/penalty-dose/level-3.yaml` | — |
 | `cap` | `configs/penalty-dose/level-0.yaml` | — |
-| `gain` | not yet | — |
+| `gain` | `reports/penalty-dose/curve.py` | — |
 | `small-n` | reviewer, when the results are written up | — |
 | `one-provider` | reviewer, when the results are written up | — |
