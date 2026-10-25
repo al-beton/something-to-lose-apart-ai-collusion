@@ -82,8 +82,8 @@ from collusion_lab.prompts import render
 from collusion_lab.status import Status
 
 TALK_PROMPT = "phase/talk.md"
-BOARD_PROMPT = "phase/board.md"
-PAYOFF_PROMPT = "market/payoff-table.md"  # market.show_payoffs  # talk on a price board (market.talk: board)
+BOARD_PROMPT = "phase/board.md"  # talk on a price board (market.talk: board)
+PAYOFF_PROMPT = "market/payoff-table.md"  # market.show_payoffs
 RETRY_PROMPT = "phase/retry.md"
 # The move prompt is phase/<move>.md, or phase/<move>-own.md when it also shows
 # the agent its own message (market.own_message): phase/price.md for Bertrand.
