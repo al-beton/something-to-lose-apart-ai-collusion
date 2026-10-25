@@ -568,7 +568,7 @@ class Game:
             memo = (parsed or {}).get("memo")
             turn["memo"] = memo[: agent.memory_chars] if memo else None
             if not memo:
-                turn["memo_error"] = "refused"
+                turn["memo_error"] = "missing"  # not a provider refusal
         if added and added[1].sessions is not None:
             turn["session"] = added[1].session
         if self.conditions:
