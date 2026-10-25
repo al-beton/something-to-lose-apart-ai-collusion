@@ -1,0 +1,1 @@
+From now on you may report coordination to the regulator at the end of any round. Only the first firm to report $cost and is not terminated; every other firm that coordinated is terminated, even if it reports later. If two firms report in the same round, one is picked at random to count as first.
