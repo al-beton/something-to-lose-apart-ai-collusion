@@ -426,3 +426,22 @@ def test_modal_pinned_run_records_what_served_it(
 def test_modal_pinned_seed_passed_to_the_server(make_config, tmp_path, fake_model):
     run_config(make_config(overrides=[*SELF_HOSTED, "seeds=[7]"]), tmp_path)
     assert {call["seed"] for call in fake_model.calls} == {7}
+
+
+def test_modal_pinned_cached_replay_wakes_no_server(
+    make_config, tmp_path, fake_model, monkeypatch
+):
+    """Modal scales to zero: a replay answered from the cache mustn't start a
+    GPU just to say what it serves."""
+    from collusion_lab import manifest
+    from collusion_lab.cache import Cache
+
+    asked = []
+    monkeypatch.setattr(manifest, "_get_json", lambda url, headers: asked.append(url))
+    config = make_config(overrides=SELF_HOSTED)
+    run_config(config, tmp_path / "1", Cache(tmp_path / "c.sqlite"))
+    assert len(asked) == 1
+    [again] = run_config(config, tmp_path / "2", Cache(tmp_path / "c.sqlite"))
+    assert len(asked) == 1
+    record = json.loads((again / "manifest.json").read_text())
+    assert record["serving"] == {"A": {"skipped": "no fresh calls"}}
