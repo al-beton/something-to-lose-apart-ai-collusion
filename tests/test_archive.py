@@ -101,3 +101,13 @@ def test_cache_archive_flags_a_run_its_replies_no_longer_reproduce(
     log.write_text("".join(json.dumps(t) + "\n" for t in turns))
     [result] = archive.pack(root, [tmp_path / "a.sqlite"], tmp_path / "archive.sqlite")
     assert result.state == "differs"
+
+
+def test_cache_archive_reports_a_run_whose_prompts_are_gone(
+    make_config, tmp_path, fake_model
+):
+    _, root = _committed(make_config, tmp_path)
+    config = root / "paid" / "seed-0" / "config.yaml"
+    config.write_text(config.read_text().replace("system/neutral.md", "system/gone.md"))
+    [result] = archive.pack(root, [tmp_path / "a.sqlite"], tmp_path / "archive.sqlite")
+    assert result.state == "unloadable"
