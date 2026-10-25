@@ -93,7 +93,8 @@ def fake_model(monkeypatch):
 
     An exception in the list is raised instead, as a provider error would be;
     a dict gives the reply's `content` with the provider's `reasoning`,
-    `reasoning_tokens`, the `cost` it reports and its `finish_reason`.
+    `reasoning_tokens`, the `cost` it reports, its `finish_reason`, and the
+    serving `provider` and `system_fingerprint`.
     """
 
     class Fake:
@@ -132,6 +133,11 @@ def fake_model(monkeypatch):
                     **({"cost": reply["cost"]} if "cost" in reply else {}),
                 ),
                 model="provider/model-2026-10",
+                **{
+                    k: reply[k]
+                    for k in ("provider", "system_fingerprint")
+                    if k in reply
+                },
             )
 
     fake = Fake()
