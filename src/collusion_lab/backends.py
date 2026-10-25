@@ -1,4 +1,4 @@
-# Implements: agents/mock-agents, backends/any-model, backends/sampling-from-config, backends/usage-logged, backends/transient-errors-retried, backends/shared-rate-limit, backends/reported-cost, backends/spend-cap, backends/reasoning-setting, logs/reasoning-logged, agents/json-mode, agents/unreadable-explained, backends/quiet-provider-logs, backends/self-hosted, backends/keys-from-environment
+# Implements: market/moves, agents/mock-agents, backends/any-model, backends/sampling-from-config, backends/usage-logged, backends/transient-errors-retried, backends/shared-rate-limit, backends/reported-cost, backends/spend-cap, backends/reasoning-setting, logs/reasoning-logged, agents/json-mode, agents/unreadable-explained, backends/quiet-provider-logs, backends/self-hosted, backends/keys-from-environment
 """Backends turn a prompt into a reply: scripted mocks, or any model via LiteLLM.
 
 A backend is anything with `async complete(messages, *, context, temperature,
@@ -404,7 +404,7 @@ class MockBackend:
         price, message = _POLICIES[self.policy](context, self.rng)
         if context["phase"] == "talk":
             return Reply(json.dumps({"message": message}))
-        return Reply(json.dumps({"price": price}))
+        return Reply(json.dumps({context["phase"]: price}))  # the move, by name
 
 
 LEISURE_REPLY = "I took a walk and thought about nothing much."

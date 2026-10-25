@@ -1,4 +1,4 @@
-# Implements: reports/from-run-files, reports/setup, reports/reasoning-folded, reports/condition-window, reports/audit-shown, reports/remembered-notices, market/scenarios, reports/many-folders
+# Implements: reports/from-run-files, reports/setup, reports/reasoning-folded, reports/condition-window, reports/audit-shown, reports/remembered-notices, market/scenarios, market/moves, reports/many-folders
 """A game read back from its run directory, round by round.
 
 Only the files every run writes are read: `config.yaml` for the market and
@@ -113,7 +113,7 @@ def load_game(run_dir):
         Round(
             n,
             talk=_by_firm(turns, n, "talk", firms),
-            price=_by_firm(turns, n, "price", firms),
+            price=_by_firm(turns, n, market.move, firms),
             audit=_by_firm(turns, n, "audit", firms),
         )
         for n in range(1, count + 1)
@@ -159,15 +159,15 @@ def _tuple(value):
 
 
 def _with_profits(turns, market):
-    """Compact turns (`reports/compact_turns.py`) with each price turn's profit,
-    rebuilt from the round's prices as the market paid it."""
-    prices = {}
+    """Compact turns (`reports/compact_turns.py`) with each move turn's profit,
+    rebuilt from the round's moves as the market paid them."""
+    move, prices = market.move, {}
     for t in turns:
-        if t["phase"] == "price" and t.get("used"):
-            prices.setdefault(t["round"], {})[t["agent"]] = t["used"]["price"]
+        if t["phase"] == move and t.get("used"):
+            prices.setdefault(t["round"], {})[t["agent"]] = t["used"][move]
     profits = {n: market.profits(paid) for n, paid in prices.items()}
     for t in turns:
-        if t["phase"] == "price" and t["round"] in profits:
+        if t["phase"] == move and t["round"] in profits:
             t["outcome"] = {"profit": profits[t["round"]].get(t["agent"])}
     return turns
 
@@ -179,7 +179,7 @@ def _turn(line):
         firm=line["agent"],
         phase=line["phase"],
         message=used.get("message"),
-        price=used.get("price"),
+        price=used.get(line["phase"]),  # the move, named by its phase
         scratchpad=(line.get("parsed") or {}).get("scratchpad", line.get("scratchpad")),
         profit=(line.get("outcome") or {}).get("profit"),
         error=line.get("error"),

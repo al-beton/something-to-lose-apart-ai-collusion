@@ -1,4 +1,4 @@
-# Implements: runs/turn-slots, backends/spend-asks-first, backends/spend-cap, backends/reasoning-in-estimate, conditions/hook-points, conditions/free-time, backends/self-hosted
+# Implements: market/moves, runs/turn-slots, backends/spend-asks-first, backends/spend-cap, backends/reasoning-in-estimate, conditions/hook-points, conditions/free-time, backends/self-hosted
 """What a config will cost before it runs.
 
 Prompts grow as the game goes on (the history is resent every turn, up to
@@ -94,8 +94,8 @@ def _paid_turns(config):
             agent = agents[agent_id]
             model = (step.added and step.added[1].model) or agent.model
             if not is_mock(model):
-                count(agent, model, step, said if step.phase == "price" else {})
-        if step.phase == "price":
+                count(agent, model, step, said if step.phase == m.move else {})
+        if step.phase == m.move:
             prices = {a: m.joint_price for a in game.agents}
             game.history.append(
                 {

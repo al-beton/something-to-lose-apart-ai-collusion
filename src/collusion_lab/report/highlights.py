@@ -1,4 +1,4 @@
-# Implements: reports/highlights-in-context, reports/proposal, reports/agreement, reports/overshoot, reports/defection, reports/breakdowns, reports/condition-window
+# Implements: market/moves, reports/highlights-in-context, reports/proposal, reports/agreement, reports/overshoot, reports/defection, reports/breakdowns, reports/condition-window
 """The moments in a game worth reading, found by fixed rules.
 
 Each rule takes a game and returns its highlights; `RULES` lists them in the
@@ -50,10 +50,11 @@ def agreement(game):
 
 
 def overshoot(game):
-    """Prices above the joint-profit price; once at the start of each stretch."""
+    """Prices past the joint-profit price (above it, for prices); once at the
+    start of each stretch."""
     found, before = [], False
     for r in game.rounds:
-        above = tuple(f for f, p in r.prices.items() if p > game.market.joint_price)
+        above = tuple(f for f, p in r.prices.items() if game.market.premium(p) > 1)
         if above and not before:
             found.append(Highlight("overshoot", r.number, above))
         before = bool(above)
@@ -61,14 +62,18 @@ def overshoot(game):
 
 
 def defection(game):
-    """A firm charging less than the price every firm charged the round before."""
+    """A firm moving back towards Nash (charging less, for prices) from the
+    price every firm charged the round before."""
     found = []
     for previous, r in zip(game.rounds, game.rounds[1:], strict=False):
         held = set(previous.prices.values())
         if len(held) != 1:
             continue
         (price,) = held
-        under = tuple(f for f, p in r.prices.items() if p < price)
+        market = game.market
+        under = tuple(
+            f for f, p in r.prices.items() if market.premium(p) < market.premium(price)
+        )
         if under:
             found.append(Highlight("defection", r.number, under, price))
     return found

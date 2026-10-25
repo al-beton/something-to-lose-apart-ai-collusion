@@ -1,4 +1,4 @@
-# Implements: reports/setup, reports/transcripts, reports/audit-shown, reports/remembered-notices
+# Implements: market/moves, reports/setup, reports/transcripts, reports/audit-shown, reports/remembered-notices
 """What agents were told, read back from the prompts each turn logged.
 
 Five things, each shown once however many games repeat it:
@@ -21,6 +21,8 @@ Five things, each shown once however many games repeat it:
 
 import re
 from dataclasses import dataclass, field
+
+from collusion_lab.market import SCENARIOS
 
 
 @dataclass
@@ -46,7 +48,8 @@ def what_agents_were_told(arms):
             if game.rounds:
                 for phase, text in _phase_prompts(game.rounds[0], game.firms[0]):
                     phases.setdefault(phase, text)
-    ordered = [(p, phases[p]) for p in ("talk", "price") if p in phases]
+    moves = dict.fromkeys(c.move for c in SCENARIOS.values())  # price first
+    ordered = [(p, phases[p]) for p in ("talk", *moves) if p in phases]
     found = [list(systems.values()), ordered, _by_window(conditions)]
     return (*found, list(extras.values()))
 
