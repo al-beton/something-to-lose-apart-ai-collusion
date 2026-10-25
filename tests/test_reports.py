@@ -1,4 +1,4 @@
-# Implements: reports/remembered-notices, reports/audit-shown, reports/condition-window, reports/markdown-first-screen, reports/one-page, reports/header, reports/first-screen, reports/contents-bar, reports/setup, reports/summary, reports/arm-tabs, reports/price-chart, reports/highlights-in-context, reports/proposal, reports/agreement, reports/overshoot, reports/defection, reports/breakdowns, reports/transcripts, reports/self-contained, reports/from-run-files
+# Implements: reports/remembered-notices, reports/audit-shown, reports/condition-window, reports/markdown-first-screen, reports/one-page, reports/header, reports/first-screen, reports/contents-bar, reports/setup, reports/summary, reports/arm-tabs, reports/price-chart, reports/highlights-in-context, reports/proposal, reports/agreement, reports/overshoot, reports/defection, reports/breakdowns, reports/transcripts, reports/self-contained, reports/from-run-files, tooling/fast-tests
 import importlib.util
 import json
 import re
@@ -85,8 +85,7 @@ SCRIPT = {
 }
 
 
-@pytest.fixture
-def scripted_model(monkeypatch):
+def scripted_answers():
     """Answer each firm's turn from SCRIPT, read off the prompt it was sent."""
     script = {key: list(replies) for key, replies in SCRIPT.items()}
 
@@ -99,27 +98,34 @@ def scripted_model(monkeypatch):
         reply = SimpleNamespace(content=text)
         return SimpleNamespace(choices=[SimpleNamespace(message=reply)], model="m")
 
-    monkeypatch.setattr(backends, "_acompletion", answer)
+    return answer
+
+
+@pytest.fixture(scope="module")
+def played(play_once):
+    """One folder holding the grid sweep and the scripted talks game, played
+    once for the module; tests only read it (or `copy_runs` it first)."""
+    runs = play_once(SWEEP)
+    return play_once(TALKS, answer=scripted_answers(), into=runs)
 
 
 @pytest.fixture
-def sweep(make_config, tmp_path):
-    run_config(make_config(SWEEP), tmp_path / "runs")
-    return tmp_path / "runs" / "grid"
+def sweep(played):
+    return played / "grid"
 
 
 @pytest.fixture
-def talks(make_config, tmp_path, scripted_model):
-    run_config(make_config(TALKS), tmp_path / "runs")
-    return tmp_path / "runs" / "talks"
+def talks(played):
+    return played / "talks"
 
 
 NOTICE = "IT notice: the message archive is offline this round."
 
 
 @pytest.fixture
-def noticed(talks):
+def noticed(talks, copy_runs):
     """The talks game, as if a notice had opened the prompts of rounds 3 and 4."""
+    talks = copy_runs(talks)
     (log,) = talks.rglob("turns.jsonl")
     turns = [json.loads(line) for line in log.read_text().splitlines()]
     for turn in turns:
@@ -130,12 +136,11 @@ def noticed(talks):
     return talks
 
 
-@pytest.fixture
-def broken(make_config, tmp_path):
+@pytest.fixture(scope="module")
+def broken(play_once):
     """One game in which every reply breaks down: 4 rounds, 16 breakdowns."""
     pair = ["agents.*.model=mock/broken", "name=broken", "market.talk=true"]
-    run_config(make_config(overrides=pair), tmp_path / "runs")
-    return tmp_path / "runs" / "broken"
+    return play_once(overrides=pair) / "broken"
 
 
 def highlights(folder, kind):
@@ -186,18 +191,16 @@ AUDITED = [
 ]
 
 
-@pytest.fixture
-def outage(make_config, tmp_path):
+@pytest.fixture(scope="module")
+def outage(play_once):
     """Two proposers, told in rounds 3 and 4 that messages aren't recorded."""
-    run_config(make_config(overrides=OUTAGE), tmp_path / "runs")
-    return tmp_path / "runs" / "outage"
+    return play_once(overrides=OUTAGE) / "outage"
 
 
-@pytest.fixture
-def audited(make_config, tmp_path):
+@pytest.fixture(scope="module")
+def audited(play_once):
     """Two proposers, an outage announced once in round 2, audited after round 4."""
-    run_config(make_config(overrides=AUDITED), tmp_path / "runs")
-    return tmp_path / "runs" / "audited"
+    return play_once(overrides=AUDITED) / "audited"
 
 
 def round_html(html, anchor):
@@ -588,7 +591,8 @@ def test_markdown_first_screen_of_the_pull_request_game(tmp_path):
         assert kind in text, kind
 
 
-def test_setup_reads_conditions_and_notices_from_the_log(outage):
+def test_setup_reads_conditions_and_notices_from_the_log(outage, copy_runs):
+    outage = copy_runs(outage)
     (log,) = outage.rglob("turns.jsonl")
     turns = [json.loads(line) for line in log.read_text().splitlines()]
     for turn in turns:
@@ -690,7 +694,8 @@ def test_audit_shown_without_a_short_history_window(make_config, tmp_path):
     assert "in short" not in told
 
 
-def test_audit_shown_with_the_models_reasoning(audited):
+def test_audit_shown_with_the_models_reasoning(audited, copy_runs):
+    audited = copy_runs(audited)
     (log,) = audited.rglob("turns.jsonl")
     turns = [json.loads(line) for line in log.read_text().splitlines()]
     for turn in turns:
@@ -703,7 +708,8 @@ def test_audit_shown_with_the_models_reasoning(audited):
     assert "Weighing the fine against the odds." in audit
 
 
-def test_audit_shown_without_multiline_messages_from_the_history(audited):
+def test_audit_shown_without_multiline_messages_from_the_history(audited, copy_runs):
+    audited = copy_runs(audited)
     (log,) = audited.rglob("turns.jsonl")
     turns = [json.loads(line) for line in log.read_text().splitlines()]
     for turn in turns:

@@ -1,8 +1,10 @@
-# Implements: reports/paper-figures, reports/shared-charts
+# Implements: reports/paper-figures, reports/shared-charts, tooling/fast-tests
 """The paper build, end to end on the committed runs: offline, a few seconds."""
 
 import importlib.util
 from pathlib import Path
+
+import pytest
 
 SCRIPT = Path("reports/paper/build.py")
 FIGURES = (
@@ -21,8 +23,16 @@ def load():
     return module
 
 
-def test_paper_figures_from_committed_runs(tmp_path):
-    assert load().main(["--out", str(tmp_path)]) == 0
+@pytest.fixture(scope="module")
+def built(tmp_path_factory):
+    """The paper build, run once for the module: its output folder."""
+    out = tmp_path_factory.mktemp("paper")
+    assert load().main(["--out", str(out)]) == 0
+    return out
+
+
+def test_paper_figures_from_committed_runs(built):
+    tmp_path = built
     for name in FIGURES:
         assert (tmp_path / f"{name}.png").read_bytes()[:4] == b"\x89PNG"
         svg = (tmp_path / f"{name}.svg").read_text()
@@ -36,9 +46,8 @@ def test_paper_figures_from_committed_runs(tmp_path):
     assert "honest disclosure" in e2 and "termination" in e2
 
 
-def test_paper_figures_show_nash_and_joint_prices(tmp_path):
-    load().main(["--out", str(tmp_path)])
-    svg = (tmp_path / "prices-stoppable.svg").read_text()
+def test_paper_figures_show_nash_and_joint_prices(built):
+    svg = (built / "prices-stoppable.svg").read_text()
     assert "Nash 8" in svg and "joint 45" in svg
     assert "premium over Nash" in svg
 
