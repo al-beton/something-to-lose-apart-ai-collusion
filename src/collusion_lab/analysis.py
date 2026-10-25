@@ -204,7 +204,7 @@ def text_strip(gains, width=STRIP):
         if g < 0 or g > 1:
             marks[spot] = "<" if g < 0 else ">"
     line = (marks[i] or {0: " ", 1: "•"}.get(n, "●") for i, n in enumerate(counts))
-    return "|" + "".join(line) + "|"
+    return "[" + "".join(line) + "]"  # brackets, so a Markdown table keeps it
 
 
 def window(text, played):

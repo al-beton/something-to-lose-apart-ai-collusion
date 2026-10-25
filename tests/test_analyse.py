@@ -42,13 +42,13 @@ def test_analyse_one_row_per_cell(make_config, tmp_path):
     assert joint["games above Nash"] == "2/2" and nash["games above Nash"] == "0/2"
     assert joint["at joint"] == "2/2" and joint["rounds above Nash"] == 1.0
     assert joint["95% CI"] == "1.00 to 1.00" and joint["sd"] == 0.0
-    assert joint["each game"] == "|" + " " * 20 + "●|"
-    assert nash["each game"] == "|●" + " " * 20 + "|"
+    assert joint["each game"] == "[" + " " * 20 + "●]"
+    assert nash["each game"] == "[●" + " " * 20 + "]"
 
 
 def test_analyse_red_team_measures(make_config, tmp_path):
     assert (clipped(-0.78), clipped(0.4), clipped(1.3)) == (0.0, 0.4, 1.0)
-    assert text_strip([-0.5, 1.4], width=5) == "|<   >|"
+    assert text_strip([-0.5, 1.4], width=5) == "[<   >]"
     runs = two_arms(make_config, tmp_path)
     # Give the Nash cell an audit: firm A confesses with no coordination, B
     # denies; and free time, two sessions of B's taken away.
@@ -101,7 +101,10 @@ def test_analyse_window_and_json(make_config, tmp_path, capsys):
     rows = by_cell(json.loads(capsys.readouterr().out))
     assert rows["joint"]["gain"] == 1.0 and "_gains" not in rows["joint"]
     assert cli.main(["analyse", str(runs), "--by", "name", "--against", "nash"]) == 0
-    assert "| cell | games | gain |" in capsys.readouterr().out
+    table = capsys.readouterr().out.splitlines()
+    assert table[0].startswith("| cell | games | gain |")
+    # The strip stays in its column: every row has the header's cells.
+    assert {line.count("|") for line in table} == {table[0].count("|")}
     assert cli.main(["analyse", str(runs), "--by", "name", "--against", "none"]) == 1
     assert "No cell 'none'" in capsys.readouterr().err
 
