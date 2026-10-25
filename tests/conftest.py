@@ -16,7 +16,7 @@ from types import SimpleNamespace
 
 import pytest
 
-from collusion_lab import backends, prices
+from collusion_lab import backends, manifest, prices
 from collusion_lab.config import load_config
 from collusion_lab.runner import run_config
 
@@ -89,11 +89,17 @@ def provenance_index(monkeypatch, tmp_path_factory):
     return index
 
 
+def _no_serving(url, headers):
+    raise OSError("offline")
+
+
 @pytest.fixture(autouse=True)
 def no_model_calls(monkeypatch):
     monkeypatch.setattr(backends, "_acompletion", _refuse)
     # Offline: OpenRouter's price list is unknown unless a test supplies one.
     monkeypatch.setattr(prices, "_openrouter_prices", dict)
+    # Offline: a self-hosted model's /provenance answer is unknown too.
+    monkeypatch.setattr(manifest, "_get_json", _no_serving)
 
 
 @pytest.fixture

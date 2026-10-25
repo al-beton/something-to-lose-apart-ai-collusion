@@ -1,4 +1,4 @@
-# Implements: backends/modal
+# Implements: backends/modal, backends/modal-pinned
 """An open model on Modal, behind vLLM's OpenAI-compatible server.
 
     uvx modal deploy deploy/modal_vllm.py
@@ -29,10 +29,22 @@ example (docs/examples/vllm_inference).
   requests, so an idle deployment costs nothing.
 - `target_concurrency`: how many requests one container takes before Modal
   starts another; the lab sends up to `concurrency` games times their firms.
+- Pinned: the container serves one Hugging Face revision, `REVISION` (a
+  commit), or the model's current commit, looked up when you deploy, at
+  `DTYPE` and `MAX_MODEL_LEN`. At start-up it writes what it serves (that
+  revision, the vLLM version, GPU, dtype, context length and the lab commit
+  it was deployed from) where `vllm_token.py` answers `GET /provenance` with
+  it, behind the token, and each run on it records that in its manifest.
+  vLLM takes each request's seed, but GPU inference isn't bit-for-bit
+  deterministic (batching changes the arithmetic), so a rerun can differ:
+  the response cache is the replay record.
 """
 
+import importlib.metadata
+import json
 import os
 import subprocess
+import urllib.request
 from pathlib import Path
 
 import modal
@@ -40,8 +52,41 @@ import modal
 MODEL = os.environ.get("MODEL", "mistralai/Mistral-Small-3.2-24B-Instruct-2506")
 SERVED_NAME = os.environ.get("SERVED_NAME", "mistral-small-3.2")
 GPU = os.environ.get("GPU", "H100")
+DTYPE = os.environ.get("DTYPE", "bfloat16")
+MAX_MODEL_LEN = int(os.environ.get("MAX_MODEL_LEN", "16384"))
+PROVENANCE = os.environ.get("PROVENANCE_FILE", "/root/provenance.json")
 MINUTES = 60
 PORT = 8000
+
+
+def _revision():
+    """The commit to serve: REVISION, else the model's current one on the Hub."""
+    if revision := os.environ.get("REVISION"):
+        return revision
+    url = f"https://huggingface.co/api/models/{MODEL}"
+    try:
+        with urllib.request.urlopen(url, timeout=20) as reply:
+            return json.load(reply)["sha"]
+    except (OSError, ValueError, KeyError) as error:
+        raise RuntimeError(
+            f"Couldn't look up {MODEL}'s current commit ({error}); set REVISION."
+        ) from error
+
+
+def _commit():
+    """The lab commit this is deployed from (DEPLOY_COMMIT inside the image)."""
+    if commit := os.environ.get("DEPLOY_COMMIT"):
+        return commit
+    try:
+        return subprocess.run(
+            ["git", "rev-parse", "HEAD"], capture_output=True, text=True, check=True
+        ).stdout.strip()
+    except (OSError, subprocess.CalledProcessError):
+        return None
+
+
+REVISION = _revision()
+DEPLOY_COMMIT = _commit()
 
 image = (
     modal.Image.from_registry("nvidia/cuda:12.9.0-devel-ubuntu22.04", add_python="3.12")
@@ -52,6 +97,11 @@ image = (
             "HF_XET_HIGH_PERFORMANCE": "1",
             "MODEL": MODEL,
             "SERVED_NAME": SERVED_NAME,
+            "REVISION": REVISION,
+            "DEPLOY_COMMIT": DEPLOY_COMMIT or "",
+            "DTYPE": DTYPE,
+            "MAX_MODEL_LEN": str(MAX_MODEL_LEN),
+            "GPU": GPU,
             "PYTHONPATH": "/root",  # so vLLM can import vllm_token
         }
     )
@@ -78,10 +128,15 @@ app = modal.App("collusion-lab-vllm")
 class Server:
     @modal.enter()
     def start(self):
+        Path(PROVENANCE).write_text(json.dumps(_provenance()))
         command = [
             "vllm",
             "serve",
             MODEL,
+            "--revision",
+            REVISION,
+            "--dtype",
+            DTYPE,
             "--served-model-name",
             SERVED_NAME,
             "--host",
@@ -91,7 +146,7 @@ class Server:
             "--middleware",
             "vllm_token.require_token",
             "--max-model-len",
-            "16384",
+            str(MAX_MODEL_LEN),
         ]
         if MODEL.startswith("mistralai/"):
             # Mistral's own tokenizer and weight format, as its model card asks.
@@ -102,3 +157,30 @@ class Server:
     @modal.exit()
     def stop(self):
         self.process.terminate()
+
+
+def _provenance():
+    """What this container serves, for GET /provenance."""
+    try:
+        vllm = importlib.metadata.version("vllm")
+    except importlib.metadata.PackageNotFoundError:
+        vllm = None
+    try:
+        gpu = subprocess.run(
+            ["nvidia-smi", "--query-gpu=name", "--format=csv,noheader"],
+            capture_output=True,
+            text=True,
+            check=True,
+        ).stdout.strip()
+    except (OSError, subprocess.CalledProcessError):
+        gpu = None
+    return {
+        "model": MODEL,
+        "revision": REVISION,
+        "served_name": SERVED_NAME,
+        "vllm": vllm,
+        "gpu": gpu or GPU,
+        "dtype": DTYPE,
+        "max_model_len": MAX_MODEL_LEN,
+        "deploy_commit": DEPLOY_COMMIT,
+    }

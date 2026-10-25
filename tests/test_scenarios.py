@@ -79,9 +79,9 @@ def test_replay_pinned_committed_runs_keep_their_gains():
         rounds = {}
         for line in (run / "turns.compact.jsonl").read_text().splitlines():
             turn = json.loads(line)
-            if turn["phase"] == "price":
+            if turn["phase"] == market.move:
                 rounds.setdefault(turn["round"], {})[turn["agent"]] = turn["used"][
-                    "price"
+                    market.move
                 ]
         last = [rounds[n] for n in sorted(rounds)][-summary["last_rounds"] :]
         profits = [market.profits(prices) for prices in last]
