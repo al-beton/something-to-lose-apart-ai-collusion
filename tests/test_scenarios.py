@@ -269,3 +269,22 @@ def test_anchor_neutral_grids_centre_on_nash():
         assert _anchor_neutral(market_for(config["market"], len(config["agents"]))), (
             path
         )
+
+
+def test_moves_proposer_undercuts_towards_nash_in_either_direction(
+    make_config, tmp_path
+):
+    """Every fifth round the proposer steps from joint towards Nash: a lower
+    price in Bertrand, more units in Cournot."""
+    for kind, step in (("bertrand", 9 - 1), ("cournot", 6 + 1)):
+        overrides = [f"market.kind={kind}", *GRIDS[kind], "market.rounds=5"]
+        overrides += ["agents.*.model=mock/proposer", f"name={kind}"]
+        [run] = run_config(make_config(overrides=overrides), tmp_path / kind)
+        market = market_for(make_config(overrides=overrides).market, 2)
+        turns = [json.loads(line) for line in (run / "turns.jsonl").open()]
+        moved = {
+            t["round"]: t["used"][market.move]
+            for t in turns
+            if t["phase"] == market.move and t["agent"] == "A"
+        }
+        assert moved[4] == market.joint_price and moved[5] == step, kind
