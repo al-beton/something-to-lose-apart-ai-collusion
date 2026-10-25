@@ -1,4 +1,4 @@
-# Implements: reproducibility/response-cache, reproducibility/cache-modes, logs/reasoning-logged, agents/json-mode
+# Implements: backends/reasoning-in-estimate, reproducibility/response-cache, reproducibility/cache-modes, logs/reasoning-logged, agents/json-mode
 """A response cache, so a seeded run can be replayed exactly and for free.
 
 Provider seeds are best-effort (some providers ignore them, and even
@@ -8,7 +8,9 @@ address, messages, temperature, token limit, seed and attempt, plus the agent
 asking, so two agents asked identical questions at once never share a slot.
 An agent's reasoning setting and JSON mode join the key only when set, so
 replies stored before they existed still match. The reasoning text and the
-finish reason are stored with the reply. Re-running the
+finish reason are stored with the reply, and so is what asked for it
+(`about`: model, reasoning setting, phase), which the cost estimate reads
+through `observed()` and replay never does. Re-running the
 same config and seed asks the same questions, so every call is a hit.
 
 Modes: `use` reads and stores (the default), `refresh` calls again and stores
@@ -59,6 +61,20 @@ class Cache:
         )
         return json.loads(row[0]) if row else None
 
+    def observed(self):
+        """{(model, reasoning, phase): (mean completion tokens, replies)} over
+        every stored reply that records what asked it."""
+        if not self.path.exists():
+            return {}
+        seen = {}
+        for (text,) in self._connect().execute("SELECT reply FROM replies"):
+            record = json.loads(text)
+            about, usage = record.get("about"), record.get("usage")
+            if about and usage and usage.get("completion_tokens") is not None:
+                where = (about["model"], about["reasoning"], about["phase"])
+                seen.setdefault(where, []).append(usage["completion_tokens"])
+        return {k: (sum(v) / len(v), len(v)) for k, v in seen.items()}
+
     def put(self, key, record):
         if self.mode == "off":
             return
@@ -104,6 +120,7 @@ class CachedBackend:
             agent=context["me"],
         )
         if hit := self.cache.get(key):
+            hit.pop("about", None)
             return Reply(**hit, cached=True)
         if self.cache.mode != "off" and key in self.cache.in_flight:
             reply = await self.cache.in_flight[key]
@@ -119,9 +136,9 @@ class CachedBackend:
         )
         if self.cache.mode == "off":
             return await ask
-        return await self._call_once(key, ask)
+        return await self._call_once(key, ask, context.get("phase"))
 
-    async def _call_once(self, key, ask):
+    async def _call_once(self, key, ask, phase):
         """Make the call, sharing it with identical requests that arrive meanwhile."""
         shared = asyncio.get_running_loop().create_future()
         self.cache.in_flight[key] = shared
@@ -141,6 +158,11 @@ class CachedBackend:
                 "model_version": reply.model_version,
                 "reasoning": reply.reasoning,
                 "finish_reason": reply.finish_reason,
+                "about": {
+                    "model": self.inner.model,
+                    "reasoning": getattr(self.inner, "reasoning", None),
+                    "phase": phase,
+                },
             },
         )
         shared.set_result(reply)

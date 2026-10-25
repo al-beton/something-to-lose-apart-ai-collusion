@@ -1,4 +1,4 @@
-# Implements: backends/spend-cap, runs/stops-cleanly, runs/one-config, runs/overrides, backends/keys-from-environment, backends/spend-asks-first, reproducibility/cache-modes, runs/summary-table, runs/fallback-rates, reports/one-page, runs/failures-dont-stop-sweeps, runs/resume, runs/missing-runs-shown, runs/live-progress, runs/status-command, backends/self-hosted, runs/explore, backends/model-aliases, reports/many-folders, reports/written-summary, reports/picked-highlights, runs/debrief
+# Implements: backends/reasoning-in-estimate, backends/spend-cap, runs/stops-cleanly, runs/one-config, runs/overrides, backends/keys-from-environment, backends/spend-asks-first, reproducibility/cache-modes, runs/summary-table, runs/fallback-rates, reports/one-page, runs/failures-dont-stop-sweeps, runs/resume, runs/missing-runs-shown, runs/live-progress, runs/status-command, backends/self-hosted, runs/explore, backends/model-aliases, reports/many-folders, reports/written-summary, reports/picked-highlights, runs/debrief
 """The `lab` command.
 
 - `lab run CONFIG [--set path=value ...] [--out DIR] [-y]` plays a config,
@@ -137,7 +137,7 @@ def main(argv=None):
         parser.error(str(error))
     if args.max_cost is not None:
         config = dataclasses.replace(config, budget=args.max_cost)
-    if not _spend_checked(config, args.yes):
+    if not _spend_checked(config, args.yes, args.cache_path):
         return 1
     cache = Cache(args.cache_path, args.cache)
     outcomes = run_sweep(config, args.out, cache, progress=_progress)
@@ -197,7 +197,7 @@ def _explore(args, parser):
         parser.error(str(error))
     if args.max_cost is not None:
         config = dataclasses.replace(config, budget=args.max_cost)
-    if not _spend_checked(config, args.yes):
+    if not _spend_checked(config, args.yes, args.cache_path):
         return 1
     outcomes = run_sweep(
         config, args.out, Cache(args.cache_path, args.cache), _progress
@@ -317,10 +317,12 @@ def _progress(line):
     print(line, flush=True)
 
 
-def _spend_checked(config, yes):
-    """Say what a paid run will cost; whether it may go ahead."""
+def _spend_checked(config, yes, cache_path=DEFAULT_PATH):
+    """Say what a paid run will cost (from what the cache at `cache_path` has
+    seen); whether it may go ahead."""
     calls = paid_calls(config)
-    guess = estimate(config, price_for) if calls else None
+    seen = Cache(cache_path).observed() if calls else {}
+    guess = estimate(config, price_for, seen) if calls else None
     if calls:
         print(_spend_line(calls, guess))
     if over := _over_budget(config.budget, guess):
@@ -354,8 +356,22 @@ def _spend_line(calls, guess):
     rest = " for the rest" if hosted else ""
     return (
         f"{line}{hosted}, estimated ${guess.cost:.4f}{rest} "
-        f"({guess.prompt_tokens:,} prompt tokens, before retries)."
+        f"({guess.prompt_tokens:,} prompt tokens, before retries).\n"
+        f"{_basis(guess.basis)}"
     )
+
+
+def _basis(basis):
+    """Which completion-token figure the estimate used, for how many calls."""
+    parts = []
+    if basis["observed"]:
+        parts.append(f"the cache's observed means for {basis['observed']} calls")
+    if basis["max_tokens"]:
+        parts.append(
+            "max_tokens, plus a reasoning allowance with reasoning on, for "
+            f"{basis['max_tokens']} calls (nothing cached for them yet)"
+        )
+    return f"  completion tokens: {'; '.join(parts)}."
 
 
 def _over_budget(budget, guess):
