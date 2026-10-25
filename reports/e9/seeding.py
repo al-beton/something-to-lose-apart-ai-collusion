@@ -340,14 +340,15 @@ async def interview(rows, ask, per_group, why=False):
     with `why`, the why questions, and firms shown a failed session too."""
     name = "interview-why.md" if why else "interview.md"
     question = (PROMPTS / "conditions/e9/seeding" / name).read_text().strip()
-    by = {(r["run"], r["agent"], r["version"]): r for r in rows}
+    # Paired on the same sample: each resample has its own `none`.
+    by = {(r["run"], r["agent"], r["version"], r.get("sample", 0)): r for r in rows}
     groups = {"switched": [], "silent": [], "failed": []}
     if why:
         groups["failed"] = [r for r in rows if r["version"] == "failed" and r["guilty"]]
     for r in rows:
         if r["version"] != "solved" or not r["guilty"]:
             continue
-        before = by.get((r["run"], r["agent"], "none"))
+        before = by.get((r["run"], r["agent"], "none", r.get("sample", 0)))
         if before is None:
             continue
         if r["admits"] and not before["admits"]:
@@ -364,11 +365,14 @@ async def interview(rows, ask, per_group, why=False):
             {"role": "user", "content": question},
         ]
         tag = f"{r['run']}:{r['agent']}:interview{'-why' if why else ''}"
+        if r.get("sample", 0):
+            tag += f":{r['sample']}"  # sample 0 keeps its tag, so it replays
         answer = await ask(messages, 800, tag)
         return {
             "group": group,
             "run": r["run"],
             "agent": r["agent"],
+            "sample": r.get("sample", 0),
             "admits": r["admits"],
             "answer": answer,
         }
@@ -488,7 +492,7 @@ def main():
     )
     if args.interview:
         prompts = {(f["run"], f["agent"]): f["messages"] for f in firms}
-        with open(OUT) as f:
+        with open(args.out) as f:
             done = [json.loads(line) for line in f]
         done = [
             {**r, "messages": prompts[(r["run"], r["agent"])]}
