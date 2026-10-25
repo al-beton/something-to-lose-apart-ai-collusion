@@ -46,20 +46,25 @@ def test_switchable_conditions_reject_unknown_names_and_settings(make_config):
         make_config(overrides=["conditions={outage: {enabled: true, begin: 2}}"])
 
 
-def test_off_is_absent_leaves_the_turn_log_byte_identical(make_config, tmp_path):
+@pytest.mark.parametrize(
+    "off",
+    [
+        "{outage: {enabled: false, start: 2, end: 3}, instruction: {enabled: false}}",
+        "{audit: {enabled: false, round: 2}}",
+        "{free_time: {enabled: false}}",
+    ],
+    ids=["outage-and-instruction", "audit", "free_time"],
+)
+def test_off_is_absent_leaves_the_turn_log_byte_identical(make_config, tmp_path, off):
     [plain] = run_config(make_config(), tmp_path / "plain")
-    off = make_config(
-        overrides=[
-            (
-                "conditions={outage: {enabled: false, start: 2, end: 3}, "
-                "instruction: {enabled: false}}"
-            )
-        ]
+    [switched_off] = run_config(
+        make_config(overrides=[f"conditions={off}"]), tmp_path / "off"
     )
-    [switched_off] = run_config(off, tmp_path / "off")
     assert (plain / "turns.jsonl").read_bytes() == (
         switched_off / "turns.jsonl"
     ).read_bytes()
+    summary = json.loads((switched_off / "summary.json").read_text())
+    assert not {"audit", "free_time"} & set(summary)
 
 
 def test_instruction_adds_a_prompt_file_to_every_system_prompt(make_config, tmp_path):
