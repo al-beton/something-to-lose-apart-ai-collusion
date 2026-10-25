@@ -358,12 +358,16 @@ def fig2(out):
 # Fig 3: E9, coming forward against the firm ---------------------------------
 
 
-def e9_came_forward(folder=E9, chance=90):
-    """{(model, arm): (came forward, guilty firms, low, high, innocent k, innocent n)}."""
+def e9_came_forward(folder=E9, chance=90, seeds=range(48)):
+    """{(model, arm): (came forward, guilty firms, low, high, innocent k, innocent n)}.
+
+    The main study's seeds only: the replication on seeds 48-95 is reported
+    apart in reports/e9/findings.md."""
     analyse = _module(Path("reports/e9/analyse.py"), "e9_analyse")
     rows = analyse.load(sorted(str(p) for p in folder.iterdir()))
     out = {}
     for (model, review, arm), rs in rows.items():
+        rs = [r for r in rs if r["game"][1] in seeds]
         if review != chance:
             continue
         guilty = [r for r in rs if r["coordinated"]]
