@@ -1,6 +1,6 @@
 """Write the compact turn record a committed run keeps instead of its full log.
 
-Implements: specs-and-docs/runs-are-evidence, runs/free-time-kept, runs/reasoning-kept, agents/memo
+Implements: specs-and-docs/runs-are-evidence, runs/fork-pointers, runs/free-time-kept, runs/reasoning-kept, agents/memo
 
 `uv run python reports/compact_turns.py SOURCE DEST` reads every
 `turns.jsonl` under SOURCE (a folder of runs the lab wrote) and writes
@@ -61,6 +61,8 @@ def main(source, dest):
     for log in sorted(source.rglob("turns.jsonl")):
         out = dest / log.parent.relative_to(source) / "turns.compact.jsonl"
         out.parent.mkdir(parents=True, exist_ok=True)
+        # A whole log: any pointer to a base (forks.py) would add it twice.
+        (out.parent / "fork.json").unlink(missing_ok=True)
         with out.open("w") as f:
             for line in log.open():
                 f.write(

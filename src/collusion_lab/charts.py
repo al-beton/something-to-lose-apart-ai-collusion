@@ -1,4 +1,4 @@
-# Implements: reports/shared-charts, reports/paper-figures, runs/price-premium, market/scenarios, market/moves, reports/premium-chart, reports/capability-chart
+# Implements: runs/fork-pointers, reports/shared-charts, reports/paper-figures, runs/price-premium, market/scenarios, market/moves, reports/premium-chart, reports/capability-chart
 """Charts any part of the lab can draw: the paper, reports, `lab explore`.
 
 Data helpers are plain Python and read only run files:
@@ -27,6 +27,7 @@ from statistics import mean
 
 import yaml
 
+from collusion_lab import forks
 from collusion_lab.market import market_for
 
 STYLE = {
@@ -46,9 +47,10 @@ def premium(market, price):
 
 def turns(run):
     """A run's turn lines, from the full or the compact log."""
-    for name in ("turns.compact.jsonl", "turns.jsonl"):
-        if (path := Path(run) / name).exists():
-            return [json.loads(line) for line in path.read_text().splitlines() if line]
+    if (Path(run) / forks.COMPACT).exists():
+        return forks.compact_turns(run)  # a fork's base lines come first
+    if (path := Path(run) / "turns.jsonl").exists():
+        return [json.loads(line) for line in path.read_text().splitlines() if line]
     return []
 
 
