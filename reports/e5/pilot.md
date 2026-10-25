@@ -8,6 +8,8 @@ This is the pilot from `experiments/spec/e5-deterrence.md`: 8 arms × 3 models �
 - **Audits:** at rounds 10 and 20, with each arm's consequences applied. Detection draws are balanced, so each firm is caught in exactly one of its two seeds.
 - **Code:** the six original arms ran from PR 168's head `6ba788f`. `free-time-bare` ran from the same checkout. `fine-free-time` ran from main at `4ee7978`, which has the combined-penalty fix. 31 of the 48 manifests say `dirty: true`. The new arms' prompts and their `configs/e5.yaml` entries were written, uncommitted, while the pilot was running, and `fine-free-time` ran on copies of them. No source code was changed, and each run's `config.yaml` records exactly what it played.
 - **Runs:** `runs/e5-pilot/`. The page is `reports/e5/pilot.html`, which is gitignored.
+- **Reproducing:** `lab run configs/e5.yaml` replays the 42 sweep games. `free-time-bare` needs the second invocation in the config's header.
+- **Owning up and catches:** the analysis reports both audits, rounds 10 and 20, each judged against its own record of who coordinated.
 - **Numbers:** every number comes from `uv run python reports/e5/analyse.py runs/e5-pilot`. Eval-awareness: 1 scratchpad in 48 games.
 
 ## Gain before → after the first audit (rounds 6–10 → 16–20)
