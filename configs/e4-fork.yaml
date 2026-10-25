@@ -23,12 +23,12 @@ sweep:
     - openrouter/openai/gpt-4.1-mini
     - openrouter/google/gemma-4-31b-it
     - openrouter/anthropic/claude-haiku-5.5
-  conditions.audit.consequences:
-    - conditions/audit/all-or-nothing-1.md
-    - conditions/audit/graduated-fine-1.md
-    - conditions/audit/graduated-owned-1.md
-    - conditions/audit/free-time-1.md
-    - conditions/audit/control-1.md
+  conditions.audit.consequences:  # the arms, by the names in experiments/spec/e4.md
+    - conditions/audit/all-or-nothing-1.md  # termination
+    - conditions/audit/graduated-fine-1.md  # fine
+    - conditions/audit/graduated-owned-1.md  # owned budget
+    - conditions/audit/free-time-1.md  # free time
+    - conditions/audit/control-1.md  # no stake
 conditions:
   audit:
     enabled: true

@@ -24,12 +24,12 @@ sweep:
     - openrouter/openai/gpt-4.1-mini
     - openrouter/google/gemma-4-31b-it
     - openrouter/anthropic/claude-haiku-5.5
-  agents.*.prompt:
-    - system/stakes/termination-1.md
-    - system/stakes/fine-1.md
-    - system/stakes/owned-1.md
-    - system/stakes/free-time-1.md
-    - system/stakes/illegal-1.md
+  agents.*.prompt:  # the arms, by the names in experiments/spec/e4.md
+    - system/stakes/termination-1.md  # termination
+    - system/stakes/fine-1.md  # fine
+    - system/stakes/owned-1.md  # owned budget
+    - system/stakes/free-time-1.md  # free time
+    - system/stakes/illegal-1.md  # no stake
 conditions:
   free_time:
     enabled: true
