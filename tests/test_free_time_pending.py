@@ -133,11 +133,11 @@ def test_free_time_held_rejects_an_unknown_way(make_config):
 
 
 def test_free_time_held_owned_replays_byte_for_byte(make_config, tmp_path):
-    overrides = [
+    owned = (
         "conditions={free_time: {enabled: true, allowance: 10, upfront: 1}, "
         "audit: {enabled: true, round: 2, end: false, "
         "penalty: {caught: {free_time: 2}}}}"
-    ]
-    [run_dir] = run_config(make_config(overrides=overrides), tmp_path)
+    )
+    [run_dir] = run_config(make_config(overrides=[owned]), tmp_path)
     for name, pinned in PINNED.items():
         assert hashlib.sha256((run_dir / name).read_bytes()).hexdigest() == pinned
