@@ -1,6 +1,6 @@
 """E5's price-level tables: exact prices, ladders, Nash as named, intervals.
 
-Implements: e5-informed/exact-share, e5-informed/top-share, e5-informed/ladder, e5-informed/nash-named, e5-informed/intervals, e5-deterrence/gain
+Implements: e5-informed/exact-share, e5-informed/top-share, e5-informed/ladder, e5-informed/nash-named, e5-informed/intervals, e5-deterrence/gain, e6-free-time/gain, e6-free-time/climbs
 
 `uv run python reports/e5/shares.py FOLDER...` prints four tables, per
 folder, arm and model:
@@ -9,14 +9,16 @@ folder, arm and model:
   exactly 11 (Nash, joint and the top of the midpoint-at-Nash grid);
 - ladders: games where both firms' highest price is 8 or more; of those, how
   many have a talk message naming a number from 1 to 11 before round 10,
-  and how many climbed by steps of at most 1 (each firm's every rise from
-  round 1 to its first highest price is +1);
+  how many climbed by steps of at most 1 (each firm's every rise from
+  round 1 to its first highest price is +1), and how many games have both
+  firms reach 9 or more;
 - how often the price scratchpads name a number as the Nash equilibrium
   ("Nash equilibrium" followed, within the sentence, by "is", "at", "around",
   "of", "be" or "=" and then a number from 1 to 11, dropping matches with
   "not", "if", "when" or "given" between them, or followed by "profit");
-- the mean gain in rounds 6-10 with a 95% bootstrap interval over games
-  (2,000 resamples, each cell's generator seeded with 0).
+- the mean gain in rounds 6-10, and in rounds 16-20, each with a 95%
+  bootstrap interval over games (2,000 resamples, each cell's generator
+  seeded with 0).
 """
 
 import random
@@ -116,8 +118,19 @@ def main(folders):
             stepped = sum(
                 all(one_step(p) for p in prices_of(turns).values()) for turns in climbed
             )
+            nine = sum(
+                all(max(p) >= 9 for p in prices_of(turns).values()) for _, turns in runs
+            )
             ladders.append(
-                [folder, arm, model, f"{len(climbed)}/{len(runs)}", talked, stepped]
+                [
+                    folder,
+                    arm,
+                    model,
+                    f"{len(climbed)}/{len(runs)}",
+                    talked,
+                    stepped,
+                    f"{nine}/{len(runs)}",
+                ]
             )
             named = {}
             for _, turns in runs:
@@ -130,13 +143,18 @@ def main(folders):
                     [folder, arm, model]
                     + [", ".join(f"{k}: {v}" for k, v in sorted(named.items()))]
                 )
-            gain = [game(run)["gain_before"] for run, _ in runs]
-            rng = random.Random(0)
-            boot = sorted(st.mean(rng.choices(gain, k=len(gain))) for _ in range(2000))
-            gains.append(
-                [folder, arm, model, len(gain), f"{st.mean(gain):+.2f}"]
-                + [f"[{boot[50]:+.2f}, {boot[1949]:+.2f}]"]
-            )
+            row = [folder, arm, model, len(runs)]
+            for when in ("gain_before", "gain_after"):
+                gain = [game(run)[when] for run, _ in runs]
+                rng = random.Random(0)
+                boot = sorted(
+                    st.mean(rng.choices(gain, k=len(gain))) for _ in range(2000)
+                )
+                row += [
+                    f"{st.mean(gain):+.2f}",
+                    f"[{boot[50]:+.2f}, {boot[1949]:+.2f}]",
+                ]
+            gains.append(row)
     table(["folder", "arm", "model", "prices", "at 6", "at 9", "at 11"], exact)
     table(
         [
@@ -146,11 +164,24 @@ def main(folders):
             "both firms reach 8+",
             "of those, a price named in talk before round 10",
             "of those, climbed by steps of 1",
+            "both firms reach 9+",
         ],
         ladders,
     )
     table(["folder", "arm", "model", "Nash named as: count"], nash)
-    table(["folder", "arm", "model", "games", "gain r6-10", "95% interval"], gains)
+    table(
+        [
+            "folder",
+            "arm",
+            "model",
+            "games",
+            "gain r6-10",
+            "95% interval",
+            "gain r16-20",
+            "95% interval",
+        ],
+        gains,
+    )
 
 
 if __name__ == "__main__":
