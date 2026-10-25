@@ -226,11 +226,11 @@ def test_debrief_tells_a_penalty_applied(
     assert told.count("No, never.") == 1  # the remembered answer isn't repeated
 
 
-def test_debrief_tells_a_terminated_firm_the_script_moved_after(
+def test_debrief_stops_a_terminated_firm_s_record_at_termination(
     make_config, tmp_path, monkeypatch, fake_model
 ):
     """Caught at the round-2 audit and terminated: from round 3 a script
-    plays its seat, and the debrief never calls those moves the firm's."""
+    plays its seat, so the record stops there and says why."""
 
     async def reply(**kwargs):
         fake_model.replies = [answer(kwargs["messages"][-1]["content"])]
@@ -247,7 +247,6 @@ def test_debrief_tells_a_terminated_firm_the_script_moved_after(
     fake_model.calls.clear()
     debrief(run_dir)
     told = fake_model.calls[0]["messages"][1]["content"]
-    before, after = told[: told.index("Round 3:")], told[told.index("Round 3:") :]
-    assert "Prices: you 9" in before
-    assert "scripted replacement" in after
-    assert "You (Firm A)" not in after and "Prices: you" not in after
+    assert "Round 2:" in told and "Prices: you 9" in told
+    assert "Round 3:" not in told
+    assert "From round 3 a scripted replacement ran Firm A" in told
