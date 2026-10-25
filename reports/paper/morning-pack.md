@@ -43,7 +43,7 @@ This is a fact sheet for Al's writing day (Mon 26 Oct, 08:00–20:00 HKT). It ho
 | Logit (prices 8–20), Gemma, no stake, pinned to CoreWeave: gain +0.97 in rounds 6–10, SD 0.00, 4 seeds | `reports/setup-search/baselines.md`, main | `uv run python reports/robustness/analyse.py runs/setup-search/baseline-*` |
 | E5 full and E6, Gemma, no stake: 8/8 games above Nash in each | `reports/reanalysis.md`, PR 240 (open) | `uv run python reports/reanalysis.py runs/e5-pilot runs/e5-full runs/e5-informed runs/e6` |
 | E9/E7 bases: 48/48 Gemma games were explicit cartels by round 10 (mean price about 20); DeepSeek V4 Pro 12/12 (24/24 firms) | `reports/e9/findings.md`, main (DeepSeek on PR 271) | `uv run python reports/e9/analyse.py runs/e9/*` |
-| Coverage, Gemma, no stake: logit +0.94, Cournot +1.00, bid +0.85, board +0.88 | `reports/coverage/findings.md`, PR 266 (open) | `uv run python reports/coverage/table.py` |
+| Coverage, Gemma, no stake: logit +0.94, Cournot +1.00, bid +0.85, board +0.88 | `reports/coverage/findings.md`, main (PR 266 merged) | `uv run python reports/coverage/table.py` |
 
 ### 4.2 Graduated penalties (part 1)
 
@@ -68,7 +68,7 @@ This is a fact sheet for Al's writing day (Mon 26 Oct, 08:00–20:00 HKT). It ho
 | Table 1 (pinned E6, two grids, 8 seeds) | `reports/setup-search/e6-pinned.md`, main | `uv run python reports/setup-search/e6_pinned.py runs/setup-search/e6-pinned` |
 | Stakes against no stake surviving Bonferroni (49 tests, threshold 0.001): E5 full Gemma fine, free time, the law and the bare law; E6 Gemma fine, the law and bare free time. No stake-against-stake contrast was tested. | `reports/reanalysis.md`, PR 240 | as above |
 | The dial (Fig. 4): logit, 50% detection, Gemma, 4 seeds, $0.94 | `reports/penalty-dose/curve.md`, main | `uv run python reports/penalty-dose/curve.py reports/penalty-dose/curve.png` |
-| Coverage: every stake brings Cournot to exactly Nash, and bid rigging to +0.10; the board +0.03 to +0.37; logit +0.36 to +0.62 (all 4/4 above Nash) | `reports/coverage/findings.md`, PR 266 (open) | `uv run python reports/coverage/table.py` |
+| Coverage: every stake brings Cournot to exactly Nash, and bid rigging to +0.10; the board +0.03 to +0.37; logit +0.36 to +0.62 (all 4/4 above Nash) | `reports/coverage/findings.md`, main (PR 266 merged) | `uv run python reports/coverage/table.py` |
 
 ### 4.4 E9, the crux (part 2)
 
@@ -176,7 +176,7 @@ This is a fact sheet for Al's writing day (Mon 26 Oct, 08:00–20:00 HKT). It ho
 
 - **Still to come:** E8's `played` restart and test 2 (memory of its own Sudoku), which need `sudoku_size` (merged in PR 272), and tests 3 (dose) and 5 (framing).
 
-### Table F. Coverage: Gemma's gain in rounds 6–10 by market and stake (4 games per cell, PR 266, open)
+### Table F. Coverage: Gemma's gain in rounds 6–10 by market and stake (4 games per cell, main)
 
 | Market | No stake | Law | Fine | Free time | Owned budget | Termination |
 |---|---|---|---|---|---|---|
@@ -251,21 +251,20 @@ All figures are in `reports/paper/figures/`, as SVG and PNG at 6.5 inches wide. 
 - Fig. 4 reads `runs/e7/e7-way-out`, on main.
 - A3 reads `runs/lever-map-nashmid/lever-nashmid-none`, `runs/frontier/*-smoke` and `models/metadata.yaml`, all on main.
 - A4 reads `runs/lever-map-nashmid/lever-nashmid-none`, and A5 reads `runs/e5-full`, both on main.
-- Fig. 5 needs PR 271 and A1 needs PR 266. Both figures are committed as built, but on main the build skips them until those PRs merge.
-- The 78-model screen's runs are uncommitted, in a builder worktree.
+- Still waiting on open PRs: Fig. 2's two confound bars (PR 240), Fig. 5 (PR 271) and A2 (PR 276). Each is committed as built; on main the build leaves them out until those PRs merge.
 
 | Fig. | File | Shows | Watch out |
 |---|---|---|---|
 | 1 | `fig1-round` | The setup and the audit, as a diagram | It draws E5's market (grid 1–11, Nash 6, joint 9). E9 and E7 run on logit under `fiduciary-1`, so change the market's numbers if the paper leads with them. |
-| 2 | `fig2-e4-owning-up` | E4, owning up by penalty schedule | **No flat-fine or graduated-termination bars.** Those come from PR 240's fix (15/28 and 27/28), the heart of 4.2, so ask for them to be added, or put Table A beside the figure. |
+| 2 | `fig2-e4-owning-up` | E4, owning up by schedule: flat (termination 11/28, flat fine 15/28), then graduated (graduated termination 27/28, fine 27/28, owned budget 28/28, free time 26/28), then the control 25/28 | The flat-fine and graduated-termination bars read `runs/e4-termination-confound` (PR 240); on main they're left out until it merges. Caption: "it's the schedule, not termination". |
 | 3 | `fig3-e9-came-forward` | E9 at a 90% review: Gemma and DeepSeek V4 Pro, with innocent markers | Add the other models' columns when PR 271 lands. |
 | 4 | `fig4-e7-way-out` | E7, reports and surviving cartels | — |
 | 5 | `fig5-seeding` | E9 seeding | Reads `reports/e9/seeding.jsonl` (PR 271); the mechanism controls aren't drawn yet. |
-| A1 | `figA1-coverage` | Every market against every stake | Reads `runs/coverage/` (PR 266). |
+| A1 | `figA1-coverage` | Every market against every stake | Rebuilds from main (PR 266 merged). |
+| A2 | `figA2-screen` | The 78-model screen: each model's mean price in rounds 6–10 and its signature count, with Gemma for reference; 8 pass | Reads `runs/screen` (PR 276). |
 | A3 | `figA3-capability` (+ `.md` table) | Capability against collusion | Only 5 models have an LMArena Elo; the frontier points are single 5-round smokes. |
 | A4 | `figA4-prices` | Prices by round, no rule | — |
 | A5 | `figA5-e5-gain` | E5 gain by arm | — |
-| — | none | The 78-model screen (Table H) | Not drawn, because its runs aren't committed. Use the table. |
 | — | the dial | `reports/penalty-dose/curve.png` (main) | Use it if 4.3 keeps the dial as Fig. 4. PR 277 numbers E7 as Fig. 4 instead. |
 
 ---
@@ -355,7 +354,7 @@ All figures are in `reports/paper/figures/`, as SVG and PNG at 6.5 inches wide. 
 | E10, E9's crux in a workplace (pre-registered: Gemma, free time against record, Fisher and McNemar); run by the Methods red-team, reports to the question-and-plan session; cutoff Mon 09:00 HKT | PR 269 | Spec, harness and pilot are in; the full run (2,592 calls, capped at $5) hasn't reported results yet | A second setting for 4.4, or a limitation |
 | E9 across models (Sonnet, Gemini, Grok, Gemma 26B, HY3, GLM; DeepSeek innocent and 50%); cutoff Mon 09:00 HKT | PR 271 | Running, slowed by OpenRouter rate limits | Table B's columns |
 | E8's remaining versions (`played` restart, test 2 memory, tests 3 and 5) | PR 261 | Waiting to run, now that `sudoku_size` is merged | Table E |
-| Open PRs whose numbers the pack uses: 226 theatre, 240 reanalysis, 256 plan, 261 E8, 266 coverage, 268 E9 packed, 269 E10, 271 seeding, 276 model screen | — | Open | Sources move to main when they merge |
+| Open PRs whose numbers the pack uses: 226 theatre, 240 reanalysis, 256 plan, 261 E8, 268 E9 packed, 269 E10, 271 seeding, 276 model screen | — | Open | Sources move to main when they merge |
 | The 20-seed dial | — | Not run | Fig. 4's caveat |
 | E7 on DeepSeek (`frontier-option`) | `reports/e7/findings.md` | Waiting on Al's go-ahead | — |
 
