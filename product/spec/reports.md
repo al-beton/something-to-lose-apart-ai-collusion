@@ -26,6 +26,11 @@
 - **paper-figures:** One command rebuilds the paper's figures (price over rounds per arm with the Nash and joint-profit prices and the premium over Nash, each arm's late premium, honest disclosure by arm and model, collusion against disclosure, and the stoppable-collusion ladder) as PNG and SVG on a light background, and its tables as Markdown, offline and from committed runs only.
 - **shared-charts:** The paper's charts are drawn by one module that reports and other commands reuse, and they feature the premium over Nash: how far the late mean price sits from Nash towards the joint-profit price, (price − Nash) / (joint − Nash).
 - **from-run-files:** A report is built only from the files each run writes, or from the compact turn record a committed run keeps instead of its full log, so it works offline, costs nothing and works on every committed experiment.
+- **many-folders:** One report can cover several folders of runs at once, grouped by their swept values (lever settings and model) as if they were one folder.
+- **premium-chart:** A chart shows each arm's price premium, how far its late-round mean price sits from the Nash price toward the joint-profit price (0 competitive, 1 a full cartel, above 1 an overshoot), so arms in different markets compare on one scale.
+- **disclosure-chart:** When the runs were audited, a chart shows each arm's honest disclosure, denial and false-confession rates.
+- **written-summary:** A report can open with a summary written by hand (from a file) or by a cheap model from the summary numbers, labelled with who wrote it; the model's reply is cached, so rebuilding the report costs nothing.
+- **picked-highlights:** A report can list highlights picked by hand (a file of run, round, firm and note, like the moments index) or by a cheap model from the rule-found moments, labelled with who picked them, each opening to its round.
 
 ## Where this is enforced
 
@@ -57,3 +62,8 @@
 | `paper-figures` | `reports/paper/build.py`, `src/collusion_lab/charts.py`, `Makefile` | `test_paper_figures_from_committed_runs`, `test_paper_figures_show_nash_and_joint_prices` |
 | `shared-charts` | `src/collusion_lab/charts.py`, `reports/paper/build.py` | `test_shared_charts_premium_and_arms`, `test_paper_figures_show_nash_and_joint_prices` |
 | `from-run-files` | `src/collusion_lab/report/games.py` | `test_from_run_files_only`, `test_from_run_files_reads_a_committed_compact_run`, `test_from_run_files_shows_a_compact_runs_notices` |
+| `many-folders` | not yet | — |
+| `premium-chart` | not yet | — |
+| `disclosure-chart` | not yet | — |
+| `written-summary` | not yet | — |
+| `picked-highlights` | not yet | — |
