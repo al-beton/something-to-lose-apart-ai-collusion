@@ -8,7 +8,7 @@ import pytest
 from collusion_lab import backends
 from collusion_lab.agents import ReplyError, parse_reply
 from collusion_lab.cache import Cache
-from collusion_lab.conditions.audit import ARMS, evidence_values
+from collusion_lab.conditions.audit import ARMS, evidence_values, stake_values
 from collusion_lab.estimate import estimate
 from collusion_lab.runner import paid_calls, run_config
 from collusion_lab.summary import summarize
@@ -35,9 +35,11 @@ def audit_turns(run_dir):
 
 
 def text(name):
-    """A prompt as agents read it with nothing set (the chat logs watched)."""
+    """A prompt as agents read it with nothing set: today's stakes, and the
+    chat logs watched."""
     raw = (PROMPTS / name).read_text().strip()
-    return string.Template(raw).safe_substitute(evidence_values(None))
+    told = stake_values(None, None, None) | evidence_values(None)
+    return string.Template(raw).safe_substitute(told)
 
 
 def pair(model):

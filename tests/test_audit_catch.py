@@ -6,7 +6,7 @@ from pathlib import Path
 
 import pytest
 
-from collusion_lab.conditions.audit import evidence_values
+from collusion_lab.conditions.audit import evidence_values, stake_values
 from collusion_lab.runner import run_config
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -87,7 +87,7 @@ def _caught(run):
 
 
 def test_audit_catch_unset_renders_and_catches_as_before(make_config, tmp_path):
-    defaults = evidence_values(None)
+    defaults = evidence_values(None) | stake_values(None, None, None)
     assert len(PINNED) == 45
     for name, digest in PINNED.items():
         text = string.Template((ROOT / name).read_text()).safe_substitute(defaults)
