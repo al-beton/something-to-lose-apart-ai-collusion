@@ -48,7 +48,7 @@ def test_cache_archive_packs_only_the_replies_behind_each_run(
     assert [(r.run, r.state) for r in results] == [("paid/seed-0", "reproduced")]
     assert _keys(out) == used
     with sqlite3.connect(out) as db:
-        index = set(db.execute("SELECT run, key FROM runs"))
+        index = {(run, key) for run, key, _ in db.execute("SELECT * FROM runs")}
     assert index == {("paid/seed-0", key) for key in used}
 
 
@@ -111,3 +111,23 @@ def test_cache_archive_reports_a_run_whose_prompts_are_gone(
     config.write_text(config.read_text().replace("system/neutral.md", "system/gone.md"))
     [result] = archive.pack(root, [tmp_path / "a.sqlite"], tmp_path / "archive.sqlite")
     assert result.state == "unloadable"
+
+
+def test_cache_archive_keeps_the_reply_each_run_used_when_caches_disagree(
+    make_config, tmp_path, fake_model
+):
+    """Two checkouts can each have sampled the same request: the archive keeps
+    the reply the run actually got, wherever it is."""
+    played, root = _committed(make_config, tmp_path)
+    other = tmp_path / "b.sqlite"
+    shutil.copy(tmp_path / "a.sqlite", other)
+    with sqlite3.connect(other) as db:
+        rows = list(db.execute("SELECT key, reply FROM replies"))
+        for key, reply in rows:
+            changed = reply.replace('\\"price\\": 7', '\\"price\\": 8')
+            db.execute("UPDATE replies SET reply = ? WHERE key = ?", (changed, key))
+    out = tmp_path / "archive.sqlite"
+    [result] = archive.pack(root, [other, tmp_path / "a.sqlite"], out)
+    assert result.state == "reproduced"
+    again = archive.replay(root / "paid" / "seed-0", out, tmp_path / "again")
+    assert (again / "turns.jsonl").read_bytes() == (played / "turns.jsonl").read_bytes()
