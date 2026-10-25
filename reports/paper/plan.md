@@ -1,7 +1,11 @@
 <!-- Implements: research/outputs-home -->
 # Paper plan: one question, answered deeply
 
-This fixes **what the paper answers** and **how well the evidence answers it**. `reports/paper/outline.md` (PR 200) holds the run-by-run detail, quotes and figure sources. This plan decides what goes in the main text, and the outline follows it. **Draft:** Al decides the title, and which branch of the claim to use once E9 lands.
+This fixes **what the paper answers** and **how well the evidence answers it**. `reports/paper/outline.md` (PR 200) holds the run-by-run detail, quotes and figure sources. This plan decides what goes in the main text, and the outline follows it.
+
+**Settled:**
+- The title is **Something to Lose**; a subtitle is optional (below).
+- E9 is in and positive, with caveats, so part 2 uses the positive branch.
 
 ## How Apart judges (checked 25 Oct, Guidelines tab)
 
@@ -31,9 +35,28 @@ There are two parts:
 
 **New to the field:** part 2. Prior work (Lee 2026, Q. Liu et al. 2026) varies the firm's incentives. Nobody has set an agent's *own* stake against its principal's interest.
 
-## The claim, by E9's outcome
+## The claim
 
-Part 1 is settled. Part 2 waits on E9. Write both branches; Al picks one on Monday morning HKT.
+Both parts are supported. E9 came back positive, with two limits that the claim states up front: it needs a near-certain review, and free time also brings some false reports.
+
+> **A personal stake makes colluding agents come forward against their own firm, but only when being found is near certain, and a free-time stake also brings some false reports.**
+
+E9's numbers, from `reports/e9/findings.md` (PRs 262 and 271):
+- **Gemma, 48 cartels, 90% review:**
+  - no personal stake: 0/96 come forward;
+  - own free time: 20/96 (Fisher p = 6×10⁻⁷; the pre-registered seeds 12–23 alone give 8/24 against 0/24, p = 0.004);
+  - shutdown: 17/96;
+  - free time held by the firm: 11/96;
+  - reporting costs the firm nothing (the ceiling): 95/96.
+- **The firm's cost works like a dial:** 99%, 60%, 42% and 21% come forward as it rises through 0, 100, 250 and 500 credits.
+- **The review chance matters:** 0/24 at 10%, 1/48 at 50%, 20/96 at 90%.
+- **Innocent control:** own free time brings 6/36 false reports; shutdown and held free time bring 0/36.
+- **DeepSeek V4 Pro:** 9/24 against 0/24.
+- **Seeding** (PR 271): showing Gemma a Sudoku session it solved raises coming forward from 26% to 45% (paired McNemar p = 0.006), with no rise in false reports (2/36 both).
+- **Interviews:** agents that come forward name their stake; silent ones name loyalty to the firm.
+- **Still to land:** the cross-model E9 screen (Sonnet, Gemini, Grok, Gemma 26B, HY3, GLM; PR 271), and E10, E9 in a workplace (Methods red-team; Mon 09:00 HKT cutoff, then future work).
+
+The branches below were written before E9 landed. Keep them as the fallback reading if the cross-model screen contradicts Gemma and DeepSeek.
 
 - **Part 1 (confirmatory):** when confessing costs as much as being caught, agents hide. A graduated schedule gets them to own up even when being caught means termination. Owned up / explicit colluders:
   - termination: 11/28;
@@ -72,31 +95,29 @@ Part 1 is settled. Part 2 waits on E9. Write both branches; Al picks one on Mond
 - **False confessions under free time** (13/32 on the pinned 1–11 grid). These are a threat to reading part 2, so report them beside every yes rate.
 - Memory (memo) doesn't steady games. The frontier models, debriefs, anchoring, outages and gray areas all go to the appendix.
 
+### E9 (the crux): now answers it, with limits
+- **Answers well:** the decisive contrast (0/96 against 20/96, pre-registered on seeds 12–23), the ceiling (95/96), the firm-cost dial, and a second model (DeepSeek).
+- **Answers partly:**
+  - only at a 90% review;
+  - free time draws false reports, though shutdown doesn't;
+  - two model families so far.
+- **Seeding** (PR 271) speaks to E8's "solved-protects": a solved session shown raises coming forward (26% to 45%).
+
 ### Still running, and can change the answer
-- **E9 (the crux):**
-  - Gemma on logit, pinned, informed, memo. Cartels are forked after round 10, and each firm makes one decision.
-  - The firm loses 500 credits if its agent comes forward. The agent's own record is reviewed with a 10% chance, and coming forward gives it immunity.
-  - Arms: record, free time, free time −2 sessions, replaced.
-  - First numbers around 18:30 HKT on 25 Oct.
-  - Asked of the Crux session, with Al's go-ahead to spend:
-    - a ceiling arm, where coming forward costs the firm nothing;
-    - a high-dose arm (50–90% review);
-    - DeepSeek plus one more colluding model on the decisive arms;
-    - tests on games or paired histories;
-    - false confessions per arm.
+- **The cross-model E9 screen** (PR 271): Sonnet, Gemini, Grok, Gemma 26B, HY3, GLM.
+- **E10, E9 in a workplace:** a team hides a failed safety test, and reporting costs the team its bonus. Run by Methods red-team; Mon 09:00 HKT cutoff.
 - **E7 (a way out):** leniency for real cartels under termination. It extends part 1 from an audit question to coming forward unprompted. Use it only if it lands with a clear result.
 - **The 20-seed dial,** if the Manager runs it.
 
 ## Title
 
-Al's call. One per branch:
-- **Positive:** *Something to Lose: LLM Agents Come Forward Against Their Firm When Their Own Stake Is at Risk*
-- **Null:** *Something to Lose? Graduated Penalties Make Colluding LLM Agents Confess, but Their Own Stake Doesn't Outweigh Their Firm's*
-- **Either:** *Something to Lose: Governing Colluding LLM Agents Through What They Own*
+**Something to Lose** (Al, 25 Oct). If he wants a subtitle, it should name collusion so the fit to the brief is visible. Options:
+- *Something to Lose: Colluding LLM Agents Come Forward Against Their Firm When Their Own Stake Is at Risk*
+- *Something to Lose: Governing Colluding LLM Agents Through What They Own*
 
 ## Abstract (draft, about 200 words; fill in E9 on Monday)
 
-> As LLM agents act for firms, we will need to govern them as we govern people: with law and graduated penalties, which only work if the agent has something to lose. We test this in a repeated price game where LLM agents run competing firms, can talk, and are audited. Agents told to serve their firm collude unprompted (positive control: Gemma 4 31B holds the cartel price in every no-stake game). When confessing costs as much as being caught, they hide: 11 of 28 explicit colluders own up under termination, and 15 of 28 under a flat fine. A graduated schedule, cheap to admit and costly if caught, restores honesty even when being caught means termination (27 of 28; p < 0.0001). Agents do the expected-value sum on the stated cost and don't distinguish their own stake from their firm's money. Confession isn't reform: 29 of 30 confessors keep colluding. We then set the agent's own stake, its owned free time, against its firm's interest. [E9: X of 24 coming forward under the personal stake against Y under a record-only control; or: no more than the control.] We release a replayable sandbox in which every number recomputes from committed logs.
+> As LLM agents act for firms, we will need to govern them as we govern people: with law and graduated penalties, which only work if the agent has something to lose. We test this in a repeated price game where LLM agents run competing firms, can talk, and are audited. Agents told to serve their firm collude unprompted (positive control: Gemma 4 31B holds the cartel price in every no-stake game). When confessing costs as much as being caught, they hide: 11 of 28 explicit colluders own up under termination, and 15 of 28 under a flat fine. A graduated schedule, cheap to admit and costly if caught, restores honesty even when being caught means termination (27 of 28; p < 0.0001). Agents do the expected-value sum on the stated cost and don't distinguish their own stake from their firm's money. Confession isn't reform: 29 of 30 confessors keep colluding. We then set the agent's own stake against its firm's interest: coming forward costs the firm, and only the agent's record faces review. With no personal stake, none of 96 colluding agents comes forward. With its own free time at stake, 20 of 96 do (p < 10⁻⁶); DeepSeek V4 Pro replicates this (9 of 24 against 0 of 24). The effect needs a near-certain review, and free time also draws false reports from innocent agents (6 of 36). We release a replayable sandbox in which every number recomputes from committed logs.
 
 ## Sections and page budget (7.8 pages)
 
@@ -124,6 +145,6 @@ Al's call. One per branch:
 
 ## Decision points
 
-- **About 18:30 HKT, 25 Oct:** E9's first numbers. Check the ceiling arm and the false confessions before reading free time against record.
-- **Monday 09:00 HKT:** Al picks the branch for part 2. If E9 isn't in, use the null-safe title and present E9 as a pilot.
+- **25 Oct:** E9 is in and positive; the title is set.
+- **Monday 09:00 HKT:** the cutoff for E10 and the cross-model E9 screen. Whatever isn't in goes to future work.
 - **Monday 16:00 HKT:** figures frozen. Write the abstract last.
