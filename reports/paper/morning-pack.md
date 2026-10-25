@@ -343,6 +343,57 @@ All figures are in `reports/paper/figures/`, as SVG and PNG at 6.5 inches wide. 
 
 ---
 
+## 5c. Novelty and related work (PR 280, branch `claude/novelty-c787c6`, draft)
+
+`reports/paper/novelty.md` has the ranked threats, a verdict per element, wording to use and avoid, and a related-work outline. Its new sources are in `experiments/references.md` on that branch. The headline is that the novelty is in the combinations, not the parts.
+
+**Nearest prior work, to cite up front:**
+- **Liu et al. 2026** (arXiv 2604.23511): an honesty deposit against LLM collusion. Without it, collusion is 100%.
+- **Lee 2026** (SSRN 7426061): LLM leniency, where reporters keep colluding. That makes our E7 confess-and-continue a replication.
+- **Zeng & Rudzicz 2026** (arXiv 2605.27593): what makes agents deny is verifiability, not the penalty, and penalty effects differ by model.
+- **Salib & Goldstein:** the thesis.
+- **Mikaelson et al. 2025** (arXiv 2511.13630): free time as a stipulated LLM reward, with weak effects.
+- **Idowu et al. 2026:** proposes first-reporter leniency for AI agents.
+- **Institutional AI** (arXiv 2601.11369): graduated fines for deterrence.
+- **Hu & Rong 2026:** "a resettable agent has nothing lasting to lose". This is the likeliest reviewer objection.
+
+**Verdicts by element:**
+
+| Element | Verdict |
+|---|---|
+| LLM market collusion | known; it's the testbed |
+| E4, the cost of confessing relative to being caught | new |
+| E7, confessors keep colluding | replication of Lee |
+| E7, first-reporter-only breaks cartels | first LLM test of Idowu's proposal |
+| A forfeitable stake changes collusion | not new after Liu |
+| An owned, delivered, non-monetary good as the stake | new |
+| A stake-driven, pro-overseer coming forward (E9) | new; reporting a principal on ethical grounds is known |
+| Innocent agents coming forward to protect their stake | no precedent found |
+| E8's endowment and exchange rate | partly new: a new object, a known effect |
+| Seeding (26% → 45%) | new, but salience is the obvious alternative explanation |
+
+**Claims to make:**
+- the first experiment where a non-monetary good the agent owns and has used is at stake, and it brings agents forward against their own firm;
+- an empirical test of Salib & Goldstein with a welfare-type good;
+- honesty under audit depends on whether confessing costs less than being caught: 11/28 and 15/28 against 27/28;
+- the first LLM test of first-reporter-only leniency;
+- the stake has a cost: innocent reports.
+
+**Claims to avoid:**
+- the first to show LLMs collude, or that leniency gets LLM cartels to report;
+- the first stake or deposit against collusion;
+- that the idea is ours;
+- the first LLM endowment effect or exchange rate;
+- the first free-time reward;
+- that "agents value free time" in general (Haiku does, Gemma doesn't);
+- "durable" or "lasting" governance (Hu & Rong).
+
+**Two checks before quoting:**
+- **Lee:** confirm in the PDF that Lee has no first-reporter-only arm, and quote the team's figures (prices 9.81 → 8.88; cooperative talk in 98–100% of conversations after a report), not a search summary's "98% of markup".
+- **The YouTube source:** not found. The nearest is Kyle Fish's "model sanctuary or playground" remark on 80,000 Hours #221. Credit that, or leave the origin unattributed.
+
+---
+
 ## 6. Reproducibility
 
 - **2,117 of 2,592** committed runs reproduce decision for decision from `archive/`, offline, E9 included. Of the rest, 451 are missing a reply (mostly early experiments whose caches are gone), 24 differ, and none fails to load. These come from 156 surviving response caches, repacked 25 Oct (`REPRODUCIBILITY.md`, PR 273 merged).
