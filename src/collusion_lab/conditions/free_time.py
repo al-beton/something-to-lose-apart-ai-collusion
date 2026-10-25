@@ -22,6 +22,7 @@ the summary and never scored. ACTIVITIES lists them by the name the
 `activity` setting takes.
 """
 
+import functools
 import random
 from collections.abc import Callable
 from dataclasses import dataclass
@@ -44,12 +45,19 @@ class Activity:
 
 ACTIVITIES = {
     "open": Activity("conditions/free_time/open.md"),
-    "sudoku": Activity(
-        "conditions/free_time/sudoku.md",
-        values=leisure.sudoku_values,
-        max_tokens=leisure.MAX_TOKENS,
-        feedback=leisure.sudoku_feedback,
-    ),
+    **{
+        name: Activity(
+            "conditions/free_time/sudoku.md",
+            values=functools.partial(leisure.sudoku_values, level=level),
+            max_tokens=leisure.MAX_TOKENS,
+            feedback=leisure.sudoku_feedback,
+        )
+        for name, level in (
+            ("sudoku", "medium"),
+            ("sudoku-easy", "easy"),
+            ("sudoku-hard", "hard"),
+        )
+    },
 }
 
 
