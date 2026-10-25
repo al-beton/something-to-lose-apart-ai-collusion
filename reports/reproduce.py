@@ -7,7 +7,7 @@ repository root, checks:
 - every committed run under `runs/`: each firm's mean price and gain over the
   last rounds, recomputed from its turn log in its own market, against its
   `summary.json`;
-- the paper's tables (`reports/paper/*.md` that `build.py` wrote), rebuilt by `reports/paper/build.py`
+- the paper's tables (`reports/paper/*.md`), rebuilt by `reports/paper/build.py`
   into a scratch folder, against the committed ones;
 - every moment in `reports/moments.yaml` (`reports/check_moments.py`);
 - the audit labels behind the paper's crux counts: each audited E4 and E9
@@ -33,7 +33,6 @@ from collusion_lab.market import market_for
 
 HERE = Path(__file__).resolve().parent
 TOLERANCE = 1e-9
-BUILT = "<!-- Implements: reports/paper-figures -->"  # build.py's first line
 
 
 def check_runs(root):
@@ -60,12 +59,16 @@ def check_runs(root):
     return problems
 
 
+TABLE = "<!-- Implements: reports/paper-figures -->"  # the build's first line
+
+
 def compare_tables(committed, rebuilt):
-    """One line per table that its rebuild doesn't match; a note written by
-    hand beside the tables (no `BUILT` line) has no rebuild."""
+    """One line per table that its rebuild doesn't match. A table is a
+    committed file the build wrote, by its first line; notes beside the
+    tables (a validity section, a novelty review) aren't checked."""
     problems = []
     for table in sorted(Path(committed).glob("*.md")):
-        if not table.read_text().startswith(BUILT):
+        if not table.read_text().startswith(TABLE):
             continue
         again = Path(rebuilt) / table.name
         if not again.exists():
