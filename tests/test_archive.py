@@ -191,3 +191,33 @@ def test_cache_archive_packing_and_replaying_write_no_cache(
     archive.pack(root, [tmp_path / "a.sqlite"], out)
     archive.replay(root / "paid" / "seed-0", out, tmp_path / "again")
     assert set(Path.cwd().iterdir()) == before
+
+
+def test_cache_archive_compares_free_time_replies(tmp_path):
+    """A free-time turn uses no move, so its reply is what must match."""
+    turn = {"round": 3, "phase": "leisure", "agent": "B", "used": {}, "session": 1}
+    for name, reply in (("committed", "1 2 3"), ("replayed", "3 2 1")):
+        (tmp_path / name).mkdir()
+        line = json.dumps({**turn, "reply": reply, "score": {"right": len(name)}})
+        (tmp_path / name / "turns.compact.jsonl").write_text(line + "\n")
+    assert not archive._same(tmp_path / "committed", tmp_path / "replayed")
+
+
+def test_cache_archive_prefers_a_cache_for_replies_it_shares(tmp_path):
+    """Putting a cache first gives its own reply for every key, even one an
+    earlier cache holds too."""
+    merged = archive.Merged()
+    for source, replies in enumerate((("A", "C"), ("B", "D"), ("B", "E"))):
+        for key, reply in zip(("k1", "k2"), replies, strict=True):
+            merged.add(key, json.dumps(reply), source)
+    merged.prefer = 2
+    assert (merged.get("k1"), merged.get("k2")) == ("B", "E")
+
+
+def test_cache_archive_packs_into_the_archive_folder(monkeypatch, tmp_path):
+    seen = {}
+    monkeypatch.setattr(
+        archive, "pack", lambda root, caches, out: seen.update(out=out) or []
+    )
+    cli.main(["archive", "pack", "--caches", str(tmp_path / "a.sqlite")])
+    assert seen["out"] == "archive"

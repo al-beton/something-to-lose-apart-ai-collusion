@@ -289,7 +289,7 @@ def _archive_parser(commands):
     pack = actions.add_parser("pack", help="archive every committed run's replies")
     pack.add_argument("root", nargs="?", default="runs")
     pack.add_argument("--caches", nargs="+", required=True, metavar="PATH")
-    pack.add_argument("--out", default="archive/replies.sqlite")
+    pack.add_argument("--out", default="archive")
     replay = actions.add_parser("replay", help="play a run again from an archive")
     replay.add_argument("run")
     replay.add_argument("--archive", required=True, metavar="PATH")

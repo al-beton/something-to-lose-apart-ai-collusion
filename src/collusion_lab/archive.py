@@ -7,8 +7,8 @@ else can replay our runs from them. `pack(root, caches, out)` merges the
 caches it is given and replays every committed run under `root` (each folder
 with a `config.yaml`) against them, offline: a call the caches can't answer
 fails the run rather than reaching a model. The replies each replay read are
-written to `out`, an SQLite file: `replies (id, key, reply)` and `runs (run,
-key, reply)`, the index from each run to the reply it read for each key.
+written to the folder `out` (see `_write`), with an index from each run to
+its file.
 Caches in different checkouts each sampled their own replies, so one request
 can have several; a run that the first cache's replies don't reproduce is
 replayed again with each disagreeing cache put first, and the archive keeps
@@ -16,7 +16,8 @@ the replies of the attempt that reproduced it.
 
 Each run ends in one state:
 - `reproduced`: every reply was there, and the replay made the same move
-  and message, turn for turn, as the run's committed log;
+  and message, and gave the same free-time replies, turn for turn, as the
+  run's committed log;
 - `differs`: every reply was there, but the replay's decisions differ (a
   prompt file edited since the run changes what is asked, so its replies
   answer a question the run never asked);
@@ -67,9 +68,7 @@ class Merged(Cache):
                     self.add(key, reply, source)
 
     def add(self, key, reply, source=0):
-        options = self.records.setdefault(key, [])
-        if all(reply != other for _, other in options):
-            options.append((source, reply))
+        self.records.setdefault(key, []).append((source, reply))
 
     def get(self, key):
         if not (options := self.records.get(key)):
@@ -178,8 +177,17 @@ def _decisions(run_dir):
     for name in ("turns.compact.jsonl", "turns.jsonl"):
         if (path := Path(run_dir) / name).exists():
             lines = [json.loads(line) for line in path.read_text().splitlines()]
-            return [(t["round"], t["phase"], t["agent"], t.get("used")) for t in lines]
+            return [_decision(t) for t in lines]
     return None
+
+
+def _decision(turn):
+    """What a turn decided: its move and message, or for free time, which
+    uses no move, its reply and score."""
+    move = (turn["round"], turn["phase"], turn["agent"], turn.get("used"))
+    if turn["phase"] != "leisure":
+        return move
+    return (*move, turn.get("session"), turn.get("reply"), turn.get("score"))
 
 
 def _write(out, index, states, limit):
