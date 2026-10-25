@@ -30,11 +30,11 @@ Al wants setups whose results are very consistent within a condition and change 
 |---|---|---|
 | `question` | `reports/setup-search/baselines.md` | — |
 | `steady-baseline` | `reports/setup-search/baselines.md` | — |
-| `detection-dose` | not yet | — |
+| `detection-dose` | `reports/setup-search/dose_curve.py`, `reports/setup-search/detection-curve.md` | — |
 | `baselines` | `reports/setup-search/run_baselines.py` | — |
 | `pinned` | `reports/setup-search/run_baselines.py`, `configs/setup-search/logit-detection.yaml` | — |
 | `dose-runs` | `configs/setup-search/logit-detection.yaml`, `prompts/conditions/setup-search/detection-0.md`, `prompts/conditions/setup-search/detection-10.md`, `prompts/conditions/setup-search/detection-25.md`, `prompts/conditions/setup-search/detection-90.md` | — |
 | `cap` | `reports/setup-search/run_baselines.py`, `configs/setup-search/logit-detection.yaml` | — |
-| `spread` | `reports/setup-search/baselines.md` | — |
+| `spread` | `reports/setup-search/baselines.md`, `reports/setup-search/dose_curve.py` | — |
 | `one-provider` | reviewer, when the results are written up | — |
 | `small-n` | reviewer, when the results are written up | — |
