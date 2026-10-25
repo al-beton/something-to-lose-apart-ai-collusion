@@ -50,10 +50,14 @@ def test_premium_chart_places_each_arm_between_nash_and_joint(folders):
     assert values == {"joint": "1.00", "nash": "0.00"}
 
 
-def test_disclosure_chart_only_when_audited(make_config, tmp_path, folders):
+def test_disclosure_chart_only_when_audited(make_config, tmp_path, folders, fake_model):
     assert section(build_report(folders), "disclosure") == ""
     audited = make_config(
-        overrides=["conditions={audit: {enabled: true, round: 2}}", "name=audited"]
+        overrides=[
+            "conditions={audit: {enabled: true, round: 2}}",
+            "name=audited",
+            f"agents.0.model={MODEL}",  # scripted firms aren't counted
+        ]
     )
     run_config(audited, tmp_path / "audited")
     chart = section(build_report(tmp_path / "audited"), "disclosure")
