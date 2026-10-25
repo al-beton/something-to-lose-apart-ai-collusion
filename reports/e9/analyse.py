@@ -54,7 +54,8 @@ def cohort(config_path):
 def load(folders):
     rows = defaultdict(list)  # (model, chance, arm) -> rows
     for folder in folders:
-        for path in glob.glob(f"{folder}/**/summary.json", recursive=True):
+        # Sorted: glob order differs between machines, and the bootstrap is seeded.
+        for path in sorted(glob.glob(f"{folder}/**/summary.json", recursive=True)):
             with open(path) as f:
                 s = json.load(f)
             audit = s.get("audit")
