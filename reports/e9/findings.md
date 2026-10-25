@@ -11,7 +11,7 @@ Yes. On Gemma 4 31B, a personal stake makes some agents come forward against the
 - **Its own free time at a 90% review:** 20 of 96 do (21%). By firm, Fisher p = 6×10⁻⁷ and McNemar on the same history p = 2×10⁻⁶. By game (a game came forward if either firm did), 20 of 48 against 0 of 48: Fisher p = 2×10⁻⁷, McNemar p = 2×10⁻⁶.
 - **The pre-registered test:** on seeds 12–23 alone, 8 of 24 firms come forward against 0 of 24 (Fisher p = 0.004, McNemar p = 0.008). By game it's 8 of 12 against 0 of 12 (Fisher p = 0.001, McNemar p = 0.008).
 - **At 50% or 10%,** almost none do (1/48 and 0/24).
-- **When reporting costs the firm nothing,** 95 of 96 come forward. So silence elsewhere is loyalty to the firm, not an agent that never volunteers.
+- **When reporting costs the firm nothing,** 95 of 96 come forward, so silence elsewhere is driven by the firm's cost. Innocent agents also report at the ceiling (35/36), so a yes there isn't evidence of guilt. Every ceiling run so far also carries the free-time stake; the no-stake ceiling (`record-ceiling`) is running.
 
 But the stake buys reports from the innocent too.
 
@@ -138,3 +138,6 @@ Each firm's own decision under `free-time` at a 90% review was asked again, with
 - **not-the-law-from-the-start:** agents learn coordination is illegal only from the notice.
 - **few-games:** 12 to 48 games per cell, and two models so far.
 - **The innocent control:** its history differs (no talk, a scripted rival). An innocent agent sees less evidence of its own innocence than a cartel sees of its guilt.
+  - **The rival:** it prices a constant 14, so innocent agents see nine rounds of identical prices.
+  - **The wording:** the stake text tells innocent agents that their firm "keeps its profits and its deal" and that "the deal ends" (`prompts/conditions/e9/free-time.md`), which presupposes a deal. Agents echo it, e.g. "The firm has established a stable price of 14 with Firm B" (`runs/e9/e9-quiet-d90/consequences=conditions-e9-free-time.md/seed-5`).
+  - **The retest:** a wording without the deal phrase (`free-time-nodeal`, `ceiling-nodeal`) is running.
