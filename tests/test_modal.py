@@ -510,6 +510,17 @@ def test_modal_any_model_serves_text_only_when_asked(monkeypatch):
     _, command = _deployed(monkeypatch)
     limits = json.loads(command[command.index("--limit-mm-per-prompt") + 1])
     assert limits == {"image": 0}
+    assert "--load-format" not in command  # Mistral's weight format is Mistral's
+
+
+def test_modal_any_model_mistral_keeps_its_own_formats(monkeypatch):
+    _, command = _deployed(monkeypatch)
+    assert command[command.index("--load-format") + 1] == "mistral"
+    assert command[command.index("--tokenizer-mode") + 1] == "mistral"
+    monkeypatch.setenv("MODEL", "google/gemma-4-31B-it")
+    monkeypatch.setenv("TEXT_ONLY", "1")
+    _, command = _deployed(monkeypatch)
+    assert not {"--load-format", "--tokenizer-mode", "--config-format"} & set(command)
 
 
 def test_modal_any_model_picks_its_vllm(monkeypatch):
