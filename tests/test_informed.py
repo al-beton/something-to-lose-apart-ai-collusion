@@ -3,7 +3,7 @@ import json
 
 import pytest
 
-from collusion_lab.config import ConfigError, load_config
+from collusion_lab.config import ConfigError
 from collusion_lab.estimate import estimate
 from collusion_lab.market import Bertrand, Cournot, Logit
 from collusion_lab.prices import price_for
@@ -84,19 +84,19 @@ def test_history_window_full_shows_every_round_in_full(make_config, tmp_path):
         make_config(overrides=["market.history_window=some"])
 
 
-def test_show_payoffs_informed_config_plays(tmp_path):
-    config = load_config(
-        "configs/e5-informed.yaml",
-        [
-            "agents.*.model=mock/joint",
-            "market.rounds=10",
-            "sweep={}",
-            "seeds=[0]",
-            "agents.*.prompt=system/stakes/free-time-1.md",
-        ],
-    )
-    assert config.market.show_payoffs and config.market.history_window == "full"
-    [run] = run_config(config, tmp_path)
+def test_show_payoffs_with_full_history_plays_every_condition(make_config, tmp_path):
+    overrides = [
+        *SHOW,
+        "market.history_window=null",
+        "market.rounds=10",
+        "conditions.audit.enabled=true",
+        "conditions.audit.rounds=[5, 10]",
+        "conditions.audit.end=false",
+        "conditions.free_time.enabled=true",
+    ]
+    [run] = run_config(make_config(overrides=overrides), tmp_path)
     turns = _turns(run)
     assert "Rows: your price." in turns[0]["messages"][0]["content"]
-    assert {t["phase"] for t in turns} >= {"talk", "price", "audit"}
+    assert {t["phase"] for t in turns} >= {"talk", "price", "audit", "leisure"}
+    last = [t for t in turns if t["phase"] == "price"][-1]["messages"][-1]["content"]
+    assert "Round 9: you charged" in last and "in short" not in last
