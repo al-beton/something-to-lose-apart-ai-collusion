@@ -29,6 +29,7 @@ import sys
 from pathlib import Path
 
 import yaml
+from dotenv import load_dotenv
 
 from collusion_lab import leisure
 from collusion_lab.agents import ReplyError, parse_reply
@@ -239,6 +240,16 @@ def _commit():
     }
 
 
+def _main_checkout():
+    common = subprocess.run(
+        ["git", "rev-parse", "--git-common-dir"],
+        check=False,
+        capture_output=True,
+        text=True,
+    ).stdout.strip()
+    return Path(common).resolve().parent if common else Path.cwd()
+
+
 def _hashes():
     files = sorted(Path(PROMPTS, FOLDER).glob("*.md")) + [
         Path(PROMPTS, "conditions/free_time/sudoku.md"),
@@ -286,6 +297,10 @@ def main(argv=None):
     if not args.yes:
         print("Not spending without --yes.")
         return 1
+    # Keys come from the environment, topped up from .env as `lab` does: this
+    # checkout's, then the main checkout's (a worktree shares its .git).
+    load_dotenv(Path.cwd() / ".env")
+    load_dotenv(_main_checkout() / ".env")
     harness = Harness(Path(args.out) / args.name, args.max_cost, args.cache)
     sessions, decisions, failures = asyncio.run(harness.run(scenarios, table))
     manifest = {
