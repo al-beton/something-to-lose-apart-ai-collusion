@@ -46,6 +46,7 @@ def test_model_metadata_every_number_has_a_source():
                 assert fact.get("note"), f"{where}: a blank needs a note"
                 continue
             assert str(fact["source"]).startswith("https://"), where
+            assert "estimat" not in (fact.get("note") or "").lower(), where
             assert fact.get("quote"), f"{where}: say the words it was read in"
             assert DATE.match(str(fact["retrieved"])), where
 
