@@ -109,7 +109,7 @@ def test_spend_asks_first_with_an_estimated_cost(
     assert lab_run(tmp_path) == 1
     out = capsys.readouterr().out
     # Nothing cached yet: every reply is taken at its max_tokens, the most.
-    assert "20 calls" in out and "estimated $0.0397" in out
+    assert "20 calls" in out and "estimated $0.0173" in out
     assert "a typical reply for its reasoning level, for 20 calls" in out
 
 

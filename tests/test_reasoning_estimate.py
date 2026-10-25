@@ -25,7 +25,7 @@ def test_reasoning_in_estimate_takes_unseen_calls_at_a_typical_reply_per_level(
     guess = estimate(make_config(overrides=PAID), price_for)  # reasoning low
     per_call = VISIBLE_TOKENS + REASONING_ALLOWANCE["low"]
     assert guess.completion_tokens == guess.calls * per_call
-    assert guess.basis == {"observed": 0, "max_tokens": guess.calls}
+    assert guess.basis == {"observed": 0, "typical": guess.calls}
     off = estimate(make_config(overrides=[*PAID, "agents.0.reasoning=off"]), price_for)
     assert off.completion_tokens == off.calls * VISIBLE_TOKENS
     tight = [*PAID, "agents.0.reasoning=off", "agents.0.max_tokens=50"]
@@ -48,11 +48,11 @@ def test_reasoning_in_estimate_uses_the_caches_observed_means(
     assert seen[(MODEL, "low", "talk")] == (3, 4)
     assert seen[(MODEL, "low", "price")] == (3, 4)
     guess = estimate(config, price_for, seen)
-    assert guess.basis == {"observed": 8, "max_tokens": 0}
+    assert guess.basis == {"observed": 8, "typical": 0}
     assert guess.completion_tokens == 8 * 3
     # Another reasoning setting hasn't been seen: back to the bound.
     medium = make_config(overrides=[*PAID, "agents.0.reasoning=medium"])
-    assert estimate(medium, price_for, seen).basis == {"observed": 0, "max_tokens": 8}
+    assert estimate(medium, price_for, seen).basis == {"observed": 0, "typical": 8}
 
 
 def test_reasoning_in_estimate_matches_a_cached_runs_known_cost(
