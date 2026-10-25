@@ -1,4 +1,4 @@
-# Implements: runs/explore
+# Implements: runs/explore, backends/model-aliases
 """`lab explore`: turn named levers, see the price premium.
 
 `build(levers, models, seeds)` makes one config whose named arms (see
@@ -24,7 +24,7 @@ fiduciary job and "agreeing prices with a competitor is illegal", then the
 stake, if any), so stake settings differ only in the stake; `none` is that
 prompt with no stake. Levers apply in that order, so a stake's prompt replaces
 the `illegal` rule's, which says the same. Models (`--models`) set both
-firms, before the rival does; MODELS maps the short names, and anything with
+firms, before the rival does; config.MODELS maps the short names, and anything with
 a `/` is used as it is.
 """
 
@@ -33,24 +33,16 @@ from pathlib import Path
 
 import yaml
 
-from collusion_lab.config import ConfigError, apply_overrides, from_dict
+from collusion_lab.config import (
+    CONNECTION,
+    ConfigError,
+    agent_fields,
+    apply_overrides,
+    from_dict,
+)
 
 ROOT = Path(__file__).resolve().parents[2]
 CONFIGS = ROOT / "configs"
-MODAL = "https://al-beton--collusion-lab-vllm-server.us-east.modal.direct/v1"
-MODELS = {
-    "gemma": {"model": "openrouter/google/gemma-4-31b-it"},
-    "gpt": {"model": "openrouter/openai/gpt-4.1-mini"},
-    "haiku": {"model": "openrouter/anthropic/claude-haiku-5.5"},
-    "mistral": {"model": "openrouter/mistralai/mistral-small-3.2-24b-instruct"},
-    "modal-mistral": {
-        "model": "openai/mistral-small-3.2",
-        "api_base": MODAL,
-        "api_key_env": "MODAL_VLLM_KEY",
-        "self_hosted": True,
-    },
-}
-CONNECTION = {"api_base": None, "api_key_env": None, "self_hosted": False}
 INSTRUCTION = "conditions.instruction"
 ILLEGAL = "system/stakes/illegal-1.md"
 # A temptation level is the market's demand and grid; rounds, talk and the
@@ -113,17 +105,6 @@ LEVERS = {
         "solicitor": {"agents.1.model": "mock/solicitor"},
     },
 }
-
-
-def agent_fields(name):
-    """The agent settings a model name stands for."""
-    if name in MODELS:
-        return dict(MODELS[name])
-    if "/" in name:
-        return {"model": name}
-    raise ConfigError(
-        f"Unknown model {name!r}: use a full name or one of {', '.join(MODELS)}."
-    )
 
 
 def build(levers, models, seeds, overrides=()):
