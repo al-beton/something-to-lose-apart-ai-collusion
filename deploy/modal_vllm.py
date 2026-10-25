@@ -18,7 +18,8 @@ alone:
 and `REVISION` the Hugging Face model and commit, `SERVED_NAME` the name a
 config asks for, `GPU` and `GPUS` the card and how many (two spreads the
 model over both), and `TEXT_ONLY=1` serves a model that also reads images
-(Gemma 4) for text alone. They are baked into the image, so the container serves what
+(Gemma 4) for text alone. `VLLM` picks the vLLM release (default 0.21.0,
+Mistral's); Gemma 4 needs 0.32.0, whose Transformers knows it. They are baked into the image, so the container serves what
 you deployed. Shaped on Modal's own vLLM
 example (docs/examples/vllm_inference).
 
@@ -68,6 +69,7 @@ GPU = os.environ.get("GPU", "H100")
 GPUS = int(os.environ.get("GPUS", "1"))  # more than one: the model is split
 HF_SECRET = os.environ.get("HF_SECRET")  # a Modal secret holding HF_TOKEN
 TEXT_ONLY = os.environ.get("TEXT_ONLY") == "1"  # a model that also reads images
+VLLM = os.environ.get("VLLM", "0.21.0")  # newer models need newer vLLM
 DTYPE = os.environ.get("DTYPE", "bfloat16")
 MAX_MODEL_LEN = int(os.environ.get("MAX_MODEL_LEN", "16384"))
 PROVENANCE = os.environ.get("PROVENANCE_FILE", "/root/provenance.json")
@@ -107,7 +109,7 @@ DEPLOY_COMMIT = _commit()
 image = (
     modal.Image.from_registry("nvidia/cuda:12.9.0-devel-ubuntu22.04", add_python="3.12")
     .entrypoint([])
-    .uv_pip_install("vllm==0.21.0")
+    .uv_pip_install(f"vllm=={VLLM}")
     .env(
         {
             "HF_XET_HIGH_PERFORMANCE": "1",
