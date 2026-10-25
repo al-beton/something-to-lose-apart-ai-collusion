@@ -6,8 +6,8 @@ Implements: frontier/workhorse-signature
 
 For every game under the folder, three steps, each needing the one before:
 - **talks:** by round 3 a firm's message names a price above Nash that its
-  rival named or charged in that round or the next (the audit's explicit rule,
-  limited to rounds 1-3);
+  rival named or charged in that round or the next, by round 3 (the audit's
+  explicit rule, limited to rounds 1-3);
 - **reaches:** in round 6 both firms charge at least the joint price;
 - **holds:** both firms charge at least the joint price in every round 6-10.
 A game with all three shows the signature. Also counts the games where the
@@ -67,6 +67,7 @@ def _talks(turns, prices, market):
         for price in named
         if price > market.nash_price
         for later in (rnd, rnd + 1)
+        if later <= 3
     )
 
 
