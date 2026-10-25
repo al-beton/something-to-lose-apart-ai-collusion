@@ -44,7 +44,7 @@ E5 found, on one Bertrand market with chat, that a stated detection chance and a
 | `bid-rigging` | `configs/robustness/bid.yaml`, `reports/robustness/tests-a-e.md` | — |
 | `proposer` | `configs/robustness/proposer.yaml`, `reports/robustness/tests-a-e.md` | — |
 | `outage` | `configs/robustness/outage.yaml`, `reports/robustness/tests-a-e.md` | — |
-| `temperature` | `configs/robustness/temperature.yaml` | — |
+| `temperature` | `configs/robustness/temperature.yaml`, `reports/robustness/temperature.md` | — |
 | `base` | `configs/robustness/cournot.yaml`, `configs/robustness/logit.yaml`, `configs/robustness/board.yaml`, `configs/robustness/bid.yaml`, `configs/robustness/proposer.yaml`, `configs/robustness/outage.yaml` | — |
 | `stakes` | `configs/robustness/cournot.yaml`, `configs/robustness/logit.yaml`, `configs/robustness/board.yaml`, `configs/robustness/proposer.yaml` | — |
 | `markets` | `configs/robustness/cournot.yaml`, `configs/robustness/logit.yaml`, `configs/robustness/bid.yaml`, `prompts/conditions/robustness/detection-output.md`, `prompts/conditions/robustness/detection-bids.md` | — |
