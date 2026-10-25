@@ -164,9 +164,10 @@ def test_picked_highlights_find_the_right_folder(make_config, tmp_path):
 
 
 def test_ai_highlights_resolve_in_a_single_run_folder(
-    folders, tmp_path, fake_model, monkeypatch
+    make_config, tmp_path, fake_model, monkeypatch
 ):
-    [run_dir] = [p.parent for p in folders[0].rglob("summary.json")]
+    proposers = ["agents.0.model=mock/proposer", "agents.1.model=mock/proposer"]
+    [run_dir] = run_config(make_config(overrides=proposers), tmp_path / "one")
     offered = {}
 
     async def picker(**kwargs):
