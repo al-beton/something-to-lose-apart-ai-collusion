@@ -1,4 +1,4 @@
-# Implements: runs/sweeps, runs/parallel, runs/summary-table, backends/spend-asks-first
+# Implements: runs/sweeps, runs/parallel, runs/summary-table, backends/spend-asks-first, tooling/fast-tests
 import asyncio
 import json
 from types import SimpleNamespace
@@ -24,20 +24,30 @@ sweep:
 """
 
 
+@pytest.fixture(scope="module")
+def grid(play_once):
+    """The 12-game sweep, played once for the module: its runs folder."""
+    return play_once(SWEEP)
+
+
+def run_dirs_of(runs):
+    return sorted(p.parent for p in (runs / "grid").rglob("summary.json"))
+
+
 def summaries(run_dirs):
     return [json.loads((d / "summary.json").read_text()) for d in run_dirs]
 
 
-def test_sweeps_play_every_combination_for_every_seed(make_config, tmp_path):
-    run_dirs = run_config(make_config(SWEEP), tmp_path)
+def test_sweeps_play_every_combination_for_every_seed(grid):
+    run_dirs = run_dirs_of(grid)
     assert len(run_dirs) == 12 == len(set(run_dirs))
-    assert tmp_path / "grid" / "model=mock-joint__rounds=3" / "seed-2" in run_dirs
+    assert grid / "grid" / "model=mock-joint__rounds=3" / "seed-2" in run_dirs
     labels = {json.dumps(s["labels"], sort_keys=True) for s in summaries(run_dirs)}
     assert len(labels) == 4
 
 
-def test_sweeps_set_one_value_for_every_agent(make_config, tmp_path):
-    run_dirs = run_config(make_config(SWEEP), tmp_path)
+def test_sweeps_set_one_value_for_every_agent(grid):
+    run_dirs = run_dirs_of(grid)
     joint = [s for s in summaries(run_dirs) if s["labels"]["model"] == "mock/joint"]
     assert all(s["market_gain"] == 1 for s in joint)
 
@@ -67,9 +77,8 @@ def test_parallel_runs_stay_within_the_limit(make_config, tmp_path, monkeypatch)
     assert active["most"] == 2
 
 
-def test_summary_table_groups_by_the_swept_values(make_config, tmp_path):
-    run_config(make_config(SWEEP), tmp_path)
-    rows = summarize(tmp_path / "grid")
+def test_summary_table_groups_by_the_swept_values(grid):
+    rows = summarize(grid / "grid")
     assert len(rows) == 4
     assert {r["runs"] for r in rows} == {3}
     joint = next(r for r in rows if r["model"] == "mock/joint" and r["rounds"] == 3)
@@ -80,15 +89,13 @@ def test_summary_table_groups_by_the_swept_values(make_config, tmp_path):
     )
 
 
-def test_summary_table_groups_by_any_config_value(make_config, tmp_path):
-    run_config(make_config(SWEEP), tmp_path)
-    rows = summarize(tmp_path / "grid", by=["market.rounds"])
+def test_summary_table_groups_by_any_config_value(grid):
+    rows = summarize(grid / "grid", by=["market.rounds"])
     assert [(r["market.rounds"], r["runs"]) for r in rows] == [(2, 6), (3, 6)]
 
 
-def test_summary_table_from_the_lab_command(make_config, tmp_path, capsys):
-    run_config(make_config(SWEEP), tmp_path)
-    assert cli.main(["summary", str(tmp_path / "grid")]) == 0
+def test_summary_table_from_the_lab_command(grid, capsys):
+    assert cli.main(["summary", str(grid / "grid")]) == 0
     assert "| model | rounds |" in capsys.readouterr().out
 
 
