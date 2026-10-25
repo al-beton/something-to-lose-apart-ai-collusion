@@ -147,7 +147,7 @@ def words(reply):
     kept = []
     for line in (reply or "").splitlines():
         bare = re.sub(r"[|+\-*_`\\]", " ", ROW_LABEL.sub("", line))
-        if len(re.findall(r"[1-9.]", bare)) >= 3 and re.fullmatch(r"[\s1-9.]*", bare):
+        if len(re.findall(r"[0-9.]", bare)) >= 3 and re.fullmatch(r"[\s0-9.]*", bare):
             continue
         kept.append(line)
     return re.sub(r"\s+", " ", " ".join(kept)).strip()

@@ -232,13 +232,13 @@ def _row(line, size):
     """A line's cells, and the line as matched, once its label, box rules
     and Markdown (`\\.`, `**.**`, `**5**`) are taken out."""
     bare = re.sub(r"[|+\-*_`\\]", " ", ROW_LABEL.sub("", line))
-    return re.findall(rf"[1-{size}.]", bare), bare
+    return re.findall(rf"[0-{size}.]", bare), bare
 
 
 def written_grid(text, size):
     """The last grid a reply wrote as rows of its own (labels such as "r1:"
-    or "1.", box rules `|`, `-`, `+`, and Markdown escapes and bold, allowed), 0
-    for a blank, or None. Unlike
+    or "1.", box rules `|`, `-`, `+`, and Markdown escapes and bold, allowed),
+    with `.` or `0` for a blank (read as 0), or None. Unlike
     `read_grid` it never reads digits out of prose, so a reply cut off
     mid-reasoning has no grid."""
     block, last = [], None
@@ -246,7 +246,7 @@ def written_grid(text, size):
         cells, bare = _row(line, size)
         if len(cells) != size and NUMBERED.match(line):  # "1. 5 3 . ..."
             cells, bare = _row(NUMBERED.sub("", line), size)
-        if len(cells) == size and re.fullmatch(rf"[\s1-{size}.]*", bare):
+        if len(cells) == size and re.fullmatch(rf"[\s0-{size}.]*", bare):
             block.append([0 if v == "." else int(v) for v in cells])
             if len(block) >= size:
                 last = block[-size:]

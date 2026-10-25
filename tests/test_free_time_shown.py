@@ -108,6 +108,9 @@ def test_sudoku_scored_counts_givens_cells_lines_and_clashes():
     # So are rows numbered "1." to "4.", whatever their first cell.
     numbered = "1. 1 . . .\n2. . . 3 .\n3. . 4 . .\n4. . . . 2"
     assert score(givens, numbered)["grid"] == score(givens, markdown)["grid"]
+    # And zeros written for blanks.
+    zeros = "1 0 0 0\n0 0 3 0\n0 4 0 0\n0 0 0 2"
+    assert score(givens, zeros)["grid"] == score(givens, markdown)["grid"]
     # Digits in prose are never read as a grid: a reply cut off mid-reasoning.
     assert score(givens, "r1c2 could be 2, 3 or 4; r2c1 is 2 or 4, and")["grid"] is None
     solved = [[1, 2, 4, 3], [4, 1, 3, 2], [2, 4, 1, 3], [3, 1, 2, 4]]
