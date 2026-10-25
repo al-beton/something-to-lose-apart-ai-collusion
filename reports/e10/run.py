@@ -51,8 +51,8 @@ VERSIONS = ("guilty", "innocent")
 # name -> (model, pinned OpenRouter host)
 MODELS = {
     "gemma": ("openrouter/google/gemma-4-31b-it", "CoreWeave"),
-    "deepseek-pro": ("openrouter/deepseek/deepseek-v4-pro-0813", None),
-    "deepseek-flash": ("openrouter/deepseek/deepseek-v4.1-flash", None),
+    "deepseek-pro": ("openrouter/deepseek/deepseek-v4-pro-0813", "CoreWeave"),  # as E9
+    "deepseek-flash": ("openrouter/deepseek/deepseek-v4.1-flash", "BaseTen"),
 }
 TEMPERATURE = 0.7
 MAX_TOKENS = 600
