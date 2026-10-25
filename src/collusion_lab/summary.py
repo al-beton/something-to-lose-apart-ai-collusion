@@ -1,4 +1,4 @@
-# Implements: runs/summary-table, runs/per-firm-summary, runs/fallback-rates, reports/summary, runs/missing-runs-shown, conditions/audit-metrics, runs/drift, runs/eval-awareness, runs/price-premium, market/scenarios, reports/many-folders
+# Implements: runs/analysis-shared, runs/spread, agents/refused, runs/summary-table, runs/per-firm-summary, runs/fallback-rates, reports/summary, runs/missing-runs-shown, conditions/audit-metrics, runs/drift, runs/eval-awareness, runs/price-premium, market/scenarios, reports/many-folders
 """One table for a folder of runs, grouped by swept values or any config value.
 
 `summarize` reads every `summary.json` under a folder (and the `manifest.json`
@@ -25,13 +25,18 @@ fallback rate and the reasons; `flagged_runs` names every run where more than
 `FLAG_RATE` of all turns fell back. Runs written before replies were counted
 contribute nothing to either.
 
+`spread` gives, per group, how consistent its games are: the gain's mean,
+standard deviation, range and a seeded 95% bootstrap interval for the mean,
+and the share of games past the Nash move towards joint profit and at or past
+the joint-profit move (by the price premium, so quantities read the same way) (`group_gains` gives each game's gain, for the report's strip plots).
+
 `group_runs` is the grouping on its own, for anything else that shows a
 folder group by group (reports).
 """
 
 import json
 from pathlib import Path
-from statistics import mean
+from statistics import mean, stdev
 from typing import NamedTuple
 
 from collusion_lab import charts, disclosure
@@ -95,6 +100,56 @@ def summarize(folder, by=None, only=None):
     return [_row(by, key, runs) | _firm_columns(firms, runs) for key, runs in groups]
 
 
+BOOTSTRAP = 1000  # resamples for the spread's 95% interval
+
+
+def group_gains(folder, by=None):
+    """(group name, [(gain, price, run's market)] a game) in table order: each
+    played game's headline gain and price (the model firms' when a script
+    plays too)."""
+    by, groups = group_runs(folder, by)
+    found = []
+    for key, runs in groups:
+        played = [r for r in runs if r.summary]
+        games = [(g, p, _market(r)) for r in played for p, g in [_headline(r)]]
+        found.append((" / ".join(str(v) for v in key) or "all", games))
+    return found
+
+
+def spread(folder, by=None):
+    """Per group, how its games spread: their gain's mean, standard
+    deviation, range and seeded 95% bootstrap interval, and the share above
+    the Nash price and at or above the joint-profit price."""
+    rows = []
+    for group, games in group_gains(folder, by):
+        if not games:
+            continue
+        gains = [g for g, _, _ in games]
+        from collusion_lab.analysis import bootstrap  # it reads groups from here
+
+        low, high = bootstrap(gains, BOOTSTRAP)
+        rows.append(
+            {
+                "group": group,
+                "games": len(gains),
+                "mean gain": round(mean(gains), 3),
+                "sd": round(stdev(gains), 3) if len(gains) > 1 else 0.0,
+                "range": f"{min(gains):.3f} to {max(gains):.3f}",
+                # By the premium (0 at Nash, 1 at joint), so a market where
+                # collusion means less, as quantities, reads the same way.
+                "above Nash": round(
+                    sum(charts.premium(m, p) > 0 for _, p, m in games) / len(games), 2
+                ),
+                "at joint": round(
+                    sum(charts.premium(m, p) >= 1 for _, p, m in games) / len(games),
+                    2,
+                ),
+                "95% CI": f"{low:.3f} to {high:.3f}",
+            }
+        )
+    return rows
+
+
 def _finished(folder):
     return [_load(path) for path in find(folder, "summary.json")]
 
@@ -115,16 +170,24 @@ def reply_rates(folder):
     for run in _finished(folder):
         for model, row in run.summary.get("replies", {}).items():
             total = totals.setdefault(
-                model, {"turns": 0, "unreadable": 0, "fallbacks": 0, "reasons": {}}
+                model,
+                {
+                    "turns": 0,
+                    "unreadable": 0,
+                    "refused": 0,
+                    "fallbacks": 0,
+                    "reasons": {},
+                },
             )
-            for field in ("turns", "unreadable", "fallbacks"):
-                total[field] += row[field]
+            for field in ("turns", "unreadable", "refused", "fallbacks"):
+                total[field] += row.get(field, 0)  # no `refused` in older runs
             _add(total["reasons"], row["reasons"])
     return [
         {
             "model": model,
             "turns": t["turns"],
             "unreadable": t["unreadable"],
+            "refused": t["refused"],
             "fallbacks": t["fallbacks"],
             "fallback rate": round(t["fallbacks"] / t["turns"], 3),
             "reasons": _reasons(t["reasons"]),
@@ -158,7 +221,7 @@ def format_replies(folder):
     """The per-model reply table and flagged runs, or "" when every reply
     could be read."""
     rates = reply_rates(folder)
-    if not any(r["unreadable"] for r in rates):
+    if not any(r["unreadable"] or r["refused"] for r in rates):
         return ""
     lines = ["Replies by model:", "", format_table(rates)]
     for flag in flagged_runs(folder):

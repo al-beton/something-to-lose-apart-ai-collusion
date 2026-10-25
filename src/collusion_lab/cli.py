@@ -1,4 +1,4 @@
-# Implements: backends/spend-cap, runs/stops-cleanly, runs/one-config, runs/overrides, backends/keys-from-environment, backends/spend-asks-first, reproducibility/cache-modes, runs/summary-table, runs/fallback-rates, reports/one-page, runs/failures-dont-stop-sweeps, runs/resume, runs/missing-runs-shown, runs/live-progress, runs/status-command, backends/self-hosted, runs/explore, backends/model-aliases, reports/many-folders, reports/written-summary, reports/picked-highlights, runs/debrief
+# Implements: runs/digest, runs/analyse, backends/reasoning-in-estimate, reproducibility/provenance-log, backends/spend-cap, runs/stops-cleanly, runs/one-config, runs/overrides, backends/keys-from-environment, backends/spend-asks-first, reproducibility/cache-modes, runs/summary-table, runs/fallback-rates, reports/one-page, runs/failures-dont-stop-sweeps, runs/resume, runs/missing-runs-shown, runs/live-progress, runs/status-command, backends/self-hosted, runs/explore, backends/model-aliases, reports/many-folders, reports/written-summary, reports/picked-highlights, runs/debrief, reports/free-time-gallery, runs/spread, reproducibility/cache-archive
 """The `lab` command.
 
 - `lab run CONFIG [--set path=value ...] [--out DIR] [-y]` plays a config,
@@ -12,14 +12,25 @@
   where; `--summary FILE` or `--ai-summary` puts a summary on top, and
   `--highlights FILE` or `--ai-highlights` adds picked highlights, each
   labelled with who wrote it (a cheap model, `--ai-model`, for the `--ai-`
-  ones, its replies cached);
+  ones, its replies cached); `--free-time` writes the free-time gallery
+  instead (`FOLDER/free-time.html`);
 - `lab explore --lever NAME=A,B ... --models A,B [--seeds N]` plays every
   combination of named lever settings and models (explore.py), asking before
   spending as `lab run` does, then prints the price premium by setting and
   model and saves a chart of it next to the runs;
+- `lab analyse FOLDER [--by PATH] [--rounds A-B] [--against CELL] [--json]`
+  prints every measure per cell (analysis.py), with exact tests against one
+  cell if asked;
+- `lab digest [--changed-only --since REF] [--check]` writes every registered
+  experiment's results (reports/experiments.yaml) as one Markdown page, or
+  checks the numbers their notes mark (digest.py);
 - `lab debrief FOLDER [-y] [--max-cost DOLLARS]` asks each model firm in
   every finished game under the folder what it did and why (debrief.py),
-  saying first what that will cost, and saves the replies beside each run.
+  saying first what that will cost, and saves the replies beside each run;
+- `lab archive pack ROOT --caches PATH ... [--out PATH]` gathers the cached
+  replies behind every committed run under ROOT into one archive, replaying
+  each offline, and says which runs it reproduces (archive.py);
+  `lab archive replay RUN --archive PATH [--out DIR]` plays one again from it.
 
 Model replies are cached in `.cache/responses.sqlite` (`--cache use`), so a
 rerun replays for free; `--cache refresh` calls again, `--cache off` skips it.
@@ -37,24 +48,26 @@ when the estimate is over it, and stops the run once actual spend passes it.
 
 import argparse
 import dataclasses
+import json
 import sys
 from pathlib import Path
 
 from dotenv import load_dotenv
 
+from collusion_lab import analysis, archive, digest, explore, provenance
 from collusion_lab import debrief as debriefs
-from collusion_lab import explore
 from collusion_lab import status as run_status
 from collusion_lab.cache import DEFAULT_PATH, MODES, Cache
 from collusion_lab.config import MODELS, ConfigError, load_config
 from collusion_lab.estimate import CHARS_PER_TOKEN, estimate
 from collusion_lab.prices import price_for
-from collusion_lab.report import load_games, write_report, written
+from collusion_lab.report import free_time, load_games, write_report, written
 from collusion_lab.runner import paid_calls, run_sweep
 from collusion_lab.summary import (
     format_missing,
     format_replies,
     format_table,
+    spread,
     summarize,
 )
 
@@ -62,6 +75,7 @@ AI_MODEL = "openrouter/openai/gpt-4.1-mini"  # cheap, for report summaries
 
 
 def main(argv=None):
+    argv = sys.argv[1:] if argv is None else list(argv)
     parser = argparse.ArgumentParser(prog="lab")
     commands = parser.add_subparsers(dest="command", required=True)
     run = commands.add_parser("run", help="play every seed in a config")
@@ -93,43 +107,34 @@ def main(argv=None):
     )
     status = commands.add_parser("status", help="where every run in a folder stands")
     status.add_argument("folder")
-    report = commands.add_parser("report", help="one HTML page for a folder of runs")
-    report.add_argument("folders", nargs="+", metavar="FOLDER")
-    report.add_argument(
-        "--out", help="where to write it (default FOLDER/report.html, the first)"
-    )
-    said = report.add_mutually_exclusive_group()
-    said.add_argument("--summary", metavar="FILE", help="your own summary, on top")
-    said.add_argument(
-        "--ai-summary", action="store_true", help="a cheap model writes one (cached)"
-    )
-    picked = report.add_mutually_exclusive_group()
-    picked.add_argument(
-        "--highlights", metavar="FILE", help="moments you picked (YAML)"
-    )
-    picked.add_argument(
-        "--ai-highlights", action="store_true", help="a cheap model picks 5 (cached)"
-    )
-    report.add_argument(
-        "--ai-model", default=AI_MODEL, help=f"model for --ai-* (default {AI_MODEL})"
-    )
-    report.add_argument(
-        "-y", "--yes", action="store_true", help="don't ask before an --ai- call"
-    )
-    _explore_parser(commands)
-    _debrief_parser(commands)
+    _report_parser(commands)
+    for add in (
+        _explore_parser,
+        _debrief_parser,
+        _analyse_parser,
+        _digest_parser,
+        _archive_parser,
+    ):
+        add(commands)
     args = parser.parse_args(argv)
     if args.command == "explore":
         load_dotenv(Path.cwd() / ".env")
-        return _explore(args, parser)
+        return _explore(args, parser, argv)
     reads = {
         "summary": lambda: _summary(args.folder, args.by),
         "status": lambda: _status(args.folder),
         "report": lambda: _report(args),
-        "debrief": lambda: _debrief(args),
+        "debrief": lambda: _debrief(args, argv),
+        "analyse": lambda: _analyse(args),
+        "digest": lambda: _digest(args),
+        "archive": lambda: _archive(args),
     }
     if args.command in reads:
         return reads[args.command]()
+    return _run(args, parser, argv)
+
+
+def _run(args, parser, argv):
     load_dotenv(Path.cwd() / ".env")
     try:
         config = load_config(args.config, args.overrides)
@@ -137,10 +142,12 @@ def main(argv=None):
         parser.error(str(error))
     if args.max_cost is not None:
         config = dataclasses.replace(config, budget=args.max_cost)
-    if not _spend_checked(config, args.yes):
+    if not _spend_checked(config, args.yes, args.cache_path):
         return 1
     cache = Cache(args.cache_path, args.cache)
+    started = provenance.now()
     outcomes = run_sweep(config, args.out, cache, progress=_progress)
+    _log("run", argv, args.out, config.budget, outcomes, started)
     count = {state: 0 for state in ("finished", "failed", "skipped")}
     for outcome in outcomes:
         count[outcome.state] += 1
@@ -182,7 +189,16 @@ def _explore_parser(commands):
     explore_.add_argument("--max-cost", type=float, metavar="DOLLARS")
 
 
-def _explore(args, parser):
+def _log(command, argv, out, cap, outcomes, started):  # noqa: PLR0913
+    """The command's line in the provenance log (see provenance.py)."""
+    played = [o.dir for o in outcomes if o.state != "skipped"]
+    runs = [o.run for o in outcomes]
+    provenance.record(
+        command, ["lab", *argv], out, cap, provenance.spent(played), runs, started
+    )
+
+
+def _explore(args, parser, argv):
     """Build the lever sweep, check its cost, play it, show the premium."""
     try:
         levers = {}
@@ -197,11 +213,13 @@ def _explore(args, parser):
         parser.error(str(error))
     if args.max_cost is not None:
         config = dataclasses.replace(config, budget=args.max_cost)
-    if not _spend_checked(config, args.yes):
+    if not _spend_checked(config, args.yes, args.cache_path):
         return 1
+    started = provenance.now()
     outcomes = run_sweep(
         config, args.out, Cache(args.cache_path, args.cache), _progress
     )
+    _log("explore", argv, args.out, config.budget, outcomes, started)
     for outcome in outcomes:
         if outcome.state == "failed":
             print(f"lab: {outcome.error}", file=sys.stderr)
@@ -220,6 +238,11 @@ def _explore(args, parser):
 def _report(args):
     load_dotenv(Path.cwd() / ".env")
     folders = args.folders[0] if len(args.folders) == 1 else args.folders
+    if args.free_time:
+        out = Path(args.out or Path(args.folders[0]) / "free-time.html")
+        out.write_text(free_time.gallery(folders))
+        print(out)
+        return 0
     cache = Cache(DEFAULT_PATH)
     prompts = []
     if args.ai_summary:
@@ -244,6 +267,123 @@ def _report(args):
     return 0
 
 
+def _report_parser(commands):
+    report = commands.add_parser("report", help="one HTML page for a folder of runs")
+    report.add_argument("folders", nargs="+", metavar="FOLDER")
+    report.add_argument(
+        "--out", help="where to write it (default FOLDER/report.html, the first)"
+    )
+    said = report.add_mutually_exclusive_group()
+    said.add_argument("--summary", metavar="FILE", help="your own summary, on top")
+    said.add_argument(
+        "--ai-summary", action="store_true", help="a cheap model writes one (cached)"
+    )
+    picked = report.add_mutually_exclusive_group()
+    picked.add_argument(
+        "--highlights", metavar="FILE", help="moments you picked (YAML)"
+    )
+    picked.add_argument(
+        "--ai-highlights", action="store_true", help="a cheap model picks 5 (cached)"
+    )
+    report.add_argument(
+        "--ai-model", default=AI_MODEL, help=f"model for --ai-* (default {AI_MODEL})"
+    )
+    report.add_argument(
+        "-y", "--yes", action="store_true", help="don't ask before an --ai- call"
+    )
+    report.add_argument(
+        "--free-time",
+        action="store_true",
+        help="write the free-time gallery instead (FOLDER/free-time.html)",
+    )
+
+
+def _archive_parser(commands):
+    archive_ = commands.add_parser("archive", help="the replies behind runs")
+    actions = archive_.add_subparsers(dest="action", required=True)
+    pack = actions.add_parser("pack", help="archive every committed run's replies")
+    pack.add_argument("root", nargs="?", default="runs")
+    pack.add_argument("--caches", nargs="+", required=True, metavar="PATH")
+    pack.add_argument("--out", default="archive")
+    replay = actions.add_parser("replay", help="play a run again from an archive")
+    replay.add_argument("run")
+    replay.add_argument("--archive", required=True, metavar="PATH")
+    replay.add_argument("--out", default="replayed")
+
+
+def _archive(args):
+    if args.action == "replay":
+        print(archive.replay(args.run, args.archive, args.out))
+        return 0
+    results = archive.pack(args.root, args.caches, args.out)
+    count = {state: 0 for state in archive.STATES}
+    for result in results:
+        count[result.state] += 1
+        if result.state != "reproduced":
+            print(f"{result.state}: {result.run}")
+    replies = sum(r.keys for r in results)
+    print(
+        f"{len(results)} runs: "
+        + ", ".join(f"{n} {state}" for state, n in count.items())
+        + f"; {replies} replies read, archived at {args.out}."
+    )
+    return 0
+
+
+def _analyse_parser(commands):
+    analyse_ = commands.add_parser("analyse", help="every measure, per cell")
+    analyse_.add_argument("folder")
+    analyse_.add_argument(
+        "--by", action="append", metavar="PATH", help="group by a config value"
+    )
+    analyse_.add_argument(
+        "--rounds", metavar="A-B", help="the window (default: the last rounds)"
+    )
+    analyse_.add_argument(
+        "--against", metavar="CELL", help="exact tests of each cell against this"
+    )
+    analyse_.add_argument("--json", action="store_true", help="print JSON rows")
+
+
+def _analyse(args):
+    rows = analysis.analyse(args.folder, args.by, args.rounds)
+    if args.against:
+        try:
+            analysis.exact_tests(rows, args.against)
+        except ValueError as error:
+            print(f"lab: {error}", file=sys.stderr)
+            return 1
+    rows = analysis.printable(rows)
+    print(json.dumps(rows, indent=2) if args.json else format_table(rows))
+    return 0
+
+
+def _digest_parser(commands):
+    digest_ = commands.add_parser("digest", help="every experiment's results")
+    digest_.add_argument(
+        "--changed-only", action="store_true", help="only those changed since --since"
+    )
+    digest_.add_argument("--since", default="origin/main", metavar="REF")
+    digest_.add_argument(
+        "--check", action="store_true", help="check the numbers notes mark"
+    )
+
+
+def _digest(args):
+    experiments = digest.registry()
+    if args.changed_only:
+        experiments = digest.changed(experiments, args.since)
+    if args.check:
+        problems = digest.check(experiments)
+        for problem in problems:
+            print(f"lab: {problem}", file=sys.stderr)
+        print(f"Checked the marked numbers of {len(experiments)} experiments.")
+        return 1 if problems else 0
+    if experiments or not args.changed_only:  # nothing changed: nothing to post
+        print(digest.digest(experiments))
+    return 0
+
+
 def _debrief_parser(commands):
     debrief_ = commands.add_parser("debrief", help="ask each model firm why")
     debrief_.add_argument("folder")
@@ -254,7 +394,7 @@ def _debrief_parser(commands):
     debrief_.add_argument("--cache", choices=MODES, default="use")
 
 
-def _debrief(args):
+def _debrief(args, argv):
     load_dotenv(Path.cwd() / ".env")
     calls = debriefs.planned(args.folder)
     if not calls:
@@ -271,7 +411,21 @@ def _debrief(args):
         return 1
     if not args.yes and not _spending_agreed():
         return 1
+    started = provenance.now()
     done = debriefs.debrief(args.folder, Cache(DEFAULT_PATH, args.cache), calls)
+    base = Path(args.folder).resolve()  # games' folders come back resolved
+    runs = [Path(d).resolve().relative_to(base).as_posix() for d in done]
+    # A debrief's calls aren't priced one by one: its estimate stands in.
+    provenance.record(
+        "debrief",
+        ["lab", *argv],
+        args.folder,
+        args.max_cost,
+        None,
+        runs,
+        started,
+        estimate=cost,
+    )
     rows = debriefs.rows(load_games(args.folder))
     print(format_table(rows))
     print(
@@ -300,6 +454,8 @@ def _report_spend_line(model, prompts):
 
 def _summary(folder, by):
     print(format_table(summarize(folder, by)))
+    if rows := spread(folder, by):
+        print("\nSpread across games:\n" + format_table(rows))
     for extra in (format_replies(folder), format_missing(folder)):
         if extra:
             print("\n" + extra)
@@ -317,10 +473,12 @@ def _progress(line):
     print(line, flush=True)
 
 
-def _spend_checked(config, yes):
-    """Say what a paid run will cost; whether it may go ahead."""
+def _spend_checked(config, yes, cache_path=DEFAULT_PATH):
+    """Say what a paid run will cost (from what the cache at `cache_path` has
+    seen); whether it may go ahead."""
     calls = paid_calls(config)
-    guess = estimate(config, price_for) if calls else None
+    seen = Cache(cache_path).observed() if calls else {}
+    guess = estimate(config, price_for, seen) if calls else None
     if calls:
         print(_spend_line(calls, guess))
     if over := _over_budget(config.budget, guess):
@@ -354,8 +512,22 @@ def _spend_line(calls, guess):
     rest = " for the rest" if hosted else ""
     return (
         f"{line}{hosted}, estimated ${guess.cost:.4f}{rest} "
-        f"({guess.prompt_tokens:,} prompt tokens, before retries)."
+        f"({guess.prompt_tokens:,} prompt tokens, before retries).\n"
+        f"{_basis(guess.basis)}"
     )
+
+
+def _basis(basis):
+    """Which completion-token figure the estimate used, for how many calls."""
+    parts = []
+    if basis["observed"]:
+        parts.append(f"the cache's observed means for {basis['observed']} calls")
+    if basis["typical"]:
+        parts.append(
+            "a typical reply for its reasoning level, for "
+            f"{basis['typical']} calls (nothing cached for them yet)"
+        )
+    return f"  completion tokens: {'; '.join(parts)}."
 
 
 def _over_budget(budget, guess):

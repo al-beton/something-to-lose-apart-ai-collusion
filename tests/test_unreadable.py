@@ -92,6 +92,7 @@ def test_fallback_rates_per_model_with_reasons(bumpy):
         "model": MODEL_NAME,
         "turns": 4,
         "unreadable": 3,
+        "refused": 0,
         "fallbacks": 1,
         "fallback rate": 0.25,
         "reasons": "no-json 2, truncated 1",

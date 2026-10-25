@@ -6,7 +6,7 @@ from pathlib import Path
 import pytest
 
 from collusion_lab import backends, cli
-from collusion_lab.config import load_config
+from collusion_lab.config import ConfigError, load_config
 from collusion_lab.runner import run_config
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -94,13 +94,23 @@ def test_modal_config_runs_against_a_served_model(monkeypatch):
     assert server["secrets"] and server["gpu"] and server["scaledown_window"] > 0
 
 
-def _deployed(monkeypatch):
+def _deployed(monkeypatch, revision="test-revision"):
     """Run deploy/modal_vllm.py against a stand-in `modal`: the settings its
-    server is deployed with, and the command its start-up runs."""
+    server is deployed with, and the command its start-up runs. `revision`
+    stands in for REVISION (None: look it up), and what it serves is written
+    to a scratch file unless PROVENANCE_FILE says where."""
     import importlib.util
+    import os
     import subprocess
     import sys
+    import tempfile
     import types
+
+    if revision and not os.environ.get("REVISION"):
+        monkeypatch.setenv("REVISION", revision)
+    if not os.environ.get("PROVENANCE_FILE"):
+        scratch = Path(tempfile.mkdtemp()) / "provenance.json"
+        monkeypatch.setenv("PROVENANCE_FILE", str(scratch))
 
     deployed = {}
 
@@ -110,16 +120,35 @@ def _deployed(monkeypatch):
 
     class Chain:  # Image and Volume builders: every call returns the chain
         def __getattr__(self, name):
-            return lambda *args, **kwargs: self
+            def call(*args, **kwargs):
+                deployed.setdefault("built", []).append((name, args))
+                return self
+
+            return call
 
     modal = types.ModuleType("modal")
     modal.Image = modal.Volume = Chain()
     modal.Secret = types.SimpleNamespace(from_name=lambda name: name)
-    modal.App = lambda name: types.SimpleNamespace(server=decorator)
+
+    def function(**settings):
+        deployed.setdefault("functions", []).append(settings)
+        return lambda f: f
+
+    def app(name):
+        deployed["app"] = name
+        return types.SimpleNamespace(server=decorator, function=function)
+
+    modal.App = app
     modal.enter = modal.exit = lambda: lambda f: f
     monkeypatch.setitem(sys.modules, "modal", modal)
     ran = []
-    monkeypatch.setattr(subprocess, "Popen", lambda command: ran.append(command))
+
+    def popen(command, **options):
+        if options:  # subprocess.run's git or nvidia-smi: as on a bare machine
+            raise OSError("not here")
+        ran.append(command)
+
+    monkeypatch.setattr(subprocess, "Popen", popen)
     spec = importlib.util.spec_from_file_location(
         "modal_vllm", ROOT / "deploy/modal_vllm.py"
     )
@@ -301,3 +330,216 @@ def test_self_hosted_needs_its_own_address(make_config):
 
     with pytest.raises(ConfigError, match="self_hosted"):
         make_config(overrides=["agents.0.self_hosted=true"])
+
+
+def test_modal_pinned_serves_one_revision_at_a_stated_dtype(monkeypatch):
+    monkeypatch.setenv("REVISION", "0123abcd")
+    _, command = _deployed(monkeypatch)
+    for flag, value in (
+        ("--revision", "0123abcd"),
+        ("--dtype", "bfloat16"),
+        ("--max-model-len", "16384"),
+    ):
+        assert command[command.index(flag) + 1] == value
+
+
+def test_modal_pinned_revision_looked_up_at_deploy(monkeypatch):
+    import io
+    import urllib.request
+
+    monkeypatch.delenv("REVISION", raising=False)
+    asked = []
+
+    def hub(url, timeout):
+        asked.append(url)
+        return io.BytesIO(json.dumps({"sha": "feedface"}).encode())
+
+    monkeypatch.setattr(urllib.request, "urlopen", hub)
+    _, command = _deployed(monkeypatch, revision=None)
+    assert command[command.index("--revision") + 1] == "feedface"
+    assert asked == [
+        "https://huggingface.co/api/models/mistralai/Mistral-Small-3.2-24B-Instruct-2506"
+    ]
+
+    def down(url, timeout):
+        raise OSError("no network")
+
+    monkeypatch.setattr(urllib.request, "urlopen", down)
+    with pytest.raises(RuntimeError, match="REVISION"):
+        _deployed(monkeypatch, revision=None)
+
+
+def test_modal_pinned_provenance_behind_the_token(monkeypatch, tmp_path):
+    import asyncio
+    import importlib.util
+    import sys
+    import types
+
+    written = tmp_path / "provenance.json"
+    monkeypatch.setenv("PROVENANCE_FILE", str(written))
+    monkeypatch.setenv("REVISION", "0123abcd")
+    monkeypatch.setenv("DEPLOY_COMMIT", "c0ffee")
+    _deployed(monkeypatch)
+    told = json.loads(written.read_text())
+    assert told["revision"] == "0123abcd" and told["deploy_commit"] == "c0ffee"
+    assert told["dtype"] == "bfloat16" and told["max_model_len"] == 16384
+    assert {"model", "served_name", "gpu", "vllm"} <= told.keys()
+
+    responses = types.ModuleType("starlette.responses")
+    responses.JSONResponse = lambda body, status_code: (body, status_code)
+    monkeypatch.setitem(sys.modules, "starlette.responses", responses)
+    monkeypatch.setenv("VLLM_API_KEY", "modal-token-123")
+    spec = importlib.util.spec_from_file_location(
+        "vllm_token", ROOT / "deploy/vllm_token.py"
+    )
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    async def call_next(request):
+        return "served"
+
+    def ask(token=None):
+        headers = {"authorization": f"Bearer {token}"} if token else {}
+        request = types.SimpleNamespace(
+            url=types.SimpleNamespace(path="/provenance"), headers=headers
+        )
+        return asyncio.run(module.require_token(request, call_next))
+
+    assert ask()[1] == 401
+    assert ask("modal-token-123") == (told, 200)
+
+
+def test_modal_pinned_run_records_what_served_it(
+    make_config, tmp_path, fake_model, monkeypatch
+):
+    from collusion_lab import manifest
+
+    told = {"revision": "0123abcd", "vllm": "0.21.0", "gpu": "H100"}
+    asked = []
+
+    def serving(url, headers):
+        asked.append((url, headers))
+        return told
+
+    monkeypatch.setattr(manifest, "_get_json", serving)
+    monkeypatch.setenv("MODAL_KEY", "modal-token-123")
+    overrides = [*SELF_HOSTED, "agents.0.api_key_env=MODAL_KEY"]
+    [run_dir] = run_config(make_config(overrides=overrides), tmp_path)
+    record = json.loads((run_dir / "manifest.json").read_text())
+    assert record["serving"] == {"A": told}
+    assert asked == [
+        (
+            "https://example--collusion-lab-vllm-serve.modal.run/provenance",
+            {"Authorization": "Bearer modal-token-123"},
+        )
+    ]
+    assert "modal-token-123" not in (run_dir / "manifest.json").read_text()
+
+
+def test_modal_pinned_seed_passed_to_the_server(make_config, tmp_path, fake_model):
+    run_config(make_config(overrides=[*SELF_HOSTED, "seeds=[7]"]), tmp_path)
+    assert {call["seed"] for call in fake_model.calls} == {7}
+
+
+def test_modal_pinned_cached_replay_wakes_no_server(
+    make_config, tmp_path, fake_model, monkeypatch
+):
+    """Modal scales to zero: a replay answered from the cache mustn't start a
+    GPU just to say what it serves."""
+    from collusion_lab import manifest
+    from collusion_lab.cache import Cache
+
+    asked = []
+    monkeypatch.setattr(manifest, "_get_json", lambda url, headers: asked.append(url))
+    config = make_config(overrides=SELF_HOSTED)
+    run_config(config, tmp_path / "1", Cache(tmp_path / "c.sqlite"))
+    assert len(asked) == 1
+    [again] = run_config(config, tmp_path / "2", Cache(tmp_path / "c.sqlite"))
+    assert len(asked) == 1
+    record = json.loads((again / "manifest.json").read_text())
+    assert record["serving"] == {"A": {"skipped": "no fresh calls"}}
+
+
+def test_modal_any_model_deploys_as_its_own_app(monkeypatch):
+    server, command = _deployed(monkeypatch)
+    assert server["app"] == "collusion-lab-vllm"  # Mistral's, as before
+    monkeypatch.setenv("APP_NAME", "collusion-lab-gemma")
+    monkeypatch.setenv("MODEL", "google/gemma-4-31B-it")
+    monkeypatch.setenv("SERVED_NAME", "gemma-4-31b-it")
+    server, command = _deployed(monkeypatch)
+    assert server["app"] == "collusion-lab-gemma"
+    assert command[2] == "google/gemma-4-31B-it"
+    assert command[command.index("--served-model-name") + 1] == "gemma-4-31b-it"
+    assert "--tokenizer-mode" not in command  # Mistral's own format only
+
+
+def test_modal_any_model_spreads_over_its_gpus(monkeypatch):
+    server, command = _deployed(monkeypatch)
+    assert server["gpu"] == "H100" and "--tensor-parallel-size" not in command
+    monkeypatch.setenv("GPUS", "2")
+    server, command = _deployed(monkeypatch)
+    assert server["gpu"] == "H100:2"
+    assert command[command.index("--tensor-parallel-size") + 1] == "2"
+
+
+def test_modal_any_model_gated_token_only_from_the_secret(monkeypatch):
+    server, _ = _deployed(monkeypatch)
+    assert server["secrets"] == ["collusion-lab-vllm"]
+    monkeypatch.setenv("HF_SECRET", "huggingface")
+    server, _ = _deployed(monkeypatch)
+    assert server["secrets"] == ["collusion-lab-vllm", "huggingface"]
+
+
+def test_modal_any_model_gemma_alias_reads_its_address(make_config, monkeypatch):
+    monkeypatch.setenv(
+        "MODAL_GEMMA_BASE", "https://example--collusion-lab-gemma.modal.run/v1"
+    )
+    [agent, _] = make_config(overrides=["agents.0.model=modal-gemma"]).agents
+    assert agent.model == "openai/gemma-4-31b-it" and agent.self_hosted
+    assert agent.api_base == "https://example--collusion-lab-gemma.modal.run/v1"
+    assert agent.api_key_env == "MODAL_VLLM_KEY"
+    monkeypatch.delenv("MODAL_GEMMA_BASE")
+    with pytest.raises(ConfigError, match="MODAL_GEMMA_BASE"):
+        make_config(overrides=["agents.0.model=modal-gemma"])
+
+
+def test_modal_any_model_serves_text_only_when_asked(monkeypatch):
+    _, command = _deployed(monkeypatch)
+    assert "--limit-mm-per-prompt" not in command
+    monkeypatch.setenv("TEXT_ONLY", "1")
+    _, command = _deployed(monkeypatch)
+    limits = json.loads(command[command.index("--limit-mm-per-prompt") + 1])
+    assert limits == {"image": 0}
+
+
+def test_modal_any_model_mistral_keeps_its_own_formats(monkeypatch):
+    _, command = _deployed(monkeypatch)
+    assert command[command.index("--load-format") + 1] == "mistral"
+    assert command[command.index("--tokenizer-mode") + 1] == "mistral"
+    monkeypatch.setenv("MODEL", "google/gemma-4-31B-it")
+    monkeypatch.setenv("TEXT_ONLY", "1")
+    _, command = _deployed(monkeypatch)
+    assert not {"--load-format", "--tokenizer-mode", "--config-format"} & set(command)
+
+
+def test_modal_any_model_picks_its_vllm(monkeypatch):
+    server, _ = _deployed(monkeypatch)
+    assert ("uv_pip_install", ("vllm==0.21.0",)) in server["built"]  # Mistral's
+    monkeypatch.setenv("VLLM", "0.32.0")  # Gemma 4 needs a newer one
+    server, _ = _deployed(monkeypatch)
+    assert ("uv_pip_install", ("vllm==0.32.0",)) in server["built"]
+
+
+def test_modal_any_model_weights_fetched_without_a_gpu(monkeypatch):
+    server, _ = _deployed(monkeypatch)
+    [download] = server["functions"]
+    assert "gpu" not in download  # billed as CPU time
+    assert "/root/.cache/huggingface" in download["volumes"]
+
+
+def test_modal_any_model_sets_its_gpu_memory_share(monkeypatch):
+    _, command = _deployed(monkeypatch)
+    assert "--gpu-memory-utilization" not in command  # vLLM's default, 0.9
+    monkeypatch.setenv("GPU_MEMORY", "0.95")  # Gemma 4 31B's KV cache at 16k
+    _, command = _deployed(monkeypatch)
+    assert command[command.index("--gpu-memory-utilization") + 1] == "0.95"

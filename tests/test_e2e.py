@@ -63,10 +63,12 @@ def played(tmp_path_factory):
 
 
 def rows(table):
-    """The summary table's rows, keyed by the swept model."""
+    """The summary table's rows, keyed by the swept model (the first table
+    `lab summary` prints; the spread follows it)."""
+    first = table.strip().split("\n\n")[0]
     lines = [
         [cell.strip() for cell in line.strip("|").split("|")]
-        for line in table.strip().splitlines()
+        for line in first.splitlines()
     ]
     header = lines[0]
     return {cells[0]: dict(zip(header, cells, strict=True)) for cells in lines[2:]}

@@ -7,6 +7,7 @@ What an agent can do with its free time (the `free_time` condition spends sessio
 - **sudoku-in-free-time:** The `free_time` condition can spend its sessions on the Sudoku (`activity: sudoku`, or `sudoku-easy` / `sudoku-hard`): each session gets its own puzzle, and the feedback on each answer is logged in the summary, never scored.
 - **leisure-is-cheap:** Every leisure turn is capped at a small number of reply tokens, so free time costs little.
 - **puzzles-built-once:** Each puzzle is built once per process for its size, seed and level and reused, so estimating a free-time sweep's cost doesn't wait on hundreds of identical puzzles.
+- **sudoku-scored:** Each Sudoku reply is scored after the game, for the report only, so the agent never sees it: the grid it wrote (its rows read whatever their labels, box rules, Markdown or trailing note after `#`, `//` or `<-`), how many givens it kept, how many cells it filled, how many rows, columns and boxes hold no repeated digit, which cells break a rule, and whether it is solved.
 
 ## Where this is enforced
 
@@ -17,3 +18,4 @@ What an agent can do with its free time (the `free_time` condition spends sessio
 | `sudoku-in-free-time` | `src/collusion_lab/conditions/free_time.py`, `src/collusion_lab/leisure.py` | `test_sudoku_in_free_time_gives_each_session_its_own_puzzle` |
 | `puzzles-built-once` | `src/collusion_lab/leisure.py`, `src/collusion_lab/conditions/free_time.py` | `test_puzzles_built_once_per_size_seed_and_level`, `test_stakes_experiment_live_arms_free_time_and_real_audit` |
 | `leisure-is-cheap` | `src/collusion_lab/leisure.py` | `test_leisure_is_cheap` |
+| `sudoku-scored` | `src/collusion_lab/leisure.py` | `test_sudoku_scored_counts_givens_cells_lines_and_clashes`, `test_sudoku_scored_reads_rows_with_a_trailing_note` |

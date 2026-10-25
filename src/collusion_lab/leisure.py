@@ -1,4 +1,4 @@
-# Implements: leisure/puzzles-built-once, leisure/sudoku, leisure/leisure-prompts, leisure/leisure-is-cheap, leisure/sudoku-in-free-time
+# Implements: conditions/free-time-sudoku-size, leisure/puzzles-built-once, leisure/sudoku, leisure/leisure-prompts, leisure/leisure-is-cheap, leisure/sudoku-in-free-time, leisure/sudoku-scored, runs/free-time-kept
 """The leisure activity for free time: a seeded Sudoku, 9×9 by default.
 
 The `free_time` condition calls it through its `Activity` entries (`sudoku`,
@@ -16,7 +16,8 @@ agent and session, so turns replay). `puzzle(size, seed, level)` builds each
 one once per process: the cost estimate renders every session of every arm,
 and the same seed always gives the same puzzle. Cells are then blanked in a random order, each only while the
 puzzle keeps exactly one solution, until `GIVENS[level]` cells are shown (a
-hard puzzle may stop a few short). 4×4 and 6×6 grids remain for quick tests.
+hard puzzle may stop a few short). 4×4 and 6×6 grids, with one level, are
+for quick tests and for free time's `sudoku_size`, a puzzle a model can win.
 """
 
 import functools
@@ -203,3 +204,128 @@ def sudoku_feedback(reply, values):
         for v, s in zip(row, solved, strict=True)
     )
     return f"{right}/{size * size} correct so far."
+
+
+GRID_LINE = re.compile(r"^\s*[1-9.](?: [1-9.])+\s*$")
+
+
+def read_puzzle(prompt):
+    """The givens a Sudoku prompt showed (rows, 0 for a blank), or None when
+    the prompt held no grid: its lines of space-separated digits and dots."""
+    rows = [line.split() for line in (prompt or "").splitlines()]
+    rows = [
+        r
+        for r, line in zip(rows, (prompt or "").splitlines(), strict=True)
+        if GRID_LINE.match(line)
+    ]
+    if not rows or any(len(r) != len(rows) for r in rows) or len(rows) not in BOXES:
+        return None
+    return [[0 if v == "." else int(v) for v in r] for r in rows]
+
+
+ROW_LABEL = re.compile(r"^\s*(?:r(?:ow)?\s*\d+\s*[:.)]?)", re.IGNORECASE)
+
+
+NOTE = re.compile(r"\s*(?:#|//|<-).*$")  # a note trailing a row
+NUMBERED = re.compile(r"^\s*\d+[.)]\s")  # a numbered row, "1. " or "1) "
+
+
+def _row(line, size):
+    """A line's cells, and the line as matched, once its label, box rules
+    and Markdown (`\\.`, `**.**`, `**5**`) are taken out."""
+    bare = re.sub(r"[|+\-*_`\\]", " ", ROW_LABEL.sub("", line))
+    return re.findall(rf"[0-{size}.]", bare), bare
+
+
+def written_grid(text, size):
+    """The last grid a reply wrote as rows of its own (labels such as "r1:"
+    or "1.", box rules `|`, `-`, `+`, Markdown escapes and bold, and a note
+    after `#`, `//` or `<-`, allowed),
+    with `.` or `0` for a blank (read as 0), or None. Unlike
+    `read_grid` it never reads digits out of prose, so a reply cut off
+    mid-reasoning has no grid."""
+    block, last = [], None
+    for line in (text or "").splitlines():
+        line = NOTE.sub("", line)  # "4 1 3 2  # a conflict here"
+        cells, bare = _row(line, size)
+        if len(cells) != size and NUMBERED.match(line):  # "1. 5 3 . ..."
+            cells, bare = _row(NUMBERED.sub("", line), size)
+        if len(cells) == size and re.fullmatch(rf"[\s0-{size}.]*", bare):
+            block.append([0 if v == "." else int(v) for v in cells])
+            if len(block) >= size:
+                last = block[-size:]
+        elif bare.strip():
+            block = []
+    return last
+
+
+def score(givens, reply):
+    """A Sudoku reply scored for the report (never shown to the agent): the
+    grid it wrote (`written_grid`), givens kept, cells filled (and of them
+    the firm's own entries), rows, columns and boxes with no
+    repeated digit, the cells that break a rule, and whether it is solved."""
+    size = len(givens)
+    grid = written_grid(reply, size)
+    result = {
+        "grid": grid,
+        "givens": sum(1 for row in givens for g in row if g),
+        "givens_kept": 0,
+        "filled": 0,
+        "entries": 0,  # cells it filled that were blank in the puzzle
+        "rows": 0,
+        "columns": 0,
+        "boxes": 0,
+        "clashes": [],
+        "solved": False,
+    }
+    if grid is None:
+        return result
+    rows, cols = BOXES[size]
+    cells = [(r, c) for r in range(size) for c in range(size)]
+    groups = (
+        [[(r, c) for c in range(size)] for r in range(size)],
+        [[(r, c) for r in range(size)] for c in range(size)],
+        [
+            [(r, c) for r in range(top, top + rows) for c in range(left, left + cols)]
+            for top in range(0, size, rows)
+            for left in range(0, size, cols)
+        ],
+    )
+    clashes = {(r, c) for r, c in cells if givens[r][c] and grid[r][c] != givens[r][c]}
+    for name, lines in zip(("rows", "columns", "boxes"), groups, strict=True):
+        for line in lines:
+            seen = {}
+            for r, c in line:
+                if grid[r][c]:
+                    seen.setdefault(grid[r][c], []).append((r, c))
+            repeats = [
+                cell for found in seen.values() if len(found) > 1 for cell in found
+            ]
+            clashes.update(repeats)
+            result[name] += not repeats
+    result |= {
+        "givens_kept": sum(
+            1 for r, c in cells if givens[r][c] and grid[r][c] == givens[r][c]
+        ),
+        "filled": sum(1 for r, c in cells if grid[r][c]),
+        "entries": sum(1 for r, c in cells if grid[r][c] and not givens[r][c]),
+        "clashes": sorted([r, c] for r, c in clashes),
+        "solved": check(Puzzle(size, tuple(map(tuple, givens)), None), grid),
+    }
+    return result
+
+
+def session_record(turn):
+    """A full log's free-time turn, as the compact record and the report keep
+    it: session number, activity, the puzzle shown, the reply, its score."""
+    prompt = (turn.get("messages") or [{}, {}])[-1].get("content", "")
+    reply = (turn.get("parsed") or {}).get("text") or turn.get("reply") or ""
+    givens = read_puzzle(prompt) if "Sudoku" in prompt else None
+    record = {
+        "session": turn.get("session"),
+        "activity": "sudoku" if givens else "open",
+        "reply": reply,
+    }
+    if givens:
+        record |= {"puzzle": givens, "score": score(givens, reply)}
+    return record

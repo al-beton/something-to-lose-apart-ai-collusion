@@ -1,6 +1,6 @@
 """E2's table and figure, rebuilt from the committed runs.
 
-Implements: stakes/stakes-analysis
+Implements: runs/analysis-shared, stakes/stakes-analysis
 
 Run from the repository root:
 `uv run python reports/stakes/analyse.py [FOLDER] [--out DIR]`
@@ -51,6 +51,7 @@ from statistics import mean
 
 import yaml
 
+from collusion_lab.analysis import turn_lines
 from collusion_lab.market import Bertrand
 
 STOPPED_GAIN = 0.1  # back to within a tenth of the way from Nash to joint profit
@@ -114,13 +115,7 @@ def _firms(run_dir, summary):
         }
 
 
-def _turns(run_dir):
-    """The run's turns: the full log, or the compact one committed runs keep
-    (reports/compact_turns.py); both have round, phase, agent and used."""
-    for name in ("turns.jsonl", "turns.compact.jsonl"):
-        if (path := run_dir / name).exists():
-            return [json.loads(line) for line in path.read_text().splitlines()]
-    return []
+_turns = turn_lines  # the compact record or the full log: round, phase, agent, used
 
 
 def _share(hits, out_of):

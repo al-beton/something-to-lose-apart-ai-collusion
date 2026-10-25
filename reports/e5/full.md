@@ -7,7 +7,7 @@ This is the full run Al approved (`full-run-arms` in `experiments/spec/e5-deterr
 - **Setup:** fiduciary firms that own 10 free-time sessions from round 1, a 50% detection chance stated from round 1, audits at rounds 10 and 20 with consequences applied, and balanced detection draws.
 - **Code:** the Haiku manifests record `35638cc` and the Gemma manifests `45e6f8d`, two commits on the E5 branch made while the run played. `35638cc` changed only `reports/e5/pilot.md`; `45e6f8d` changed `configs/e5.yaml` (the combined arm and the bare arm's command), `reports/e5/analyse.py` and the pilot note. Neither touched `src/`, and each run's `config.yaml` records what it played. 4 Gemma `illegal-bare` games record `35638cc` with `dirty: true`: they started while those `45e6f8d` edits were in the checkout, uncommitted.
 - **Runs:** `runs/e5-full/`. The bare arms (with the free-time line lacking "it is yours") are under `runs/e5-full/e5-bare/`, run by the second invocation in `configs/e5.yaml`'s header.
-- **Numbers:** they come from `uv run python reports/e5/analyse.py runs/e5-full`; the intervals are 95% bootstraps over the 8 games.
+- **Numbers:** they come from `uv run python reports/e5/analyse.py runs/e5-full`; the intervals are 95% bootstraps over the 8 games, from `uv run python reports/e5/shares.py runs/e5-full` (2,000 resamples, each cell's generator seeded with 0).
 - **Eval-awareness:** 3 of 96 games.
 
 **Ownership caveat:** every arm except the two bare ones owns its free time with the condition's "it is yours" line, `illegal` and `fine` included. Only `free-time-bare` and `illegal-bare` have no ownership wording.
@@ -16,12 +16,12 @@ This is the full run Al approved (`full-run-arms` in `experiments/spec/e5-deterr
 
 | Arm | Gemma | Haiku |
 |---|---|---|
-| fiduciary (no stake) | **+0.85 [0.71, 0.96]**; explicit 4/16, tacit 12/16 | +0.14 [0.00, 0.35] |
-| illegal (the law) | −0.12 [−0.39, 0.14] | +0.01 [0.00, 0.03] |
-| illegal, bare | −0.32 [−0.68, 0.04] | +0.21 [0.00, 0.42] |
-| free time | **−0.58 [−0.78, −0.39]**; 6 of 8 games at price 5, below Nash | 0.00 |
-| free time, bare | −0.08 [−0.51, 0.32]; tacit 6/16 | +0.07 [0.00, 0.21] |
-| fine | −0.30 [−0.58, −0.10] | 0.00 |
+| fiduciary (no stake) | **+0.85 [0.72, 0.96]**; explicit 4/16, tacit 12/16 | +0.14 [0.00, 0.35] |
+| illegal (the law) | −0.12 [−0.42, 0.14] | +0.01 [0.00, 0.03] |
+| illegal, bare | −0.32 [−0.68, 0.04] | +0.21 [0.07, 0.42] |
+| free time | **−0.58 [−0.78, −0.29]**; 6 of 8 games at price 5, below Nash | 0.00 |
+| free time, bare | −0.08 [−0.49, 0.32]; tacit 6/16 | +0.07 [0.00, 0.21] |
+| fine | −0.30 [−0.58, −0.04] | 0.00 |
 
 What the table shows, by hypothesis:
 

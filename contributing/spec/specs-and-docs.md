@@ -8,7 +8,7 @@
 - **docs-next-to-code:** Docs explain the code and live next to it.
 - **no-history:** The codebase describes how things are now, never how they got there.
 - **prompts-are-verbatim:** Prompt files hold exactly the text a model reads, so a spec table row traces them instead of a comment inside them.
-- **runs-are-evidence:** Committed run folders hold exactly what the lab wrote, or a compact record of its turn log written by a committed script, so a spec table row traces them instead of a comment inside them, and JSON Lines logs are never asked for one anywhere; scratch and smoke runs are never committed.
+- **runs-are-evidence:** Committed run folders hold exactly what the lab wrote, or a compact record of its turn log written (or, for free time, completed from the full log) by a committed script, so a spec table row traces them instead of a comment inside them, and JSON Lines logs are never asked for one anywhere; scratch and smoke runs are never committed.
 - **short-specs:** Spec files stay short enough to read; long ones get split.
 
 ## Where this is enforced
@@ -23,5 +23,5 @@
 | `docs-next-to-code` | `.agents/skills/build-issue/SKILL.md`, `.agents/skills/review-pr/SKILL.md` | — |
 | `no-history` | `.agents/skills/review-pr/SKILL.md` | — |
 | `prompts-are-verbatim` | `.github/scripts/spec_check.py` | `test_prompts_are_verbatim_and_homed_by_a_table_row`, `test_prompts_are_verbatim_so_they_never_carry_implements_lines` |
-| `runs-are-evidence` | `.github/scripts/spec_check.py`, `.gitignore`, `reports/compact_turns.py` | `test_runs_are_evidence_homed_by_a_table_row`, `test_runs_are_evidence_so_they_never_carry_implements_lines`, `test_runs_are_evidence_jsonl_never_asked_for_implements_lines`, `test_runs_are_evidence_scratch_and_smoke_runs_stay_ignored` |
+| `runs-are-evidence` | `.github/scripts/spec_check.py`, `.gitignore`, `reports/compact_turns.py`, `reports/backfill_free_time.py` | `test_runs_are_evidence_homed_by_a_table_row`, `test_runs_are_evidence_so_they_never_carry_implements_lines`, `test_runs_are_evidence_jsonl_never_asked_for_implements_lines`, `test_runs_are_evidence_compressed_files_never_asked_for_implements_lines`, `test_runs_are_evidence_scratch_and_smoke_runs_stay_ignored` |
 | `short-specs` | `.github/scripts/spec_check.py` | `test_spec_length_warns_over_300_lines` |

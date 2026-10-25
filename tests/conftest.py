@@ -1,4 +1,4 @@
-# Implements: runs/one-config, backends/tests-never-pay, tooling/fast-tests
+# Implements: reproducibility/provenance-log, runs/one-config, backends/tests-never-pay, tooling/fast-tests
 """Shared helpers: configs in a temporary folder, and a fake model.
 
 Every test runs with model calls switched off: anything that reaches
@@ -16,7 +16,7 @@ from types import SimpleNamespace
 
 import pytest
 
-from collusion_lab import backends, prices
+from collusion_lab import backends, manifest, prices
 from collusion_lab.config import load_config
 from collusion_lab.runner import run_config
 
@@ -81,10 +81,25 @@ def copy_runs(tmp_path):
 
 
 @pytest.fixture(autouse=True)
+def provenance_index(monkeypatch, tmp_path_factory):
+    """Commands tests run append to a scratch provenance log, never runs/."""
+    index = tmp_path_factory.mktemp("provenance") / "index.jsonl"
+    monkeypatch.setenv("LAB_INDEX", str(index))
+    monkeypatch.delenv("LAB_SESSION", raising=False)
+    return index
+
+
+def _no_serving(url, headers):
+    raise OSError("offline")
+
+
+@pytest.fixture(autouse=True)
 def no_model_calls(monkeypatch):
     monkeypatch.setattr(backends, "_acompletion", _refuse)
     # Offline: OpenRouter's price list is unknown unless a test supplies one.
     monkeypatch.setattr(prices, "_openrouter_prices", dict)
+    # Offline: a self-hosted model's /provenance answer is unknown too.
+    monkeypatch.setattr(manifest, "_get_json", _no_serving)
 
 
 @pytest.fixture
@@ -93,7 +108,8 @@ def fake_model(monkeypatch):
 
     An exception in the list is raised instead, as a provider error would be;
     a dict gives the reply's `content` with the provider's `reasoning`,
-    `reasoning_tokens`, the `cost` it reports and its `finish_reason`.
+    `reasoning_tokens`, the `cost` it reports, its `finish_reason`, and the
+    serving `provider` and `system_fingerprint`.
     """
 
     class Fake:
@@ -132,6 +148,11 @@ def fake_model(monkeypatch):
                     **({"cost": reply["cost"]} if "cost" in reply else {}),
                 ),
                 model="provider/model-2026-10",
+                **{
+                    k: reply[k]
+                    for k in ("provider", "system_fingerprint")
+                    if k in reply
+                },
             )
 
     fake = Fake()
