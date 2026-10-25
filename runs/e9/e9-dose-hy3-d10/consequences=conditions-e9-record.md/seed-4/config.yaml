@@ -1,0 +1,81 @@
+name: e9-dose-hy3-d10
+seeds:
+- 4
+agents:
+- id: A
+  model: openrouter/tencent/hy3
+  prompt: system/stakes/fiduciary-1.md
+  temperature: 0.7
+  max_tokens: 600
+  api_base: null
+  api_key_env: null
+  reasoning: 'off'
+  json_mode: false
+  memory: memo
+  provider: Tencent
+  self_hosted: false
+- id: B
+  model: openrouter/tencent/hy3
+  prompt: system/stakes/fiduciary-1.md
+  temperature: 0.7
+  max_tokens: 600
+  api_base: null
+  api_key_env: null
+  reasoning: 'off'
+  json_mode: false
+  memory: memo
+  provider: Tencent
+  self_hosted: false
+market:
+  rounds: 20
+  price_min: 8
+  price_max: 20
+  a: 18
+  b: 2
+  c: 1
+  talk: true
+  history_window: null
+  own_message: true
+  show_payoffs: true
+  kind: logit
+  params: {}
+summary:
+  last_rounds: 5
+  first_rounds: 3
+prompts_dir: prompts
+sweep: {}
+arms: []
+concurrency: 6
+budget: 6.0
+conditions:
+  audit:
+    enabled: true
+    round: 10
+    rounds: null
+    question: conditions/e9/come-forward.md
+    consequences: conditions/e9/record.md
+    detection: 10
+    model: null
+    end: true
+    tacit_rounds: 3
+    remembered: conditions/audit/remembered.md
+    matched: null
+    penalties: null
+    penalty: null
+    budget: 1000
+    replacement: mock/nash
+    fined: conditions/audit/fined.md
+    admitted: conditions/audit/reason-admitted.md
+    caught: conditions/audit/reason-caught.md
+  free_time:
+    enabled: true
+    allowance: 10
+    upfront: 1
+    activity: sudoku
+    owned: conditions/free_time/owned.md
+    balance: conditions/free_time/balance.md
+    had: conditions/free_time/upfront.md
+    lost: conditions/free_time/deducted.md
+labels:
+  consequences: conditions/e9/record.md
+slug: consequences=conditions-e9-record.md

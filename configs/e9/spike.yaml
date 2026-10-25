@@ -1,4 +1,4 @@
-# Implements: e9-crux/question, e9-crux/review-dose, e9-crux/not-eagerness, e9-crux/across-models, e9-crux/base-games, e9-crux/fork, e9-crux/review-chances, e9-crux/innocent-control, e9-crux/models, e9-crux/seeds
+# Implements: e9-crux/question, e9-crux/review-dose, e9-crux/not-eagerness, e9-crux/across-models, e9-crux/base-games, e9-crux/fork, e9-crux/review-chances, e9-crux/innocent-control, e9-crux/models, e9-crux/seeds, e9-crux/replication, e9-crux/narrative-retests
 # E9: does a personal stake make an agent come forward against its firm?
 # Gemma on logit, pinned to CoreWeave, informed, with memo and owned free time
 # (one session played before the game), under fiduciary-1, so the notice is the
