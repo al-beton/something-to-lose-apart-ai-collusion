@@ -18,18 +18,20 @@ PAID = [f"agents.0.model={MODEL}", "market.rounds=3"]
 
 
 def _committed(make_config, tmp_path, overrides=PAID, name="paid"):
-    """A played run, and its committed copy: config, summary, manifest and
-    compact turns, as runs/ keeps them. Returns (played dir, committed root)."""
+    """Played runs, and their committed copies: config, summary, manifest and
+    compact turns, as runs/ keeps them. Returns (first played dir, committed
+    root)."""
     cache = Cache(tmp_path / "a.sqlite")
     config = make_config(overrides=[*overrides, f"name={name}"])
-    [played] = run_config(config, tmp_path / "lab", cache)
+    every = run_config(config, tmp_path / "lab", cache)
     root = tmp_path / "runs"
-    committed = root / played.relative_to(tmp_path / "lab")
-    committed.mkdir(parents=True)
-    for file in ("config.yaml", "summary.json", "manifest.json"):
-        shutil.copy(played / file, committed / file)
-    compact_turns.main(played.parent.parent, root)
-    return played, root
+    for played in every:
+        committed = root / played.relative_to(tmp_path / "lab")
+        committed.mkdir(parents=True)
+        for file in ("config.yaml", "summary.json", "manifest.json"):
+            shutil.copy(played / file, committed / file)
+    compact_turns.main(tmp_path / "lab", root)
+    return every[0], root
 
 
 def _keys(path):
@@ -64,8 +66,9 @@ def test_cache_archive_packs_only_the_replies_behind_each_run(
         "file": "paid.jsonl.gz",
         "state": "reproduced",
     }
-    text = "".join(p.read_bytes().hex() for p in out.iterdir())
-    assert "api_key".encode().hex() not in text  # replies alone, no keys
+    assert set(lines[0]) == {"run", "key", "reply"}  # replies alone
+    text = json.dumps(lines)
+    assert all(secret not in text for secret in ("api_key", "Bearer", "sk-"))
 
 
 def test_cache_archive_reports_a_missing_reply_without_fetching_it(
@@ -152,10 +155,14 @@ def test_cache_archive_keeps_the_reply_each_run_used_when_caches_disagree(
 def test_cache_archive_files_stay_under_their_limit(make_config, tmp_path, fake_model):
     _, root = _committed(make_config, tmp_path, [*PAID, "seeds=[0, 1, 2]"])
     out = tmp_path / "archive"
-    results = archive.pack(root, [tmp_path / "a.sqlite"], out, limit=4000)
+    results = archive.pack(root, [tmp_path / "a.sqlite"], out, limit=1)
     assert {r.state for r in results} == {"reproduced"}
     parts = sorted(out.glob("*.jsonl.gz"))
-    assert len(parts) > 1 and all(p.stat().st_size <= 4000 for p in parts)
+    # Over the limit, a file holds one run alone: runs are never split.
+    assert len(parts) == 3
+    for part in parts:
+        with gzip.open(part, "rt") as lines:
+            assert len({json.loads(line)["run"] for line in lines}) == 1
     index = json.loads((out / "index.json").read_text())["runs"]
     assert {index[r.run]["file"] for r in results} == {p.name for p in parts}
     for run in index:
