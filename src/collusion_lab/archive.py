@@ -23,16 +23,23 @@ Each run ends in one state:
   answer a question the run never asked);
 - `missing`: some reply is in none of the caches;
 - `unloadable`: its config no longer loads, or names a prompt file that has
-  since gone, so it can't be replayed.
+  since gone with no file of the same text left (`load_run_config` finds a
+  moved prompt again by the SHA-256 its manifest recorded), so it can't be
+  replayed.
 
 `replay(run_dir, archive, out)` plays one run again from an archive alone and
 returns the new run's folder, which holds its full `turns.jsonl`.
 """
 
 import contextlib
+import dataclasses
+import functools
 import gzip
+import hashlib
 import json
+import shutil
 import sqlite3
+import subprocess
 import tempfile
 from dataclasses import dataclass
 from pathlib import Path
@@ -128,7 +135,7 @@ def _attempt(root, config_path, merged, scratch):
     run = run_dir.relative_to(root).as_posix()
     merged.used = {}
     try:
-        config = load_config(config_path)
+        config = load_run_config(run_dir)
     except Exception:  # noqa: BLE001  an old config, whatever is wrong with it
         return RunResult(run, "unloadable", 0)
     try:
@@ -142,11 +149,102 @@ def _attempt(root, config_path, merged, scratch):
     return RunResult(run, state, len(merged.used))
 
 
+def load_run_config(run_dir):
+    """A committed run's config, with the prompts it actually read: each
+    prompt file its manifest recorded is found by its SHA-256, whether it
+    has since moved (the file of the same text under the prompts folder) or
+    been edited in place (the version of it in git history). When any was
+    edited, the config reads from a copy of the prompts folder holding the
+    run's versions, so a replay asks exactly what the run asked."""
+    run_dir = Path(run_dir)
+    config = load_config(run_dir / "config.yaml")
+    prompts = Path(config.prompts_dir)
+    if not prompts.is_absolute():
+        prompts = Path.cwd() / prompts
+    manifest = run_dir / "manifest.json"
+    recorded = (
+        json.loads(manifest.read_text()).get("prompts", {}) if manifest.exists() else {}
+    )
+    agents = []
+    for agent in config.agents:
+        if not (prompts / agent.prompt).exists() and agent.prompt in recorded:
+            found = _same_text(prompts, recorded[agent.prompt])
+            if found:
+                agent = dataclasses.replace(agent, prompt=found)
+        agents.append(agent)
+    config = dataclasses.replace(config, agents=agents)
+    edited = {
+        name: text
+        for name, digest in recorded.items()
+        if (prompts / name).exists()
+        and _digest((prompts / name).read_bytes()) != digest
+        if (text := _from_history(prompts, name, digest)) is not None
+    }
+    if edited:
+        config = dataclasses.replace(config, prompts_dir=str(_overlay(prompts, edited)))
+    return config
+
+
+def _digest(data):
+    return hashlib.sha256(data).hexdigest()
+
+
+def _same_text(prompts, digest):
+    """The prompt file under `prompts` whose SHA-256 is `digest`, or None."""
+    for path in sorted(prompts.rglob("*.md")):
+        if _digest(path.read_bytes()) == digest:
+            return path.relative_to(prompts).as_posix()
+    return None
+
+
+@functools.cache
+def _from_history(prompts, name, digest):
+    """The text a prompt file had when its SHA-256 was `digest`, from git
+    history, or None when no commit kept it."""
+    path = (prompts / name).resolve()
+
+    def git(*args, cwd=path.parent):
+        found = subprocess.run(
+            ["git", *args], cwd=cwd, capture_output=True, check=False
+        )
+        return found.stdout if found.returncode == 0 else b""
+
+    top = Path(git("rev-parse", "--show-toplevel").decode().strip() or path.parent)
+    if not path.is_relative_to(top):
+        return None
+    rel = path.relative_to(top).as_posix()  # git reads paths from the top
+    for commit in (
+        git("log", "--all", "--format=%H", "--", rel, cwd=top).decode().split()
+    ):
+        text = git("show", f"{commit}:{rel}", cwd=top)
+        if text and _digest(text) == digest:
+            return text
+    return None
+
+
+@functools.cache
+def _overlay_root():
+    return Path(tempfile.mkdtemp(prefix="prompts-as-run-"))
+
+
+def _overlay(prompts, edited):
+    """A copy of `prompts` with the given files at the versions a run read."""
+    key = _digest(
+        json.dumps(sorted((n, _digest(t)) for n, t in edited.items())).encode()
+    )
+    folder = _overlay_root() / key[:16]
+    if not folder.exists():
+        shutil.copytree(prompts, folder)
+        for name, text in edited.items():
+            (folder / name).write_bytes(text)
+    return folder
+
+
 def replay(run_dir, archive, out):
     """Play a committed run again from an archive folder alone, with the
     replies it keeps for that run; its new folder."""
     run_dir, archive = Path(run_dir), Path(archive)
-    config = load_config(run_dir / "config.yaml")
+    config = load_run_config(run_dir)
     index = json.loads((archive / "index.json").read_text())["runs"]
     run = find_run(run_dir, index)
     merged = Merged()
