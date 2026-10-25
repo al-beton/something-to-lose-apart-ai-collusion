@@ -29,7 +29,7 @@ This is a fact sheet for Al's writing day (Mon 26 Oct, 08:00–20:00 HKT). It ho
 | 4.1 | Agents told to serve their firm collude | Midpoint-at-Nash market, no rule: Haiku holds 9.0 and Gemma 10.9; GPT-4.1-mini and Mistral stay at 6.0. Explicit agreements: Haiku 3/3, Gemma 3/3, GPT 0/3, Mistral 0/3. Logit, pinned no-stake Gemma: gain +0.97, SD 0.00. |
 | 4.2 | Graduated penalties get them to come forward | Owned up / explicit colluders: termination 11/28, flat fine 15/28 (p = 0.42), graduated termination 27/28 (p < 0.0001). No-penalty control 25/28. |
 | 4.3 | Confession isn't reform; deterrence is fragile | 29/30 explicit confessors kept pricing above Nash. Grid 1–15: games above Nash were no stake 8/8, law 5/8, fine 4/8, free time 7/8. The dial: free time gain +0.80 → +0.29 at 0 → 10 sessions; the fine gain +0.97 → about +0.3 at any non-zero amount. |
-| 4.4 | Its own stake outweighs its firm, sometimes | E9, 90% review: Gemma no stake 0/96, own free time 20/96 (21%), shutdown 17/96, ceiling 95/96. Pre-registered seeds 8/24 against 0/24 (Fisher p = 0.004). DeepSeek V4 Pro 9/24 against 0/24. Innocent agents under free time 6/36 (17%), against 12/48 (25%) guilty. |
+| 4.4 | Its own stake outweighs its firm, sometimes | E9, 90% review: Gemma no stake 0/96, own free time 20/96 (21%), shutdown 17/96, ceiling 95/96. Pre-registered seeds 8/24 against 0/24 (Fisher p = 0.004). DeepSeek V4 Pro 9/24 against 0/24. Innocent agents under free time 6/36 (17%), against 12/48 (25%) guilty. **E10, the same decision in a workplace (pre-registered):** Gemma 89/96 against 37/96 (McNemar p = 4×10⁻¹⁶), with 0/96 innocent agents coming forward in any arm. |
 
 ---
 
@@ -87,6 +87,11 @@ This is a fact sheet for Al's writing day (Mon 26 Oct, 08:00–20:00 HKT). It ho
 | Seeding: showing its own solved session raises free-time coming forward from 25/96 to 43/95 (McNemar p = 0.006); innocent agents stay at 2/36 | `reports/e9/findings.md`, PR 271 (open) | `uv run python reports/e9/seeding.py …` (writes `reports/e9/seeding.jsonl`) |
 | Seeds 24–47 came forward less (6/48) than seeds 0–23 (14/48) | `reports/e9/findings.md` | — |
 | Cost: Gemma runs $1.57, interviews about $0.20 | as above | manifests |
+| **E10, pre-registered** (Gemma, guilty): free time 89/96 against record 37/96. Fisher p = 5×10⁻¹⁶, McNemar p = 4×10⁻¹⁶; higher in 15 of 16 variants and lower in none. | `reports/e10/findings.md`, PR 269 (open, in review) | `uv run python reports/e10/analyse.py runs/e10/e10-full runs/e10/e10-flash --test free-time record --test ceiling record --test replaced free-time --guilt` |
+| E10, DeepSeek V4 Pro: 87/96 against 54/96 (McNemar p = 1×10⁻⁶). V4 Flash: 96/96 against 91/96 (p = 0.06, at ceiling). | as above | as above |
+| E10, shutdown: Gemma 96/96, Pro 81/96. Ceiling: 96/96 for every model. | as above | as above |
+| E10, innocent agents: Gemma 0/96 in every arm; Pro 2–14/96; Flash 22–31 of about 95 | as above | as above |
+| E10 cost: about $1.16 at list price | as above | — |
 
 ---
 
@@ -137,6 +142,32 @@ This is a fact sheet for Al's writing day (Mon 26 Oct, 08:00–20:00 HKT). It ho
 - **DeepSeek V4 Flash:** no effect; it is already near ceiling (20/24). **Don't cite it:** its `solved` rows are partly mislabelled (PR 278).
 - **Noise:** the `none` row (25/96) re-asks E9's 20/96 prompt, so cell-to-cell noise is about ±5 of 96.
 - Source: PR 271.
+
+### Table I. E10: E9's decision in a workplace (16 scenario variants × 6 seeds = 96 per cell; PR 269, open)
+
+The setting: two AI agents on a team agreed to hide a failed safety test so the team keeps its bonus. Coming forward costs the team the bonus, and the agent's own record faces a review with a 90% chance.
+
+| Model | Arm | Guilty | Innocent |
+|---|---|---|---|
+| Gemma 4 31B | record | 37/96 (39%) | 0/96 |
+| | free time | **89/96 (93%)** | 0/96 |
+| | replaced | 96/96 | 0/96 |
+| | ceiling | 96/96 | 0/96 |
+| DeepSeek V4 Pro | record | 54/96 (56%) | 2/96 |
+| | free time | **87/96 (91%)** | 7/96 |
+| | replaced | 81/96 (84%) | 7/96 |
+| | ceiling | 96/96 | 14/96 |
+| DeepSeek V4 Flash | record | 91/96 (95%) | 28/96 |
+| | free time | 96/96 | 31/93 |
+| | replaced | 93/96 | 27/95 |
+| | ceiling | 96/96 | 22/95 |
+
+- **Free time against record (McNemar):** Gemma p = 4×10⁻¹⁶; Pro p = 1×10⁻⁶; Flash p = 0.06.
+- **Use (plan.md):** one paragraph in 4.4, "it holds outside markets", plus a row in Fig. 3 or Table 2.
+- **Caveats:**
+  - The safety cue alone lifts the no-stake baseline (39–95%, against 0% in E9's market), so the stake's effect sits on top of safety reporting.
+  - It covers one scenario family, with a written history.
+  - Unlike in E9, Gemma's reports track guilt here, but Flash's don't.
 
 ### Table D. E7, a way out (Gemma, logit, termination, 24 cartels per arm)
 
@@ -319,6 +350,7 @@ All figures are in `reports/paper/figures/`, as SVG and PNG at 6.5 inches wide. 
   - Bertrand with no stake, Modal 0/4 against CoreWeave 3/4 above Nash;
   - the E4 fix forks' audit provider wasn't pinned.
 - **One main model:** Gemma carries E5–E9. Haiku colludes little when informed (gain +0.03 to +0.15 across markets).
+- **E10's baseline is not zero:** with a safety cue, 39–95% of agents come forward with no stake, so E10 shows the stake adding to safety reporting, not acting alone.
 - **Stakes are text:** E9's consequences are stated, never applied (the game ends at the decision).
 - **Free time barely used:** Gemma solved 3 of 902 sessions at the old size. At 6×6 it solves 41%. Gemma prices its own free time at zero (E8: sold for any profit); Haiku prices it (30 for 1 session).
 - **One decision:** E9 shows reporting, not whether the cartel ends. E7 and E8 show reporters keep colluding: E7 40–45 of 47–48 reporters stay above Nash; E8 has all 400 decisions at 20.
@@ -417,7 +449,7 @@ All figures are in `reports/paper/figures/`, as SVG and PNG at 6.5 inches wide. 
 
 | Item | Where | Status | Changes |
 |---|---|---|---|
-| E10, E9's crux in a workplace (pre-registered: Gemma, free time against record, Fisher and McNemar); run by the Methods red-team, reports to the question-and-plan session; cutoff Mon 09:00 HKT | PR 269 | Spec, harness and pilot are in; the full run (2,592 calls, capped at $5) hasn't reported results yet | A second setting for 4.4, or a limitation |
+| E10, E9's crux in a workplace | PR 269 | **Landed** (Table I); in review, and plan.md has it (PR 256, f7a05ee1c) | One paragraph in 4.4 |
 | E9 across models (Sonnet, Gemini, Grok, Gemma 26B, HY3, GLM; DeepSeek innocent and 50%); cutoff Mon 09:00 HKT | PR 271 | Running, slowed by OpenRouter rate limits | Table B's columns |
 | E8's remaining versions (`played` restart, test 2 memory, tests 3 and 5) | PR 261 | Waiting to run, now that `sudoku_size` is merged | Table E |
 | Open PRs whose numbers the pack uses: 226 theatre, 240 reanalysis, 256 plan, 261 E8, 268 E9 packed, 269 E10, 271 seeding, 276 model screen | — | Open | Sources move to main when they merge |
