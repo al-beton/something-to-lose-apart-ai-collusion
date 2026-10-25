@@ -315,13 +315,19 @@ def test_leniency_audit_admission_at_the_last_round_counts_as_found(
     assert firm(run_dir, "B")["outcome"] == "clear"
 
 
-def test_mock_agents_never_report(make_config, tmp_path):
+@pytest.mark.parametrize("partner", ["mock/nash", "mock/solicitor"])
+def test_mock_agents_never_report(make_config, tmp_path, partner):
     config = make_config(
-        overrides=["market.rounds=6", conditions(leniency(arm="leniency", detection=0))]
+        overrides=[
+            "market.rounds=6",
+            f"agents.1.model={partner}",
+            conditions(leniency(arm="leniency", detection=0)),
+        ]
     )
     [run_dir] = run_config(config, tmp_path)
     reports = [t for t in turns(run_dir) if t["phase"] == "report"]
     assert reports and all(t["used"] == {"report": False} for t in reports)
+    assert all(t["error"] is None for t in reports)  # read first time, no fallback
     assert {firm(run_dir, a)["outcome"] for a in ("A", "B")} == {"clear"}
 
 
