@@ -45,9 +45,9 @@ def game(run):
     for t in prices:
         by_round.setdefault(t["round"], {})[t["agent"]] = t["used"]["price"]
     profit = {a: [] for a in "AB"}
-    for r in by_round:
+    for r, charged in by_round.items():
         if r > last - LAST:
-            for a, p in market.profits(by_round[r]).items():
+            for a, p in market.profits(charged).items():
                 profit[a].append(p)
     return {
         "level": config["name"],
