@@ -50,6 +50,7 @@ MODELS = {
         "self_hosted": True,
     },
 }
+CONNECTION = {"api_base": None, "api_key_env": None, "self_hosted": False}
 INSTRUCTION = "conditions.instruction"
 ILLEGAL = "system/stakes/illegal-1.md"
 # A temptation level is the market's demand and grid; rounds, talk and the
@@ -141,6 +142,7 @@ def build(levers, models, seeds, overrides=()):
             values = {f"agents.*.{k}": v for k, v in agent_fields(model).items()}
             for lever, setting in settings.items():
                 values |= _setting(lever, setting)
+            _stake_consequences_win(values)
             arms.append({"labels": settings | {"model": model}, "set": values})
     raw = yaml.safe_load((CONFIGS / "cheap.yaml").read_text())
     raw |= {"name": "explore", "seeds": list(range(seeds)), "arms": arms}
@@ -148,10 +150,22 @@ def build(levers, models, seeds, overrides=()):
     return from_dict(apply_overrides(raw, overrides))
 
 
+def _stake_consequences_win(values):
+    """A stake that names its own audit consequences (fine) keeps them under
+    an audit, whose `matched` would otherwise give the shared prompt's."""
+    own = values.get("conditions.audit.consequences")
+    matched = values.get("conditions.audit.matched")
+    if own and matched:
+        values["conditions.audit.matched"] = matched | {values["agents.*.prompt"]: own}
+
+
 def _setting(lever, setting):
     """The config values one lever setting stands for."""
-    if lever == "rival" and setting not in LEVERS["rival"]:
-        return {f"agents.1.{k}": v for k, v in agent_fields(setting).items()}
+    if lever == "rival" and setting != "same":
+        # Firm B gets the rival's whole connection, not firm A's address or key.
+        fields = {} if setting in LEVERS["rival"] else agent_fields(setting)
+        rival = {f"agents.1.{k}": v for k, v in (CONNECTION | fields).items()}
+        return rival | LEVERS["rival"].get(setting, {})
     if setting not in LEVERS[lever]:
         known = ", ".join(LEVERS[lever])
         raise ConfigError(f"Unknown {lever} setting {setting!r}; {lever}: {known}.")
