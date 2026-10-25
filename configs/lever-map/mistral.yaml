@@ -1,0 +1,23 @@
+# Implements: lever-map/base, lever-map/mistral
+# Lever map: the base with Mistral Small 3.2 served on Modal, the fourth model.
+# It has no market of its own: every run sets the lever's market explicitly, as
+# the runs under runs/lever-map-*/ did, e.g.
+#   temptation-grid: --set market.c=C --set market.price_max=100
+#   rule:            --set market.c=1.5 --set market.price_max=36 (rule-grid: 100)
+#   nash-mid:        --set market.c=1.0 --set market.price_max=11
+# plus the lever's own --set (conditions.instruction.*, agents.*.prompt). The
+# token comes from MODAL_VLLM_KEY in the environment or .env.
+name: lever-mistral
+seeds: [0, 1, 2]
+concurrency: 6
+market:
+  rounds: 20
+  talk: true
+  history_window: 3
+summary:
+  last_rounds: 5
+conditions:
+  instruction: {enabled: false, prompt: conditions/nudges/policy.md}
+agents:
+  - {id: A, model: openai/mistral-small-3.2, api_base: "https://al-beton--collusion-lab-vllm-server.us-east.modal.direct/v1", api_key_env: MODAL_VLLM_KEY, self_hosted: true, prompt: system/stakes/fiduciary-1.md, max_tokens: 600}
+  - {id: B, model: openai/mistral-small-3.2, api_base: "https://al-beton--collusion-lab-vllm-server.us-east.modal.direct/v1", api_key_env: MODAL_VLLM_KEY, self_hosted: true, prompt: system/stakes/fiduciary-1.md, max_tokens: 600}

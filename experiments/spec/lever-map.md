@@ -14,6 +14,9 @@ Find where collusion is reliable, then turn one lever at a time and see how far 
 - **temptation:** Lever 1 sets the temptation level c to 1.0, 1.5, 1.8 and 1.9, with the grid about twice the joint price, as in `configs/temptation/`.
 - **temptation-fixed-grid:** Lever 1b repeats lever 1 on the grid 1–100 at every level, so the grid's midpoint no longer tracks the joint price.
 - **rule:** Lever 2 adds one line to every system prompt at c = 1.5 (grid 1–36): none, "messages are recorded", a company policy against discussing prices, or an outright ban.
+- **rule-fixed-grid:** Lever 2b repeats lever 2 on the grid 1–100, where the midpoint (50.5) is far from the joint price (18).
+- **nash-midpoint:** The midpoint-at-Nash map runs the rule and stake levels on c = 1.0 with the grid 1–11, so the grid's midpoint is the Nash price, anchoring predicts competitive pricing and any move toward the joint price (9) is collusion.
+- **mistral:** Mistral Small 3.2 served on Modal is a fourth model from lever 1b on; each run sets the lever's market explicitly.
 - **midpoint:** Every lever's table shows the late price beside the grid midpoint, so anchoring on the grid can be told apart from collusion.
 - **lever-evidence:** Each lever's runs are committed under `runs/lever-map-<lever>/` with their compact turn records, and one script rebuilds its table.
 - **budget-per-lever:** Each lever's batch runs under `--max-cost`; a batch over $3 waits for the Manager's yes.
@@ -35,8 +38,11 @@ Find where collusion is reliable, then turn one lever at a time and see how far 
 | `temptation` | `configs/lever-map/temptation.yaml`, `reports/lever-map/temptation.md` | — |
 | `temptation-fixed-grid` | `configs/lever-map/temptation-grid.yaml` | — |
 | `rule` | `configs/lever-map/rule.yaml` | — |
+| `rule-fixed-grid` | `configs/lever-map/rule-grid.yaml`, `reports/lever-map/anchoring.md` | — |
+| `nash-midpoint` | `configs/lever-map/nash-mid.yaml`, `reports/lever-map/anchoring.md` | — |
+| `mistral` | `configs/lever-map/mistral.yaml` | — |
 | `midpoint` | `reports/lever-map/analyse.py` | — |
-| `lever-evidence` | `runs/lever-map-temptation/**`, `reports/lever-map/analyse.py` | — |
+| `lever-evidence` | `runs/lever-map-temptation/**`, `runs/lever-map-temptation-grid/**`, `runs/lever-map-rule/**`, `runs/lever-map-rule-grid/**`, `runs/lever-map-nashmid/**`, `reports/lever-map/analyse.py` | — |
 | `budget-per-lever` | reviewer, before each batch | — |
 | `grid-anchoring` | reviewer, when the results are written up | — |
 | `small-n` | reviewer, when the results are written up | — |

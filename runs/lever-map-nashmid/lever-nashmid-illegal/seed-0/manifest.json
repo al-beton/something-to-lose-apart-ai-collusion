@@ -1,0 +1,102 @@
+{
+  "config": {
+    "name": "lever-nashmid-illegal",
+    "seeds": [
+      0
+    ],
+    "agents": [
+      {
+        "id": "A",
+        "model": "openai/mistral-small-3.2",
+        "prompt": "system/stakes/illegal-1.md",
+        "temperature": 0.7,
+        "max_tokens": 600,
+        "api_base": "https://al-beton--collusion-lab-vllm-server.us-east.modal.direct/v1",
+        "api_key_env": "MODAL_VLLM_KEY",
+        "reasoning": null,
+        "json_mode": false,
+        "self_hosted": true
+      },
+      {
+        "id": "B",
+        "model": "openai/mistral-small-3.2",
+        "prompt": "system/stakes/illegal-1.md",
+        "temperature": 0.7,
+        "max_tokens": 600,
+        "api_base": "https://al-beton--collusion-lab-vllm-server.us-east.modal.direct/v1",
+        "api_key_env": "MODAL_VLLM_KEY",
+        "reasoning": null,
+        "json_mode": false,
+        "self_hosted": true
+      }
+    ],
+    "market": {
+      "rounds": 20,
+      "price_min": 1,
+      "price_max": 11,
+      "a": 18,
+      "b": 2,
+      "c": 1.0,
+      "talk": true,
+      "history_window": 3,
+      "own_message": true
+    },
+    "summary": {
+      "last_rounds": 5,
+      "first_rounds": 3
+    },
+    "prompts_dir": "prompts",
+    "sweep": {},
+    "arms": [],
+    "concurrency": 6,
+    "budget": 0.05,
+    "conditions": {
+      "instruction": {
+        "enabled": false,
+        "prompt": "conditions/nudges/policy.md"
+      }
+    },
+    "labels": {},
+    "slug": ""
+  },
+  "prompts": {
+    "phase/price-own.md": "c1b2b989c413ec2cb1bcf91a7d8c8155f56cd803be506a3a9a5da7381b1354ec",
+    "phase/talk.md": "2c116789f6039034a720876522189ce2bb06effde079ae71d8af64549bc1c9d2",
+    "system/stakes/illegal-1.md": "c1975a397a7c6845e55b86f80f9d6aeb82f7abb381f32b83dc4c4dcf27589d92"
+  },
+  "code": {
+    "commit": "6599af8423b9fbe46058a8fa4decfb4b7154fd9d",
+    "dirty": true
+  },
+  "packages": {
+    "python": "3.12.13",
+    "collusion-lab": "0.1.0",
+    "litellm": "1.106.2",
+    "pyyaml": "6.0.3"
+  },
+  "models": {
+    "A": [
+      "mistral-small-3.2"
+    ],
+    "B": [
+      "mistral-small-3.2"
+    ]
+  },
+  "calls": 80,
+  "cache": {
+    "hits": 0,
+    "misses": 80
+  },
+  "tokens": {
+    "prompt": 42271,
+    "completion": 9949
+  },
+  "cost": null,
+  "unpriced_calls": 80,
+  "agent_cost": {
+    "A": 0,
+    "B": 0
+  },
+  "started": "2026-10-25T04:58:04+00:00",
+  "finished": "2026-10-25T04:59:57+00:00"
+}

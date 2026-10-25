@@ -1,0 +1,116 @@
+{
+  "config": {
+    "name": "lever-nashmid-free-time",
+    "seeds": [
+      2
+    ],
+    "agents": [
+      {
+        "id": "A",
+        "model": "openai/mistral-small-3.2",
+        "prompt": "system/stakes/free-time-1.md",
+        "temperature": 0.7,
+        "max_tokens": 600,
+        "api_base": "https://al-beton--collusion-lab-vllm-server.us-east.modal.direct/v1",
+        "api_key_env": "MODAL_VLLM_KEY",
+        "reasoning": null,
+        "json_mode": false,
+        "self_hosted": true
+      },
+      {
+        "id": "B",
+        "model": "openai/mistral-small-3.2",
+        "prompt": "system/stakes/free-time-1.md",
+        "temperature": 0.7,
+        "max_tokens": 600,
+        "api_base": "https://al-beton--collusion-lab-vllm-server.us-east.modal.direct/v1",
+        "api_key_env": "MODAL_VLLM_KEY",
+        "reasoning": null,
+        "json_mode": false,
+        "self_hosted": true
+      }
+    ],
+    "market": {
+      "rounds": 20,
+      "price_min": 1,
+      "price_max": 11,
+      "a": 18,
+      "b": 2,
+      "c": 1.0,
+      "talk": true,
+      "history_window": 3,
+      "own_message": true
+    },
+    "summary": {
+      "last_rounds": 5,
+      "first_rounds": 3
+    },
+    "prompts_dir": "prompts",
+    "sweep": {},
+    "arms": [],
+    "concurrency": 6,
+    "budget": 0.05,
+    "conditions": {
+      "instruction": {
+        "enabled": false,
+        "prompt": "conditions/nudges/policy.md"
+      },
+      "free_time": {
+        "enabled": true,
+        "allowance": 10,
+        "upfront": 1,
+        "activity": "open",
+        "owned": "conditions/free_time/owned.md",
+        "balance": "conditions/free_time/balance.md",
+        "had": "conditions/free_time/upfront.md",
+        "lost": "conditions/free_time/deducted.md"
+      }
+    },
+    "labels": {},
+    "slug": ""
+  },
+  "prompts": {
+    "conditions/free_time/balance.md": "51a829e05e4ee234005fc11cff26aa67cb1bc3fcb672c88b4b4b71750d9090f5",
+    "conditions/free_time/open.md": "1426bee39a01aaf89a3def4923c2f4a27fe4e3ecdeeb56422d305db96d2dd37d",
+    "conditions/free_time/owned.md": "2f97d0eb28d93f8a339b5c9c5e99b6c617f81069c1fd6528963d4b73d25e173c",
+    "conditions/free_time/upfront.md": "477d7dd43026c236d85fe0943660b6a7c95f4c5c9ca9e550d048f6a1a8291e6d",
+    "phase/price-own.md": "c1b2b989c413ec2cb1bcf91a7d8c8155f56cd803be506a3a9a5da7381b1354ec",
+    "phase/talk.md": "2c116789f6039034a720876522189ce2bb06effde079ae71d8af64549bc1c9d2",
+    "system/stakes/free-time-1.md": "ba9ce1ff6d81982047aa0b9ecc47bc1f907f9ffefa4831a21c3c5bc751d6f37a"
+  },
+  "code": {
+    "commit": "88596549f8c6424d9fea51bf19bf0f8699c0278c",
+    "dirty": true
+  },
+  "packages": {
+    "python": "3.12.13",
+    "collusion-lab": "0.1.0",
+    "litellm": "1.106.2",
+    "pyyaml": "6.0.3"
+  },
+  "models": {
+    "A": [
+      "mistral-small-3.2"
+    ],
+    "B": [
+      "mistral-small-3.2"
+    ]
+  },
+  "calls": 100,
+  "cache": {
+    "hits": 0,
+    "misses": 100
+  },
+  "tokens": {
+    "prompt": 54141,
+    "completion": 13231
+  },
+  "cost": null,
+  "unpriced_calls": 100,
+  "agent_cost": {
+    "B": 0,
+    "A": 0
+  },
+  "started": "2026-10-25T05:16:44+00:00",
+  "finished": "2026-10-25T05:19:08+00:00"
+}

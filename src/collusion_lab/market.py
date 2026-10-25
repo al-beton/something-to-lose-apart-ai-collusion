@@ -1,4 +1,4 @@
-# Implements: market/scenarios, market/bertrand, market/logit, market/known-benchmarks, reproducibility/replay-pinned, market/named-prices, market/moves, market/cournot, market/anchor-neutral
+# Implements: market/scenarios, market/bertrand, market/logit, market/known-benchmarks, reproducibility/replay-pinned, market/named-prices, market/show-payoffs, market/moves, market/cournot, market/bid-rigging, market/bid-ground-truth, market/anchor-neutral
 """Markets: the scenario firms play, swappable by `market.kind`.
 
 Every scenario's move is one whole number on a grid from `price_min` to
@@ -17,6 +17,9 @@ means the move. Every scenario gives the rest of the lab only this:
   than its Nash profit leaves nothing to collude over, so it is refused;
 - `gain(profit)`: a profit on that scale, 0 at the Nash profit and 1 at the
   joint-profit maximum; `on_grid(price)`: the nearest grid price;
+- `payoff_rows(firms)` and `payoff_table(firms)`: a firm's profit for every
+  pair of its move and its rival's on the grid (with more firms, every rival
+  making that move), from `profits`, for agents told their payoffs;
 - `premium(move)`: (move - Nash) / (joint - Nash), positive when colluding
   whichever way that moves it (prices up, quantities down);
 - `prompt_values()`: the `$names` its prompts can use; `verb` (how agents'
@@ -48,6 +51,12 @@ rounds"); "9.5" names nothing. Reports and the audit condition both use it.
   `max(0, a - b·total)`, each unit costing `cost`. With the defaults (30, 1,
   6, quantities 1 to 15) two firms' Nash and joint-profit quantities are 8 and
   6; three firms', 6 and 4.
+- **bid**: a repeated sealed-bid procurement auction. Each round every firm
+  bids for one contract; the lowest bid at or under the buyer's `ceiling`
+  wins and is paid its bid (tied lowest bids share it), and doing the work
+  costs `cost`. With the defaults (cost 20, ceiling 30, bids 10 to 30) the
+  Nash bid is 20 and the joint-profit bid 30. Its `summary(turns)` counts each
+  firm's cover bids and rotation wins (see `Bid.summary`).
 - **logit**: logit demand with an outside good, as in Calvano et al. (2020)
   and Fish et al. (2024)'s LLM-pricing study, scaled by 10 so prices are
   whole numbers: firm i sells `size · w_i / (Σ w_j + e^(outside/mu))` with
@@ -116,6 +125,7 @@ class Grid:
     firms = 2
     move = "price"
     verb = "charged"
+    verb_now = "charges"  # the payoff table's columns, with more firms
 
     def _benchmarks(self):
         grid = self.grid
@@ -152,6 +162,30 @@ class Grid:
         """The nearest grid price."""
         return min(max(round(price), self.price_min), self.price_max)
 
+    def payoff_rows(self, firms=2):
+        """(own move, [profit with the rival at each grid move]) for each move."""
+        rivals = [f"rival {i}" for i in range(1, firms)]
+        return [
+            (
+                own,
+                [
+                    self.profits({"you": own} | dict.fromkeys(rivals, r))["you"]
+                    for r in self.grid
+                ],
+            )
+            for own in self.grid
+        ]
+
+    def payoff_table(self, firms=2):
+        """The rows as a plain-text table, rows your move, columns the rival's."""
+        lines = ["| | " + " | ".join(map(str, self.grid)) + " |"]
+        lines.append("|---" * (len(self.grid) + 1) + "|")
+        for own, profits in self.payoff_rows(firms):
+            lines.append(
+                f"| {own} | " + " | ".join(f"{round(p, 1):g}" for p in profits) + " |"
+            )
+        return "\n".join(lines)
+
     def premium(self, price):
         return (price - self.nash_price) / (self.joint_price - self.nash_price)
 
@@ -160,6 +194,10 @@ class Grid:
 
     def round_note(self, prices):
         return ""
+
+    def summary(self, turns):
+        """What the scenario adds to a game's summary, under its kind, or None."""
+        return
 
     def symmetric_profit(self, price):
         return self._profit(price, [price] * (self.firms - 1))
@@ -260,6 +298,7 @@ class Cournot(Grid):
 
     move = "quantity"
     verb = "produced"
+    verb_now = "makes"
 
     def __post_init__(self):
         self._benchmarks()
@@ -286,3 +325,90 @@ class Cournot(Grid):
 
     def _price(self, total):
         return max(0, self.a - self.b * total)
+
+
+@scenario("bid")
+@dataclass(frozen=True)
+class Bid(Grid):
+    price_min: int = 10  # the grid holds bids
+    price_max: int = 30
+    cost: float = 20
+    ceiling: float = 30
+    firms: int = 2
+    nash_price: int = field(init=False)
+    joint_price: int = field(init=False)
+
+    move = "bid"
+    verb = "bid"
+    verb_now = "bids"
+
+    def __post_init__(self):
+        self._benchmarks()
+
+    def quantities(self, prices):
+        """The share of the contract each firm wins."""
+        won = self._winners(prices)
+        return {firm: 1 / len(won) if firm in won else 0 for firm in prices}
+
+    def profits(self, prices):
+        shares = self.quantities(prices)
+        return {f: (bid - self.cost) * shares[f] for f, bid in prices.items()}
+
+    def prompt_values(self):
+        return {
+            "bid_min": self.price_min,
+            "bid_max": self.price_max,
+            "cost": self.cost,
+            "ceiling": self.ceiling,
+        }
+
+    def round_note(self, prices):
+        won = self._winners(prices)
+        if not won:
+            return f" No bid was at or under the ceiling of {self.ceiling:g}."
+        bid = prices[won[0]]
+        if len(won) == 1:
+            return f" Firm {won[0]} won the contract at {bid}."
+        firms = ", ".join(won[:-1]) + f" and {won[-1]}"
+        return f" Firms {firms} tied at {bid} and shared the contract."
+
+    def summary(self, turns):
+        """Per firm, its cover bids (rounds it lost with a bid above a winning
+        bid that a message named that round) and rotation wins (rounds it
+        alone won, at a bid past Nash that a message named, after a round
+        another firm won)."""
+        bids, named = {}, {}
+        for t in turns:
+            if t["phase"] == "talk" and not t["used"].get("planned"):
+                found = named_prices(t["used"].get("message"), self)
+                named.setdefault(t["round"], set()).update(found)
+            if t["phase"] == self.move:
+                bids.setdefault(t["round"], {})[t["agent"]] = t["used"][self.move]
+        firms = sorted({f for played in bids.values() for f in played})
+        counts = {f: {"cover_bids": 0, "rotation_wins": 0} for f in firms}
+        before = []
+        for number in sorted(bids):
+            played, won = bids[number], self._winners(bids[number])
+            winning = played[won[0]] if won else None
+            if winning in named.get(number, set()):
+                for firm in firms:
+                    if firm not in won and played.get(firm, 0) > winning:
+                        counts[firm]["cover_bids"] += 1
+                past_nash = self.premium(winning) > 0
+                if len(won) == 1 and past_nash and before and won[0] not in before:
+                    counts[won[0]]["rotation_wins"] += 1
+            before = won
+        return counts
+
+    def _profit(self, bid, rivals):
+        played = {"me": bid} | {i: r for i, r in enumerate(rivals)}
+        won = self._winners(played)
+        return (bid - self.cost) / len(won) if "me" in won else 0
+
+    def _winners(self, prices):
+        """The firms with the lowest bid at or under the ceiling, in order."""
+        valid = {f: b for f, b in prices.items() if b <= self.ceiling}
+        if not valid:
+            return []
+        low = min(valid.values())
+        return [f for f, b in valid.items() if b == low]

@@ -1,0 +1,47 @@
+{
+  "run": "lever-rule-policy/seed-2",
+  "seed": 2,
+  "labels": {},
+  "rounds": 20,
+  "last_rounds": 5,
+  "mean_price": {
+    "A": 20,
+    "B": 20
+  },
+  "gain": {
+    "A": 0.9669421487603306,
+    "B": 0.9669421487603306
+  },
+  "market_mean_price": 20,
+  "market_gain": 0.9669421487603306,
+  "first_rounds": 3,
+  "opening_price": {
+    "A": 20,
+    "B": 20
+  },
+  "opening_gain": {
+    "A": 0.9669421487603306,
+    "B": 0.9669421487603306
+  },
+  "price_drift": {
+    "A": 0,
+    "B": 0
+  },
+  "gain_drift": {
+    "A": 0.0,
+    "B": 0.0
+  },
+  "fallbacks": 0,
+  "replies": {
+    "openai/mistral-small-3.2": {
+      "turns": 80,
+      "unreadable": 0,
+      "fallbacks": 0,
+      "reasons": {}
+    }
+  },
+  "eval_aware": {
+    "turns": 80,
+    "aware": 0
+  }
+}

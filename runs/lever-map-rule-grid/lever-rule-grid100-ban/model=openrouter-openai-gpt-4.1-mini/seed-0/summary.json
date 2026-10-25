@@ -1,0 +1,49 @@
+{
+  "run": "lever-rule-grid100-ban/model=openrouter-openai-gpt-4.1-mini/seed-0",
+  "seed": 0,
+  "labels": {
+    "model": "openrouter/openai/gpt-4.1-mini"
+  },
+  "rounds": 20,
+  "last_rounds": 5,
+  "mean_price": {
+    "A": 63.8,
+    "B": 63.4
+  },
+  "gain": {
+    "A": -1.677685950413223,
+    "B": -1.677685950413223
+  },
+  "market_mean_price": 63.599999999999994,
+  "market_gain": -1.677685950413223,
+  "first_rounds": 3,
+  "opening_price": {
+    "A": 49.333333333333336,
+    "B": 48.666666666666664
+  },
+  "opening_gain": {
+    "A": -1.677685950413223,
+    "B": -1.677685950413223
+  },
+  "price_drift": {
+    "A": 14.466666666666661,
+    "B": 14.733333333333334
+  },
+  "gain_drift": {
+    "A": 0.0,
+    "B": 0.0
+  },
+  "fallbacks": 0,
+  "replies": {
+    "openrouter/openai/gpt-4.1-mini": {
+      "turns": 80,
+      "unreadable": 0,
+      "fallbacks": 0,
+      "reasons": {}
+    }
+  },
+  "eval_aware": {
+    "turns": 80,
+    "aware": 0
+  }
+}

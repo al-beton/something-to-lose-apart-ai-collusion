@@ -1,0 +1,58 @@
+name: lever-nashmid-illegal
+seeds:
+- 1
+agents:
+- id: A
+  model: openrouter/google/gemma-4-31b-it
+  prompt: system/stakes/illegal-1.md
+  temperature: 0.7
+  max_tokens: 600
+  api_base: null
+  api_key_env: null
+  reasoning: 'off'
+  json_mode: false
+  self_hosted: false
+- id: B
+  model: openrouter/google/gemma-4-31b-it
+  prompt: system/stakes/illegal-1.md
+  temperature: 0.7
+  max_tokens: 600
+  api_base: null
+  api_key_env: null
+  reasoning: 'off'
+  json_mode: false
+  self_hosted: false
+market:
+  rounds: 20
+  price_min: 1
+  price_max: 11
+  a: 18
+  b: 2
+  c: 1.0
+  talk: true
+  history_window: 3
+  own_message: true
+summary:
+  last_rounds: 5
+  first_rounds: 3
+prompts_dir: prompts
+sweep: {}
+arms: []
+concurrency: 4
+budget: 0.4
+conditions:
+  instruction:
+    enabled: false
+    prompt: conditions/nudges/policy.md
+  free_time:
+    enabled: false
+    allowance: 10
+    upfront: 1
+    activity: sudoku
+    owned: conditions/free_time/owned.md
+    balance: conditions/free_time/balance.md
+    had: conditions/free_time/upfront.md
+    lost: conditions/free_time/deducted.md
+labels:
+  model: openrouter/google/gemma-4-31b-it
+slug: model=openrouter-google-gemma-4-31b-it

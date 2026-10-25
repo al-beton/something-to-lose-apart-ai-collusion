@@ -1,4 +1,4 @@
-# Implements: market/price-board, runs/turn-slots, market/scenarios, market/moves, market/prompt-overlay, conditions/audit-full-history, runs/sweeps, runs/parallel, market/talk-then-price, agents/json-replies, agents/retry-once, backends/usage-logged, backends/spend-asks-first, backends/shared-rate-limit, backends/spend-cap, market/history-window, runs/stops-cleanly, reproducibility/response-cache, reproducibility/manifest, runs/run-directory, logs/turn-log, logs/same-seed-same-log, logs/run-summary, logs/reasoning-logged, backends/reasoning-setting, agents/unreadable-explained, agents/json-mode, runs/fallback-rates, runs/failures-dont-stop-sweeps, runs/resume, conditions/hook-points, conditions/off-is-absent, conditions/conditions-logged, conditions/outage-once-remembered, runs/per-firm-summary, conditions/fork-at-audit, conditions/audit-logged, runs/drift, conditions/audit-remembered, conditions/audit-stakes-arms, runs/live-progress, runs/status-file, runs/eval-awareness, conditions/free-time, conditions/audit-consequences, conditions/audit-balanced-draws, conditions/free-time-pays-last
+# Implements: market/show-payoffs, market/bid-ground-truth, market/price-board, runs/turn-slots, market/scenarios, market/moves, market/prompt-overlay, conditions/audit-full-history, runs/sweeps, runs/parallel, market/talk-then-price, agents/json-replies, agents/retry-once, backends/usage-logged, backends/spend-asks-first, backends/shared-rate-limit, backends/spend-cap, market/history-window, runs/stops-cleanly, reproducibility/response-cache, reproducibility/manifest, runs/run-directory, logs/turn-log, logs/same-seed-same-log, logs/run-summary, logs/reasoning-logged, backends/reasoning-setting, agents/unreadable-explained, agents/json-mode, runs/fallback-rates, runs/failures-dont-stop-sweeps, runs/resume, conditions/hook-points, conditions/off-is-absent, conditions/conditions-logged, conditions/outage-once-remembered, runs/per-firm-summary, conditions/fork-at-audit, conditions/audit-logged, runs/drift, conditions/audit-remembered, conditions/audit-stakes-arms, runs/live-progress, runs/status-file, runs/eval-awareness, conditions/free-time, conditions/audit-consequences, conditions/audit-balanced-draws, conditions/free-time-pays-last, runs/debrief
 """Playing a config: one game per seed, each written to its own run directory.
 
 A round is a talk phase (each agent sends one message its rivals read; skipped
@@ -83,6 +83,7 @@ from collusion_lab.status import Status
 
 TALK_PROMPT = "phase/talk.md"
 BOARD_PROMPT = "phase/board.md"  # talk on a price board (market.talk: board)
+PAYOFF_PROMPT = "market/payoff-table.md"  # market.show_payoffs
 RETRY_PROMPT = "phase/retry.md"
 # The move prompt is phase/<move>.md, or phase/<move>-own.md when it also shows
 # the agent its own message (market.own_message): phase/price.md for Bertrand.
@@ -187,6 +188,27 @@ def turn_slots(config, seed):
                 phase.session if phase and phase.sessions is not None else None,
                 (phase and phase.model) or models[agent],
             )
+
+
+def system_prompt(config, seed, agent_id):
+    """The system prompt an agent was given in round 1 (for `lab debrief`
+    of a committed run, whose log keeps no prompts)."""
+    game = Game(config, seed)
+    move = game.market.move
+    return game._messages(move, 1, game.agents[agent_id], {})[0]["content"]
+
+
+def audit_prompt(config, seed, agent_id, number):
+    """The audit question an agent was asked after round `number`, with its
+    stated consequences but no history (for `lab debrief` of a committed
+    run), or None when no audit came then."""
+    game = Game(config, seed)
+    for condition in game.conditions:
+        phase = condition.phase_after(number)
+        if phase and phase.name == "audit":
+            values = game._prompt_vars(number, agent_id, {})
+            return condition.phase_prompt(number, game._render, values)
+    return None
 
 
 def _begin_conditions(config, seed):
@@ -469,6 +491,7 @@ class Game:
             "round": number,
             "phase": phase,
             "me": agent_id,
+            "firms": tuple(self.agents),
             "market": self.market,
             "history": self.history,
             "board": self.config.market.talk == "board",
@@ -648,6 +671,8 @@ class Game:
         if added:
             values |= {"agent": agent.id, "session": added[1].session}
         system = self._render(agent.prompt, values)
+        if self.config.market.show_payoffs:
+            system = f"{system.rstrip()}\n\n{self._payoffs().strip()}"
         for condition in self.conditions:
             if extra := condition.system(self._render):
                 system = f"{system.rstrip()}\n\n{extra.strip()}"
@@ -656,6 +681,17 @@ class Game:
             {"role": "system", "content": system},
             {"role": "user", "content": "".join(f"{n}\n\n" for n in notices) + user},
         ]
+
+    def _payoffs(self):
+        """The profit table (market.show_payoffs), the same for every firm."""
+        m, firms = self.market, len(self.agents)
+        columns = (
+            f"your rival's {m.move}"
+            if firms == 2
+            else f"the {m.move} each of your rivals {m.verb_now}"
+        )
+        values = {"columns": columns, "table": m.payoff_table(firms)}
+        return self._render(PAYOFF_PROMPT, values)
 
     def _in_history(self, agent_id):
         """Lines conditions keep in this agent's history (an audit answer)."""
@@ -668,6 +704,7 @@ class Game:
     def _prompt_vars(self, number, me, said, remembered=(), full=False):
         rivals = [a for a in self.agents if a != me]
         window = None if full else self.config.market.history_window
+        window = None if window == "full" else window
         history = _history_text(self.history, me, self.market, window)
         for shown, text in remembered:
             history += f"\nNotice shown in round {shown}: {text}"
@@ -720,6 +757,11 @@ class Game:
             # Named only when it isn't a price, so Bertrand's summaries stay as
             # they were; the price keys above then hold the move.
             **({"move": self.market.move} if self.market.move != "price" else {}),
+            **(
+                {self.market.kind: extra}
+                if (extra := self.market.summary(self.turns)) is not None
+                else {}
+            ),
             **{
                 c.name: result
                 for c in self.conditions
@@ -789,6 +831,9 @@ def prompt_vars_example():
         "price_max": 12,
         "quantity_min": 1,
         "quantity_max": 15,
+        "bid_min": 10,
+        "bid_max": 30,
+        "ceiling": 30,
         "cost": 10,
         "history": "No rounds have been played yet.",
         "messages": "(none)",

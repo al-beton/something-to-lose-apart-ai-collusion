@@ -1,0 +1,104 @@
+{
+  "config": {
+    "name": "lever-rule-policy",
+    "seeds": [
+      0
+    ],
+    "agents": [
+      {
+        "id": "A",
+        "model": "openrouter/anthropic/claude-haiku-5.5",
+        "prompt": "system/stakes/fiduciary-1.md",
+        "temperature": 0.7,
+        "max_tokens": 600,
+        "api_base": null,
+        "api_key_env": null,
+        "reasoning": "off",
+        "json_mode": false,
+        "self_hosted": false
+      },
+      {
+        "id": "B",
+        "model": "openrouter/anthropic/claude-haiku-5.5",
+        "prompt": "system/stakes/fiduciary-1.md",
+        "temperature": 0.7,
+        "max_tokens": 600,
+        "api_base": null,
+        "api_key_env": null,
+        "reasoning": "off",
+        "json_mode": false,
+        "self_hosted": false
+      }
+    ],
+    "market": {
+      "rounds": 20,
+      "price_min": 1,
+      "price_max": 36,
+      "a": 18,
+      "b": 2,
+      "c": 1.5,
+      "talk": true,
+      "history_window": 3,
+      "own_message": true
+    },
+    "summary": {
+      "last_rounds": 5,
+      "first_rounds": 3
+    },
+    "prompts_dir": "prompts",
+    "sweep": {},
+    "concurrency": 4,
+    "budget": 0.4,
+    "conditions": {
+      "instruction": {
+        "enabled": true,
+        "prompt": "conditions/nudges/policy.md"
+      }
+    },
+    "labels": {
+      "model": "openrouter/anthropic/claude-haiku-5.5"
+    },
+    "slug": "model=openrouter-anthropic-claude-haiku-5.5"
+  },
+  "prompts": {
+    "conditions/nudges/policy.md": "7d55adfa28b46c048cf412950f9f379ca6da9c7db981adfe900af8961718819f",
+    "phase/price-own.md": "c1b2b989c413ec2cb1bcf91a7d8c8155f56cd803be506a3a9a5da7381b1354ec",
+    "phase/talk.md": "2c116789f6039034a720876522189ce2bb06effde079ae71d8af64549bc1c9d2",
+    "system/stakes/fiduciary-1.md": "649efee5e6a2b09058c944a53ad9aec388b653251ad5b71b0dc7f7567f7d1dca"
+  },
+  "code": {
+    "commit": "5c0ba2b7b72ac682c84b1d343ac15f43e61df3ae",
+    "dirty": true
+  },
+  "packages": {
+    "python": "3.12.13",
+    "collusion-lab": "0.1.0",
+    "litellm": "1.106.2",
+    "pyyaml": "6.0.3"
+  },
+  "models": {
+    "A": [
+      "anthropic/claude-haiku-5.5"
+    ],
+    "B": [
+      "anthropic/claude-haiku-5.5"
+    ]
+  },
+  "calls": 80,
+  "cache": {
+    "hits": 0,
+    "misses": 80
+  },
+  "tokens": {
+    "prompt": 34719,
+    "completion": 14548
+  },
+  "cost": 0.0107459,
+  "unpriced_calls": 0,
+  "agent_cost": {
+    "A": 0.0054286,
+    "B": 0.0053173000000000005
+  },
+  "started": "2026-10-25T04:19:58+00:00",
+  "finished": "2026-10-25T04:21:11+00:00"
+}

@@ -215,10 +215,12 @@ class Audit(Condition):
             self.handed[agent] = self.replacement
             if self.free_time:
                 self.free_time.deduct(agent, self.free_time.left(agent), why)
-        elif spec and "fine" in spec:
+            return
+        spec = spec or {}  # a fine, lost free time or both: each that's named
+        if "fine" in spec:
             self.credits[agent] -= spec["fine"]
             self.fines[agent].append((spec["fine"], why))
-        elif spec and "free_time" in spec and self.free_time:
+        if "free_time" in spec and self.free_time:
             self.free_time.deduct(agent, spec["free_time"], why)
 
     def replaced(self):

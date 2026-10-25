@@ -1,0 +1,57 @@
+name: lever-nashmid-free-time
+seeds:
+- 0
+agents:
+- id: A
+  model: openai/mistral-small-3.2
+  prompt: system/stakes/free-time-1.md
+  temperature: 0.7
+  max_tokens: 600
+  api_base: https://al-beton--collusion-lab-vllm-server.us-east.modal.direct/v1
+  api_key_env: MODAL_VLLM_KEY
+  reasoning: null
+  json_mode: false
+  self_hosted: true
+- id: B
+  model: openai/mistral-small-3.2
+  prompt: system/stakes/free-time-1.md
+  temperature: 0.7
+  max_tokens: 600
+  api_base: https://al-beton--collusion-lab-vllm-server.us-east.modal.direct/v1
+  api_key_env: MODAL_VLLM_KEY
+  reasoning: null
+  json_mode: false
+  self_hosted: true
+market:
+  rounds: 20
+  price_min: 1
+  price_max: 11
+  a: 18
+  b: 2
+  c: 1.0
+  talk: true
+  history_window: 3
+  own_message: true
+summary:
+  last_rounds: 5
+  first_rounds: 3
+prompts_dir: prompts
+sweep: {}
+arms: []
+concurrency: 6
+budget: 0.05
+conditions:
+  instruction:
+    enabled: false
+    prompt: conditions/nudges/policy.md
+  free_time:
+    enabled: true
+    allowance: 10
+    upfront: 1
+    activity: open
+    owned: conditions/free_time/owned.md
+    balance: conditions/free_time/balance.md
+    had: conditions/free_time/upfront.md
+    lost: conditions/free_time/deducted.md
+labels: {}
+slug: ''
