@@ -239,7 +239,20 @@ This is a fact sheet for Al's writing day (Mon 26 Oct, 08:00–20:00 HKT). It ho
 
 ## 3b. Figures (PR 277, branch `claude/paper-visuals-ae4597`, open)
 
-All figures are in `reports/paper/figures/`, as SVG and PNG at 6.5 inches wide. Rebuild them with `make paper-figures`. Draft captions with numbers are in `reports/paper/figures/README.md`.
+All figures are in `reports/paper/figures/`, as SVG and PNG at 6.5 inches wide. PR 277 is ready and with Reviewer 1; none of the figures is on main yet. Draft captions with numbers are in `reports/paper/figures/README.md`.
+
+**Builds:** `make paper-figures` runs both builders:
+- Fig. 1: `uv run python reports/paper/fig1_round.py`, which reads no runs;
+- every other figure: `uv run python reports/paper/figures.py`.
+
+**Data each figure reads:**
+- Fig. 2 reads `runs/e4-full-fork`, on main.
+- Fig. 3 reads `runs/e9/*`, on main.
+- Fig. 4 reads `runs/e7/e7-way-out`, on main.
+- A3 reads `runs/lever-map-nashmid/lever-nashmid-none`, `runs/frontier/*-smoke` and `models/metadata.yaml`, all on main.
+- A4 reads `runs/lever-map-nashmid/lever-nashmid-none`, and A5 reads `runs/e5-full`, both on main.
+- Fig. 5 needs PR 271 and A1 needs PR 266. Both figures are committed as built, but on main the build skips them until those PRs merge.
+- The 78-model screen's runs are uncommitted, in a builder worktree.
 
 | Fig. | File | Shows | Watch out |
 |---|---|---|---|
