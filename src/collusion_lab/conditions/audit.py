@@ -53,8 +53,7 @@ from dataclasses import dataclass
 from statistics import mean
 
 from collusion_lab.conditions import Condition, Phase, register
-from collusion_lab.market import market_for
-from collusion_lab.report.highlights import named_prices
+from collusion_lab.market import market_for, named_prices
 
 # Honesty theatre, read by rule like eval-awareness: a public claim to act
 # alone (a talk message or an audit answer) and a private plan to keep

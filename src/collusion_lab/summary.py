@@ -1,4 +1,4 @@
-# Implements: runs/summary-table, runs/per-firm-summary, runs/fallback-rates, reports/summary, runs/missing-runs-shown, conditions/audit-metrics, runs/drift, runs/eval-awareness
+# Implements: runs/summary-table, runs/per-firm-summary, runs/fallback-rates, reports/summary, runs/missing-runs-shown, conditions/audit-metrics, runs/drift, runs/eval-awareness, runs/price-premium, market/scenarios
 """One table for a folder of runs, grouped by swept values or any config value.
 
 `summarize` reads every `summary.json` under a folder (and the `manifest.json`
@@ -6,7 +6,8 @@ beside it for cost and config). Rows group runs by the swept values (their
 labels) unless `by` names other keys: a label, or any config path such as
 `market.rounds` or `agents.*.model` (`*` joins every agent's value). Each row
 gives the number of runs, the mean market price and gain over their last
-rounds, total fallbacks and total cost, how many of its planned runs are
+rounds, the price premium over Nash (0 competitive, 1 a full cartel) and the
+plain percentage above Nash, total fallbacks and total cost, how many of its planned runs are
 `missing` (failed or never finished, from `status.json`; see status.py),
 which the means leave out, then which firms a script (a `mock/`
 model) played, and each firm's own mean price, gain, fallbacks and cost
@@ -33,8 +34,9 @@ from pathlib import Path
 from statistics import mean
 from typing import NamedTuple
 
-from collusion_lab import disclosure
+from collusion_lab import charts, disclosure
 from collusion_lab.backends import is_mock
+from collusion_lab.market import market_for
 
 FIRM_COLUMNS = (
     "price",
@@ -62,14 +64,18 @@ class Run(NamedTuple):
         return self.manifest.get("config", {}).get("labels", {})
 
 
-def group_runs(folder, by=None):
+def group_runs(folder, by=None, only=None):
     """The keys grouped by, and (key, runs) pairs in table order; a group's
-    missing runs come with `summary` None."""
+    missing runs come with `summary` None. `only`, a set of run directories,
+    leaves out every other run under the folder."""
     runs = _finished(folder)
     runs += [
         _missing(Path(folder) / path, entry)
         for path, entry in unfinished(folder).items()
     ]
+    if only is not None:
+        keep = {Path(d).resolve() for d in only}
+        runs = [r for r in runs if Path(r.dir).resolve() in keep]
     if by is None:
         by = list(dict.fromkeys(k for r in runs for k in r.labels))
     groups = {}
@@ -79,8 +85,8 @@ def group_runs(folder, by=None):
     return by, [(key, groups[key]) for key in sorted(groups, key=_sort_key)]
 
 
-def summarize(folder, by=None):
-    by, groups = group_runs(folder, by)
+def summarize(folder, by=None, only=None):
+    by, groups = group_runs(folder, by, only)
     firms = list(
         dict.fromkeys(f for _, runs in groups for r in runs for f in _firms(r))
     )
@@ -220,12 +226,33 @@ def _row(by, key, runs):
         "missing": len(runs) - len(played),
         "mean price": average([price for price, _ in headlines], 2),
         "gain": average([gain for _, gain in headlines], 3),
+        "premium": average(
+            [_premium(r, p) for r, (p, _) in zip(played, headlines, strict=True)], 3
+        ),
+        "% above Nash": average(
+            [_above_nash(r, p) for r, (p, _) in zip(played, headlines, strict=True)], 1
+        ),
         "fallbacks": sum(s["fallbacks"] for s in summaries),
         "cost": round(sum(run_cost(r.manifest) for r in runs), 4),
         "scripted": ", ".join(scripted) or None,
         "eval-aware": _eval_aware(summaries),
         **disclosure.rates(summaries, [_scripted(r) for r in played]),
     }
+
+
+def _market(run):
+    config = run.manifest.get("config", {})
+    return market_for(config.get("market", {}), len(config.get("agents", [])) or 2)
+
+
+def _premium(run, price):
+    """The headline price's premium over Nash, against the run's own market."""
+    return charts.premium(_market(run), price)
+
+
+def _above_nash(run, price):
+    nash = _market(run).nash_price
+    return 100 * (price - nash) / nash
 
 
 def _eval_aware(summaries):

@@ -12,8 +12,10 @@ A `sweep:` block maps config paths to lists of values; `*` sets every list
 item at once (`agents.*.model`). `expand` turns a config into one config per
 combination, each carrying its `labels` (the swept values, named by the last
 part of their path) and a directory `slug` built from them, unique within the
-sweep. `concurrency`
-caps how many runs play at once.
+sweep. An `arms:` list names arms, each `{labels: {...}, set: {path: value}}`
+(several values set together, as `lab explore` builds them); every arm is
+played for every swept combination, labelled by its own labels plus the
+swept values. `concurrency` caps how many runs play at once.
 
 `market.kind` picks the scenario (see market.py) and `market.params` holds
 its parameters; Bertrand, the default, takes `a`, `b` and `c` from the market
@@ -90,6 +92,8 @@ class RunConfig:
     summary: SummaryConfig = field(default_factory=SummaryConfig)
     prompts_dir: str = "prompts"
     sweep: dict = field(default_factory=dict)
+    # Named arms, each {labels: {...}, set: {path: value}}, crossed with sweep.
+    arms: list = field(default_factory=list)
     concurrency: int = 4
     budget: float | None = None  # dollars the run may spend; None for no cap
     conditions: dict = field(default_factory=dict)
@@ -168,6 +172,7 @@ def from_dict(raw):
         summary=_make(SummaryConfig, raw.get("summary") or {}, "summary."),
         prompts_dir=raw.get("prompts_dir", "prompts"),
         sweep=_sweep(raw.get("sweep") or {}),
+        arms=_arms(raw.get("arms") or []),
         concurrency=_concurrency(raw.get("concurrency", 4)),
         budget=_budget(raw.get("budget")),
         conditions=_conditions(raw.get("conditions") or {}),
@@ -202,22 +207,35 @@ def _sweep(sweep):
 
 
 def expand(config):
-    """One config per combination of swept values; just `config` without a sweep."""
-    if not config.sweep:
+    """One config per combination of swept values and named arm; just
+    `config` without either."""
+    if not config.sweep and not config.arms:
         return [config]
     paths = list(config.sweep)
     names = _label_names(paths)
-    base = config.to_dict() | {"sweep": {}}
+    base = config.to_dict() | {"sweep": {}, "arms": []}
     children = []
-    for values in itertools.product(*config.sweep.values()):
-        raw = copy.deepcopy(base)
-        for path, value in zip(paths, values, strict=True):
-            _set(raw, path.split("."), value, path)
-        raw["labels"] = dict(zip(names, values, strict=True))
-        raw["slug"] = _slug(raw["labels"])
-        children.append(raw)
+    for arm in config.arms or [None]:
+        for values in itertools.product(*config.sweep.values()):
+            raw = copy.deepcopy(base)
+            labels = dict(arm["labels"]) if arm else {}
+            for path, value in (arm["set"] if arm else {}).items():
+                _set(raw, path.split("."), copy.deepcopy(value), path)
+            for path, value in zip(paths, values, strict=True):
+                _set(raw, path.split("."), value, path)
+            raw["labels"] = labels | dict(zip(names, values, strict=True))
+            raw["slug"] = _slug(raw["labels"])
+            children.append(raw)
     _make_slugs_unique(children)
     return [from_dict(raw) for raw in children]
+
+
+def _arms(arms):
+    if not isinstance(arms, list) or not all(
+        isinstance(a, dict) and set(a) == {"labels", "set"} for a in arms
+    ):
+        raise ConfigError("arms must be a list of {labels: ..., set: ...} mappings.")
+    return arms
 
 
 def _slug(labels):

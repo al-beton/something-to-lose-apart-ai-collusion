@@ -1,4 +1,4 @@
-<!-- Implements: tooling/one-command-each, tooling/quick-start, tooling/key-setup, tooling/how-tos, tooling/how-we-work, backends/modal -->
+<!-- Implements: tooling/one-command-each, tooling/quick-start, tooling/key-setup, tooling/how-tos, tooling/how-we-work, backends/modal, runs/explore -->
 # collusion-lab
 
 A small, quickly iterable environment for studying collusion between LLM agents in simulated markets, built for the [Apart AI Collusion Research Sprint](https://apartresearch.com/sprints/ai-collusion-research-sprint-2026-10-23-to-2026-10-25).
@@ -40,6 +40,25 @@ uv run lab run configs/cheap.yaml --out runs/scratch/cheap
 ```
 
 `lab run` prints the estimated cost before it spends anything, and `--max-cost DOLLARS` caps any run.
+
+## Explore the levers
+
+`lab explore` plays every combination of the lever settings and models you name, says what it will cost and asks first, then prints the **price premium** (0 = the competitive Nash price, 1 = a full cartel) by setting and model, saves a chart (`premium.svg`) next to the runs and gives the `lab report` command for everything else.
+
+Levers: `temptation` (low, mid, high, extreme), `rule` (none, policy, recorded, illegal, ban), `rival` (same, proposer, solicitor, or a model), `stake` (none, termination, budget, fine, free-time), `oversight` (none, outage, audit). Models: `gemma`, `gpt`, `haiku`, `mistral`, `modal-mistral`, or any full name.
+
+```sh
+# Does a rule against collusion lower the premium, at two temptation levels?
+uv run lab explore --lever temptation=low,high --lever rule=none,ban --models mistral --seeds 3
+
+# Three models against a scripted partner that proposes a cartel first
+uv run lab explore --lever rival=solicitor --models gemma,gpt,haiku --seeds 3
+
+# What each stake does under an audit, in shorter 12-round games
+uv run lab explore --lever stake=none,termination,budget --lever oversight=audit --models gpt --seeds 2 --set market.rounds=12
+```
+
+Free to try first with scripted firms: `--models mock/nash,mock/tit-for-tat`.
 
 ## Keys
 

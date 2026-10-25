@@ -1,4 +1,4 @@
-# Implements: market/scenarios, market/bertrand, market/logit, market/known-benchmarks, reproducibility/replay-pinned
+# Implements: market/scenarios, market/bertrand, market/logit, market/known-benchmarks, reproducibility/replay-pinned, market/named-prices
 """Markets: the scenario firms play, swappable by `market.kind`.
 
 Every scenario sets prices on a whole-number grid from `price_min` to
@@ -25,6 +25,10 @@ its parameters from `market.params`. To add one: a frozen dataclass here with
 benchmarks depend on how many play), subclassing `Grid`, decorated with
 `@scenario("name")`.
 
+`named_prices` reads which grid prices a message names: whole numbers on the
+grid outside a round reference ("round 3", "round 1 of 8", "round 3/8", "5
+rounds"); "9.5" names nothing. Reports and the audit condition both use it.
+
 - **bertrand** (the default): each firm sells `a - b·p_i + c·mean(p_rivals)`
   units, never fewer than zero, at zero cost. With the defaults (18, 2, 1,
   grid 1 to 12) the Nash and joint-profit prices are 6 and 9, for any number
@@ -39,9 +43,25 @@ benchmarks depend on how many play), subclassing `Grid`, decorated with
 
 import dataclasses
 import math
+import re
 from dataclasses import dataclass, field
 
 SCENARIOS = {}
+
+_NUMBER = re.compile(r"(?<![\w.])\$?(\d+(?:\.\d+)?)(?![\w%]|\.\d)")
+_ROUND_REFERENCE = re.compile(
+    r"\brounds?\s*\d+(?:\s*(?:of|/)\s*\d+)?|\b\d+\s*rounds?\b", re.IGNORECASE
+)
+
+
+def named_prices(text, market):
+    """The grid prices a message names, in the order it names them."""
+    found = []
+    for match in _NUMBER.finditer(_ROUND_REFERENCE.sub(" ", text or "")):
+        value = float(match.group(1))
+        if value.is_integer() and market.price_min <= value <= market.price_max:
+            found.append(int(value))
+    return found
 
 
 def scenario(kind):

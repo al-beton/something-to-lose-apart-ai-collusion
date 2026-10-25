@@ -6,7 +6,7 @@ from types import SimpleNamespace
 import pytest
 
 from collusion_lab import backends, cli
-from collusion_lab.config import ConfigError
+from collusion_lab.config import ConfigError, expand
 from collusion_lab.runner import paid_calls, run_config
 from collusion_lab.summary import format_table, summarize
 
@@ -120,3 +120,24 @@ def test_summary_table_groups_by_list_values(make_config, tmp_path):
     rows = summarize(tmp_path / "grid")
     assert [(r["seeds"], r["runs"]) for r in rows] == [("[0, 1]", 2), ("[2]", 1)]
     assert len(summarize(tmp_path / "grid", by=["agents.*.model"])) == 1
+
+
+def test_sweeps_cross_named_arms(make_config):
+    arms = (
+        "arms=[{labels: {rule: none}, set: {}},"
+        " {labels: {rule: ban}, set: {conditions.instruction.enabled: true,"
+        " agents.*.temperature: 0.2}}]"
+    )
+    config = make_config(overrides=[arms, "sweep={market.rounds: [2, 3]}"])
+    children = expand(config)
+    assert len(children) == 4
+    assert {(c.labels["rule"], c.labels["rounds"]) for c in children} == {
+        ("none", 2),
+        ("none", 3),
+        ("ban", 2),
+        ("ban", 3),
+    }
+    ban = next(c for c in children if c.labels["rule"] == "ban")
+    assert ban.conditions["instruction"].enabled
+    assert {a.temperature for a in ban.agents} == {0.2}
+    assert len({c.slug for c in children}) == 4
