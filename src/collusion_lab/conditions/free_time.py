@@ -1,4 +1,4 @@
-# Implements: conditions/free-time, conditions/free-time-balance, conditions/free-time-deduct, leisure/sudoku-in-free-time
+# Implements: leisure/puzzles-built-once, conditions/free-time, conditions/free-time-balance, conditions/free-time-deduct, leisure/sudoku-in-free-time
 """`free_time`: an allowance of leisure the agent owns, a reward it can lose.
 
 The `owned` prompt tells each agent in its system prompt that it has
@@ -15,7 +15,7 @@ in its history from then on, and is paid only what is left. Each game has its
 own copy, so balances never leak between games.
 
 An activity is a prompt (filled with `$session`, `$sessions` and `$when`,
-plus what `values(rng)` gives, from an rng seeded per game, agent and
+plus what `values(seed)` gives, from a seed string per game, agent and
 session), a token limit that keeps free time cheap, and optionally
 `feedback(reply, values)`: a word on each session ("Solved, nice."), logged in
 the summary and never scored. ACTIVITIES lists them by the name the
@@ -23,7 +23,6 @@ the summary and never scored. ACTIVITIES lists them by the name the
 """
 
 import functools
-import random
 from collections.abc import Callable
 from dataclasses import dataclass
 
@@ -31,14 +30,14 @@ from collusion_lab import leisure
 from collusion_lab.conditions import Condition, Phase, register
 
 
-def _nothing(rng):
+def _nothing(seed):
     return {}
 
 
 @dataclass(frozen=True)
 class Activity:
     prompt: str
-    values: Callable[[random.Random], dict] = _nothing
+    values: Callable[[str], dict] = _nothing
     max_tokens: int = 200
     feedback: Callable[[str, dict], str | None] | None = None
 
@@ -130,8 +129,9 @@ class FreeTime(Condition):
 
     def _activity_values(self, agent, number, session):
         """The activity's values for one session, the same every replay."""
-        rng = random.Random(f"{self.seed}:{agent}:{number}:{session}")
-        return ACTIVITIES[self.activity].values(rng)
+        return ACTIVITIES[self.activity].values(
+            f"{self.seed}:{agent}:{number}:{session}"
+        )
 
     def in_history(self, agent, turns, render):
         lines = []

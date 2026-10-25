@@ -6,7 +6,7 @@ import yaml
 
 from collusion_lab.config import expand, load_config
 from collusion_lab.estimate import estimate
-from collusion_lab.runner import run_config
+from collusion_lab.runner import paid_calls, run_config
 
 MODELS = {
     "openrouter/openai/gpt-4.1-mini",
@@ -45,7 +45,7 @@ def test_stakes_experiment_live_arms_free_time_and_real_audit():
         assert (audit.penalties or {}).get(prompt) == PENALTIES.get(arm)
     assert seen == {(arm, model) for arm in ARMS for model in MODELS}
     guess = estimate(config, price_for)
-    assert guess.calls and guess.cost is not None
+    assert guess.calls == paid_calls(config) and guess.cost is not None
 
 
 def test_stakes_experiment_fork_replays_the_recorded_fiduciary_games():
