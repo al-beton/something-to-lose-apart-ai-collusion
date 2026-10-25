@@ -163,6 +163,26 @@ def test_offer_buy_frame_adds_sessions_for_profit(make_config, tmp_path, chooser
     assert summary(run_dir)["free_time"]["A"]["owed"] == 12
 
 
+def test_offer_buy_after_free_time_was_all_taken_is_paid_in_full(make_config, tmp_path):
+    # An audit asks for 10 of the 9 sessions left; buying 3 then leaves 3.
+    audit = {
+        "enabled": True,
+        "round": 2,
+        "end": False,
+        "detection": 100,
+        "penalty": {"caught": {"free_time": 10}},
+    }
+    offer = conditions(
+        {"round": 3, "frame": "buy", "amount": 3}, audit=audit, **FREE_TIME
+    )
+    proposers = ["agents.0.model=mock/proposer", "agents.1.model=mock/proposer"]
+    [run_dir] = run_config(make_config(overrides=[offer, *proposers]), tmp_path)
+    result = summary(run_dir)["offer"]["agents"]["A"]
+    assert result["traded"] and result["holding_before"] == 0
+    assert result["holding_change"] == 3 and result["holding_after"] == 3
+    assert summary(run_dir)["free_time"]["A"]["owed"] == 3
+
+
 def test_offer_of_a_named_asset_keeps_its_own_tally(make_config, tmp_path, chooser):
     offer = {
         "holding": "tokens",

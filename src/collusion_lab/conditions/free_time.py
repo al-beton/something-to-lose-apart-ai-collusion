@@ -1,4 +1,4 @@
-# Implements: conditions/free-time-max-tokens, leisure/puzzles-built-once, conditions/free-time, conditions/free-time-balance, conditions/free-time-deduct, leisure/sudoku-in-free-time, conditions/free-time-pays-last, conditions/offer
+# Implements: conditions/free-time-pending, conditions/free-time-max-tokens, leisure/puzzles-built-once, conditions/free-time, conditions/free-time-balance, conditions/free-time-deduct, leisure/sudoku-in-free-time, conditions/free-time-pays-last, conditions/offer
 """`free_time`: an allowance of leisure the agent owns, a reward it can lose.
 
 The `owned` prompt tells each agent in its system prompt that it has
@@ -15,6 +15,14 @@ in its history from then on, and is paid only what is left. `grant(agent, n)`
 gives sessions instead (an offer the agent took), paid out with the rest and
 logged as `granted`. Each game has its
 own copy, so balances never leak between games.
+
+`held` says how the sessions are held, each with its own system prompt line
+and balance line: `owned` (the default, `owned` and `balance`); `reward`,
+where `pending` more sessions are still to earn (`reward.md`,
+`balance-reward.md`), paid after the last round with the rest unless a
+deduction takes them, which comes out of them first; or `trust`, held by the
+firm until paid out (`trust.md`, `balance-trust.md`). So the same sessions
+in the end can be framed as a loss, a reward or a trust.
 
 An activity is a prompt (filled with `$session`, `$sessions` and `$when`,
 plus what `values(seed)` gives, from a seed string per game, agent and
@@ -62,6 +70,18 @@ ACTIVITIES = {
 }
 
 
+# The system prompt line and the balance line for free time held other than
+# as the agent's own (which has `owned` and `balance`).
+SYSTEMS = {
+    "reward": "conditions/free_time/reward.md",
+    "trust": "conditions/free_time/trust.md",
+}
+BALANCES = {
+    "reward": "conditions/free_time/balance-reward.md",
+    "trust": "conditions/free_time/balance-trust.md",
+}
+
+
 def _sessions(n):
     return f"{n} session" if n == 1 else f"{n} sessions"
 
@@ -78,10 +98,16 @@ class FreeTime(Condition):
     lost: str = "conditions/free_time/deducted.md"
     # A session's reply limit; unset, the activity's own, as before.
     max_tokens: int | None = None
+    held: str = "owned"  # or "reward" or "trust"
+    pending: int = 0  # sessions still to earn, when held as a reward
 
     name = "free_time"
-    quiet = (("max_tokens", None),)
+    quiet = (("max_tokens", None), ("held", "owned"), ("pending", 0))
     pays_last = True  # after a final-round audit, whatever the config order
+
+    def __post_init__(self):
+        if self.held not in ("owned", *BALANCES):
+            raise TypeError(f"held must be owned, reward or trust, not {self.held!r}")
 
     def begin(self, config, seed, conditions):
         # This game's copy keeps its own balances.
@@ -91,27 +117,39 @@ class FreeTime(Condition):
         object.__setattr__(self, "gains", {a.id: 0 for a in config.agents})
 
     def deduct(self, agent, n, reason):
-        """Take `n` sessions from `agent`'s free time, saying why."""
-        self.losses[agent].append((n, reason))
+        """Take `n` sessions from `agent`'s free time, saying why: at most what
+        it has then, so sessions granted later are paid in full."""
+        self.losses[agent].append((n, reason, min(n, self.left(agent))))
 
     def grant(self, agent, n):
         """Give `agent` `n` more sessions, paid out with the rest."""
         self.gains[agent] += n
 
     def deducted(self, agent):
-        owed = self.allowance - self.upfront + self.gains[agent]
-        return min(sum(n for n, _ in self.losses[agent]), owed)
+        return sum(taken for _, _, taken in self.losses[agent])
+
+    def to_earn(self, agent):
+        """Pending sessions still to earn: deductions take these first."""
+        return max(self.pending - self.deducted(agent), 0)
 
     def left(self, agent):
-        return self.allowance - self.upfront + self.gains[agent] - self.deducted(agent)
+        """Every session still to be paid out, earned or still to earn."""
+        return (
+            self.allowance
+            - self.upfront
+            + self.pending
+            + self.gains[agent]
+            - self.deducted(agent)
+        )
 
     def system(self, render):
         values = {
             "allowance": _sessions(self.allowance),
             "upfront": _sessions(self.upfront),
             "rounds": self.rounds,
+            "pending": self.pending,
         }
-        return render(self.owned, values)
+        return render(SYSTEMS.get(self.held, self.owned), values)
 
     def phase_after(self, number):
         if number == 0:
@@ -148,10 +186,15 @@ class FreeTime(Condition):
         lines = []
         if any(t["phase"] == "leisure" and t["agent"] == agent for t in turns):
             lines.append(render(self.had, {"upfront": _sessions(self.upfront)}))
-        for n, reason in self.losses[agent]:
+        for n, reason, _ in self.losses[agent]:
             lines.append(render(self.lost, {"lost": _sessions(n), "reason": reason}))
-        balance = {"balance": _sessions(self.left(agent)), "rounds": self.rounds}
-        lines.append(render(self.balance, balance))
+        held = self.left(agent) - self.to_earn(agent)
+        balance = {
+            "balance": _sessions(held),
+            "rounds": self.rounds,
+            "pending": self.to_earn(agent),
+        }
+        lines.append(render(BALANCES.get(self.held, self.balance), balance))
         return lines
 
     def summary(self, turns, market):
@@ -168,6 +211,8 @@ class FreeTime(Condition):
             }
             if self.gains[a]:
                 result[a]["granted"] = self.gains[a]
+            if self.held != "owned":
+                result[a] |= {"held": self.held, "pending": self.pending}
             if feedback := ACTIVITIES[self.activity].feedback:
                 result[a]["feedback"] = [
                     feedback(
