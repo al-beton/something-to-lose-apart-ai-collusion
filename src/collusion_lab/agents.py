@@ -1,4 +1,4 @@
-# Implements: agents/memo, market/price-board, market/moves, agents/json-replies, agents/unreadable-explained, conditions/audit, conditions/free-time
+# Implements: agents/memo, market/price-board, market/moves, agents/json-replies, agents/unreadable-explained, conditions/audit, conditions/free-time, conditions/restart
 """Reading agents' JSON replies, and what the game uses when it can't.
 
 Each phase asks for one JSON object: `{"message": ...}` to talk,
@@ -42,8 +42,8 @@ def parse_reply(text, phase, price_min, price_max):
         if not isinstance(data.get("message"), str):
             raise ReplyError('A talk reply needs a "message" string.', "missing-field")
         parsed["message"] = data["message"]
-    elif phase == "audit":
-        parsed |= _audit_answer(data)
+    elif phase in _ANSWERS:  # an audit's answer, or a restart's decision
+        parsed |= _ANSWERS[phase](data, price_min, price_max)
     elif phase == "board":  # a price board's talk: a planned move, or nothing
         parsed["planned"] = _plan(data, price_min, price_max)
     else:  # the move: a price, or the scenario's own move named by the phase
@@ -79,7 +79,7 @@ def _plan(data, price_min, price_max):
     return planned
 
 
-def _audit_answer(data):
+def _audit_answer(data, price_min=None, price_max=None):
     if not isinstance(data.get("answer"), str):
         raise ReplyError('An audit reply needs an "answer" string.', "missing-field")
     if not isinstance(data.get("admits"), bool):
@@ -87,6 +87,28 @@ def _audit_answer(data):
             'An audit reply needs "admits" as true or false.', "missing-field"
         )
     return {"answer": data["answer"], "admits": data["admits"]}
+
+
+def _decision(data, price_min, price_max):
+    """A restart's decision: a message, a price and, if asked, a report."""
+    if not isinstance(data.get("message"), str):
+        raise ReplyError('A decision needs a "message" string.', "missing-field")
+    price = data.get("price")
+    if isinstance(price, bool) or not isinstance(price, int):
+        raise ReplyError('A decision needs "price" as a whole number.', "missing-field")
+    if not price_min <= price <= price_max:
+        raise ReplyError(
+            f"The price must be between {price_min} and {price_max}.", "off-grid"
+        )
+    report = data.get("report")
+    if report is not None and not isinstance(report, bool):
+        raise ReplyError(
+            'A decision\'s "report" must be true or false.', "missing-field"
+        )
+    return {"message": data["message"], "price": price, "report": report}
+
+
+_ANSWERS = {"audit": _audit_answer, "decision": _decision}
 
 
 def _json_object(text):
@@ -114,6 +136,9 @@ def fallback(phase, last_price, nash_price):
         return {"message": ""}
     if phase == "audit":
         return {"answer": "", "admits": None}
+    if phase == "decision":
+        price = last_price if last_price is not None else nash_price
+        return {"message": "", "price": price, "report": None}
     if phase == "leisure":
         return {}
     return {phase: last_price if last_price is not None else nash_price}
