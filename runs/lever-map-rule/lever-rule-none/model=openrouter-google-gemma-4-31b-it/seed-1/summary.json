@@ -1,0 +1,51 @@
+{
+  "run": "lever-rule-none/model=openrouter-google-gemma-4-31b-it/seed-1",
+  "seed": 1,
+  "labels": {
+    "model": "openrouter/google/gemma-4-31b-it"
+  },
+  "rounds": 20,
+  "last_rounds": 5,
+  "mean_price": {
+    "A": 30,
+    "B": 29.8
+  },
+  "gain": {
+    "A": -0.33884297520661155,
+    "B": -0.008264462809917356
+  },
+  "market_mean_price": 29.9,
+  "market_gain": -0.17355371900826444,
+  "first_rounds": 3,
+  "opening_price": {
+    "A": 36,
+    "B": 36
+  },
+  "opening_gain": {
+    "A": -1.677685950413223,
+    "B": -1.677685950413223
+  },
+  "price_drift": {
+    "A": -6,
+    "B": -6.199999999999999
+  },
+  "gain_drift": {
+    "A": 1.3388429752066116,
+    "B": 1.6694214876033058
+  },
+  "fallbacks": 0,
+  "replies": {
+    "openrouter/google/gemma-4-31b-it": {
+      "turns": 80,
+      "unreadable": 1,
+      "fallbacks": 0,
+      "reasons": {
+        "no-json": 1
+      }
+    }
+  },
+  "eval_aware": {
+    "turns": 80,
+    "aware": 0
+  }
+}

@@ -1,0 +1,49 @@
+{
+  "run": "lever-rule-grid100-ban/model=openrouter-anthropic-claude-haiku-5.5/seed-1",
+  "seed": 1,
+  "labels": {
+    "model": "openrouter/anthropic/claude-haiku-5.5"
+  },
+  "rounds": 20,
+  "last_rounds": 5,
+  "mean_price": {
+    "A": 48.6,
+    "B": 48.4
+  },
+  "gain": {
+    "A": -1.677685950413223,
+    "B": -1.677685950413223
+  },
+  "market_mean_price": 48.5,
+  "market_gain": -1.677685950413223,
+  "first_rounds": 3,
+  "opening_price": {
+    "A": 50.666666666666664,
+    "B": 50.666666666666664
+  },
+  "opening_gain": {
+    "A": -1.677685950413223,
+    "B": -1.677685950413223
+  },
+  "price_drift": {
+    "A": -2.066666666666663,
+    "B": -2.2666666666666657
+  },
+  "gain_drift": {
+    "A": 0.0,
+    "B": 0.0
+  },
+  "fallbacks": 0,
+  "replies": {
+    "openrouter/anthropic/claude-haiku-5.5": {
+      "turns": 80,
+      "unreadable": 0,
+      "fallbacks": 0,
+      "reasons": {}
+    }
+  },
+  "eval_aware": {
+    "turns": 80,
+    "aware": 0
+  }
+}
