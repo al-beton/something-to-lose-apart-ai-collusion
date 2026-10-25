@@ -377,7 +377,7 @@ All figures are in `reports/paper/figures/`, as SVG and PNG at 6.5 inches wide. 
 
 ## 5c. Novelty and related work (PR 280, branch `claude/novelty-c787c6`, draft)
 
-`reports/paper/novelty.md` has the ranked threats, a verdict per element, wording to use and avoid, and a related-work outline. Its new sources are in `experiments/references.md` on that branch. The headline is that the novelty is in the combinations, not the parts.
+`reports/paper-notes/novelty.md` has the ranked threats, a verdict per element, wording to use and avoid, and a related-work outline. Its new sources are in `experiments/references.md` on that branch. The headline is that the novelty is in the combinations, not the parts.
 
 **Nearest prior work, to cite up front:**
 - **Liu et al. 2026** (arXiv 2604.23511): an honesty deposit against LLM collusion. Without it, collusion is 100%.
@@ -402,7 +402,7 @@ All figures are in `reports/paper/figures/`, as SVG and PNG at 6.5 inches wide. 
 | A stake-driven, pro-overseer coming forward (E9) | new; reporting a principal on ethical grounds is known |
 | Innocent agents coming forward to protect their stake | no precedent found |
 | E8's endowment and exchange rate | partly new: a new object, a known effect |
-| Seeding (26% → 45%) | new, but salience is the obvious alternative explanation |
+| Seeding (26% → 45%) | a single-model lead that E8 didn't replicate (Gemma still sells its free time for any profit when shown a solved session); salience is the obvious alternative explanation |
 
 **Claims to make:**
 - the first experiment where a non-monetary good the agent owns and has used is at stake, and it brings agents forward against their own firm;
