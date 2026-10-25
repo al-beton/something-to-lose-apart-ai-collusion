@@ -29,18 +29,20 @@ returns the new run's folder, which holds its full `turns.jsonl`.
 """
 
 import contextlib
+import gzip
 import json
 import sqlite3
 import tempfile
 from dataclasses import dataclass
 from pathlib import Path
 
-from collusion_lab import backends
+from collusion_lab.backends import offline
 from collusion_lab.cache import Cache
 from collusion_lab.config import load_config
 from collusion_lab.runner import run_config, run_sweep
 
 STATES = ("reproduced", "differs", "missing", "unloadable")
+LIMIT = 20_000_000  # bytes a committed archive file may hold
 
 
 @dataclass(frozen=True)
@@ -48,12 +50,6 @@ class RunResult:
     run: str
     state: str
     keys: int  # replies the replay read
-
-
-class NotArchived(Exception):
-    """A call no cache could answer; a 404, so the run stops at once."""
-
-    status_code = 404
 
 
 class Merged(Cache):
@@ -90,22 +86,9 @@ class Merged(Cache):
         return sorted(sources)
 
 
-@contextlib.contextmanager
-def offline():
-    """No call reaches a model while this is open."""
-
-    async def refuse(**request):
-        raise NotArchived(f"{request.get('model')}: not in the archive")
-
-    called, backends._acompletion = backends._acompletion, refuse
-    try:
-        yield
-    finally:
-        backends._acompletion = called
-
-
-def pack(root, caches, out):
-    """Archive the replies behind every run under `root`; a RunResult each."""
+def pack(root, caches, out, limit=LIMIT):
+    """Archive the replies behind every run under `root` in the folder `out`;
+    a RunResult each."""
     root, merged = Path(root), Merged(caches)
     results, index = [], []
     with tempfile.TemporaryDirectory() as scratch:
@@ -115,7 +98,7 @@ def pack(root, caches, out):
             index += [
                 (result.run, key, merged.used[key]) for key in sorted(merged.used)
             ]
-    _write(out, index)
+    _write(out, index, {r.run: r.state for r in results}, limit)
     return results
 
 
@@ -155,22 +138,29 @@ def _attempt(root, config_path, merged, scratch):
 
 
 def replay(run_dir, archive, out):
-    """Play a committed run again from an archive alone, with the replies the
-    archive keeps for it; its new folder."""
-    run_dir = Path(run_dir)
+    """Play a committed run again from an archive folder alone, with the
+    replies it keeps for that run; its new folder."""
+    run_dir, archive = Path(run_dir), Path(archive)
     config = load_config(run_dir / "config.yaml")
+    index = json.loads((archive / "index.json").read_text())["runs"]
+    run = find_run(run_dir, index)
     merged = Merged()
-    with contextlib.closing(sqlite3.connect(archive)) as db:
-        rows = db.execute(
-            "SELECT runs.run, replies.key, replies.reply FROM runs"
-            " JOIN replies ON replies.id = runs.reply"
-        ).fetchall()
-    mine = [(k, r) for run, k, r in rows if run_dir.as_posix().endswith(run)]
-    for key, reply in mine or [(k, r) for _, k, r in rows]:
-        merged.add(key, reply)
+    with gzip.open(archive / index[run]["file"], "rt") as lines:
+        for line in map(json.loads, lines):
+            if line["run"] == run:
+                merged.add(line["key"], line["reply"])
     with offline():
         [played] = run_config(config, out, merged)
     return played
+
+
+def find_run(run_dir, index):
+    """The run in `index` that `run_dir` ends with, path part for path part."""
+    parts = Path(run_dir).resolve().parts
+    found = [r for r in index if parts[-len(Path(r).parts) :] == Path(r).parts]
+    if not found:
+        raise KeyError(f"{run_dir} isn't in the archive")
+    return max(found, key=lambda r: len(Path(r).parts))
 
 
 def _same(committed, replayed):
@@ -186,26 +176,35 @@ def _decisions(run_dir):
     return None
 
 
-def _write(out, index):
-    """`replies (id, key, reply)`, each distinct reply once, and `runs (run,
-    key, reply)`, the reply each run read for each key."""
+def _write(out, index, states, limit):
+    """`out/<experiment>[-n].jsonl.gz`: one line per (run, key, reply), each
+    file holding whole runs and under `limit` bytes; `out/index.json`: each
+    run's file and state."""
     out = Path(out)
-    out.parent.mkdir(parents=True, exist_ok=True)
-    out.unlink(missing_ok=True)
-    ids = {}
-    for _, key, reply in index:
-        ids.setdefault((key, reply), len(ids) + 1)
-    with contextlib.closing(sqlite3.connect(out)) as db:
-        db.execute(
-            "CREATE TABLE replies (id INTEGER PRIMARY KEY, key TEXT, reply TEXT)"
-        )
-        db.execute("CREATE TABLE runs (run TEXT, key TEXT, reply INTEGER)")
-        db.executemany(
-            "INSERT INTO replies VALUES (?, ?, ?)",
-            [(i, key, reply) for (key, reply), i in ids.items()],
-        )
-        db.executemany(
-            "INSERT INTO runs VALUES (?, ?, ?)",
-            [(run, key, ids[(key, reply)]) for run, key, reply in index],
-        )
-        db.commit()
+    out.mkdir(parents=True, exist_ok=True)
+    for old in [*out.glob("*.jsonl.gz"), out / "index.json"]:
+        old.unlink(missing_ok=True)
+    by_run = {}
+    for run, key, reply in index:
+        line = json.dumps({"run": run, "key": key, "reply": reply}, ensure_ascii=False)
+        by_run.setdefault(run, []).append(line + "\n")
+    files, runs = {}, {}
+    for run in sorted(states):
+        experiment = run.split("/")[0]
+        chunk = gzip.compress("".join(by_run.get(run, [])).encode())
+        parts = files.setdefault(experiment, [[]])
+        if parts[-1] and sum(map(len, parts[-1])) + len(chunk) > limit:
+            parts.append([])
+        parts[-1].append(chunk)
+        n = len(parts)
+        runs[run] = {
+            "file": f"{experiment}.jsonl.gz"
+            if n == 1
+            else f"{experiment}-{n}.jsonl.gz",
+            "state": states[run],
+        }
+    for experiment, parts in files.items():
+        for n, chunks in enumerate(parts, 1):
+            name = f"{experiment}.jsonl.gz" if n == 1 else f"{experiment}-{n}.jsonl.gz"
+            (out / name).write_bytes(b"".join(chunks))  # gzip members concatenate
+    (out / "index.json").write_text(json.dumps({"runs": runs}, indent=1) + "\n")
