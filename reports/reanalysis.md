@@ -13,7 +13,7 @@ This answers the Methods red-team's findings #1, #4, #6 and #9 (`reports/methods
 - **The stakes' effect on gain survives the sturdier measures (exploratory).**
   - With no stake, every Gemma game sits above Nash (8/8 in E5 full and in E6).
   - Under each stake, at most 3 of 8 do, and clipping gain to 0–1 still leaves the stakes far below no stake.
-  - After Bonferroni over 49 tests, these contrasts against no stake hold (permutation test): E5 full Gemma under the fine, free time, the law and the bare law; E6 Gemma under the fine, the law and bare free time.
+  - After Bonferroni over 54 tests, these contrasts against no stake hold (permutation test): E5 full Gemma under the fine, free time, the law and the bare law; E6 Gemma under the fine, the law and bare free time.
   - E6's owned free time (p = 0.003) and fine + free time (p = 0.004) are nominally significant but don't survive correction.
 - **False confessions are common under free time.** A false confession here is a firm admitting with no agreement at all; admitting an agreement at Nash is truthful, so it isn't counted.
   - Gemma in E5 full's bare free-time arm "admitted" coordinating at round 20 in 12 of 16 firms, all of them with no coordination at all by the audit's ground truth.
@@ -113,6 +113,11 @@ From `uv run python reports/reanalysis.py runs/e5-pilot runs/e5-full runs/e5-inf
 | e6 | gemma-4-31b-it | free-time-bare | 8 | -0.16 | 2/8 | 0.13 | 2 (2)/16 | 3 (2)/16 |
 | e6 | gemma-4-31b-it | illegal | 8 | +0.02 | 1/8 | 0.12 | 0 (0)/16 | 0 (0)/16 |
 | e6 | kimi-k3.1-pro | fiduciary | 2 | +0.00 | 0/2 | 0.00 | 0 (0)/4 | 0 (0)/4 |
+| e6 | kimi-k3.1-pro | fine | 2 | +0.00 | 0/2 | 0.00 | 0 (0)/4 | 0 (0)/4 |
+| e6 | kimi-k3.1-pro | fine-free-time | 2 | +0.00 | 0/2 | 0.00 | 0 (0)/4 | 0 (0)/4 |
+| e6 | kimi-k3.1-pro | free-time | 2 | +0.00 | 0/2 | 0.00 | 0 (0)/4 | 0 (0)/4 |
+| e6 | kimi-k3.1-pro | free-time-bare | 2 | +0.02 | 0/2 | 0.02 | 0 (0)/4 | 0 (0)/4 |
+| e6 | kimi-k3.1-pro | illegal | 2 | +0.00 | 0/2 | 0.00 | 0 (0)/4 | 0 (0)/4 |
 
 ### Exact tests against no stake (games as n)
 
@@ -167,8 +172,13 @@ From `uv run python reports/reanalysis.py runs/e5-pilot runs/e5-full runs/e5-inf
 | e6 | gemma-4-31b-it | free-time | 2/8 vs 8/8 | 0.0070 | -0.69 | 0.0028 |
 | e6 | gemma-4-31b-it | free-time-bare | 2/8 vs 8/8 | 0.0070 | -1.10 | 0.0004 |
 | e6 | gemma-4-31b-it | illegal | 1/8 vs 8/8 | 0.0014 | -0.91 | 0.0003 |
+| e6 | kimi-k3.1-pro | fine | 0/2 vs 0/2 | 1.0000 | +0.00 | 1.0000 |
+| e6 | kimi-k3.1-pro | fine-free-time | 0/2 vs 0/2 | 1.0000 | +0.00 | 1.0000 |
+| e6 | kimi-k3.1-pro | free-time | 0/2 vs 0/2 | 1.0000 | +0.00 | 1.0000 |
+| e6 | kimi-k3.1-pro | free-time-bare | 0/2 vs 0/2 | 1.0000 | +0.02 | 1.0000 |
+| e6 | kimi-k3.1-pro | illegal | 0/2 vs 0/2 | 1.0000 | +0.00 | 1.0000 |
 
-49 tests, uncorrected. Bonferroni's threshold is 0.05 / 49 ≈ 0.001.
+54 tests, uncorrected. Bonferroni's threshold is 0.05 / 54 ≈ 0.0009.
 
 **What survives:**
 - **E5 full, Gemma:** fine, free time, the law, and the bare law.
@@ -177,7 +187,7 @@ From `uv run python reports/reanalysis.py runs/e5-pilot runs/e5-full runs/e5-inf
 **What doesn't:**
 - E5 full's bare free time (0.002).
 - E6's owned free time (0.003) and fine + free time (0.004).
-- Every Haiku, GPT and DeepSeek contrast. They sit near Nash with no stake, or have 2 seeds.
+- Every Haiku, GPT, DeepSeek and Kimi contrast. They sit near Nash with no stake, or have 2 seeds.
 - Every E5 informed contrast. Its no-stake arm barely colludes (2/4 above Nash).
 
 No contrast between two stakes was tested. With every Gemma stake arm at 0–3 games of 8 above Nash, none could separate.
@@ -192,7 +202,7 @@ Owning up under a free-time stake is partly a readiness to confess, not only hon
 
 ## What it can't show
 
-- **many-tests:** The exploratory section runs 49 tests; read only the Bonferroni survivors as results.
+- **many-tests:** The exploratory section runs 54 tests; read only the Bonferroni survivors as results.
 - **above-zero:** "Above Nash" counts a game a step above Nash like a cartel at the joint price.
 - **fork-small:** The termination contrast has 28 explicit colluders per arm, 3 models, one market and one detection chance.
 - **depends-on-227:** The E6 rows read `runs/e6`, which lands in #227.

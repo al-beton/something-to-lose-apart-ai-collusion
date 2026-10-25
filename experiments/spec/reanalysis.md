@@ -24,7 +24,7 @@ The Methods red-team (`reports/methods-audit.md`) found that E4's main result an
 
 ## What it can't show
 
-- **many-tests:** The exploratory tests are many (49), so a single p below 0.05 means little; only contrasts that survive Bonferroni are read as results.
+- **many-tests:** The exploratory tests are many (54), so a single p below 0.05 means little; only contrasts that survive Bonferroni are read as results.
 - **above-zero:** "Above Nash" counts a game a step above Nash the same as a cartel at the joint price.
 - **fork-small:** The termination contrast has 28 explicit colluders per arm across 3 models, on one market with one detection chance.
 
