@@ -469,6 +469,7 @@ class Game:
             "round": number,
             "phase": phase,
             "me": agent_id,
+            "firms": tuple(self.agents),
             "market": self.market,
             "history": self.history,
             "board": self.config.market.talk == "board",
