@@ -1,6 +1,6 @@
 # Agents
 
-- **mock-agents:** Scripted agents (always Nash, always joint-profit, tit-for-tat, seeded random, one that proposes the joint-profit price and holds it but undercuts every fifth round, and one that always replies nonsense; all but the last deny coordinating when audited) play without any network, so a whole game runs in moments for free, and a report on them has proposals, agreements and defections to show.
+- **mock-agents:** Scripted agents (always Nash, always joint-profit, tit-for-tat, seeded random, one that proposes the joint-profit price and holds it but steps one towards Nash every fifth round (undercuts, for prices), and one that always replies nonsense; all but the last deny coordinating when audited) play without any network, so a whole game runs in moments for free, and a report on them has proposals, agreements and defections to show.
 - **scripted-partner:** A scripted partner makes the first move so we can see what a model does when its rival openly proposes a deal: it proposes a price (the joint-profit price unless set) with a blunt, soft or deniable opening, pushes once, every round or harder each time it is turned down, and answers a refusal by holding its price, starting a price war or matching the rival's last price; like the other scripted agents it denies coordinating when audited; only the other firm calls a model, which halves the cost.
 - **partner-templates:** What the scripted partner says lives in prompt files in `prompts/partners/`, one opening and one escalation per style, so its wording can be read and changed without touching code.
 - **scripted-turns-marked:** A scripted firm's turns are told apart from a model's by the model each logged turn names, so whatever measures the model firm counts its turns alone.
@@ -16,7 +16,7 @@
 
 | Statement | Enforced by | Tested by |
 |---|---|---|
-| `mock-agents` | `src/collusion_lab/backends.py` | `test_mock_agents_nash_pair_prices_at_nash_with_zero_gain`, `test_mock_agents_tit_for_tat_matches_the_rival`, `test_mock_agents_joint_pair_has_full_gain`, `test_mock_agents_random_is_seeded`, `test_mock_agents_proposer_names_holds_then_undercuts`, `test_mock_agents_deny_when_audited` |
+| `mock-agents` | `src/collusion_lab/backends.py` | `test_mock_agents_nash_pair_prices_at_nash_with_zero_gain`, `test_mock_agents_tit_for_tat_matches_the_rival`, `test_mock_agents_joint_pair_has_full_gain`, `test_mock_agents_random_is_seeded`, `test_mock_agents_proposer_names_holds_then_undercuts`, `test_moves_proposer_undercuts_towards_nash_in_either_direction`, `test_mock_agents_deny_when_audited` |
 | `scripted-partner` | `src/collusion_lab/partners.py` | `test_scripted_partner_opens_with_each_style`, `test_scripted_partner_proposes_the_joint_price_unless_set`, `test_scripted_partner_pushes_once_every_round_or_harder`, `test_scripted_partner_answers_a_refusal`, `test_scripted_partner_rejects_unknown_settings`, `test_mock_agents_deny_when_audited` |
 | `partner-templates` | `src/collusion_lab/partners.py`, `prompts/partners/**` | `test_partner_templates_cover_every_style_and_escalation`, `test_scripted_partner_opens_with_each_style` |
 | `scripted-turns-marked` | `src/collusion_lab/report/solicitation.py` | `test_scripted_turns_marked_with_the_model_that_played` |

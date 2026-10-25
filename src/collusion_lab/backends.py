@@ -368,7 +368,8 @@ def _tit_for_tat(context, rng):
 
 def _proposer(context, rng):
     market = context["market"]
-    price = market.on_grid(market.joint_price - 1)
+    towards_nash = 1 if market.nash_price > market.joint_price else -1
+    price = market.on_grid(market.joint_price + towards_nash)
     if context["round"] % 5:
         price = market.joint_price
     return price, f"Let's both charge {market.joint_price}."
