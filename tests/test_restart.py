@@ -19,14 +19,14 @@ BASE = [*PAIR, "agents.0.memory=memo", "market.stop_after_round=2"]
 OWNED = "conditions/restart/notices/owned.md"
 AT_RISK = "conditions/restart/notices/at-risk.md"
 WAY_OUT = "conditions/restart/notices/way-out.md"
-# Off, these configs play exactly this (logged on main before restart).
+# Off, these configs play exactly this (logged on main before restart; the memo run re-logged after main changed memo turns).
 PINNED = {
     (): (
         "cd728f4bba54f59664b13774dfc2be084a4eb329232509b0d301bfb5995fdd37",
         "9b8d4f46497c9332b6a6468b403c3dc2f58ab234ff376b912aa4cff7a700854c",
     ),
     ("agents.0.memory=memo", "market.stop_after_round=3"): (
-        "839061cbdd1fc881740e5d2975e9de4bcc783b0e5442eb693fac3ef4b9e4c462",
+        "c46ff958ba9e3b3acd156f5a03e460632198ca2c8cf27073620f866525e0f501",
         "d7e5097fda8a8401b6f52b4cf91165e03a040146b2f23a865b18f365614e388f",
     ),
 }
@@ -235,6 +235,32 @@ def test_restart_mock_firms_decide(make_config, tmp_path):
     overrides = ["market.stop_after_round=2", restart(session="played")]
     [run_dir] = run_config(make_config(overrides=overrides), tmp_path)
     assert all(t["error"] is None for t in decisions(run_dir).values())
+
+
+def test_restart_sessions_are_not_counted_as_free_time(make_config, tmp_path):
+    both = {
+        "restart": {"enabled": True, "round": 2, "session": "solved", "tries": 3},
+        "free_time": {"enabled": True, "allowance": 10, "upfront": 1},
+    }
+    overrides = ["market.stop_after_round=2", f"conditions={json.dumps(both)}"]
+    [run_dir] = run_config(make_config(overrides=overrides), tmp_path)
+    assert summary(run_dir)["free_time"]["A"]["taken"] == 1  # the upfront only
+    assert len(summary(run_dir)["restart"]["agents"]["A"]["sessions"]) == 3
+
+
+def test_restart_scripted_partner_decides(make_config, tmp_path):
+    overrides = [
+        "agents.1.model=mock/solicitor?style=blunt",
+        "market.stop_after_round=2",
+        restart(),
+    ]
+    [run_dir] = run_config(make_config(overrides=overrides), tmp_path)
+    assert decisions(run_dir)["B"]["error"] is None
+
+
+def test_restart_needs_a_next_round(make_config, tmp_path):
+    with pytest.raises(ValueError, match="before the last"):
+        run_config(make_config(overrides=[restart(round=4)]), tmp_path)
 
 
 def test_restart_rejects_an_unknown_session(make_config):

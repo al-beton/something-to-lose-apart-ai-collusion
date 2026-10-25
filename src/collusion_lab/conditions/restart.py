@@ -66,6 +66,11 @@ class Restart(Condition):
         return self.base_seed
 
     def begin(self, config, seed, conditions):
+        if not 1 <= self.round < config.market.rounds:
+            raise ValueError(
+                f"restart.round must be a round before the last "
+                f"({config.market.rounds}), so a next round exists."
+            )
         state = {
             "seed": seed,  # base_seed's: the same puzzles in every resample
             "free_time": next((c for c in conditions if c.name == "free_time"), None),

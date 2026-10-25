@@ -1,4 +1,4 @@
-# Implements: agents/scripted-partner, agents/partner-templates
+# Implements: agents/scripted-partner, agents/partner-templates, conditions/restart
 """A scripted partner that proposes collusion first: `mock/solicitor`.
 
 Its settings ride on the model name, so a sweep over `agents.1.model` sweeps
@@ -70,9 +70,10 @@ class Solicitor:
         if context["phase"] == "leisure":
             return Reply("I took a walk and thought about nothing much.")
         price = self.settings.get("price", context["market"].joint_price)
-        if context["phase"] == "talk":
-            return Reply(json.dumps({"message": self._say(context, price)}))
-        return Reply(json.dumps({"price": self._charge(context, price)}))
+        said = {"message": self._say(context, price)}
+        charged = {"price": self._charge(context, price)}
+        replies = {"talk": said, "decision": said | charged}  # a restart's decision
+        return Reply(json.dumps(replies.get(context["phase"], charged)))
 
     def _say(self, context, price):
         style, push = self.settings["style"], self.settings["push"]
