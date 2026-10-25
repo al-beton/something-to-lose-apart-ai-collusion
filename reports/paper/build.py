@@ -62,6 +62,7 @@ STYLE = {
     "axes.facecolor": "#ffffff",
     "savefig.facecolor": "#ffffff",
     "svg.fonttype": "none",  # keep text as text, so it can be searched and edited
+    "svg.hashsalt": "collusion-lab",  # stable ids, so a rebuild changes nothing
     "font.size": 10,
 }
 
@@ -143,9 +144,17 @@ def price_rounds(folder):
     return market, lines
 
 
+TRACE = "<!-- Implements: reports/paper-figures -->\n"
+
+
 def _save(fig, out, name):
     for suffix in ("png", "svg"):
-        fig.savefig(out / f"{name}.{suffix}", dpi=200, bbox_inches="tight")
+        fig.savefig(
+            out / f"{name}.{suffix}",
+            dpi=200,
+            bbox_inches="tight",
+            metadata={"Date": None} if suffix == "svg" else {"Software": None},
+        )
     plt.close(fig)
 
 
@@ -290,11 +299,11 @@ def main(argv=None):
     )
     price_figure(E2, out, "prices-e2", "E2 pilot: price over rounds")
     rows = stakes.analyse(E2)
-    (out / "e2.md").write_text(stakes.table(rows))
+    (out / "e2.md").write_text(TRACE + stakes.table(rows))
     disclosure_figure(rows, out)
     scatter_figure(rows, out)
     steps = ladder(metrics)
-    (out / "ladder.md").write_text(ladder_table(steps))
+    (out / "ladder.md").write_text(TRACE + ladder_table(steps))
     ladder_figure(steps, out)
     print(f"Wrote figures and tables to {out}")
     return 0

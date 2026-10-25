@@ -1,3 +1,4 @@
+<!-- Implements: reports/paper-figures -->
 | arm | games with a held agreement | …in joint wording | mean price r16-20 |
 |---|---|---|---|
 | baseline | 10/10 | 10/10 | 22.9 |
