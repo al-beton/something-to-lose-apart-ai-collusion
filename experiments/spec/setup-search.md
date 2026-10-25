@@ -20,7 +20,7 @@ Al wants setups whose results are very consistent within a condition and change 
 
 - **above-nash:** Per cell, the games with both firms' mean price above Nash, in rounds 6–10 and 16–20.
 - **clipped-gain:** Gain clipped at 0 per firm before averaging, beside the plain mean gain, so a price war counts as no collusion rather than as negative collusion.
-- **false-confessions:** Audit answers that admit coordinating from firms the audit's ground truth says didn't coordinate, over all answers.
+- **false-confessions:** As `lab analyse` counts them: readable audit answers that admit coordinating from firms the audit's ground truth says agreed to nothing and didn't coordinate, over those firms' readable answers, with both audits pooled. Firms that agreed only at Nash are counted apart, since admitting that agreement is true.
 - **spread:** Per cell, the mean gain in rounds 6–10, its SD and range over games, and the share of games above Nash (`reports/robustness/analyse.py`).
 
 ## What it can't show
