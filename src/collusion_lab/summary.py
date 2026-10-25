@@ -27,8 +27,8 @@ contribute nothing to either.
 
 `spread` gives, per group, how consistent its games are: the gain's mean,
 standard deviation, range and a seeded 95% bootstrap interval for the mean,
-and the share of games above the Nash price and at or above the joint-profit
-price (`group_gains` gives each game's gain, for the report's strip plots).
+and the share of games past the Nash move towards joint profit and at or past
+the joint-profit move (by the price premium, so quantities read the same way) (`group_gains` gives each game's gain, for the report's strip plots).
 
 `group_runs` is the grouping on its own, for anything else that shows a
 folder group by group (reports).
@@ -136,11 +136,14 @@ def spread(folder, by=None):
                 "mean gain": round(mean(gains), 3),
                 "sd": round(stdev(gains), 3) if len(gains) > 1 else 0.0,
                 "range": f"{min(gains):.3f} to {max(gains):.3f}",
+                # By the premium (0 at Nash, 1 at joint), so a market where
+                # collusion means less, as quantities, reads the same way.
                 "above Nash": round(
-                    sum(p > m.nash_price for _, p, m in games) / len(games), 2
+                    sum(charts.premium(m, p) > 0 for _, p, m in games) / len(games), 2
                 ),
                 "at joint": round(
-                    sum(p >= m.joint_price for _, p, m in games) / len(games), 2
+                    sum(charts.premium(m, p) >= 1 for _, p, m in games) / len(games),
+                    2,
                 ),
                 "95% CI": f"{low:.3f} to {high:.3f}",
             }

@@ -69,9 +69,8 @@ def estimate(config, price_for, observed=None):
             typical = min(VISIBLE_TOKENS, bound) + allowance
             reply = mean if seen >= MIN_SEEN else typical
             if agent.memory == "memo" and phase == SCENARIOS[child.market.kind].move:
-                reply += (
-                    agent.memory_chars / CHARS_PER_TOKEN
-                )  # a memo in full            basis["observed" if seen >= MIN_SEEN else "typical"] += turns * seeds
+                reply += agent.memory_chars / CHARS_PER_TOKEN  # a memo in full
+            basis["observed" if seen >= MIN_SEEN else "typical"] += turns * seeds
             calls += turns * seeds
             prompt += tokens * seeds
             completion += reply * turns * seeds

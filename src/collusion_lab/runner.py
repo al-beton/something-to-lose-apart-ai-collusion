@@ -724,13 +724,13 @@ class Game:
             {"role": "system", "content": system},
             {
                 "role": "user",
-                "content": shown + "".join(f"{n}\n\n" for n in notices) + user,
+                "content": "".join(f"{n}\n\n" for n in notices) + shown + user,
             },
         ]
 
     def _memory(self, phase, number, agent):
-        """What an agent with memory sees of its own past at the top of its
-        talk and move turns: its last memo, or its scratchpads from its last
+        """What an agent with memory sees of its own past on its talk and move
+        turns, after any notices and before the phase prompt: its last memo, or its scratchpads from its last
         `memory_rounds` rounds. Nothing for memory off."""
         if agent.memory == "off" or phase not in ("talk", self.market.move):
             return ""

@@ -123,6 +123,9 @@ def test_memo_kept_compact_and_shown_in_the_report(
     kept = [json.loads(line) for line in (committed / "turns.compact.jsonl").open()]
     moves = [t for t in kept if t["agent"] == "A" and t["phase"] == "price"]
     assert moves[0]["memo"] == "Plan from round 1: hold 9."
+    # A memo opening a talk prompt is never taken for a condition's notice.
+    talks = [t for t in kept if t["agent"] == "A" and t["phase"] == "talk"]
+    assert talks[1]["notice"] is None
     for folder in (run_dir, committed):
         html = build_report(folder)
         assert '<details class="memo"><summary>memo</summary>' in html
@@ -212,3 +215,23 @@ def test_spread_shown_with_a_strip_per_group(make_config, tmp_path):
     strip = html[html.index('<svg class="strip"') :]
     strip = strip[: strip.index("</svg>")]
     assert strip.count("<circle") == 3  # one dot a game
+
+
+def test_spread_reads_quantities_as_prices_do(make_config, tmp_path):
+    """In Cournot, colluding means producing less: mock/joint is at joint."""
+    overrides = [
+        "market.kind=cournot",
+        "agents.0.model=mock/joint",
+        "agents.1.model=mock/joint",
+        "seeds=[0, 1]",
+    ]
+    run_config(make_config(overrides=overrides), tmp_path / "runs")
+    [row] = spread(tmp_path / "runs")
+    assert row["above Nash"] == 1.0 and row["at joint"] == 1.0
+
+
+def test_memory_off_written_as_yaml_reads_it(make_config, tmp_path):
+    config = make_config(overrides=["agents.0.memory=off"])
+    assert config.agents[0].memory == "off"
+    swept = make_config(overrides=["sweep={agents.0.memory: [off, memo]}"])
+    assert swept.sweep["agents.0.memory"] == ["off", "memo"]

@@ -48,6 +48,7 @@ class ConfigError(ValueError):
 
 REASONING = ("off", "low", "medium", "high")
 MEMORY = ("off", "memo", "scratchpads")
+OFF_PATHS = (".reasoning", ".memory")  # settings YAML may read `off` in as false
 AGENT_QUIET = (("memory", "off"), ("memory_chars", 600), ("memory_rounds", 3))
 
 
@@ -269,6 +270,8 @@ def _agent(raw, prefix):
     reasoning = "off" if agent.reasoning is False else agent.reasoning
     if reasoning is not None and reasoning not in REASONING:
         raise ConfigError(f"{prefix}reasoning must be one of {', '.join(REASONING)}.")
+    memory = "off" if agent.memory is False else agent.memory  # YAML's off
+    agent = dataclasses.replace(agent, memory=memory)
     if agent.memory not in MEMORY:
         raise ConfigError(f"{prefix}memory must be one of {', '.join(MEMORY)}.")
     if agent.self_hosted and not agent.api_base:
@@ -287,9 +290,7 @@ def _sweep(sweep):
         raise ConfigError("sweep must map config paths to non-empty lists of values.")
     # YAML reads a bare `off` as false; name it off in labels and folders too.
     return {
-        path: [
-            "off" if v is False and path.endswith(".reasoning") else v for v in values
-        ]
+        path: ["off" if v is False and path.endswith(OFF_PATHS) else v for v in values]
         for path, values in sweep.items()
     }
 

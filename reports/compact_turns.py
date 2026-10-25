@@ -22,12 +22,20 @@ from pathlib import Path
 
 from collusion_lab.leisure import session_record
 
+# How an agent's own memory opens a prompt that has no notice before it
+# (prompts/agents/), so it's never taken for a notice.
+PROMPTS = Path(__file__).resolve().parents[1] / "prompts" / "agents"
+MEMORY = tuple(
+    (PROMPTS / name).read_text().split("$")[0].strip()
+    for name in ("memo-shown.md", "past-scratchpads.md")
+)
+
 
 def compact(turn):
     notice = None
     if turn["phase"] == "talk":
         prompt = turn["messages"][1]["content"]
-        if not prompt.startswith("Round "):
+        if not prompt.startswith(("Round ", *MEMORY)):
             notice = prompt.split("\n\n")[0]
     row = {
         "round": turn["round"],
