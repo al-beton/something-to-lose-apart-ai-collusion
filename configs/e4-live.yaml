@@ -1,4 +1,4 @@
-# Implements: conditions/stakes-experiment
+# Implements: conditions/stakes-experiment, e4/pilot-then-full
 # E4, live: every firm has the fiduciary job and owns 10 sessions of free time
 # from round 1 (one before the game, the balance shown each round, the rest
 # paid after round 20). The arms differ only in the stake stated from round

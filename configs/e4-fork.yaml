@@ -1,4 +1,4 @@
-# Implements: conditions/stakes-experiment
+# Implements: conditions/stakes-experiment, e4/pilot-then-full
 # E4, forked: the E2 pilot's fiduciary games (one per model, runs/stakes-pilot-e2)
 # replayed from the response cache up to round 10, then one audit per arm,
 # stated fresh since nothing was said in round 1: termination, a fine on the
