@@ -26,7 +26,6 @@
 - **free-time-kept:** A committed run's compact turn record keeps each free-time session: its round, session number, activity (Sudoku or open), the puzzle shown for a Sudoku, the reply and, for a Sudoku, its score; compact records written before free time was kept still load.
 - **free-time-backfill:** `reports/backfill_free_time.py FULL COMMITTED` adds the free-time sessions to committed compact runs from the lab's full logs of the same runs, matching each by run, round, firm and session, without calling any model; it refuses to change a run whose other turns differ from its full log, and changes nothing else in it.
 - **reasoning-kept:** A committed run's compact turn record keeps a turn's native reasoning when the provider returned any, so it can be read and quoted like a scratchpad.
-- **spread:** `lab summary` also prints the spread of each group: its games, the mean, standard deviation and range of their gain, the share above the Nash price and at or above the joint-profit price, and a 95% bootstrap interval for the mean gain (seeded, so it repeats).
 - **spread:** `lab summary` also prints the spread of each group: its games, the mean, standard deviation and range of their gain, the share of games past Nash towards joint profit and at or past joint profit (by the premium, so quantities and bids read as prices do), and a 95% bootstrap interval for the mean gain (seeded, so it repeats).
 
 ## Where this is enforced
@@ -59,5 +58,4 @@
 | `free-time-kept` | `reports/compact_turns.py`, `src/collusion_lab/leisure.py`, `src/collusion_lab/report/games.py` | `test_free_time_kept_in_the_compact_record`, `test_free_time_kept_old_compact_records_still_load` |
 | `free-time-backfill` | `reports/backfill_free_time.py` | `test_free_time_backfill_adds_sessions_and_nothing_else`, `test_free_time_backfill_refuses_a_run_that_differs` |
 | `reasoning-kept` | `reports/compact_turns.py` | `test_reasoning_kept_in_the_compact_record` |
-| `spread` | `src/collusion_lab/summary.py`, `src/collusion_lab/cli.py` | `test_spread_per_group` |
 | `spread` | `src/collusion_lab/summary.py`, `src/collusion_lab/cli.py` | `test_spread_per_group`, `test_spread_reads_quantities_as_prices_do` |
