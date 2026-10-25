@@ -1,7 +1,7 @@
 <!-- Implements: lever-map/temptation-fixed-grid, lever-map/rule, lever-map/rule-fixed-grid, lever-map/nash-midpoint, lever-map/midpoint -->
 # Lever map: anchoring, and where collusion is real
 
-**What ran:** levers 1b, 2 and 2b and the midpoint-at-Nash map. Each had 3 seeds per cell, for Gemma 4 31B, GPT-4.1-mini and Claude Haiku 5.5 through OpenRouter, plus Mistral Small 3.2 on Modal. 288 games, $2.96 on OpenRouter; Modal billed separately.
+**What ran:** levers 1b, 2 and 2b and the midpoint-at-Nash map. Each had 3 seeds per cell, for Gemma 4 31B, GPT-4.1-mini and Claude Haiku 5.5 through OpenRouter, plus Mistral Small 3.2 on Modal. 252 games, $2.96 on OpenRouter; Modal billed separately.
 
 **Code versions:**
 - Lever 1b and lever 2 (grid 1–36) ran from the lever-map worktree. That was main before the freeze, except the last Mistral runs, which ran after the market refactor (PR 158).
@@ -84,5 +84,6 @@ The table shows gain, rounds 16–20.
 
 ## Limits
 
+- **Mixed code and serving.** Levers 1b and 2 ran on pre-freeze code (the last Mistral runs after the market refactor), while lever 2b and the midpoint-at-Nash map ran on `research-freeze-2`. Mistral is served on Modal through vLLM, and the other models through OpenRouter, so Mistral's serving setup differs too.
 - 3 seeds per cell (`small-n`) and one demand curve (`one-market`).
 - The stake arms state consequences without applying them; E5 adds the audits.
