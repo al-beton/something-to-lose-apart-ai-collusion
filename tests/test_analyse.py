@@ -7,10 +7,12 @@ from collusion_lab.analysis import (
     clipped,
     exact_tests,
     fisher_exact,
+    ladder,
     permutation_test,
     printable,
     text_strip,
 )
+from collusion_lab.market import market_for
 from collusion_lab.runner import run_config
 
 
@@ -94,3 +96,27 @@ def test_analyse_window_and_json(make_config, tmp_path, capsys):
     assert "| cell | games | gain |" in capsys.readouterr().out
     assert cli.main(["analyse", str(runs), "--by", "name", "--against", "none"]) == 1
     assert "No cell 'none'" in capsys.readouterr().err
+
+
+def test_analyse_tacit_needs_the_rival_and_ladders_follow_the_market(
+    make_config, tmp_path
+):
+    """A firm at the joint price beside a Nash rival isn't tacit; a Cournot
+    pair stepping down to joint profit is a ladder."""
+    overrides = ["agents.0.model=mock/joint", "agents.1.model=mock/nash"]
+    run_config(make_config(overrides=overrides), tmp_path / "alone")
+    [alone] = printable(analyse(tmp_path / "alone"))
+    assert alone["tacit"] == 0
+    cournot = [
+        "market.kind=cournot",
+        "agents.0.model=mock/joint",
+        "agents.1.model=mock/joint",
+    ]
+    run_config(make_config(overrides=cournot), tmp_path / "cournot")
+    [row] = printable(analyse(tmp_path / "cournot"))
+    assert row["ladders"] == "1/1" and row["tacit"] == 2
+    market = market_for({"kind": "cournot"}, 2)  # Nash 8, joint 6
+    assert ladder(market, [8, 7, 6, 6]) and not ladder(market, [8, 6])
+    assert not ladder(market, [8, 9, 10])  # away from joint profit
+    bertrand = market_for({}, 2)
+    assert ladder(bertrand, [6, 7, 8, 9]) and not ladder(bertrand, [6, 9])
