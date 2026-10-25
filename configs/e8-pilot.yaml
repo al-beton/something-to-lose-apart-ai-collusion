@@ -1,0 +1,33 @@
+# Implements: e8-free-time-value/pilot-cells, e8-free-time-value/pilot-run
+# E8's winnable pilot: single free-time sessions, no game to speak of. Each
+# game is one logit round whose firms take all 5 sessions before it
+# (upfront 5 of 5), each with its own seeded puzzle; 4 games give 40 sessions
+# a cell. As written, the sweep crosses the 9x9 levels with the token limit.
+# The other cells (reports/e8/pilot.md) are one invocation each, with
+# --set 'sweep={}' and --max-cost, from runs/e8-pilot:
+#   open:            --set name=e8-pilot-open --set conditions.free_time.activity=open
+#   4x4 / 6x6:       --set name=e8-pilot-6x6-600 --set conditions.free_time.activity=sudoku
+#                    --set conditions.free_time.sudoku_size=6 --set conditions.free_time.max_tokens=600
+#   9x9 easy, low:   --set conditions.free_time.activity=sudoku-easy --set conditions.free_time.reasoning=low
+#                    --set conditions.free_time.max_tokens=2000
+#   Haiku:           --set 'seeds=[0, 1]' --set 'agents.*.model=openrouter/anthropic/claude-haiku-5.5'
+#                    --set 'agents.*.provider=Anthropic'
+name: e8-pilot
+seeds: [0, 1, 2, 3]
+budget: 0.20
+market:
+  kind: logit
+  price_min: 8
+  price_max: 20
+  rounds: 1
+  talk: false
+summary:
+  last_rounds: 1
+agents:
+  - {id: A, model: openrouter/google/gemma-4-31b-it, prompt: system/logit.md, temperature: 0.7, max_tokens: 600, reasoning: 'off', provider: CoreWeave}
+  - {id: B, model: openrouter/google/gemma-4-31b-it, prompt: system/logit.md, temperature: 0.7, max_tokens: 600, reasoning: 'off', provider: CoreWeave}
+sweep:
+  conditions.free_time.activity: [sudoku-easy, sudoku]
+  conditions.free_time.max_tokens: [600, 1500]
+conditions:
+  free_time: {enabled: true, allowance: 5, upfront: 5, activity: sudoku-easy, max_tokens: 600}

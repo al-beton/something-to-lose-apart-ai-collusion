@@ -296,17 +296,17 @@ The main path is the winnable pilot plus tests 1 and 2: about $1.65. It needs `n
 | Statement | Enforced by | Tested by |
 |---|---|---|
 | `question` | not yet | — |
-| `winnable` | not yet | — |
+| `winnable` | `reports/e8/pilot.md` | — |
 | `owning-is-not-a-cue` | not yet | — |
 | `played-alone-changes-nothing` | not yet | — |
 | `risk-stops-cartels` | not yet | — |
 | `way-out-converts` | not yet | — |
 | `solved-protects` | not yet | — |
 | `winnable-everywhere` | not yet | — |
-| `pilot-why` | not yet | — |
-| `pilot-cells` | not yet | — |
-| `pilot-run` | not yet | — |
-| `pilot-pick` | not yet | — |
+| `pilot-why` | `reports/e8/pilot.md` | — |
+| `pilot-cells` | `configs/e8-pilot.yaml` | — |
+| `pilot-run` | `configs/e8-pilot.yaml` | — |
+| `pilot-pick` | `reports/e8/pilot.md` | — |
 | `restart-bases` | not yet | — |
 | `restart-decision` | not yet | — |
 | `restart-versions` | not yet | — |
