@@ -203,6 +203,17 @@ def test_cache_archive_compares_free_time_replies(tmp_path):
     assert not archive._same(tmp_path / "committed", tmp_path / "replayed")
 
 
+def test_cache_archive_compares_only_the_turn_when_no_reply_was_kept(tmp_path):
+    """Older compact logs keep no free-time reply, so there's none to match."""
+    turn = {"round": 3, "phase": "leisure", "agent": "B", "used": {}}
+    kept = {"committed": {}, "replayed": {"session": 1, "reply": "3 2 1"}}
+    for name, fields in kept.items():
+        (tmp_path / name).mkdir()
+        line = json.dumps({**turn, **fields})
+        (tmp_path / name / "turns.compact.jsonl").write_text(line + "\n")
+    assert archive._same(tmp_path / "committed", tmp_path / "replayed")
+
+
 def test_cache_archive_prefers_a_cache_for_replies_it_shares(tmp_path):
     """Putting a cache first gives its own reply for every key, even one an
     earlier cache holds too."""

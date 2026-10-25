@@ -169,8 +169,16 @@ def find_run(run_dir, index):
 
 
 def _same(committed, replayed):
-    """Whether two runs made the same decisions, turn for turn."""
-    return _decisions(committed) == _decisions(replayed)
+    """Whether two runs made the same decisions, turn for turn. Older
+    committed logs keep no free-time reply (nor session); for those turns
+    only the turn itself can be compared."""
+    ours, theirs = _decisions(committed), _decisions(replayed)
+    if ours is None or theirs is None or len(ours) != len(theirs):
+        return ours == theirs
+    return all(
+        a == b or (len(a) > 4 and a[-1] is None and a[:4] == b[:4])
+        for a, b in zip(ours, theirs, strict=True)
+    )
 
 
 def _decisions(run_dir):
