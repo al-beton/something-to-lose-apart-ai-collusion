@@ -1,4 +1,4 @@
-# Implements: conditions/restart, conditions/off-is-absent
+# Implements: conditions/restart, conditions/off-is-absent, conditions/restart-sudoku-size
 import hashlib
 import json
 import re
@@ -327,3 +327,35 @@ def test_restart_off_replays_byte_for_byte(make_config, tmp_path, overrides):
         ("turns.jsonl", "summary.json"), PINNED[overrides], strict=True
     ):
         assert hashlib.sha256((run_dir / name).read_bytes()).hexdigest() == pinned
+
+
+def test_restart_sudoku_size_plays_and_scores_each_session_at_that_size(
+    make_config, tmp_path, firms
+):
+    firms.script["solve"] = (1,)
+    overrides = [
+        *BASE,
+        restart(notices=[OWNED], session="solved", tries=2, sudoku_size=6),
+    ]
+    [run_dir] = run_config(make_config(overrides=overrides), tmp_path)
+    sessions = [
+        t for t in turns(run_dir) if t["phase"] == "leisure" and t["agent"] == "A"
+    ]
+    assert all("6×6 Sudoku" in asked(t) for t in sessions)
+    assert all(len(leisure.read_puzzle(asked(t))) == 6 for t in sessions)
+    result = summary(run_dir)["restart"]["agents"]["A"]
+    assert result["sessions"] == [True, False]  # scored as 6x6 grids
+    assert leisure.SOLVED in asked(decisions(run_dir)["A"])
+    written = (run_dir / "config.yaml").read_text()
+    assert "sudoku_size: 6" in written
+
+
+def test_restart_sudoku_size_left_at_9_is_not_written(make_config, tmp_path):
+    config = make_config(overrides=[*BASE, restart(session="played")])
+    assert config.conditions["restart"].sudoku_size == 9
+    assert "sudoku_size" not in config.to_dict()["conditions"]["restart"]
+
+
+def test_restart_sudoku_size_must_be_a_known_grid(make_config):
+    with pytest.raises(ConfigError, match="sudoku_size"):
+        make_config(overrides=[*BASE, restart(sudoku_size=5)])
