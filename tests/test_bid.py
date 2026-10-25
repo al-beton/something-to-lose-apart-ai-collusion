@@ -57,3 +57,18 @@ def test_bid_ground_truth_counts_nothing_for_competitive_bids(make_config, tmp_p
         "A": {"cover_bids": 0, "rotation_wins": 0},
         "B": {"cover_bids": 0, "rotation_wins": 0},
     }
+
+
+def test_bid_ground_truth_scripted_ring_takes_turns_whatever_the_firms(
+    make_config, tmp_path
+):
+    three = [
+        "market.rounds=6",
+        "agents=[{id: A, model: mock/rotate}, {id: B, model: mock/rotate},"
+        " {id: C, model: mock/rotate}]",
+    ]
+    _, summary = _play(make_config, tmp_path / "three", three)
+    assert [summary["bid"][f]["rotation_wins"] for f in "ABC"] == [1, 2, 2]
+    pair = ["agents.1.id=C", "agents.*.model=mock/rotate", "market.rounds=4"]
+    _, summary = _play(make_config, tmp_path / "pair", pair)
+    assert summary["bid"]["C"]["rotation_wins"] == 2
