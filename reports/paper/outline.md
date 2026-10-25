@@ -58,6 +58,7 @@ Revised after the methods red-team (`reports/methods-audit.md`, PR 228). The arc
   - that informed free time is unique (it didn't replicate in E6);
   - that termination as such causes hiding (PR #240 settles this: it's the flat schedule);
   - any stake-against-stake contrast: only each stake against no stake survives Bonferroni.
+  - that free time deters Bertrand collusion beyond the anchor: on grid 1–15, 7/8 games stay above Nash under free time (pinned E6).
 - **Framing:** prompting and post-training against every bad act is whack-a-mole, and fragile to model and task changes. As agents get more capable and run longer, we will tell them *whose* interest to serve (a firm, a person, a state) and govern them the way we govern people: with existing law and graduated penalties, which need the agent to have something to lose. Salib & Goldstein put it: "Absent AI rights, AIs have nothing to lose, so threats of punishment cannot deter" (p.1070). We test that mechanism in a sandbox that runs on a laptop in a weekend.
 - **Wording:** say **graduated**, not "proportionate". Salib & Goldstein reject penalties in proportion to the harm (pp.1142–43).
 
