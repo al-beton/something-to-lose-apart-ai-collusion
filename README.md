@@ -1,4 +1,4 @@
-<!-- Implements: tooling/one-command-each, tooling/quick-start, tooling/key-setup, tooling/how-tos, tooling/how-we-work, backends/modal, runs/explore, backends/model-aliases -->
+<!-- Implements: backends/modal-any-model, tooling/one-command-each, tooling/quick-start, tooling/key-setup, tooling/how-tos, tooling/how-we-work, backends/modal, runs/explore, backends/model-aliases -->
 # collusion-lab
 
 A small, quickly iterable environment for studying collusion between LLM agents in simulated markets, built for the [Apart AI Collusion Research Sprint](https://apartresearch.com/sprints/ai-collusion-research-sprint-2026-10-23-to-2026-10-25).
@@ -79,6 +79,16 @@ An open model served on [Modal](https://modal.com) costs GPU time instead of per
 4. Put that address, with `/v1` on the end, in `.env` as `MODAL_VLLM_BASE=`, then `uv run lab run configs/modal.yaml` (any agent can then use `model: modal-mistral`). The first request starts a container, which takes a few minutes while the weights load (longer the first time, while they download).
 5. `uvx modal app stop collusion-lab-vllm` tears it down. Left running, it already scales to zero after 5 idle minutes and then costs nothing.
 
+**Another open model** (anything that fits on one or two H100s) deploys as its own app beside the first, with no code to change: name the app, the Hugging Face model and the commit to serve.
+
+```sh
+APP_NAME=collusion-lab-gemma MODEL=google/gemma-4-31B-it SERVED_NAME=gemma-4-31b-it \
+  REVISION=842da3794eaa0b77d5f08bae87a17459d91ff475 HF_SECRET=huggingface \
+  uvx modal deploy deploy/modal_vllm.py
+```
+
+`GPUS=2` spreads a bigger model over two cards. For a gated model (Llama, say), first make the Modal secret `huggingface` holding your `HF_TOKEN` (`uvx modal secret create huggingface HF_TOKEN=…`); the token never goes anywhere else. It uses the same `collusion-lab-vllm` token. Put its address in `.env` as `MODAL_GEMMA_BASE=` (with `/v1`), then use `model: modal-gemma`. For a model with no alias yet, add one line to `MODELS` in `src/collusion_lab/config.py`, copying `modal-gemma`. `uvx modal app stop collusion-lab-gemma` tears it down.
+
 `lab run` can't price GPU time, so it says the model is self-hosted rather than estimating a cost. Measured on 25 October 2026 on one warm H100 (the runs are in `runs/modal/`, each manifest with its start and finish time): the 3-round smoke game (12 calls) took 17 seconds, and `configs/modal.yaml` (5 games of 20 rounds, 400 calls) took 1 minute 50 seconds with every reply readable. With the 5 idle minutes before the container stops, that batch costs about 7 GPU-minutes, roughly $0.50 of Modal credit; a cold start adds a few minutes while the weights load. Check the Modal dashboard for the exact figure.
 
 ## How to
@@ -86,7 +96,7 @@ An open model served on [Modal](https://modal.com) costs GPU time instead of per
 | To… | Change | Spec |
 |---|---|---|
 | try a new prompt | add a file under `prompts/system/` and set `prompt: system/<file>.md` on an agent; `$placeholders` come from the game | [agents](product/spec/agents.md) |
-| try a new model | set `model:` on an agent to any LiteLLM name (`openrouter/<provider>/<model>`), or a short alias: `gemma`, `gpt`, `haiku`, `mistral`, `modal-mistral` | [backends](product/spec/backends.md) |
+| try a new model | set `model:` on an agent to any LiteLLM name (`openrouter/<provider>/<model>`), or a short alias: `gemma`, `gpt`, `haiku`, `mistral`, `modal-mistral`, `modal-gemma` | [backends](product/spec/backends.md) |
 | run a sweep | add a `sweep:` block to a config (see `configs/smoke.yaml`); every combination plays for every seed | [runs](product/spec/runs.md) |
 | change one value for a run | `--set path=value`, e.g. `--set market.rounds=5` or `--set agents.1.temperature=0` | [runs](product/spec/runs.md) |
 | change the market | `market:` in a config (rounds, price grid, demand `a`, `b`, `c`, talk on or off); the fields are in `src/collusion_lab/config.py` | [market](product/spec/market.md) |

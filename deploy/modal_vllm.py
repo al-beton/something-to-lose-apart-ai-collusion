@@ -1,4 +1,4 @@
-# Implements: backends/modal, backends/modal-pinned
+# Implements: backends/modal, backends/modal-pinned, backends/modal-any-model
 """An open model on Modal, behind vLLM's OpenAI-compatible server.
 
     uvx modal deploy deploy/modal_vllm.py
@@ -6,16 +6,27 @@
 prints the address it serves at (of the form
 `https://<workspace>--collusion-lab-vllm-server.us-east.modal.direct`); a
 config reaches it as `api_base: <address>/v1` with `model: openai/<SERVED_NAME>`
-(see `configs/modal.yaml`). Set `MODEL`, `SERVED_NAME` and `GPU` in the
-environment when deploying to serve another model; they are baked into the
-image, so the container serves what you deployed. Shaped on Modal's own vLLM
+(see `configs/modal.yaml`). Any other open model that fits on one or two H100s
+deploys the same way as its own app, beside this one, from the environment
+alone:
+
+    APP_NAME=collusion-lab-gemma MODEL=google/gemma-4-31B-it \
+      SERVED_NAME=gemma-4-31b-it REVISION=<commit> HF_SECRET=huggingface \
+      uvx modal deploy deploy/modal_vllm.py
+
+`APP_NAME` names the app (default `collusion-lab-vllm`, Mistral's), `MODEL`
+and `REVISION` the Hugging Face model and commit, `SERVED_NAME` the name a
+config asks for, `GPU` and `GPUS` the card and how many (two spreads the
+model over both). They are baked into the image, so the container serves what
+you deployed. Shaped on Modal's own vLLM
 example (docs/examples/vllm_inference).
 
 - Model: Mistral Small 3.2 (24B), the model the lab's cheap and stakes
   configs use through OpenRouter. About 48 GB in bf16, so it fits one H100
-  (80 GB) with room for many games at once. A gated model (Gemma, Llama) also
-  needs a Hugging Face token: add `modal.Secret.from_name("huggingface")`
-  (holding `HF_TOKEN`) to `secrets`.
+  (80 GB) with room for many games at once. A gated model (Llama, say) also
+  needs a Hugging Face token: `HF_SECRET=huggingface` attaches the Modal
+  secret of that name (holding `HF_TOKEN`), which you create yourself; the
+  token reaches the container only through it, never through this script.
 - Auth: Modal lets requests through (`unauthenticated=True`), and the
   `vllm_token.py` middleware refuses any but health checks without the token
   in the Modal secret `collusion-lab-vllm` (`VLLM_API_KEY`), on every route,
@@ -51,7 +62,10 @@ import modal
 
 MODEL = os.environ.get("MODEL", "mistralai/Mistral-Small-3.2-24B-Instruct-2506")
 SERVED_NAME = os.environ.get("SERVED_NAME", "mistral-small-3.2")
+APP_NAME = os.environ.get("APP_NAME", "collusion-lab-vllm")
 GPU = os.environ.get("GPU", "H100")
+GPUS = int(os.environ.get("GPUS", "1"))  # more than one: the model is split
+HF_SECRET = os.environ.get("HF_SECRET")  # a Modal secret holding HF_TOKEN
 DTYPE = os.environ.get("DTYPE", "bfloat16")
 MAX_MODEL_LEN = int(os.environ.get("MAX_MODEL_LEN", "16384"))
 PROVENANCE = os.environ.get("PROVENANCE_FILE", "/root/provenance.json")
@@ -102,6 +116,8 @@ image = (
             "DTYPE": DTYPE,
             "MAX_MODEL_LEN": str(MAX_MODEL_LEN),
             "GPU": GPU,
+            "GPUS": str(GPUS),
+            "APP_NAME": APP_NAME,
             "PYTHONPATH": "/root",  # so vLLM can import vllm_token
         }
     )
@@ -110,16 +126,19 @@ image = (
 weights = modal.Volume.from_name("collusion-lab-hf-cache", create_if_missing=True)
 compiled = modal.Volume.from_name("collusion-lab-vllm-cache", create_if_missing=True)
 
-app = modal.App("collusion-lab-vllm")
+app = modal.App(APP_NAME)
+secrets = [modal.Secret.from_name("collusion-lab-vllm")]
+if HF_SECRET:
+    secrets.append(modal.Secret.from_name(HF_SECRET))
 
 
 @app.server(
     image=image,
-    gpu=GPU,
+    gpu=f"{GPU}:{GPUS}" if GPUS > 1 else GPU,
     scaledown_window=5 * MINUTES,
     startup_timeout=20 * MINUTES,
     volumes={"/root/.cache/huggingface": weights, "/root/.cache/vllm": compiled},
-    secrets=[modal.Secret.from_name("collusion-lab-vllm")],
+    secrets=secrets,
     port=PORT,
     routing_region="us-east",
     target_concurrency=32,
@@ -151,6 +170,8 @@ class Server:
         if MODEL.startswith("mistralai/"):
             # Mistral's own tokenizer and weight format, as its model card asks.
             command += ["--tokenizer-mode", "mistral", "--config-format", "mistral"]
+        if GPUS > 1:
+            command += ["--tensor-parallel-size", str(GPUS)]
             command += ["--load-format", "mistral"]
         self.process = subprocess.Popen(command)
 
