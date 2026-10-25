@@ -1,6 +1,6 @@
 """The paper's figures and tables, rebuilt from the committed runs.
 
-Implements: reports/paper-figures
+Implements: reports/paper-figures, reports/shared-charts
 
 `make paper-figures` (or `uv run python reports/paper/build.py [--out DIR]`,
 default `reports/paper`) reads only committed run files, offline, and writes
