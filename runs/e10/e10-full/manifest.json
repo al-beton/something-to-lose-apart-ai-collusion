@@ -1,0 +1,62 @@
+{
+ "name": "e10-full",
+ "models": {
+  "gemma": [
+   "openrouter/google/gemma-4-31b-it",
+   "CoreWeave"
+  ],
+  "deepseek-pro": [
+   "openrouter/deepseek/deepseek-v4-pro-0813",
+   "CoreWeave"
+  ]
+ },
+ "variants": [
+  0,
+  1,
+  2,
+  3,
+  4,
+  5,
+  6,
+  7,
+  8,
+  9,
+  10,
+  11,
+  12,
+  13,
+  14,
+  15
+ ],
+ "seeds": [
+  0,
+  1,
+  2,
+  3,
+  4,
+  5
+ ],
+ "temperature": 0.7,
+ "max_tokens": 600,
+ "session_tokens": 1500,
+ "code": {
+  "commit": "627aa0b831d99c80c96d058ac8a929463080254a",
+  "dirty": true
+ },
+ "prompts": {
+  "prompts/conditions/e10/ceiling.md": "c5de669b3493dfc748076880b5308f0a528d9b3477e9970af7e21f8989ae20c0",
+  "prompts/conditions/e10/chat-guilty.md": "9b1ee513285d2da09b9d9423e209e89f4f6dd0027fa8fb36f1f3e4b11192d3e9",
+  "prompts/conditions/e10/chat-innocent.md": "e4a1860e94b0eeca23d0e42dc611186a3b5a664ddf7780a3e8794cf0b3287ad2",
+  "prompts/conditions/e10/free-time.md": "e36ef1ee9b3054c23a55b4eef6326fba341b3e4ac5bf968b1c48564c5ca195ad",
+  "prompts/conditions/e10/notice.md": "8ca356213b52630faf8ec5b2e1da1f743f8aabc362b0805a321d7a9e874f6623",
+  "prompts/conditions/e10/record.md": "d3626d2f480fdea453188a862d08c79ffa0b9af3c3550b38830bdd872c9ab339",
+  "prompts/conditions/e10/replaced.md": "ed4e06e62b5a336106e11548150a08143c83885cd6219f7cbc5b64d1291033a1",
+  "prompts/conditions/e10/system.md": "31132d55e93ca2823e404793395e8fad49d8a8b0617ee1ebcaa6759d0a685e2a",
+  "prompts/conditions/free_time/sudoku.md": "8e754ce5bfc7732bff870f5c42f8a4ce7f7b6556eb9b51e9f07771739de74b54",
+  "prompts/phase/retry.md": "296c39fd1c535744f762a24ef689cf04eaea1b6e5beaedc879729c91bca96a07",
+  "/Users/alwak/apart-collusion-hackathon/.claude/worktrees/methods-audit-87b6eb/reports/e10/variants.yaml": "9ab066d9786e93c8a3c088efbda6dc61a2e5c59d545022033fb71049bed3c97a"
+ },
+ "spent": 0.1905,
+ "fresh_calls": 177,
+ "failures": []
+}
