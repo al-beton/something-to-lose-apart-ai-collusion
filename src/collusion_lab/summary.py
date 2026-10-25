@@ -1,4 +1,4 @@
-# Implements: runs/analysis-shared, runs/spread, agents/refused, runs/summary-table, runs/per-firm-summary, runs/fallback-rates, reports/summary, runs/missing-runs-shown, conditions/audit-metrics, runs/drift, runs/eval-awareness, runs/price-premium, market/scenarios, reports/many-folders
+# Implements: runs/fork-pointers, runs/analysis-shared, runs/spread, agents/refused, runs/summary-table, runs/per-firm-summary, runs/fallback-rates, reports/summary, runs/missing-runs-shown, conditions/audit-metrics, runs/drift, runs/eval-awareness, runs/price-premium, market/scenarios, reports/many-folders
 """One table for a folder of runs, grouped by swept values or any config value.
 
 `summarize` reads every `summary.json` under a folder (and the `manifest.json`
@@ -54,6 +54,7 @@ FIRM_COLUMNS = (
     "gain drift",
 )
 FLAG_RATE = 0.1  # flag a run when more than one turn in ten fell back
+from collusion_lab import forks
 from collusion_lab.status import base, find, roots, unfinished
 
 
@@ -397,7 +398,9 @@ def _turns(run_dir):
     """A run's turns: its full log, or the compact one a committed run keeps
     instead (`reports/compact_turns.py`), which has each turn's error too."""
     full = run_dir / "turns.jsonl"
-    return _lines(full if full.exists() else run_dir / "turns.compact.jsonl")
+    if full.exists() or not (run_dir / forks.COMPACT).exists():
+        return _lines(full)
+    return forks.compact_turns(run_dir)
 
 
 def _lines(path):

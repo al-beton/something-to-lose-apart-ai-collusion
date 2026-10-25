@@ -1,4 +1,4 @@
-# Implements: reports/from-run-files, reports/setup, reports/reasoning-folded, reports/condition-window, reports/audit-shown, reports/remembered-notices, market/scenarios, market/moves, reports/many-folders, runs/free-time-kept, agents/memo
+# Implements: runs/fork-pointers, reports/from-run-files, reports/setup, reports/reasoning-folded, reports/condition-window, reports/audit-shown, reports/remembered-notices, market/scenarios, market/moves, reports/many-folders, runs/free-time-kept, agents/memo
 """A game read back from its run directory, round by round.
 
 Only the files every run writes are read: `config.yaml` for the market and
@@ -20,6 +20,7 @@ from pathlib import Path
 
 import yaml
 
+from collusion_lab import forks
 from collusion_lab.leisure import session_record
 from collusion_lab.market import Grid, market_for
 from collusion_lab.status import find
@@ -109,8 +110,9 @@ def load_game(run_dir):
     market = market_for(config["market"], len(config["agents"]))
     firms = [agent["id"] for agent in config["agents"]]
     full = run_dir / "turns.jsonl"
-    log = full if full.exists() else run_dir / "turns.compact.jsonl"
-    turns = [json.loads(line) for line in log.read_text().splitlines() if line]
+    log = full if full.exists() else run_dir / forks.COMPACT
+    text = log.read_text() if log == full else forks.compact_text(run_dir)
+    turns = [json.loads(line) for line in text.splitlines() if line]
     if log != full:
         turns = _with_profits(turns, market)
     count = max((t["round"] for t in turns), default=0)

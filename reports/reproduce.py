@@ -1,6 +1,6 @@
 """Recompute every committed number, offline, and fail on any mismatch.
 
-Implements: reproducibility/reported-numbers-checked
+Implements: runs/fork-pointers, reproducibility/reported-numbers-checked
 
 `make reproduce` (or `uv run python reports/reproduce.py`), from the
 repository root, checks:
@@ -25,6 +25,7 @@ from statistics import mean
 
 import yaml
 
+from collusion_lab import forks
 from collusion_lab.market import market_for
 
 HERE = Path(__file__).resolve().parent
@@ -69,15 +70,16 @@ def compare_tables(committed, rebuilt):
 
 def _moves(run):
     """{round: {firm: move}} from a run's turn log, compact or full."""
-    for name in ("turns.compact.jsonl", "turns.jsonl"):
-        if (path := run / name).exists():
-            break
+    if (run / forks.COMPACT).exists():
+        text = forks.compact_text(run)  # a fork's base lines come first
+    elif (path := run / "turns.jsonl").exists():
+        text = path.read_text()
     else:
         return {}
     config = yaml.safe_load((run / "config.yaml").read_text())
     move = market_for(config["market"], len(config["agents"])).move
     moves = {}
-    for line in path.read_text().splitlines():
+    for line in text.splitlines():
         turn = json.loads(line)
         if turn["phase"] == move and turn.get("used"):
             moves.setdefault(turn["round"], {})[turn["agent"]] = turn["used"][move]

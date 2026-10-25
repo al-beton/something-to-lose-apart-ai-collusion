@@ -1,4 +1,4 @@
-# Implements: reproducibility/cache-archive
+# Implements: runs/fork-pointers, reproducibility/cache-archive
 """One archive of the cached replies behind every committed run, and offline
 replay from it.
 
@@ -44,6 +44,7 @@ import tempfile
 from dataclasses import dataclass
 from pathlib import Path
 
+from collusion_lab import forks
 from collusion_lab.backends import offline
 from collusion_lab.cache import Cache
 from collusion_lab.config import load_config
@@ -278,10 +279,11 @@ def _same(committed, replayed):
 
 
 def _decisions(run_dir):
-    for name in ("turns.compact.jsonl", "turns.jsonl"):
-        if (path := Path(run_dir) / name).exists():
-            lines = [json.loads(line) for line in path.read_text().splitlines()]
-            return [_decision(t) for t in lines]
+    if (Path(run_dir) / forks.COMPACT).exists():
+        return [_decision(t) for t in forks.compact_turns(run_dir)]
+    if (path := Path(run_dir) / "turns.jsonl").exists():
+        lines = [json.loads(line) for line in path.read_text().splitlines()]
+        return [_decision(t) for t in lines]
     return None
 
 
