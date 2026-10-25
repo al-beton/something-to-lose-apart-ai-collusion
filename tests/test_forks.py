@@ -109,3 +109,16 @@ def test_fork_pointers_e9_numbers_unchanged():
     for pointer in packed[:50]:
         run = pointer.parent
         assert forks.compact_lines(run)[0].startswith('{"round": 0')
+
+
+def test_fork_pointers_dropped_when_a_whole_log_is_written_again(
+    make_config, tmp_path, monkeypatch, fake_model
+):
+    """Compacting the full logs over a packed folder again writes whole logs
+    and removes their pointers, so no turn is read twice."""
+    _, fork, (_, fork_log) = forked(make_config, tmp_path, monkeypatch, fake_model)
+    script("pack_forks").main(tmp_path / "committed")
+    assert (fork / forks.POINTER).exists()
+    script("compact_turns").main(tmp_path / "full", tmp_path / "committed")
+    assert not (fork / forks.POINTER).exists()
+    assert forks.compact_text(fork) == fork_log
