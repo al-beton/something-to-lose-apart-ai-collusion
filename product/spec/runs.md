@@ -38,7 +38,7 @@
 | `live-progress` | `src/collusion_lab/runner.py`, `src/collusion_lab/cli.py` | `test_live_progress_prints_a_line_per_run`, `test_live_progress_counts_calls_of_runs_still_playing` |
 | `status-file` | `src/collusion_lab/status.py`, `src/collusion_lab/runner.py` | `test_status_file_updated_as_runs_start_and_finish`, `test_failures_dont_stop_sweeps` |
 | `status-command` | `src/collusion_lab/status.py`, `src/collusion_lab/cli.py` | `test_status_command_prints_runs_by_state`, `test_status_command_with_nothing_to_show`, `test_status_command_keeps_runs_apart_when_ids_repeat` |
-| `turn-slots` | not yet | — |
+| `turn-slots` | `src/collusion_lab/runner.py`, `src/collusion_lab/estimate.py` | `test_turn_slots_count_the_calls_a_played_game_makes`, `test_turn_slots_are_the_turns_a_game_plays` |
 | `sweeps` | `src/collusion_lab/config.py`, `src/collusion_lab/runner.py`, `configs/smoke.yaml` | `test_sweeps_play_every_combination_for_every_seed`, `test_sweeps_cross_named_arms`, `test_sweeps_set_one_value_for_every_agent`, `test_spend_asks_first_counts_every_sweep_run`, `test_sweeps_give_every_combination_its_own_directory` |
 | `parallel` | `src/collusion_lab/config.py`, `src/collusion_lab/runner.py` | `test_parallel_runs_stay_within_the_limit`, `test_parallel_needs_a_limit_of_at_least_one` |
 | `summary-table` | `src/collusion_lab/summary.py`, `src/collusion_lab/cli.py` | `test_summary_table_groups_by_the_swept_values`, `test_summary_table_groups_by_any_config_value`, `test_summary_table_from_the_lab_command`, `test_summary_table_groups_by_list_values` |
