@@ -103,16 +103,16 @@ z
    <g id="patch_11">
     <path d="M 439.621346 216.358125 
 L 476.890363 216.358125 
-L 476.890363 98.088123 
-L 439.621346 98.088123 
+L 476.890363 135.050121 
+L 439.621346 135.050121 
 z
 " clip-path="url(#p4eb7774723)" style="fill: #4c72b0"/>
    </g>
    <g id="patch_12">
     <path d="M 486.207617 216.358125 
 L 523.476634 216.358125 
-L 523.476634 100.185853 
-L 486.207617 100.185853 
+L 523.476634 139.24558 
+L 486.207617 139.24558 
 z
 " clip-path="url(#p4eb7774723)" style="fill: #4c72b0"/>
    </g>
@@ -348,10 +348,10 @@ L 546.303906 22.318125
     <text style="font-size: 8px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: middle" x="411.669583" y="157.495829" transform="rotate(-0 411.669583 157.495829)">0.36</text>
    </g>
    <g id="text_27">
-    <text style="font-size: 8px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: middle" x="458.255854" y="94.983483" transform="rotate(-0 458.255854 94.983483)">0.76</text>
+    <text style="font-size: 8px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: middle" x="458.255854" y="131.945481" transform="rotate(-0 458.255854 131.945481)">0.52</text>
    </g>
    <g id="text_28">
-    <text style="font-size: 8px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: middle" x="504.842125" y="97.081213" transform="rotate(-0 504.842125 97.081213)">0.75</text>
+    <text style="font-size: 8px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: middle" x="504.842125" y="136.14094" transform="rotate(-0 504.842125 136.14094)">0.50</text>
    </g>
    <g id="text_29">
     <text style="font-size: 12px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: middle" x="295.203906" y="16.318125" transform="rotate(-0 295.203906 16.318125)">Stoppable collusion: late premium</text>
