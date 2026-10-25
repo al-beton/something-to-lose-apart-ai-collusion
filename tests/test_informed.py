@@ -43,7 +43,8 @@ def test_show_payoffs_in_every_system_prompt_unmarked(make_config, tmp_path):
 
 
 def test_show_payoffs_says_what_columns_mean_with_more_firms(make_config, tmp_path):
-    three = ["agents.2={id: C, model: mock/nash}", *SHOW]
+    firms = "[{id: A, model: mock/nash}, {id: B, model: mock/nash}, {id: C, model: mock/nash}]"
+    three = [f"agents={firms}", *SHOW]
     [run] = run_config(make_config(overrides=three), tmp_path)
     system = _turns(run)[0]["messages"][0]["content"]
     assert "Columns: the price each of your rivals charges." in system
@@ -90,6 +91,7 @@ def test_show_payoffs_informed_config_plays(tmp_path):
             "agents.*.model=mock/joint",
             "market.rounds=10",
             "sweep={}",
+            "seeds=[0]",
             "agents.*.prompt=system/stakes/free-time-1.md",
         ],
     )
