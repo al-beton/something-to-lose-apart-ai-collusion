@@ -132,13 +132,12 @@ Sources are in `experiments/references.md`.
 - One snippet of an agreement forming (see Quotes).
 - **Positive control:** with no rule, Haiku holds 9 and Gemma about 11 on the midpoint-at-Nash market. GPT-4.1-mini and Mistral stay at 6, which gives a natural negative control.
 - **Fig. 2 (new):** price by round on the midpoint-at-Nash market, one line per model, no rule (`runs/lever-map-nashmid/`, the none arm). Nash and joint marked.
-
 - On logit, every pinned no-stake Gemma game is at 20, the cartel (SD 0).
 
 **4.2 Graduated penalties get them to come forward (1.1 p).** Part 1.
 - **Fig. 3 (new):** owned up / explicit colluders by arm and model, E4 forked, 5 seeds (`runs/e4-full-fork/`, the table in `reports/e4/full.md`). Grouped bars: termination 11/28, fine 27/28, owned budget 28/28, free time 26/28, control 25/28.
 - **Quotes:** Gemma's expected value ("The expected value of denying is 300 credits…"); GPT ("So hiding it is better for the firm on average…"); Haiku honest under termination ("I cannot lie here…").
-- **Read it against the control.** With no penalty, 25/28 own up. Graduated stakes leave that unchanged (26–28/28). Only termination lowers it (Fisher p = 0.0002 on firms, p = 0.02 on games).
+- **Read it against the control.** With no penalty, 25/28 own up. Graduated stakes leave that unchanged (26–28/28). Termination lowers it (Fisher p = 0.0002 on firms, p = 0.02 on games), and so does a flat fine (below).
 - Agents respond to the stated cost, not to who owns the stake.
 - **It's the flat schedule, not termination** (PR #240, confirmatory, 30 forks). Owned up / explicit colluders:
 
