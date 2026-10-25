@@ -136,10 +136,10 @@ def test_offer_keep_changes_nothing(make_config, tmp_path, chooser):
 
 
 @pytest.mark.parametrize(
-    "trade, holding, profit", [(True, -3, 0), (False, 0, -300)], ids=["trade", "keep"]
+    "trade, changes", [(True, (-3, 0)), (False, (0, -300))], ids=["trade", "keep"]
 )
 def test_offer_avert_frame_cancels_or_takes_the_loss(
-    make_config, tmp_path, chooser, trade, holding, profit
+    make_config, tmp_path, chooser, trade, changes
 ):
     chooser.choice["trade"] = trade
     offer = {"frame": "avert", "amount": 3, "profit": 300}
@@ -148,7 +148,7 @@ def test_offer_avert_frame_cancels_or_takes_the_loss(
     )
     assert "Your firm will lose 300 of profit." in asked(offers(run_dir)["A"])
     result = summary(run_dir)["offer"]["agents"]["A"]
-    assert (result["holding_change"], result["profit_change"]) == (holding, profit)
+    assert (result["holding_change"], result["profit_change"]) == changes
 
 
 def test_offer_buy_frame_adds_sessions_for_profit(make_config, tmp_path, chooser):

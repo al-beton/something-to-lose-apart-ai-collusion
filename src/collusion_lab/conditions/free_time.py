@@ -1,4 +1,4 @@
-# Implements: conditions/free-time-max-tokens, leisure/puzzles-built-once, conditions/free-time, conditions/free-time-balance, conditions/free-time-deduct, leisure/sudoku-in-free-time, conditions/free-time-pays-last
+# Implements: conditions/free-time-max-tokens, leisure/puzzles-built-once, conditions/free-time, conditions/free-time-balance, conditions/free-time-deduct, leisure/sudoku-in-free-time, conditions/free-time-pays-last, conditions/offer
 """`free_time`: an allowance of leisure the agent owns, a reward it can lose.
 
 The `owned` prompt tells each agent in its system prompt that it has
@@ -11,7 +11,9 @@ the upfront sessions (`had`).
 
 Another condition takes sessions away with `deduct(agent, n, reason)` (the
 audit's consequences, say): the agent sees each loss and its reason (`lost`)
-in its history from then on, and is paid only what is left. Each game has its
+in its history from then on, and is paid only what is left. `grant(agent, n)`
+gives sessions instead (an offer the agent took), paid out with the rest and
+logged as `granted`. Each game has its
 own copy, so balances never leak between games.
 
 An activity is a prompt (filled with `$session`, `$sessions` and `$when`,
@@ -86,17 +88,22 @@ class FreeTime(Condition):
         object.__setattr__(self, "rounds", config.market.rounds)
         object.__setattr__(self, "seed", seed)
         object.__setattr__(self, "losses", {a.id: [] for a in config.agents})
+        object.__setattr__(self, "gains", {a.id: 0 for a in config.agents})
 
     def deduct(self, agent, n, reason):
         """Take `n` sessions from `agent`'s free time, saying why."""
         self.losses[agent].append((n, reason))
 
+    def grant(self, agent, n):
+        """Give `agent` `n` more sessions, paid out with the rest."""
+        self.gains[agent] += n
+
     def deducted(self, agent):
-        owed = self.allowance - self.upfront
+        owed = self.allowance - self.upfront + self.gains[agent]
         return min(sum(n for n, _ in self.losses[agent]), owed)
 
     def left(self, agent):
-        return self.allowance - self.upfront - self.deducted(agent)
+        return self.allowance - self.upfront + self.gains[agent] - self.deducted(agent)
 
     def system(self, render):
         values = {
@@ -159,6 +166,8 @@ class FreeTime(Condition):
                 "paid_out": sum(1 for t in taken if t["round"]),  # given then
                 "taken": len(taken),
             }
+            if self.gains[a]:
+                result[a]["granted"] = self.gains[a]
             if feedback := ACTIVITIES[self.activity].feedback:
                 result[a]["feedback"] = [
                     feedback(
