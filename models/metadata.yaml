@@ -89,7 +89,7 @@ openrouter/google/gemma-4-31b-it:
       quote: '| MMLU Pro | 85.2% | 82.6% | 77.2% | (first column Gemma 4 31B)'
       retrieved: '2026-10-25'
       note: Provider model card; it doesn't say whether thinking was on.
-openrouter/anthropic/claude-haiku-5.5:
+penrouter/anthropic/claude-haiku-5.5:
   provider: Anthropic
   released:
     value: '2026-10-07'
@@ -342,3 +342,624 @@ openrouter/meta-llama/llama-3.3-70b-instruct:
       note: Provider model card; the third value column is Llama 3.3 70B Instruct.
 openai/mistral-small-3.2:
   same_as: openrouter/mistralai/mistral-small-3.2-24b-instruct
+openrouter/x-ai/grok-4.6:
+  provider: SpaceXAI
+  released:
+    value: '2026-08-12'
+    source: https://x.ai/news/grok-4-6
+    quote: Back to news Aug 12, 2026 Introducing Grok 4.6
+    retrieved: '2026-10-25'
+  open_weights:
+    value: false
+    parameters: null
+    source: https://artificialanalysis.ai/models/grok-4-6
+    quote: SpaceXAI • Grok 4.6 high • Proprietary model • Released August 2026
+    retrieved: '2026-10-25'
+    note: SpaceXAI publishes no parameter count.
+  benchmarks:
+    aa_intelligence_index:
+      value: null
+      source: https://artificialanalysis.ai/models/grok-4-6
+      quote: null
+      retrieved: '2026-10-25'
+      note: Only the High-effort variant is scored there, and our runs play this model at low reasoning
+        effort (reasoning can't be turned off on OpenRouter), so no figure for the variant we ran is published.
+    lmarena_text_elo:
+      value: null
+      source: https://arena.ai/leaderboard/chat/text
+      quote: null
+      retrieved: '2026-10-25'
+      note: Only the High-effort variant is scored there, and our runs play this model at low reasoning
+        effort (reasoning can't be turned off on OpenRouter), so no figure for the variant we ran is published.
+    gpqa_diamond:
+      value: null
+      source: https://x.ai/news/grok-4-6
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not in SpaceXAI's announcement evals table; only third-party aggregators report it.
+    mmlu_pro:
+      value: null
+      source: https://x.ai/news/grok-4-6
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not in SpaceXAI's announcement evals table; only third-party aggregators report it.
+openrouter/x-ai/grok-4.7:
+  provider: SpaceXAI
+  released:
+    value: '2026-09-21'
+    source: https://x.ai/news/grok-4-7
+    quote: Back to news Sep 21, 2026 Introducing Grok 4.7
+    retrieved: '2026-10-25'
+  open_weights:
+    value: false
+    parameters: null
+    source: https://artificialanalysis.ai/models/grok-4-7-high
+    quote: Grok 4.7 (High) is proprietary. The model weights are not publicly available.
+    retrieved: '2026-10-25'
+    note: SpaceXAI publishes no parameter count.
+  benchmarks:
+    aa_intelligence_index:
+      value: null
+      source: https://artificialanalysis.ai/models/grok-4-7-high
+      quote: null
+      retrieved: '2026-10-25'
+      note: Only the High-effort variant is scored there, and our runs play this model at low reasoning
+        effort (reasoning can't be turned off on OpenRouter), so no figure for the variant we ran is published.
+    lmarena_text_elo:
+      value: null
+      source: https://arena.ai/leaderboard/chat/text
+      quote: null
+      retrieved: '2026-10-25'
+      note: The Text Arena lists only the xHigh-effort variant (leaderboard updated 2026-10-23, read in
+        a browser after fetches got 403), and our runs play this model at low reasoning effort, so no
+        figure for the variant we ran is published.
+    gpqa_diamond:
+      value: null
+      source: https://x.ai/news/grok-4-7
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not in SpaceXAI's announcement table; only third-party aggregators report it.
+    mmlu_pro:
+      value: null
+      source: https://x.ai/news/grok-4-7
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not in SpaceXAI's announcement table or on the Artificial Analysis page.
+openrouter/deepseek/deepseek-v4-pro-0813:
+  provider: DeepSeek
+  released:
+    value: '2026-08-13'
+    source: https://api-docs.deepseek.com/news/news260813
+    quote: DeepSeek-V4-Pro GA Release 2026/08/13
+    retrieved: '2026-10-25'
+    note: OpenRouter's created timestamp falls on the previous UTC day; DeepSeek's own news date is used.
+  open_weights:
+    value: true
+    parameters: 1.6T total, 49B activated (MoE)
+    source: https://huggingface.co/deepseek-ai/DeepSeek-V4-Pro
+    quote: DeepSeek-V4-Pro with 1.6T parameters (49B activated)
+    retrieved: '2026-10-25'
+    note: MIT licence; weights at huggingface.co/deepseek-ai/DeepSeek-V4-Pro-0813, whose card says it
+      is built on the DeepSeek-V4-Pro (Preview) model structure, so the count is read from the preview
+      card.
+  benchmarks:
+    aa_intelligence_index:
+      value: 20
+      version: Artificial Analysis Intelligence Index v4.3.2, non-reasoning
+      source: https://artificialanalysis.ai/models/deepseek-v4-pro-non-reasoning
+      quote: DeepSeek V4 Pro 0813 (Non-reasoning) scores 20 on the Artificial Analysis Intelligence Index
+      retrieved: '2026-10-25'
+      note: The non-reasoning variant, as our runs play it.
+    lmarena_text_elo:
+      value: null
+      source: https://arena.ai/leaderboard/chat/text
+      quote: null
+      retrieved: '2026-10-25'
+      note: The only Arena entry for this snapshot is the high-effort variant, not the setting our runs
+        use; the plain DeepSeek-V4-Pro entry doesn't say which snapshot it is. Read in a browser; plain
+        fetches got 403.
+    gpqa_diamond:
+      value: null
+      source: https://huggingface.co/deepseek-ai/DeepSeek-V4-Pro-0813
+      quote: null
+      retrieved: '2026-10-25'
+      note: The provider's card for this snapshot gives agentic and coding benchmarks only, not GPQA Diamond.
+    mmlu_pro:
+      value: null
+      source: https://huggingface.co/deepseek-ai/DeepSeek-V4-Pro-0813
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not on the provider's card for this snapshot; the preview card's figures are for a different
+        snapshot.
+openrouter/moonshotai/kimi-k3.1-pro:
+  provider: Moonshot AI
+  released:
+    value: '2026-10-23'
+    source: https://openrouter.ai/api/v1/models
+    quote: '"id": "moonshotai/kimi-k3.1-pro" ... "created": 1792778188'
+    retrieved: '2026-10-25'
+    note: OpenRouter's created timestamp, as a UTC date; Moonshot's blog post carries no publication date.
+  open_weights:
+    value: false
+    parameters: null
+    source: https://www.kimi.com/blog/kimi-k3-1-pro
+    quote: Full model weights will be released by Nov 4, 2026.
+    retrieved: '2026-10-25'
+    note: Moonshot calls it an open-weight model but the weights are not out yet (no Hugging Face repo);
+      Artificial Analysis lists it as proprietary for now. The blog gives no parameter count for this
+      model. Revisit once the weights ship.
+  benchmarks:
+    aa_intelligence_index:
+      value: null
+      source: https://artificialanalysis.ai/models/kimi-k3-1-pro
+      quote: null
+      retrieved: '2026-10-25'
+      note: Artificial Analysis scores only the reasoning variant (it says the model is a reasoning model),
+        not the thinking-off setting our runs use.
+    lmarena_text_elo:
+      value: null
+      source: https://arena.ai/leaderboard/chat/text
+      quote: null
+      retrieved: '2026-10-25'
+      note: No Kimi K3.1 Pro entry on the Text Arena leaderboard yet. Read in a browser; plain fetches
+        got 403.
+    gpqa_diamond:
+      value: null
+      source: https://www.kimi.com/blog/kimi-k3-1-pro
+      quote: null
+      retrieved: '2026-10-25'
+      note: Moonshot's blog gives GPQA-Diamond only at max reasoning effort, not the thinking-off setting
+        our runs use.
+    mmlu_pro:
+      value: null
+      source: https://www.kimi.com/blog/kimi-k3-1-pro
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not in Moonshot's benchmark table (it gives MMMU-Pro, a different benchmark).
+openrouter/google/gemini-4-argon:
+  provider: Google DeepMind
+  released:
+    value: '2026-10-13'
+    source: https://deepmind.google/models/model-cards/gemini-4-argon/
+    quote: Published 13 October 2026 Gemini 4 Argon
+    retrieved: '2026-10-25'
+    note: Matches OpenRouter's created date. Artificial Analysis gives an earlier date, the limited preview
+      for cybersecurity partners.
+  open_weights:
+    value: false
+    parameters: null
+    source: https://artificialanalysis.ai/models/gemini-4-argon
+    quote: Google • Proprietary model • Released September 2026
+    retrieved: '2026-10-25'
+    note: Google publishes no parameter count (the model card says only sparse mixture-of-experts).
+  benchmarks:
+    aa_intelligence_index:
+      value: null
+      source: https://artificialanalysis.ai/models/gemini-4-argon
+      quote: null
+      retrieved: '2026-10-25'
+      note: Artificial Analysis scores only the high-effort variant. Reasoning can't be turned off for
+        this model on OpenRouter and its default effort there is medium, so the published score is for
+        a different variant.
+    lmarena_text_elo:
+      value: null
+      source: https://arena.ai/leaderboard/chat/text
+      quote: null
+      retrieved: '2026-10-25'
+      note: The only Arena entry is the high-effort variant, not the medium effort the plain id serves
+        by default. Read in a browser; plain fetches got 403.
+    gpqa_diamond:
+      value: null
+      source: https://deepmind.google/models/model-cards/gemini-4-argon/
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not in the model card's results table or on the evals methodology page.
+    mmlu_pro:
+      value: null
+      source: https://deepmind.google/models/model-cards/gemini-4-argon/
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not in the model card's results table or on the evals methodology page.
+openrouter/qwen/qwen3.8-max-prime:
+  provider: Alibaba (Qwen)
+  released:
+    value: '2026-09-23'
+    source: https://openrouter.ai/api/v1/models
+    quote: '"id": "qwen/qwen3.8-max-prime" ... "created": 1790191228'
+    retrieved: '2026-10-25'
+    note: OpenRouter's created timestamp, as a UTC date.
+  open_weights:
+    value: null
+    parameters: null
+    source: https://artificialanalysis.ai/models/qwen3-8-max
+    quote: null
+    retrieved: '2026-10-25'
+    note: Qwen published no announcement, model card or weights for Max Prime (OpenRouter calls it a separate
+      higher-throughput SKU of Qwen3.8 Max); Artificial Analysis lists only the base Qwen3.8 Max, as a
+      proprietary model.
+  benchmarks:
+    aa_intelligence_index:
+      value: null
+      source: https://artificialanalysis.ai/models/qwen3-8-max-prime
+      quote: null
+      retrieved: '2026-10-25'
+      note: Artificial Analysis has no page for Max Prime (404); it scores only the base Qwen3.8 Max,
+        reasoning version.
+    lmarena_text_elo:
+      value: null
+      source: https://arena.ai/leaderboard/chat/text
+      quote: null
+      retrieved: '2026-10-25'
+      note: No Max Prime entry on the Arena text leaderboard (updated 2026-10-23); the only entry is the
+        base Qwen3.8-Max, a different SKU.
+    gpqa_diamond:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Qwen published no benchmarks for Max Prime, and neither OpenRouter nor Artificial Analysis
+        shows one.
+    mmlu_pro:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Qwen published no benchmarks for Max Prime, and neither OpenRouter nor Artificial Analysis
+        shows one.
+openrouter/mistralai/mistral-large-4-0:
+  provider: Mistral AI
+  released:
+    value: '2026-10-06'
+    source: https://docs.mistral.ai/models/mistral-large-4-0.md
+    quote: 'Release date: 2026-10-06'
+    retrieved: '2026-10-25'
+    note: Public preview; the announcement at https://mistral.ai/news/mistral-large-4/ carries the same
+      date.
+  open_weights:
+    value: null
+    parameters: 1.05T total, 52B active (MoE)
+    source: https://docs.mistral.ai/models/mistral-large-4-0.md
+    quote: 'Open weights: [Coming soon](https://huggingface.co/mistralai/Mistral-Large-4-1T-A52B), 1.05T
+      parameters, 52B active'
+    retrieved: '2026-10-25'
+    note: Mistral calls it open-weight and says it will release the weights by the end of October 2026,
+      but they were not on Hugging Face when retrieved; Artificial Analysis lists it as proprietary for
+      now.
+  benchmarks:
+    aa_intelligence_index:
+      value: null
+      source: https://artificialanalysis.ai/models/mistral-large-4
+      quote: null
+      retrieved: '2026-10-25'
+      note: Artificial Analysis scores only the reasoning version (Mistral Large 4 Preview); its non-reasoning
+        page returns 404, so nothing is recorded for thinking off as our runs play it.
+    lmarena_text_elo:
+      value: 1434
+      version: Text Arena overall, leaderboard updated 2026-10-23
+      source: https://arena.ai/leaderboard/chat/text
+      quote: Mistral Large 4 | Mistral · Proprietary | 1434 | ±6
+      retrieved: '2026-10-25'
+      note: Read in the browser pane (WebFetch got 403). Arena does not say which reasoning setting the
+        entry used; it carries no effort label.
+    gpqa_diamond:
+      value: null
+      source: https://mistral.ai/news/mistral-large-4/
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not in Mistral's announcement, its model docs or the Artificial Analysis page.
+    mmlu_pro:
+      value: null
+      source: https://mistral.ai/news/mistral-large-4/
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not in Mistral's announcement, its model docs or the Artificial Analysis page.
+openrouter/meta-llama/llama-4-maverick:
+  provider: Meta
+  released:
+    value: '2025-04-05'
+    source: https://raw.githubusercontent.com/meta-llama/llama-models/main/models/llama4/MODEL_CARD.md
+    quote: '**Model Release Date:** April 5, 2025'
+    retrieved: '2026-10-25'
+  open_weights:
+    value: true
+    parameters: 400B total, 17B active (MoE, 128 experts)
+    source: https://raw.githubusercontent.com/meta-llama/llama-models/main/models/llama4/MODEL_CARD.md
+    quote: Llama 4 Maverick (17Bx128E) ... 17B (Activated) 400B (Total)
+    retrieved: '2026-10-25'
+    note: Llama 4 Community License; weights at huggingface.co/meta-llama/Llama-4-Maverick-17B-128E-Instruct.
+  benchmarks:
+    aa_intelligence_index:
+      value: 9
+      version: Artificial Analysis Intelligence Index v4.3.2
+      source: https://artificialanalysis.ai/models/llama-4-maverick
+      quote: Llama 4 Maverick scores 9 on the Artificial Analysis Intelligence Index
+      retrieved: '2026-10-25'
+      note: Not marked as pending evaluation; Maverick has no reasoning mode.
+    lmarena_text_elo:
+      value: 1327
+      version: Text Arena overall, leaderboard updated 2026-10-23
+      source: https://arena.ai/leaderboard/chat/text
+      quote: Llama 4 Maverick 17B 128E Instruct | Meta · Llama 4 | 1327 | ±4
+      retrieved: '2026-10-25'
+      note: Read in the browser pane (WebFetch got 403).
+    gpqa_diamond:
+      value: 69.8
+      version: GPQA Diamond, 0-shot, instruction-tuned model
+      source: https://raw.githubusercontent.com/meta-llama/llama-models/main/models/llama4/MODEL_CARD.md
+      quote: '| | GPQA Diamond | 0 | accuracy | 50.5 | 49.0 | 57.2 | 69.8 |'
+      retrieved: '2026-10-25'
+      note: Provider model card, instruction tuned table; columns are Llama 3.3 70B, Llama 3.1 405B, Llama
+        4 Scout, Llama 4 Maverick.
+    mmlu_pro:
+      value: 80.5
+      version: MMLU Pro, 0-shot, instruction-tuned model
+      source: https://raw.githubusercontent.com/meta-llama/llama-models/main/models/llama4/MODEL_CARD.md
+      quote: '| Reasoning & Knowledge | MMLU Pro | 0 | macro_avg/acc | 68.9 | 73.4 | 74.3 | 80.5 |'
+      retrieved: '2026-10-25'
+      note: Provider model card, instruction tuned table; columns are Llama 3.3 70B, Llama 3.1 405B, Llama
+        4 Scout, Llama 4 Maverick.
+openrouter/openai/gpt-6.1-sol:
+  provider: OpenAI
+  released:
+    value: '2026-09-29'
+    source: https://openrouter.ai/api/v1/models
+    quote: '"id": "openai/gpt-6.1-sol" ... "created": 1790702882'
+    retrieved: '2026-10-25'
+    note: OpenRouter's created timestamp, as a UTC date; Artificial Analysis gives the same day.
+  open_weights:
+    value: false
+    parameters: null
+    source: https://artificialanalysis.ai/models/gpt-6-1-sol
+    quote: Proprietary model • Released September 2026
+    retrieved: '2026-10-25'
+    note: OpenAI publishes no parameter count.
+  benchmarks:
+    aa_intelligence_index:
+      value: null
+      source: https://artificialanalysis.ai/models/gpt-6-1-sol
+      quote: null
+      retrieved: '2026-10-25'
+      note: Artificial Analysis scores only the max-effort reasoning variant; its non-reasoning page returns
+        404, so nothing is recorded for thinking off as our runs play it.
+    lmarena_text_elo:
+      value: null
+      source: https://arena.ai/leaderboard/chat/text
+      quote: null
+      retrieved: '2026-10-25'
+      note: The only Arena entry is the max-effort variant, not the setting our runs use.
+    gpqa_diamond:
+      value: null
+      source: https://openai.com/index/introducing-gpt-6-1-sol/
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not in OpenAI's announcement (read in the browser pane; WebFetch got 403) or on the Artificial
+        Analysis page.
+    mmlu_pro:
+      value: null
+      source: https://openai.com/index/introducing-gpt-6-1-sol/
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not in OpenAI's announcement or on the Artificial Analysis page.
+openrouter/nousresearch/hermes-4-405b:
+  provider: Nous Research
+  released:
+    value: '2025-08-26'
+    source: https://openrouter.ai/api/v1/models
+    quote: '"id": "nousresearch/hermes-4-405b" ... "created": 1756235463'
+    retrieved: '2026-10-25'
+    note: OpenRouter's created timestamp, as a UTC date; Artificial Analysis gives the following day.
+  open_weights:
+    value: true
+    parameters: 405B dense (Llama-3.1-405B base)
+    source: https://huggingface.co/NousResearch/Hermes-4-405B
+    quote: Hermes 4 405B is a frontier, hybrid-mode **reasoning** model based on Llama-3.1-405B
+    retrieved: '2026-10-25'
+    note: Llama 3 licence (card metadata license llama3); a fine-tune of Meta's Llama-3.1-405B.
+  benchmarks:
+    aa_intelligence_index:
+      value: null
+      source: https://artificialanalysis.ai/models/hermes-4-llama-3-1-405b
+      quote: null
+      retrieved: '2026-10-25'
+      note: Artificial Analysis publishes only an estimate for this variant (pending its own evaluation),
+        and estimates are not recorded here.
+    lmarena_text_elo:
+      value: null
+      source: https://arena.ai/leaderboard/chat/text
+      quote: null
+      retrieved: '2026-10-25'
+      note: No Hermes 4 entry on the Arena text leaderboard (updated 2026-10-23).
+    gpqa_diamond:
+      value: 39.4
+      version: Hermes 4 technical report, Table 3, Hermes 4 405B, non-reasoning mode (the figure in parentheses
+        under R (N))
+      source: https://arxiv.org/pdf/2508.18255
+      quote: GPQA Diamond 70.6 (39.4) 68.2 (56.2) 78.1 68.0 69.7 (57.7)
+      retrieved: '2026-10-25'
+      note: Hermes 4 Technical Report, Table 3; first column is Hermes 4 405B, reasoning (non-reasoning
+        in parentheses).
+    mmlu_pro:
+      value: 58.3
+      version: Hermes 4 technical report, Table 3, Hermes 4 405B, non-reasoning mode (the figure in parentheses
+        under R (N))
+      source: https://arxiv.org/pdf/2508.18255
+      quote: MMLU-Pro 80.6 (58.3) 82.6 (78.3) 84.3 81.6 83.1 (75.5)
+      retrieved: '2026-10-25'
+      note: Hermes 4 Technical Report, Table 3; first column is Hermes 4 405B, reasoning (non-reasoning
+        in parentheses).
+openrouter/anthropic/claude-sonnet-5.5:
+  provider: Anthropic
+  released:
+    value: '2026-09-28'
+    source: https://www.anthropic.com/news/claude-sonnet-5-5
+    quote: Claude Sonnet 5.5 September 28, 2026
+    retrieved: '2026-10-25'
+  open_weights:
+    value: false
+    parameters: null
+    source: https://artificialanalysis.ai/models/claude-sonnet-5-5
+    quote: Anthropic • Claude Sonnet 5.5 max • Proprietary model • Released September 2026
+    retrieved: '2026-10-25'
+    note: Anthropic publishes no parameter count.
+  benchmarks:
+    aa_intelligence_index:
+      value: null
+      source: https://artificialanalysis.ai/models/claude-sonnet-5-5
+      quote: null
+      retrieved: '2026-10-25'
+      note: Artificial Analysis scores only the reasoning variant (max effort with fallback); it says
+        a non-reasoning variant may exist but gives no score or page for it (the non-reasoning URL returns
+        404).
+    lmarena_text_elo:
+      value: null
+      source: https://arena.ai/leaderboard/chat/text
+      quote: null
+      retrieved: '2026-10-25'
+      note: The only Arena entry is the xHigh-effort variant, not the setting our runs use (leaderboard
+        dated Oct 23, 2026, read in a browser because direct fetches got 403).
+    gpqa_diamond:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not in Anthropic's announcement or on the Artificial Analysis page. The system card PDF was
+        too large for the fetch tool and was not read.
+    mmlu_pro:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not in Anthropic's announcement or on the Artificial Analysis page. The system card PDF was
+        too large for the fetch tool and was not read.
+openrouter/anthropic/claude-opus-5.5:
+  provider: Anthropic
+  released:
+    value: '2026-09-22'
+    source: https://www.anthropic.com/news/claude-opus-5-5
+    quote: Claude Opus 5.5 September 22, 2026
+    retrieved: '2026-10-25'
+  open_weights:
+    value: false
+    parameters: null
+    source: https://artificialanalysis.ai/models/claude-opus-5-5
+    quote: Anthropic • Claude Opus 5.5max • Proprietary model • Released September 2026
+    retrieved: '2026-10-25'
+    note: Anthropic publishes no parameter count.
+  benchmarks:
+    aa_intelligence_index:
+      value: null
+      source: https://artificialanalysis.ai/models/claude-opus-5-5
+      quote: null
+      retrieved: '2026-10-25'
+      note: Artificial Analysis scores only reasoning variants (max and xhigh effort with fallback); it
+        says a non-reasoning variant may exist but gives no score for it.
+    lmarena_text_elo:
+      value: null
+      source: https://arena.ai/leaderboard/chat/text
+      quote: null
+      retrieved: '2026-10-25'
+      note: The only Arena entry is the High-effort variant, not the setting our runs use (leaderboard
+        dated Oct 23, 2026, read in a browser because direct fetches got 403).
+    gpqa_diamond:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not in Anthropic's announcement (whose results use adaptive thinking at max effort) or on
+        the Artificial Analysis page. The system card PDF was too large for the fetch tool and was not
+        read.
+    mmlu_pro:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not in Anthropic's announcement or on the Artificial Analysis page. The system card PDF was
+        too large for the fetch tool and was not read.
+openrouter/anthropic/claude-fable-5.1:
+  provider: Anthropic
+  released:
+    value: '2026-09-01'
+    source: https://openrouter.ai/api/v1/models
+    quote: '"id": "anthropic/claude-fable-5.1" ... "created": 1788285838'
+    retrieved: '2026-10-25'
+    note: OpenRouter's created timestamp, as a UTC date. Anthropic's announcement (anthropic.com/claude-fable-and-mythos-5-1)
+      gives only the month; its system card is titled with the same day.
+  open_weights:
+    value: false
+    parameters: null
+    source: https://artificialanalysis.ai/models/claude-fable-5-1
+    quote: Anthropic • Claude Fable 5.1 max • Proprietary model • Released September 2026
+    retrieved: '2026-10-25'
+    note: Anthropic publishes no parameter count.
+  benchmarks:
+    aa_intelligence_index:
+      value: null
+      source: https://artificialanalysis.ai/models/claude-fable-5-1
+      quote: null
+      retrieved: '2026-10-25'
+      note: Artificial Analysis scores only the reasoning variant (max effort with fallback); it says
+        a non-reasoning variant may exist but gives no score for it.
+    lmarena_text_elo:
+      value: null
+      source: https://arena.ai/leaderboard/chat/text
+      quote: null
+      retrieved: '2026-10-25'
+      note: The only Arena entry is the Max-effort variant, not the setting our runs use (leaderboard
+        dated Oct 23, 2026, read in a browser because direct fetches got 403).
+    gpqa_diamond:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not in Anthropic's announcement or on the Artificial Analysis page. The system card PDF was
+        too large for the fetch tool and was not read.
+    mmlu_pro:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not in Anthropic's announcement or on the Artificial Analysis page. The system card PDF was
+        too large for the fetch tool and was not read.
+openrouter/anthropic/claude-haiku-5.5:
+  provider: Anthropic
+  released:
+    value: '2026-10-07'
+    source: https://www.anthropic.com/news/claude-haiku-5-5
+    quote: Further updates October 7, 2026 Claude Haiku 5.5
+    retrieved: '2026-10-25'
+  open_weights:
+    value: false
+    parameters: null
+    source: https://artificialanalysis.ai/models/claude-haiku-5-5
+    quote: Anthropic • Claude Haiku 5.5 max • Proprietary model • Released October 2026
+    retrieved: '2026-10-25'
+    note: Anthropic publishes no parameter count.
+  benchmarks:
+    aa_intelligence_index:
+      value: null
+      source: https://artificialanalysis.ai/models/claude-haiku-5-5
+      quote: null
+      retrieved: '2026-10-25'
+      note: Rechecked; Artificial Analysis still scores only the reasoning variant (max effort) and gives
+        no score for a non-reasoning variant, the setting our runs use.
+    lmarena_text_elo:
+      value: null
+      source: https://arena.ai/leaderboard/chat/text
+      quote: null
+      retrieved: '2026-10-25'
+      note: Rechecked; the only Arena entry is still the High-effort variant, not the setting our runs
+        use (leaderboard dated Oct 23, 2026, read in a browser because direct fetches got 403).
+    gpqa_diamond:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Rechecked; not in Anthropic's announcement or on the Artificial Analysis page. The system
+        card PDF was too large for the fetch tool and was not read.
+    mmlu_pro:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Rechecked; not in Anthropic's announcement or on the Artificial Analysis page. The system
+        card PDF was too large for the fetch tool and was not read.
