@@ -342,6 +342,8 @@ openrouter/meta-llama/llama-3.3-70b-instruct:
       note: Provider model card; the third value column is Llama 3.3 70B Instruct.
 openai/mistral-small-3.2:
   same_as: openrouter/mistralai/mistral-small-3.2-24b-instruct
+openai/gemma-4-31b-it:
+  same_as: openrouter/google/gemma-4-31b-it
 openrouter/x-ai/grok-4.6:
   provider: SpaceXAI
   released:
