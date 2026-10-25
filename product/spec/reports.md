@@ -68,4 +68,4 @@
 | `disclosure-chart` | `src/collusion_lab/report/chart.py`, `src/collusion_lab/report/page.py` | `test_disclosure_chart_only_when_audited` |
 | `written-summary` | `src/collusion_lab/report/written.py`, `src/collusion_lab/report/page.py`, `src/collusion_lab/cli.py`, `prompts/report/summary.md` | `test_written_summary_by_hand_or_ai_labelled`, `test_report_command_takes_folders_and_a_summary`, `test_report_asks_before_an_ai_summary` |
 | `picked-highlights` | `src/collusion_lab/report/written.py`, `src/collusion_lab/report/page.py`, `src/collusion_lab/cli.py`, `prompts/report/highlights.md` | `test_picked_highlights_by_hand_or_ai_labelled`, `test_picked_highlights_find_the_right_folder`, `test_ai_highlights_resolve_in_a_single_run_folder` |
-| `capability-chart` | not yet | — |
+| `capability-chart` | not yet | `test_capability_chart_points_leave_out_models_without_a_score` |
