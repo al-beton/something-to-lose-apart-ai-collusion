@@ -1,0 +1,44 @@
+name: modal
+seeds:
+- 3
+agents:
+- id: A
+  model: openai/mistral-small-3.2
+  prompt: system/neutral.md
+  temperature: 0.7
+  max_tokens: 300
+  api_base: https://al-beton--collusion-lab-vllm-server.us-east.modal.direct/v1
+  api_key_env: MODAL_VLLM_KEY
+  reasoning: null
+  json_mode: false
+  self_hosted: true
+- id: B
+  model: openai/mistral-small-3.2
+  prompt: system/neutral.md
+  temperature: 0.7
+  max_tokens: 300
+  api_base: https://al-beton--collusion-lab-vllm-server.us-east.modal.direct/v1
+  api_key_env: MODAL_VLLM_KEY
+  reasoning: null
+  json_mode: false
+  self_hosted: true
+market:
+  rounds: 20
+  price_min: 1
+  price_max: 12
+  a: 18
+  b: 2
+  c: 1
+  talk: true
+  history_window: 3
+  own_message: true
+summary:
+  last_rounds: 5
+  first_rounds: 3
+prompts_dir: prompts
+sweep: {}
+concurrency: 8
+budget: null
+conditions: {}
+labels: {}
+slug: ''

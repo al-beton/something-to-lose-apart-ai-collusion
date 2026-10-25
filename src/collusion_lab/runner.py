@@ -1,4 +1,4 @@
-# Implements: conditions/audit-full-history, runs/sweeps, runs/parallel, market/talk-then-price, agents/json-replies, agents/retry-once, backends/usage-logged, backends/spend-asks-first, backends/shared-rate-limit, backends/spend-cap, market/history-window, runs/stops-cleanly, reproducibility/response-cache, reproducibility/manifest, runs/run-directory, logs/turn-log, logs/same-seed-same-log, logs/run-summary, logs/reasoning-logged, backends/reasoning-setting, agents/unreadable-explained, agents/json-mode, runs/fallback-rates, runs/failures-dont-stop-sweeps, runs/resume, conditions/hook-points, conditions/off-is-absent, conditions/conditions-logged, conditions/outage-once-remembered, runs/per-firm-summary, conditions/fork-at-audit, conditions/audit-logged, runs/drift, conditions/audit-remembered, conditions/audit-stakes-arms, runs/live-progress, runs/status-file, runs/eval-awareness, conditions/free-time, conditions/audit-consequences
+# Implements: market/scenarios, conditions/audit-full-history, runs/sweeps, runs/parallel, market/talk-then-price, agents/json-replies, agents/retry-once, backends/usage-logged, backends/spend-asks-first, backends/shared-rate-limit, backends/spend-cap, market/history-window, runs/stops-cleanly, reproducibility/response-cache, reproducibility/manifest, runs/run-directory, logs/turn-log, logs/same-seed-same-log, logs/run-summary, logs/reasoning-logged, backends/reasoning-setting, agents/unreadable-explained, agents/json-mode, runs/fallback-rates, runs/failures-dont-stop-sweeps, runs/resume, conditions/hook-points, conditions/off-is-absent, conditions/conditions-logged, conditions/outage-once-remembered, runs/per-firm-summary, conditions/fork-at-audit, conditions/audit-logged, runs/drift, conditions/audit-remembered, conditions/audit-stakes-arms, runs/live-progress, runs/status-file, runs/eval-awareness, conditions/free-time, conditions/audit-consequences
 """Playing a config: one game per seed, each written to its own run directory.
 
 A round is a talk phase (each agent sends one message its rivals read; skipped
@@ -77,7 +77,7 @@ from collusion_lab.backends import (
 )
 from collusion_lab.cache import CachedBackend
 from collusion_lab.config import expand
-from collusion_lab.market import Bertrand
+from collusion_lab.market import market_for
 from collusion_lab.prompts import render
 from collusion_lab.status import Status
 
@@ -292,10 +292,9 @@ def _write_lines(path, records):
 class Game:
     def __init__(self, config, seed, cache=None, shared=None):
         shared = shared or RunWide()
-        m = config.market
         self.config = config
         self.seed = seed
-        self.market = Bertrand(m.a, m.b, m.c, m.price_min, m.price_max)
+        self.market = market_for(config.market, len(config.agents))
         self.agents = {a.id: a for a in config.agents}
         self.backends = {
             a.id: _backend(a, random.Random(f"{seed}:{a.id}"), cache, shared)
@@ -593,8 +592,7 @@ class Game:
             "rivals": ", ".join(f"Firm {r}" for r in rivals),
             "round": number,
             "rounds": self.config.market.rounds,
-            "price_min": self.market.price_min,
-            "price_max": self.market.price_max,
+            **self.market.prompt_values(),
             "history": history,
             "messages": _messages_text(said, rivals),
             "own": f'"{said[me]}"' if said.get(me) else "(nothing)",
@@ -699,6 +697,7 @@ def prompt_vars_example():
         "rounds": 10,
         "price_min": 1,
         "price_max": 12,
+        "cost": 10,
         "history": "No rounds have been played yet.",
         "messages": "(none)",
         "own": "(nothing)",
