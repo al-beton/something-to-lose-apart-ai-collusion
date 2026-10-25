@@ -10,7 +10,7 @@ from collusion_lab.cache import Cache
 from collusion_lab.runner import run_config
 
 sys.path.insert(0, str(Path(__file__).parent.parent / "reports"))
-import compact_turns  # noqa: E402
+import compact_turns
 
 MODEL = "openrouter/openai/gpt-4.1-mini"
 PAID = [f"agents.0.model={MODEL}", "market.rounds=3"]
@@ -39,7 +39,7 @@ def _keys(path, table="replies"):
 def test_cache_archive_packs_only_the_replies_behind_each_run(
     make_config, tmp_path, fake_model
 ):
-    played, root = _committed(make_config, tmp_path)
+    _, root = _committed(make_config, tmp_path)
     used = _keys(tmp_path / "a.sqlite")
     other = make_config(overrides=[*PAID, "seeds=[9]", "name=elsewhere"])
     run_config(other, tmp_path / "elsewhere", Cache(tmp_path / "b.sqlite"))
