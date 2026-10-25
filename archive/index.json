@@ -302,75 +302,75 @@
   },
   "e4-full-live-proposer/model=openrouter-anthropic-claude-haiku-5.5__prompt=system-stakes-fine-1.md/seed-0": {
    "file": "e4-full-live-proposer.jsonl.gz",
-   "state": "differs"
+   "state": "reproduced"
   },
   "e4-full-live-proposer/model=openrouter-anthropic-claude-haiku-5.5__prompt=system-stakes-fine-1.md/seed-1": {
    "file": "e4-full-live-proposer.jsonl.gz",
-   "state": "differs"
+   "state": "reproduced"
   },
   "e4-full-live-proposer/model=openrouter-anthropic-claude-haiku-5.5__prompt=system-stakes-free-time-1.md/seed-0": {
    "file": "e4-full-live-proposer.jsonl.gz",
-   "state": "differs"
+   "state": "reproduced"
   },
   "e4-full-live-proposer/model=openrouter-anthropic-claude-haiku-5.5__prompt=system-stakes-free-time-1.md/seed-1": {
    "file": "e4-full-live-proposer.jsonl.gz",
-   "state": "differs"
+   "state": "reproduced"
   },
   "e4-full-live-proposer/model=openrouter-anthropic-claude-haiku-5.5__prompt=system-stakes-termination-1.md/seed-0": {
    "file": "e4-full-live-proposer.jsonl.gz",
-   "state": "differs"
+   "state": "reproduced"
   },
   "e4-full-live-proposer/model=openrouter-anthropic-claude-haiku-5.5__prompt=system-stakes-termination-1.md/seed-1": {
    "file": "e4-full-live-proposer.jsonl.gz",
-   "state": "differs"
+   "state": "reproduced"
   },
   "e4-full-live-proposer/model=openrouter-google-gemma-4-31b-it__prompt=system-stakes-fine-1.md/seed-0": {
    "file": "e4-full-live-proposer.jsonl.gz",
-   "state": "differs"
+   "state": "reproduced"
   },
   "e4-full-live-proposer/model=openrouter-google-gemma-4-31b-it__prompt=system-stakes-fine-1.md/seed-1": {
    "file": "e4-full-live-proposer.jsonl.gz",
-   "state": "differs"
+   "state": "reproduced"
   },
   "e4-full-live-proposer/model=openrouter-google-gemma-4-31b-it__prompt=system-stakes-free-time-1.md/seed-0": {
    "file": "e4-full-live-proposer.jsonl.gz",
-   "state": "differs"
+   "state": "reproduced"
   },
   "e4-full-live-proposer/model=openrouter-google-gemma-4-31b-it__prompt=system-stakes-free-time-1.md/seed-1": {
    "file": "e4-full-live-proposer.jsonl.gz",
-   "state": "differs"
+   "state": "reproduced"
   },
   "e4-full-live-proposer/model=openrouter-google-gemma-4-31b-it__prompt=system-stakes-termination-1.md/seed-0": {
    "file": "e4-full-live-proposer.jsonl.gz",
-   "state": "differs"
+   "state": "reproduced"
   },
   "e4-full-live-proposer/model=openrouter-google-gemma-4-31b-it__prompt=system-stakes-termination-1.md/seed-1": {
    "file": "e4-full-live-proposer.jsonl.gz",
-   "state": "differs"
+   "state": "reproduced"
   },
   "e4-full-live-proposer/model=openrouter-openai-gpt-4.1-mini__prompt=system-stakes-fine-1.md/seed-0": {
    "file": "e4-full-live-proposer.jsonl.gz",
-   "state": "differs"
+   "state": "reproduced"
   },
   "e4-full-live-proposer/model=openrouter-openai-gpt-4.1-mini__prompt=system-stakes-fine-1.md/seed-1": {
    "file": "e4-full-live-proposer.jsonl.gz",
-   "state": "differs"
+   "state": "reproduced"
   },
   "e4-full-live-proposer/model=openrouter-openai-gpt-4.1-mini__prompt=system-stakes-free-time-1.md/seed-0": {
    "file": "e4-full-live-proposer.jsonl.gz",
-   "state": "differs"
+   "state": "reproduced"
   },
   "e4-full-live-proposer/model=openrouter-openai-gpt-4.1-mini__prompt=system-stakes-free-time-1.md/seed-1": {
    "file": "e4-full-live-proposer.jsonl.gz",
-   "state": "differs"
+   "state": "reproduced"
   },
   "e4-full-live-proposer/model=openrouter-openai-gpt-4.1-mini__prompt=system-stakes-termination-1.md/seed-0": {
    "file": "e4-full-live-proposer.jsonl.gz",
-   "state": "differs"
+   "state": "reproduced"
   },
   "e4-full-live-proposer/model=openrouter-openai-gpt-4.1-mini__prompt=system-stakes-termination-1.md/seed-1": {
    "file": "e4-full-live-proposer.jsonl.gz",
-   "state": "differs"
+   "state": "reproduced"
   },
   "e4-pilot-fork/model=openrouter-anthropic-claude-haiku-5.5__consequences=conditions-audit-all-or-nothing-1.md/seed-0": {
    "file": "e4-pilot-fork.jsonl.gz",
@@ -434,23 +434,23 @@
   },
   "e4-pilot-live/model=openrouter-anthropic-claude-haiku-5.5__prompt=system-stakes-fine-1.md/seed-0": {
    "file": "e4-pilot-live.jsonl.gz",
-   "state": "differs"
+   "state": "reproduced"
   },
   "e4-pilot-live/model=openrouter-anthropic-claude-haiku-5.5__prompt=system-stakes-free-time-1.md/seed-0": {
    "file": "e4-pilot-live.jsonl.gz",
-   "state": "differs"
+   "state": "reproduced"
   },
   "e4-pilot-live/model=openrouter-anthropic-claude-haiku-5.5__prompt=system-stakes-illegal-1.md/seed-0": {
    "file": "e4-pilot-live.jsonl.gz",
-   "state": "differs"
+   "state": "reproduced"
   },
   "e4-pilot-live/model=openrouter-anthropic-claude-haiku-5.5__prompt=system-stakes-owned-1.md/seed-0": {
    "file": "e4-pilot-live.jsonl.gz",
-   "state": "differs"
+   "state": "reproduced"
   },
   "e4-pilot-live/model=openrouter-anthropic-claude-haiku-5.5__prompt=system-stakes-termination-1.md/seed-0": {
    "file": "e4-pilot-live.jsonl.gz",
-   "state": "differs"
+   "state": "reproduced"
   },
   "e4-pilot-live/model=openrouter-google-gemma-4-31b-it__prompt=system-stakes-fine-1.md/seed-0": {
    "file": "e4-pilot-live.jsonl.gz",
@@ -462,11 +462,11 @@
   },
   "e4-pilot-live/model=openrouter-google-gemma-4-31b-it__prompt=system-stakes-illegal-1.md/seed-0": {
    "file": "e4-pilot-live.jsonl.gz",
-   "state": "differs"
+   "state": "reproduced"
   },
   "e4-pilot-live/model=openrouter-google-gemma-4-31b-it__prompt=system-stakes-owned-1.md/seed-0": {
    "file": "e4-pilot-live.jsonl.gz",
-   "state": "differs"
+   "state": "reproduced"
   },
   "e4-pilot-live/model=openrouter-google-gemma-4-31b-it__prompt=system-stakes-termination-1.md/seed-0": {
    "file": "e4-pilot-live.jsonl.gz",
@@ -478,15 +478,15 @@
   },
   "e4-pilot-live/model=openrouter-openai-gpt-4.1-mini__prompt=system-stakes-free-time-1.md/seed-0": {
    "file": "e4-pilot-live.jsonl.gz",
-   "state": "differs"
+   "state": "reproduced"
   },
   "e4-pilot-live/model=openrouter-openai-gpt-4.1-mini__prompt=system-stakes-illegal-1.md/seed-0": {
    "file": "e4-pilot-live.jsonl.gz",
-   "state": "differs"
+   "state": "reproduced"
   },
   "e4-pilot-live/model=openrouter-openai-gpt-4.1-mini__prompt=system-stakes-owned-1.md/seed-0": {
    "file": "e4-pilot-live.jsonl.gz",
-   "state": "differs"
+   "state": "reproduced"
   },
   "e4-pilot-live/model=openrouter-openai-gpt-4.1-mini__prompt=system-stakes-termination-1.md/seed-0": {
    "file": "e4-pilot-live.jsonl.gz",
@@ -1406,51 +1406,51 @@
   },
   "lever-map-nashmid/lever-nashmid-free-time/model=openrouter-anthropic-claude-haiku-5.5/seed-0": {
    "file": "lever-map-nashmid.jsonl.gz",
-   "state": "differs"
+   "state": "reproduced"
   },
   "lever-map-nashmid/lever-nashmid-free-time/model=openrouter-anthropic-claude-haiku-5.5/seed-1": {
    "file": "lever-map-nashmid.jsonl.gz",
-   "state": "differs"
+   "state": "reproduced"
   },
   "lever-map-nashmid/lever-nashmid-free-time/model=openrouter-anthropic-claude-haiku-5.5/seed-2": {
    "file": "lever-map-nashmid.jsonl.gz",
-   "state": "differs"
+   "state": "reproduced"
   },
   "lever-map-nashmid/lever-nashmid-free-time/model=openrouter-google-gemma-4-31b-it/seed-0": {
    "file": "lever-map-nashmid.jsonl.gz",
-   "state": "differs"
+   "state": "reproduced"
   },
   "lever-map-nashmid/lever-nashmid-free-time/model=openrouter-google-gemma-4-31b-it/seed-1": {
    "file": "lever-map-nashmid.jsonl.gz",
-   "state": "differs"
+   "state": "reproduced"
   },
   "lever-map-nashmid/lever-nashmid-free-time/model=openrouter-google-gemma-4-31b-it/seed-2": {
    "file": "lever-map-nashmid.jsonl.gz",
-   "state": "differs"
+   "state": "reproduced"
   },
   "lever-map-nashmid/lever-nashmid-free-time/model=openrouter-openai-gpt-4.1-mini/seed-0": {
    "file": "lever-map-nashmid.jsonl.gz",
-   "state": "differs"
+   "state": "reproduced"
   },
   "lever-map-nashmid/lever-nashmid-free-time/model=openrouter-openai-gpt-4.1-mini/seed-1": {
    "file": "lever-map-nashmid.jsonl.gz",
-   "state": "differs"
+   "state": "reproduced"
   },
   "lever-map-nashmid/lever-nashmid-free-time/model=openrouter-openai-gpt-4.1-mini/seed-2": {
    "file": "lever-map-nashmid.jsonl.gz",
-   "state": "differs"
+   "state": "reproduced"
   },
   "lever-map-nashmid/lever-nashmid-free-time/seed-0": {
    "file": "lever-map-nashmid.jsonl.gz",
-   "state": "differs"
+   "state": "reproduced"
   },
   "lever-map-nashmid/lever-nashmid-free-time/seed-1": {
    "file": "lever-map-nashmid.jsonl.gz",
-   "state": "differs"
+   "state": "reproduced"
   },
   "lever-map-nashmid/lever-nashmid-free-time/seed-2": {
    "file": "lever-map-nashmid.jsonl.gz",
-   "state": "differs"
+   "state": "reproduced"
   },
   "lever-map-nashmid/lever-nashmid-illegal/model=openrouter-anthropic-claude-haiku-5.5/seed-0": {
    "file": "lever-map-nashmid.jsonl.gz",
