@@ -29,7 +29,7 @@ NAMES = {
 
 def main(argv=None):
     parser = argparse.ArgumentParser()
-    parser.add_argument("--benchmark", default="aa_intelligence_index", choices=NAMES)
+    parser.add_argument("--benchmark", default="lmarena_text_elo", choices=NAMES)
     parser.add_argument("--runs", nargs="+", default=RUNS)
     parser.add_argument("--out", default=HERE)
     args = parser.parse_args(argv)

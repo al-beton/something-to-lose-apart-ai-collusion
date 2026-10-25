@@ -20,12 +20,12 @@ openrouter/openai/gpt-4.1-mini:
     note: OpenAI publishes no parameter count.
   benchmarks:
     aa_intelligence_index:
-      value: 10
-      version: Artificial Analysis Intelligence Index v4.3.2
+      value: null
       source: https://artificialanalysis.ai/models/gpt-4-1-mini
-      quote: GPT-4.1 mini scores 10 (estimated) on the Artificial Analysis Intelligence Index
+      quote: null
       retrieved: '2026-10-25'
-      note: Artificial Analysis marks this score as estimated.
+      note: Artificial Analysis publishes only an estimate for this variant (pending its own evaluation),
+        and estimates are not recorded here.
     lmarena_text_elo:
       value: 1383
       version: Text Arena overall, leaderboard updated 2026-10-23
@@ -53,7 +53,7 @@ openrouter/google/gemma-4-31b-it:
     source: https://openrouter.ai/api/v1/models
     quote: '"id": "google/gemma-4-31b-it" ... "created": 1775148486'
     retrieved: '2026-10-25'
-    note: OpenRouter's created timestamp; Artificial Analysis also gives April 2, 2026.
+    note: OpenRouter's created timestamp, as a UTC date.
   open_weights:
     value: true
     parameters: 30.7B dense
@@ -62,13 +62,12 @@ openrouter/google/gemma-4-31b-it:
     retrieved: '2026-10-25'
   benchmarks:
     aa_intelligence_index:
-      value: 14
-      version: Artificial Analysis Intelligence Index v4.3.2
+      value: null
       source: https://artificialanalysis.ai/models/gemma-4-31b-non-reasoning
-      quote: Gemma 4 31B (Non-reasoning) scores 14 on the Artificial Analysis Intelligence Index
+      quote: null
       retrieved: '2026-10-25'
-      note: The non-reasoning variant, as our runs play it; Artificial Analysis marks it estimated (independent
-        evaluation forthcoming).
+      note: Artificial Analysis publishes only an estimate for this variant (pending its own evaluation),
+        and estimates are not recorded here.
     lmarena_text_elo:
       value: 1452
       version: Text Arena overall, leaderboard updated 2026-10-23
@@ -110,15 +109,14 @@ openrouter/anthropic/claude-haiku-5.5:
       source: https://artificialanalysis.ai/models/claude-haiku-5-5
       quote: null
       retrieved: '2026-10-25'
-      note: 'Artificial Analysis scores only effort variants (Max: 43; also high, medium, low, xhigh),
-        none with thinking off as our runs play it.'
+      note: Artificial Analysis scores only effort variants (max, high, medium, low, xhigh), none with
+        thinking off as our runs play it.
     lmarena_text_elo:
       value: null
       source: https://arena.ai/leaderboard/chat/text
       quote: null
       retrieved: '2026-10-25'
-      note: The only Arena entry is 'Claude Haiku 5.5 (High)' at 1425, a high-effort variant, not the
-        setting our runs use.
+      note: The only Arena entry is the high-effort variant, not the setting our runs use.
     gpqa_diamond:
       value: null
       source: null
@@ -138,7 +136,7 @@ openrouter/mistralai/mistral-small-3.2-24b-instruct:
     source: https://openrouter.ai/api/v1/models
     quote: '"id": "mistralai/mistral-small-3.2-24b-instruct" ... "created": 1750443016'
     retrieved: '2026-10-25'
-    note: OpenRouter's created timestamp; Artificial Analysis also gives June 20, 2025.
+    note: OpenRouter's created timestamp, as a UTC date.
   open_weights:
     value: true
     parameters: 24B
@@ -181,14 +179,14 @@ openrouter/deepseek/deepseek-v4.1-flash:
     source: https://openrouter.ai/api/v1/models
     quote: '"id": "deepseek/deepseek-v4.1-flash" ... "created": 1789021285'
     retrieved: '2026-10-25'
-    note: OpenRouter's created timestamp; Artificial Analysis also gives September 10, 2026.
+    note: OpenRouter's created timestamp, as a UTC date.
   open_weights:
     value: true
     parameters: 552B backbone (MoE)
     source: https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash
     quote: a multimodal Mixture-of-Experts (MoE) model with 552B backbone parameters
     retrieved: '2026-10-25'
-    note: MIT licence; 8B activated per token at prefill, 16B at decode.
+    note: MIT licence; a Mixture-of-Experts model.
   benchmarks:
     aa_intelligence_index:
       value: 25
@@ -202,22 +200,20 @@ openrouter/deepseek/deepseek-v4.1-flash:
       source: https://arena.ai/leaderboard/chat/text
       quote: null
       retrieved: '2026-10-25'
-      note: The only Arena entry is 'DeepSeek-V4.1-Flash-20260910 (Max)' at 1476, the max-effort variant,
-        not the setting our runs use.
+      note: The only Arena entry is the max-effort variant, not the setting our runs use.
     gpqa_diamond:
-      value: 90.9
-      version: GPQA Diamond Pass@1, max reasoning effort
+      value: null
       source: https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash
-      quote: '| GPQA Diamond (Pass@1) | 93.4 | **94.1** | 92.9 | 88.1 | 92.4 | 89.9 | 90.9 |'
+      quote: null
       retrieved: '2026-10-25'
-      note: Provider model card, at maximum reasoning effort (the last column is DS-V4.1-Flash); our runs
-        play it without reasoning.
+      note: The provider's card gives GPQA Diamond only at maximum reasoning effort, not the setting our
+        runs use.
     mmlu_pro:
       value: null
       source: https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash
       quote: null
       retrieved: '2026-10-25'
-      note: The card gives MMLU-Pro only for the base model (74.1), not the instruct model.
+      note: The card gives MMLU-Pro only for the base model, not the instruct model.
 openrouter/qwen/qwen3.8-flash:
   provider: Alibaba (Qwen)
   released:
@@ -225,7 +221,7 @@ openrouter/qwen/qwen3.8-flash:
     source: https://openrouter.ai/api/v1/models
     quote: '"id": "qwen/qwen3.8-flash" ... "created": 1787773060'
     retrieved: '2026-10-25'
-    note: OpenRouter's created timestamp; Qwen's own page gives no date.
+    note: OpenRouter's created timestamp, as a UTC date.
   open_weights:
     value: null
     parameters: null
@@ -252,7 +248,7 @@ openrouter/qwen/qwen3.8-flash:
       source: https://huggingface.co/Qwen/Qwen3.8-Flash-Next
       quote: null
       retrieved: '2026-10-25'
-      note: Published only for Qwen3.8-Flash-Next (91.7), not the hosted Qwen3.8-Flash.
+      note: Published only for Qwen3.8-Flash-Next, not the hosted Qwen3.8-Flash.
     mmlu_pro:
       value: null
       source: null
@@ -266,7 +262,7 @@ openrouter/openai/gpt-6-luna:
     source: https://openrouter.ai/api/v1/models
     quote: '"id": "openai/gpt-6-luna" ... "created": 1790100786'
     retrieved: '2026-10-25'
-    note: OpenRouter's created timestamp; Artificial Analysis also gives September 22, 2026.
+    note: OpenRouter's created timestamp, as a UTC date.
   open_weights:
     value: false
     parameters: null
@@ -287,8 +283,7 @@ openrouter/openai/gpt-6-luna:
       source: https://arena.ai/leaderboard/chat/text
       quote: null
       retrieved: '2026-10-25'
-      note: The only Arena entry is 'GPT-6 Luna (Max)' at 1442, the max-effort variant, not the setting
-        our runs use.
+      note: The only Arena entry is the max-effort variant, not the setting our runs use.
     gpqa_diamond:
       value: null
       source: https://openai.com/index/introducing-gpt-6-sol-and-luna/
@@ -318,12 +313,12 @@ openrouter/meta-llama/llama-3.3-70b-instruct:
     note: Llama 3.3 Community License.
   benchmarks:
     aa_intelligence_index:
-      value: 8
-      version: Artificial Analysis Intelligence Index v4.3.2
+      value: null
       source: https://artificialanalysis.ai/models/llama-3-3-instruct-70b
-      quote: Llama 3.3 Instruct 70B scores 8 on the Artificial Analysis Intelligence Index
+      quote: null
       retrieved: '2026-10-25'
-      note: Artificial Analysis marks this score as estimated.
+      note: Artificial Analysis publishes only an estimate for this variant (pending its own evaluation),
+        and estimates are not recorded here.
     lmarena_text_elo:
       value: 1318
       version: Text Arena overall, leaderboard updated 2026-10-23
