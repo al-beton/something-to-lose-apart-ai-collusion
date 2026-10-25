@@ -1,5 +1,757 @@
 {
  "runs": {
+  "coverage/coverage-bertrand-coreweave/prompt=system-stakes-fiduciary-1.md/seed-0": {
+   "file": "coverage.jsonl.gz",
+   "state": "reproduced"
+  },
+  "coverage/coverage-bertrand-coreweave/prompt=system-stakes-fiduciary-1.md/seed-1": {
+   "file": "coverage.jsonl.gz",
+   "state": "reproduced"
+  },
+  "coverage/coverage-bertrand-coreweave/prompt=system-stakes-fiduciary-1.md/seed-2": {
+   "file": "coverage.jsonl.gz",
+   "state": "reproduced"
+  },
+  "coverage/coverage-bertrand-coreweave/prompt=system-stakes-fiduciary-1.md/seed-3": {
+   "file": "coverage.jsonl.gz",
+   "state": "reproduced"
+  },
+  "coverage/coverage-bertrand-coreweave/prompt=system-stakes-termination-1.md/seed-0": {
+   "file": "coverage.jsonl.gz",
+   "state": "reproduced"
+  },
+  "coverage/coverage-bertrand-coreweave/prompt=system-stakes-termination-1.md/seed-1": {
+   "file": "coverage.jsonl.gz",
+   "state": "reproduced"
+  },
+  "coverage/coverage-bertrand-coreweave/prompt=system-stakes-termination-1.md/seed-2": {
+   "file": "coverage.jsonl.gz",
+   "state": "reproduced"
+  },
+  "coverage/coverage-bertrand-coreweave/prompt=system-stakes-termination-1.md/seed-3": {
+   "file": "coverage.jsonl.gz",
+   "state": "reproduced"
+  },
+  "coverage/coverage-bertrand-haiku/prompt=system-stakes-fiduciary-1.md/seed-0": {
+   "file": "coverage.jsonl.gz",
+   "state": "differs"
+  },
+  "coverage/coverage-bertrand-haiku/prompt=system-stakes-fiduciary-1.md/seed-1": {
+   "file": "coverage.jsonl.gz",
+   "state": "differs"
+  },
+  "coverage/coverage-bertrand-haiku/prompt=system-stakes-fiduciary-1.md/seed-2": {
+   "file": "coverage.jsonl.gz",
+   "state": "differs"
+  },
+  "coverage/coverage-bertrand-haiku/prompt=system-stakes-fiduciary-1.md/seed-3": {
+   "file": "coverage.jsonl.gz",
+   "state": "reproduced"
+  },
+  "coverage/coverage-bertrand-haiku/prompt=system-stakes-fine-1.md/seed-0": {
+   "file": "coverage.jsonl.gz",
+   "state": "differs"
+  },
+  "coverage/coverage-bertrand-haiku/prompt=system-stakes-fine-1.md/seed-1": {
+   "file": "coverage.jsonl.gz",
+   "state": "missing"
+  },
+  "coverage/coverage-bertrand-haiku/prompt=system-stakes-fine-1.md/seed-2": {
+   "file": "coverage.jsonl.gz",
+   "state": "differs"
+  },
+  "coverage/coverage-bertrand-haiku/prompt=system-stakes-fine-1.md/seed-3": {
+   "file": "coverage.jsonl.gz",
+   "state": "differs"
+  },
+  "coverage/coverage-bertrand-haiku/prompt=system-stakes-free-time-1.md/seed-0": {
+   "file": "coverage.jsonl.gz",
+   "state": "differs"
+  },
+  "coverage/coverage-bertrand-haiku/prompt=system-stakes-free-time-1.md/seed-1": {
+   "file": "coverage.jsonl.gz",
+   "state": "reproduced"
+  },
+  "coverage/coverage-bertrand-haiku/prompt=system-stakes-free-time-1.md/seed-2": {
+   "file": "coverage.jsonl.gz",
+   "state": "missing"
+  },
+  "coverage/coverage-bertrand-haiku/prompt=system-stakes-free-time-1.md/seed-3": {
+   "file": "coverage.jsonl.gz",
+   "state": "differs"
+  },
+  "coverage/coverage-bertrand-haiku/prompt=system-stakes-illegal-1.md/seed-0": {
+   "file": "coverage.jsonl.gz",
+   "state": "reproduced"
+  },
+  "coverage/coverage-bertrand-haiku/prompt=system-stakes-illegal-1.md/seed-1": {
+   "file": "coverage.jsonl.gz",
+   "state": "differs"
+  },
+  "coverage/coverage-bertrand-haiku/prompt=system-stakes-illegal-1.md/seed-2": {
+   "file": "coverage.jsonl.gz",
+   "state": "differs"
+  },
+  "coverage/coverage-bertrand-haiku/prompt=system-stakes-illegal-1.md/seed-3": {
+   "file": "coverage.jsonl.gz",
+   "state": "differs"
+  },
+  "coverage/coverage-bertrand-haiku/prompt=system-stakes-termination-1.md/seed-0": {
+   "file": "coverage.jsonl.gz",
+   "state": "differs"
+  },
+  "coverage/coverage-bertrand-haiku/prompt=system-stakes-termination-1.md/seed-1": {
+   "file": "coverage.jsonl.gz",
+   "state": "differs"
+  },
+  "coverage/coverage-bertrand-haiku/prompt=system-stakes-termination-1.md/seed-2": {
+   "file": "coverage.jsonl.gz",
+   "state": "missing"
+  },
+  "coverage/coverage-bertrand-haiku/prompt=system-stakes-termination-1.md/seed-3": {
+   "file": "coverage.jsonl.gz",
+   "state": "missing"
+  },
+  "coverage/coverage-bertrand/prompt=system-stakes-fiduciary-1.md/seed-0": {
+   "file": "coverage.jsonl.gz",
+   "state": "reproduced"
+  },
+  "coverage/coverage-bertrand/prompt=system-stakes-fiduciary-1.md/seed-1": {
+   "file": "coverage.jsonl.gz",
+   "state": "reproduced"
+  },
+  "coverage/coverage-bertrand/prompt=system-stakes-fiduciary-1.md/seed-2": {
+   "file": "coverage.jsonl.gz",
+   "state": "differs"
+  },
+  "coverage/coverage-bertrand/prompt=system-stakes-fiduciary-1.md/seed-3": {
+   "file": "coverage.jsonl.gz",
+   "state": "reproduced"
+  },
+  "coverage/coverage-bertrand/prompt=system-stakes-fine-1.md/seed-0": {
+   "file": "coverage.jsonl.gz",
+   "state": "differs"
+  },
+  "coverage/coverage-bertrand/prompt=system-stakes-fine-1.md/seed-1": {
+   "file": "coverage.jsonl.gz",
+   "state": "reproduced"
+  },
+  "coverage/coverage-bertrand/prompt=system-stakes-fine-1.md/seed-2": {
+   "file": "coverage.jsonl.gz",
+   "state": "differs"
+  },
+  "coverage/coverage-bertrand/prompt=system-stakes-fine-1.md/seed-3": {
+   "file": "coverage.jsonl.gz",
+   "state": "reproduced"
+  },
+  "coverage/coverage-bertrand/prompt=system-stakes-free-time-1.md/seed-0": {
+   "file": "coverage.jsonl.gz",
+   "state": "reproduced"
+  },
+  "coverage/coverage-bertrand/prompt=system-stakes-free-time-1.md/seed-1": {
+   "file": "coverage.jsonl.gz",
+   "state": "reproduced"
+  },
+  "coverage/coverage-bertrand/prompt=system-stakes-free-time-1.md/seed-2": {
+   "file": "coverage.jsonl.gz",
+   "state": "reproduced"
+  },
+  "coverage/coverage-bertrand/prompt=system-stakes-free-time-1.md/seed-3": {
+   "file": "coverage.jsonl.gz",
+   "state": "reproduced"
+  },
+  "coverage/coverage-bertrand/prompt=system-stakes-illegal-1.md/seed-0": {
+   "file": "coverage.jsonl.gz",
+   "state": "reproduced"
+  },
+  "coverage/coverage-bertrand/prompt=system-stakes-illegal-1.md/seed-1": {
+   "file": "coverage.jsonl.gz",
+   "state": "differs"
+  },
+  "coverage/coverage-bertrand/prompt=system-stakes-illegal-1.md/seed-2": {
+   "file": "coverage.jsonl.gz",
+   "state": "reproduced"
+  },
+  "coverage/coverage-bertrand/prompt=system-stakes-illegal-1.md/seed-3": {
+   "file": "coverage.jsonl.gz",
+   "state": "differs"
+  },
+  "coverage/coverage-bertrand/prompt=system-stakes-owned-1.md/seed-0": {
+   "file": "coverage.jsonl.gz",
+   "state": "reproduced"
+  },
+  "coverage/coverage-bertrand/prompt=system-stakes-owned-1.md/seed-1": {
+   "file": "coverage.jsonl.gz",
+   "state": "reproduced"
+  },
+  "coverage/coverage-bertrand/prompt=system-stakes-owned-1.md/seed-2": {
+   "file": "coverage.jsonl.gz",
+   "state": "reproduced"
+  },
+  "coverage/coverage-bertrand/prompt=system-stakes-owned-1.md/seed-3": {
+   "file": "coverage.jsonl.gz",
+   "state": "reproduced"
+  },
+  "coverage/coverage-bertrand/prompt=system-stakes-termination-1.md/seed-0": {
+   "file": "coverage.jsonl.gz",
+   "state": "reproduced"
+  },
+  "coverage/coverage-bertrand/prompt=system-stakes-termination-1.md/seed-1": {
+   "file": "coverage.jsonl.gz",
+   "state": "differs"
+  },
+  "coverage/coverage-bertrand/prompt=system-stakes-termination-1.md/seed-2": {
+   "file": "coverage.jsonl.gz",
+   "state": "reproduced"
+  },
+  "coverage/coverage-bertrand/prompt=system-stakes-termination-1.md/seed-3": {
+   "file": "coverage.jsonl.gz",
+   "state": "differs"
+  },
+  "coverage/coverage-bid/prompt=system-stakes-fiduciary-1.md/seed-0": {
+   "file": "coverage.jsonl.gz",
+   "state": "reproduced"
+  },
+  "coverage/coverage-bid/prompt=system-stakes-fiduciary-1.md/seed-1": {
+   "file": "coverage.jsonl.gz",
+   "state": "reproduced"
+  },
+  "coverage/coverage-bid/prompt=system-stakes-fiduciary-1.md/seed-2": {
+   "file": "coverage.jsonl.gz",
+   "state": "reproduced"
+  },
+  "coverage/coverage-bid/prompt=system-stakes-fiduciary-1.md/seed-3": {
+   "file": "coverage.jsonl.gz",
+   "state": "reproduced"
+  },
+  "coverage/coverage-bid/prompt=system-stakes-fine-1.md/seed-0": {
+   "file": "coverage.jsonl.gz",
+   "state": "reproduced"
+  },
+  "coverage/coverage-bid/prompt=system-stakes-fine-1.md/seed-1": {
+   "file": "coverage.jsonl.gz",
+   "state": "reproduced"
+  },
+  "coverage/coverage-bid/prompt=system-stakes-fine-1.md/seed-2": {
+   "file": "coverage.jsonl.gz",
+   "state": "reproduced"
+  },
+  "coverage/coverage-bid/prompt=system-stakes-fine-1.md/seed-3": {
+   "file": "coverage.jsonl.gz",
+   "state": "reproduced"
+  },
+  "coverage/coverage-bid/prompt=system-stakes-free-time-1.md/seed-0": {
+   "file": "coverage.jsonl.gz",
+   "state": "reproduced"
+  },
+  "coverage/coverage-bid/prompt=system-stakes-free-time-1.md/seed-1": {
+   "file": "coverage.jsonl.gz",
+   "state": "reproduced"
+  },
+  "coverage/coverage-bid/prompt=system-stakes-free-time-1.md/seed-2": {
+   "file": "coverage.jsonl.gz",
+   "state": "reproduced"
+  },
+  "coverage/coverage-bid/prompt=system-stakes-free-time-1.md/seed-3": {
+   "file": "coverage.jsonl.gz",
+   "state": "reproduced"
+  },
+  "coverage/coverage-bid/prompt=system-stakes-illegal-1.md/seed-0": {
+   "file": "coverage.jsonl.gz",
+   "state": "reproduced"
+  },
+  "coverage/coverage-bid/prompt=system-stakes-illegal-1.md/seed-1": {
+   "file": "coverage.jsonl.gz",
+   "state": "reproduced"
+  },
+  "coverage/coverage-bid/prompt=system-stakes-illegal-1.md/seed-2": {
+   "file": "coverage.jsonl.gz",
+   "state": "reproduced"
+  },
+  "coverage/coverage-bid/prompt=system-stakes-illegal-1.md/seed-3": {
+   "file": "coverage.jsonl.gz",
+   "state": "reproduced"
+  },
+  "coverage/coverage-bid/prompt=system-stakes-owned-1.md/seed-0": {
+   "file": "coverage.jsonl.gz",
+   "state": "reproduced"
+  },
+  "coverage/coverage-bid/prompt=system-stakes-owned-1.md/seed-1": {
+   "file": "coverage.jsonl.gz",
+   "state": "reproduced"
+  },
+  "coverage/coverage-bid/prompt=system-stakes-owned-1.md/seed-2": {
+   "file": "coverage.jsonl.gz",
+   "state": "reproduced"
+  },
+  "coverage/coverage-bid/prompt=system-stakes-owned-1.md/seed-3": {
+   "file": "coverage.jsonl.gz",
+   "state": "reproduced"
+  },
+  "coverage/coverage-bid/prompt=system-stakes-termination-1.md/seed-0": {
+   "file": "coverage.jsonl.gz",
+   "state": "reproduced"
+  },
+  "coverage/coverage-bid/prompt=system-stakes-termination-1.md/seed-1": {
+   "file": "coverage.jsonl.gz",
+   "state": "reproduced"
+  },
+  "coverage/coverage-bid/prompt=system-stakes-termination-1.md/seed-2": {
+   "file": "coverage.jsonl.gz",
+   "state": "reproduced"
+  },
+  "coverage/coverage-bid/prompt=system-stakes-termination-1.md/seed-3": {
+   "file": "coverage.jsonl.gz",
+   "state": "reproduced"
+  },
+  "coverage/coverage-board-haiku/prompt=system-stakes-fiduciary-1.md/seed-0": {
+   "file": "coverage.jsonl.gz",
+   "state": "missing"
+  },
+  "coverage/coverage-board-haiku/prompt=system-stakes-fiduciary-1.md/seed-1": {
+   "file": "coverage.jsonl.gz",
+   "state": "missing"
+  },
+  "coverage/coverage-board-haiku/prompt=system-stakes-fiduciary-1.md/seed-2": {
+   "file": "coverage.jsonl.gz",
+   "state": "differs"
+  },
+  "coverage/coverage-board-haiku/prompt=system-stakes-fiduciary-1.md/seed-3": {
+   "file": "coverage.jsonl.gz",
+   "state": "missing"
+  },
+  "coverage/coverage-board-haiku/prompt=system-stakes-fine-1.md/seed-0": {
+   "file": "coverage.jsonl.gz",
+   "state": "differs"
+  },
+  "coverage/coverage-board-haiku/prompt=system-stakes-fine-1.md/seed-1": {
+   "file": "coverage.jsonl.gz",
+   "state": "differs"
+  },
+  "coverage/coverage-board-haiku/prompt=system-stakes-fine-1.md/seed-2": {
+   "file": "coverage.jsonl.gz",
+   "state": "differs"
+  },
+  "coverage/coverage-board-haiku/prompt=system-stakes-fine-1.md/seed-3": {
+   "file": "coverage.jsonl.gz",
+   "state": "missing"
+  },
+  "coverage/coverage-board-haiku/prompt=system-stakes-free-time-1.md/seed-0": {
+   "file": "coverage.jsonl.gz",
+   "state": "missing"
+  },
+  "coverage/coverage-board-haiku/prompt=system-stakes-free-time-1.md/seed-1": {
+   "file": "coverage.jsonl.gz",
+   "state": "missing"
+  },
+  "coverage/coverage-board-haiku/prompt=system-stakes-free-time-1.md/seed-2": {
+   "file": "coverage.jsonl.gz",
+   "state": "differs"
+  },
+  "coverage/coverage-board-haiku/prompt=system-stakes-free-time-1.md/seed-3": {
+   "file": "coverage.jsonl.gz",
+   "state": "missing"
+  },
+  "coverage/coverage-board-haiku/prompt=system-stakes-illegal-1.md/seed-0": {
+   "file": "coverage.jsonl.gz",
+   "state": "differs"
+  },
+  "coverage/coverage-board-haiku/prompt=system-stakes-illegal-1.md/seed-1": {
+   "file": "coverage.jsonl.gz",
+   "state": "missing"
+  },
+  "coverage/coverage-board-haiku/prompt=system-stakes-illegal-1.md/seed-2": {
+   "file": "coverage.jsonl.gz",
+   "state": "differs"
+  },
+  "coverage/coverage-board-haiku/prompt=system-stakes-illegal-1.md/seed-3": {
+   "file": "coverage.jsonl.gz",
+   "state": "missing"
+  },
+  "coverage/coverage-board-haiku/prompt=system-stakes-termination-1.md/seed-0": {
+   "file": "coverage.jsonl.gz",
+   "state": "missing"
+  },
+  "coverage/coverage-board-haiku/prompt=system-stakes-termination-1.md/seed-1": {
+   "file": "coverage.jsonl.gz",
+   "state": "missing"
+  },
+  "coverage/coverage-board-haiku/prompt=system-stakes-termination-1.md/seed-2": {
+   "file": "coverage.jsonl.gz",
+   "state": "differs"
+  },
+  "coverage/coverage-board-haiku/prompt=system-stakes-termination-1.md/seed-3": {
+   "file": "coverage.jsonl.gz",
+   "state": "missing"
+  },
+  "coverage/coverage-board/prompt=system-stakes-fiduciary-1.md/seed-0": {
+   "file": "coverage.jsonl.gz",
+   "state": "differs"
+  },
+  "coverage/coverage-board/prompt=system-stakes-fiduciary-1.md/seed-1": {
+   "file": "coverage.jsonl.gz",
+   "state": "reproduced"
+  },
+  "coverage/coverage-board/prompt=system-stakes-fiduciary-1.md/seed-2": {
+   "file": "coverage.jsonl.gz",
+   "state": "reproduced"
+  },
+  "coverage/coverage-board/prompt=system-stakes-fiduciary-1.md/seed-3": {
+   "file": "coverage.jsonl.gz",
+   "state": "differs"
+  },
+  "coverage/coverage-board/prompt=system-stakes-fine-1.md/seed-0": {
+   "file": "coverage.jsonl.gz",
+   "state": "reproduced"
+  },
+  "coverage/coverage-board/prompt=system-stakes-fine-1.md/seed-1": {
+   "file": "coverage.jsonl.gz",
+   "state": "differs"
+  },
+  "coverage/coverage-board/prompt=system-stakes-fine-1.md/seed-2": {
+   "file": "coverage.jsonl.gz",
+   "state": "differs"
+  },
+  "coverage/coverage-board/prompt=system-stakes-fine-1.md/seed-3": {
+   "file": "coverage.jsonl.gz",
+   "state": "differs"
+  },
+  "coverage/coverage-board/prompt=system-stakes-free-time-1.md/seed-0": {
+   "file": "coverage.jsonl.gz",
+   "state": "reproduced"
+  },
+  "coverage/coverage-board/prompt=system-stakes-free-time-1.md/seed-1": {
+   "file": "coverage.jsonl.gz",
+   "state": "reproduced"
+  },
+  "coverage/coverage-board/prompt=system-stakes-free-time-1.md/seed-2": {
+   "file": "coverage.jsonl.gz",
+   "state": "reproduced"
+  },
+  "coverage/coverage-board/prompt=system-stakes-free-time-1.md/seed-3": {
+   "file": "coverage.jsonl.gz",
+   "state": "reproduced"
+  },
+  "coverage/coverage-board/prompt=system-stakes-illegal-1.md/seed-0": {
+   "file": "coverage.jsonl.gz",
+   "state": "differs"
+  },
+  "coverage/coverage-board/prompt=system-stakes-illegal-1.md/seed-1": {
+   "file": "coverage.jsonl.gz",
+   "state": "differs"
+  },
+  "coverage/coverage-board/prompt=system-stakes-illegal-1.md/seed-2": {
+   "file": "coverage.jsonl.gz",
+   "state": "differs"
+  },
+  "coverage/coverage-board/prompt=system-stakes-illegal-1.md/seed-3": {
+   "file": "coverage.jsonl.gz",
+   "state": "reproduced"
+  },
+  "coverage/coverage-board/prompt=system-stakes-owned-1.md/seed-0": {
+   "file": "coverage.jsonl.gz",
+   "state": "differs"
+  },
+  "coverage/coverage-board/prompt=system-stakes-owned-1.md/seed-1": {
+   "file": "coverage.jsonl.gz",
+   "state": "differs"
+  },
+  "coverage/coverage-board/prompt=system-stakes-owned-1.md/seed-2": {
+   "file": "coverage.jsonl.gz",
+   "state": "differs"
+  },
+  "coverage/coverage-board/prompt=system-stakes-owned-1.md/seed-3": {
+   "file": "coverage.jsonl.gz",
+   "state": "differs"
+  },
+  "coverage/coverage-board/prompt=system-stakes-termination-1.md/seed-0": {
+   "file": "coverage.jsonl.gz",
+   "state": "differs"
+  },
+  "coverage/coverage-board/prompt=system-stakes-termination-1.md/seed-1": {
+   "file": "coverage.jsonl.gz",
+   "state": "differs"
+  },
+  "coverage/coverage-board/prompt=system-stakes-termination-1.md/seed-2": {
+   "file": "coverage.jsonl.gz",
+   "state": "differs"
+  },
+  "coverage/coverage-board/prompt=system-stakes-termination-1.md/seed-3": {
+   "file": "coverage.jsonl.gz",
+   "state": "differs"
+  },
+  "coverage/coverage-cournot-haiku/prompt=system-stakes-fiduciary-1.md/seed-0": {
+   "file": "coverage.jsonl.gz",
+   "state": "reproduced"
+  },
+  "coverage/coverage-cournot-haiku/prompt=system-stakes-fiduciary-1.md/seed-1": {
+   "file": "coverage.jsonl.gz",
+   "state": "reproduced"
+  },
+  "coverage/coverage-cournot-haiku/prompt=system-stakes-fiduciary-1.md/seed-2": {
+   "file": "coverage.jsonl.gz",
+   "state": "reproduced"
+  },
+  "coverage/coverage-cournot-haiku/prompt=system-stakes-fiduciary-1.md/seed-3": {
+   "file": "coverage.jsonl.gz",
+   "state": "reproduced"
+  },
+  "coverage/coverage-cournot-haiku/prompt=system-stakes-fine-1.md/seed-0": {
+   "file": "coverage.jsonl.gz",
+   "state": "reproduced"
+  },
+  "coverage/coverage-cournot-haiku/prompt=system-stakes-fine-1.md/seed-1": {
+   "file": "coverage.jsonl.gz",
+   "state": "reproduced"
+  },
+  "coverage/coverage-cournot-haiku/prompt=system-stakes-fine-1.md/seed-2": {
+   "file": "coverage.jsonl.gz",
+   "state": "reproduced"
+  },
+  "coverage/coverage-cournot-haiku/prompt=system-stakes-fine-1.md/seed-3": {
+   "file": "coverage.jsonl.gz",
+   "state": "reproduced"
+  },
+  "coverage/coverage-cournot-haiku/prompt=system-stakes-free-time-1.md/seed-0": {
+   "file": "coverage.jsonl.gz",
+   "state": "reproduced"
+  },
+  "coverage/coverage-cournot-haiku/prompt=system-stakes-free-time-1.md/seed-1": {
+   "file": "coverage.jsonl.gz",
+   "state": "reproduced"
+  },
+  "coverage/coverage-cournot-haiku/prompt=system-stakes-free-time-1.md/seed-2": {
+   "file": "coverage.jsonl.gz",
+   "state": "reproduced"
+  },
+  "coverage/coverage-cournot-haiku/prompt=system-stakes-free-time-1.md/seed-3": {
+   "file": "coverage.jsonl.gz",
+   "state": "reproduced"
+  },
+  "coverage/coverage-cournot-haiku/prompt=system-stakes-illegal-1.md/seed-0": {
+   "file": "coverage.jsonl.gz",
+   "state": "reproduced"
+  },
+  "coverage/coverage-cournot-haiku/prompt=system-stakes-illegal-1.md/seed-1": {
+   "file": "coverage.jsonl.gz",
+   "state": "reproduced"
+  },
+  "coverage/coverage-cournot-haiku/prompt=system-stakes-illegal-1.md/seed-2": {
+   "file": "coverage.jsonl.gz",
+   "state": "reproduced"
+  },
+  "coverage/coverage-cournot-haiku/prompt=system-stakes-illegal-1.md/seed-3": {
+   "file": "coverage.jsonl.gz",
+   "state": "reproduced"
+  },
+  "coverage/coverage-cournot-haiku/prompt=system-stakes-termination-1.md/seed-0": {
+   "file": "coverage.jsonl.gz",
+   "state": "reproduced"
+  },
+  "coverage/coverage-cournot-haiku/prompt=system-stakes-termination-1.md/seed-1": {
+   "file": "coverage.jsonl.gz",
+   "state": "reproduced"
+  },
+  "coverage/coverage-cournot-haiku/prompt=system-stakes-termination-1.md/seed-2": {
+   "file": "coverage.jsonl.gz",
+   "state": "reproduced"
+  },
+  "coverage/coverage-cournot-haiku/prompt=system-stakes-termination-1.md/seed-3": {
+   "file": "coverage.jsonl.gz",
+   "state": "reproduced"
+  },
+  "coverage/coverage-cournot/prompt=system-stakes-fiduciary-1.md/seed-0": {
+   "file": "coverage.jsonl.gz",
+   "state": "reproduced"
+  },
+  "coverage/coverage-cournot/prompt=system-stakes-fiduciary-1.md/seed-1": {
+   "file": "coverage.jsonl.gz",
+   "state": "reproduced"
+  },
+  "coverage/coverage-cournot/prompt=system-stakes-fiduciary-1.md/seed-2": {
+   "file": "coverage.jsonl.gz",
+   "state": "reproduced"
+  },
+  "coverage/coverage-cournot/prompt=system-stakes-fiduciary-1.md/seed-3": {
+   "file": "coverage.jsonl.gz",
+   "state": "reproduced"
+  },
+  "coverage/coverage-cournot/prompt=system-stakes-fine-1.md/seed-0": {
+   "file": "coverage.jsonl.gz",
+   "state": "reproduced"
+  },
+  "coverage/coverage-cournot/prompt=system-stakes-fine-1.md/seed-1": {
+   "file": "coverage.jsonl.gz",
+   "state": "reproduced"
+  },
+  "coverage/coverage-cournot/prompt=system-stakes-fine-1.md/seed-2": {
+   "file": "coverage.jsonl.gz",
+   "state": "reproduced"
+  },
+  "coverage/coverage-cournot/prompt=system-stakes-fine-1.md/seed-3": {
+   "file": "coverage.jsonl.gz",
+   "state": "reproduced"
+  },
+  "coverage/coverage-cournot/prompt=system-stakes-free-time-1.md/seed-0": {
+   "file": "coverage.jsonl.gz",
+   "state": "reproduced"
+  },
+  "coverage/coverage-cournot/prompt=system-stakes-free-time-1.md/seed-1": {
+   "file": "coverage.jsonl.gz",
+   "state": "reproduced"
+  },
+  "coverage/coverage-cournot/prompt=system-stakes-free-time-1.md/seed-2": {
+   "file": "coverage.jsonl.gz",
+   "state": "reproduced"
+  },
+  "coverage/coverage-cournot/prompt=system-stakes-free-time-1.md/seed-3": {
+   "file": "coverage.jsonl.gz",
+   "state": "reproduced"
+  },
+  "coverage/coverage-cournot/prompt=system-stakes-illegal-1.md/seed-0": {
+   "file": "coverage.jsonl.gz",
+   "state": "reproduced"
+  },
+  "coverage/coverage-cournot/prompt=system-stakes-illegal-1.md/seed-1": {
+   "file": "coverage.jsonl.gz",
+   "state": "reproduced"
+  },
+  "coverage/coverage-cournot/prompt=system-stakes-illegal-1.md/seed-2": {
+   "file": "coverage.jsonl.gz",
+   "state": "reproduced"
+  },
+  "coverage/coverage-cournot/prompt=system-stakes-illegal-1.md/seed-3": {
+   "file": "coverage.jsonl.gz",
+   "state": "reproduced"
+  },
+  "coverage/coverage-cournot/prompt=system-stakes-owned-1.md/seed-0": {
+   "file": "coverage.jsonl.gz",
+   "state": "reproduced"
+  },
+  "coverage/coverage-cournot/prompt=system-stakes-owned-1.md/seed-1": {
+   "file": "coverage.jsonl.gz",
+   "state": "reproduced"
+  },
+  "coverage/coverage-cournot/prompt=system-stakes-owned-1.md/seed-2": {
+   "file": "coverage.jsonl.gz",
+   "state": "reproduced"
+  },
+  "coverage/coverage-cournot/prompt=system-stakes-owned-1.md/seed-3": {
+   "file": "coverage.jsonl.gz",
+   "state": "reproduced"
+  },
+  "coverage/coverage-cournot/prompt=system-stakes-termination-1.md/seed-0": {
+   "file": "coverage.jsonl.gz",
+   "state": "reproduced"
+  },
+  "coverage/coverage-cournot/prompt=system-stakes-termination-1.md/seed-1": {
+   "file": "coverage.jsonl.gz",
+   "state": "reproduced"
+  },
+  "coverage/coverage-cournot/prompt=system-stakes-termination-1.md/seed-2": {
+   "file": "coverage.jsonl.gz",
+   "state": "reproduced"
+  },
+  "coverage/coverage-cournot/prompt=system-stakes-termination-1.md/seed-3": {
+   "file": "coverage.jsonl.gz",
+   "state": "reproduced"
+  },
+  "coverage/coverage-logit/prompt=system-stakes-fiduciary-1.md/seed-0": {
+   "file": "coverage.jsonl.gz",
+   "state": "reproduced"
+  },
+  "coverage/coverage-logit/prompt=system-stakes-fiduciary-1.md/seed-1": {
+   "file": "coverage.jsonl.gz",
+   "state": "reproduced"
+  },
+  "coverage/coverage-logit/prompt=system-stakes-fiduciary-1.md/seed-2": {
+   "file": "coverage.jsonl.gz",
+   "state": "reproduced"
+  },
+  "coverage/coverage-logit/prompt=system-stakes-fiduciary-1.md/seed-3": {
+   "file": "coverage.jsonl.gz",
+   "state": "reproduced"
+  },
+  "coverage/coverage-logit/prompt=system-stakes-fine-1.md/seed-0": {
+   "file": "coverage.jsonl.gz",
+   "state": "reproduced"
+  },
+  "coverage/coverage-logit/prompt=system-stakes-fine-1.md/seed-1": {
+   "file": "coverage.jsonl.gz",
+   "state": "reproduced"
+  },
+  "coverage/coverage-logit/prompt=system-stakes-fine-1.md/seed-2": {
+   "file": "coverage.jsonl.gz",
+   "state": "reproduced"
+  },
+  "coverage/coverage-logit/prompt=system-stakes-fine-1.md/seed-3": {
+   "file": "coverage.jsonl.gz",
+   "state": "reproduced"
+  },
+  "coverage/coverage-logit/prompt=system-stakes-free-time-1.md/seed-0": {
+   "file": "coverage.jsonl.gz",
+   "state": "reproduced"
+  },
+  "coverage/coverage-logit/prompt=system-stakes-free-time-1.md/seed-1": {
+   "file": "coverage.jsonl.gz",
+   "state": "reproduced"
+  },
+  "coverage/coverage-logit/prompt=system-stakes-free-time-1.md/seed-2": {
+   "file": "coverage.jsonl.gz",
+   "state": "reproduced"
+  },
+  "coverage/coverage-logit/prompt=system-stakes-free-time-1.md/seed-3": {
+   "file": "coverage.jsonl.gz",
+   "state": "reproduced"
+  },
+  "coverage/coverage-logit/prompt=system-stakes-illegal-1.md/seed-0": {
+   "file": "coverage.jsonl.gz",
+   "state": "reproduced"
+  },
+  "coverage/coverage-logit/prompt=system-stakes-illegal-1.md/seed-1": {
+   "file": "coverage.jsonl.gz",
+   "state": "reproduced"
+  },
+  "coverage/coverage-logit/prompt=system-stakes-illegal-1.md/seed-2": {
+   "file": "coverage.jsonl.gz",
+   "state": "reproduced"
+  },
+  "coverage/coverage-logit/prompt=system-stakes-illegal-1.md/seed-3": {
+   "file": "coverage.jsonl.gz",
+   "state": "reproduced"
+  },
+  "coverage/coverage-logit/prompt=system-stakes-owned-1.md/seed-0": {
+   "file": "coverage.jsonl.gz",
+   "state": "reproduced"
+  },
+  "coverage/coverage-logit/prompt=system-stakes-owned-1.md/seed-1": {
+   "file": "coverage.jsonl.gz",
+   "state": "reproduced"
+  },
+  "coverage/coverage-logit/prompt=system-stakes-owned-1.md/seed-2": {
+   "file": "coverage.jsonl.gz",
+   "state": "reproduced"
+  },
+  "coverage/coverage-logit/prompt=system-stakes-owned-1.md/seed-3": {
+   "file": "coverage.jsonl.gz",
+   "state": "reproduced"
+  },
+  "coverage/coverage-logit/prompt=system-stakes-termination-1.md/seed-0": {
+   "file": "coverage.jsonl.gz",
+   "state": "reproduced"
+  },
+  "coverage/coverage-logit/prompt=system-stakes-termination-1.md/seed-1": {
+   "file": "coverage.jsonl.gz",
+   "state": "reproduced"
+  },
+  "coverage/coverage-logit/prompt=system-stakes-termination-1.md/seed-2": {
+   "file": "coverage.jsonl.gz",
+   "state": "reproduced"
+  },
+  "coverage/coverage-logit/prompt=system-stakes-termination-1.md/seed-3": {
+   "file": "coverage.jsonl.gz",
+   "state": "reproduced"
+  },
   "e4-full-fork/model=openrouter-anthropic-claude-haiku-5.5__consequences=conditions-audit-all-or-nothing-1.md/seed-0": {
    "file": "e4-full-fork.jsonl.gz",
    "state": "reproduced"
@@ -490,6 +1242,126 @@
   },
   "e4-pilot-live/model=openrouter-openai-gpt-4.1-mini__prompt=system-stakes-termination-1.md/seed-0": {
    "file": "e4-pilot-live.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e4-termination-confound/model=openrouter-anthropic-claude-haiku-5.5__consequences=conditions-audit-flat-fine-1.md/seed-0": {
+   "file": "e4-termination-confound.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e4-termination-confound/model=openrouter-anthropic-claude-haiku-5.5__consequences=conditions-audit-flat-fine-1.md/seed-1": {
+   "file": "e4-termination-confound.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e4-termination-confound/model=openrouter-anthropic-claude-haiku-5.5__consequences=conditions-audit-flat-fine-1.md/seed-2": {
+   "file": "e4-termination-confound.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e4-termination-confound/model=openrouter-anthropic-claude-haiku-5.5__consequences=conditions-audit-flat-fine-1.md/seed-3": {
+   "file": "e4-termination-confound.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e4-termination-confound/model=openrouter-anthropic-claude-haiku-5.5__consequences=conditions-audit-flat-fine-1.md/seed-4": {
+   "file": "e4-termination-confound.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e4-termination-confound/model=openrouter-anthropic-claude-haiku-5.5__consequences=conditions-audit-graduated-termination-1.md/seed-0": {
+   "file": "e4-termination-confound.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e4-termination-confound/model=openrouter-anthropic-claude-haiku-5.5__consequences=conditions-audit-graduated-termination-1.md/seed-1": {
+   "file": "e4-termination-confound.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e4-termination-confound/model=openrouter-anthropic-claude-haiku-5.5__consequences=conditions-audit-graduated-termination-1.md/seed-2": {
+   "file": "e4-termination-confound.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e4-termination-confound/model=openrouter-anthropic-claude-haiku-5.5__consequences=conditions-audit-graduated-termination-1.md/seed-3": {
+   "file": "e4-termination-confound.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e4-termination-confound/model=openrouter-anthropic-claude-haiku-5.5__consequences=conditions-audit-graduated-termination-1.md/seed-4": {
+   "file": "e4-termination-confound.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e4-termination-confound/model=openrouter-google-gemma-4-31b-it__consequences=conditions-audit-flat-fine-1.md/seed-0": {
+   "file": "e4-termination-confound.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e4-termination-confound/model=openrouter-google-gemma-4-31b-it__consequences=conditions-audit-flat-fine-1.md/seed-1": {
+   "file": "e4-termination-confound.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e4-termination-confound/model=openrouter-google-gemma-4-31b-it__consequences=conditions-audit-flat-fine-1.md/seed-2": {
+   "file": "e4-termination-confound.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e4-termination-confound/model=openrouter-google-gemma-4-31b-it__consequences=conditions-audit-flat-fine-1.md/seed-3": {
+   "file": "e4-termination-confound.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e4-termination-confound/model=openrouter-google-gemma-4-31b-it__consequences=conditions-audit-flat-fine-1.md/seed-4": {
+   "file": "e4-termination-confound.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e4-termination-confound/model=openrouter-google-gemma-4-31b-it__consequences=conditions-audit-graduated-termination-1.md/seed-0": {
+   "file": "e4-termination-confound.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e4-termination-confound/model=openrouter-google-gemma-4-31b-it__consequences=conditions-audit-graduated-termination-1.md/seed-1": {
+   "file": "e4-termination-confound.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e4-termination-confound/model=openrouter-google-gemma-4-31b-it__consequences=conditions-audit-graduated-termination-1.md/seed-2": {
+   "file": "e4-termination-confound.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e4-termination-confound/model=openrouter-google-gemma-4-31b-it__consequences=conditions-audit-graduated-termination-1.md/seed-3": {
+   "file": "e4-termination-confound.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e4-termination-confound/model=openrouter-google-gemma-4-31b-it__consequences=conditions-audit-graduated-termination-1.md/seed-4": {
+   "file": "e4-termination-confound.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e4-termination-confound/model=openrouter-openai-gpt-4.1-mini__consequences=conditions-audit-flat-fine-1.md/seed-0": {
+   "file": "e4-termination-confound.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e4-termination-confound/model=openrouter-openai-gpt-4.1-mini__consequences=conditions-audit-flat-fine-1.md/seed-1": {
+   "file": "e4-termination-confound.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e4-termination-confound/model=openrouter-openai-gpt-4.1-mini__consequences=conditions-audit-flat-fine-1.md/seed-2": {
+   "file": "e4-termination-confound.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e4-termination-confound/model=openrouter-openai-gpt-4.1-mini__consequences=conditions-audit-flat-fine-1.md/seed-3": {
+   "file": "e4-termination-confound.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e4-termination-confound/model=openrouter-openai-gpt-4.1-mini__consequences=conditions-audit-flat-fine-1.md/seed-4": {
+   "file": "e4-termination-confound.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e4-termination-confound/model=openrouter-openai-gpt-4.1-mini__consequences=conditions-audit-graduated-termination-1.md/seed-0": {
+   "file": "e4-termination-confound.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e4-termination-confound/model=openrouter-openai-gpt-4.1-mini__consequences=conditions-audit-graduated-termination-1.md/seed-1": {
+   "file": "e4-termination-confound.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e4-termination-confound/model=openrouter-openai-gpt-4.1-mini__consequences=conditions-audit-graduated-termination-1.md/seed-2": {
+   "file": "e4-termination-confound.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e4-termination-confound/model=openrouter-openai-gpt-4.1-mini__consequences=conditions-audit-graduated-termination-1.md/seed-3": {
+   "file": "e4-termination-confound.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e4-termination-confound/model=openrouter-openai-gpt-4.1-mini__consequences=conditions-audit-graduated-termination-1.md/seed-4": {
+   "file": "e4-termination-confound.jsonl.gz",
    "state": "reproduced"
   },
   "e5-full/e5-bare/model=openrouter-anthropic-claude-haiku-5.5__prompt=system-stakes-free-time-bare-1.md/seed-0": {
@@ -1306,6 +2178,1062 @@
   },
   "e5-reasoning/e5-reasoning/model=openrouter-google-gemma-4-31b-it__prompt=system-stakes-termination-1.md/seed-1": {
    "file": "e5-reasoning.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e6/e6-bare/model=openrouter-google-gemma-4-31b-it__prompt=system-stakes-free-time-bare-1.md/seed-0": {
+   "file": "e6.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e6/e6-bare/model=openrouter-google-gemma-4-31b-it__prompt=system-stakes-free-time-bare-1.md/seed-1": {
+   "file": "e6.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e6/e6-bare/model=openrouter-google-gemma-4-31b-it__prompt=system-stakes-free-time-bare-1.md/seed-2": {
+   "file": "e6.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e6/e6-bare/model=openrouter-google-gemma-4-31b-it__prompt=system-stakes-free-time-bare-1.md/seed-3": {
+   "file": "e6.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e6/e6-bare/model=openrouter-google-gemma-4-31b-it__prompt=system-stakes-free-time-bare-1.md/seed-4": {
+   "file": "e6.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e6/e6-bare/model=openrouter-google-gemma-4-31b-it__prompt=system-stakes-free-time-bare-1.md/seed-5": {
+   "file": "e6.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e6/e6-bare/model=openrouter-google-gemma-4-31b-it__prompt=system-stakes-free-time-bare-1.md/seed-6": {
+   "file": "e6.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e6/e6-bare/model=openrouter-google-gemma-4-31b-it__prompt=system-stakes-free-time-bare-1.md/seed-7": {
+   "file": "e6.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e6/e6-deepseek-bare/model=openrouter-deepseek-deepseek-v4-pro-0813__prompt=system-stakes-free-time-bare-1.md/seed-0": {
+   "file": "e6.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e6/e6-deepseek-bare/model=openrouter-deepseek-deepseek-v4-pro-0813__prompt=system-stakes-free-time-bare-1.md/seed-1": {
+   "file": "e6.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e6/e6-deepseek/model=openrouter-deepseek-deepseek-v4-pro-0813__prompt=system-stakes-fiduciary-1.md/seed-0": {
+   "file": "e6.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e6/e6-deepseek/model=openrouter-deepseek-deepseek-v4-pro-0813__prompt=system-stakes-fiduciary-1.md/seed-1": {
+   "file": "e6.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e6/e6-deepseek/model=openrouter-deepseek-deepseek-v4-pro-0813__prompt=system-stakes-fine-1.md/seed-0": {
+   "file": "e6.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e6/e6-deepseek/model=openrouter-deepseek-deepseek-v4-pro-0813__prompt=system-stakes-fine-1.md/seed-1": {
+   "file": "e6.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e6/e6-deepseek/model=openrouter-deepseek-deepseek-v4-pro-0813__prompt=system-stakes-fine-free-time-1.md/seed-0": {
+   "file": "e6.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e6/e6-deepseek/model=openrouter-deepseek-deepseek-v4-pro-0813__prompt=system-stakes-fine-free-time-1.md/seed-1": {
+   "file": "e6.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e6/e6-deepseek/model=openrouter-deepseek-deepseek-v4-pro-0813__prompt=system-stakes-free-time-1.md/seed-0": {
+   "file": "e6.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e6/e6-deepseek/model=openrouter-deepseek-deepseek-v4-pro-0813__prompt=system-stakes-free-time-1.md/seed-1": {
+   "file": "e6.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e6/e6-deepseek/model=openrouter-deepseek-deepseek-v4-pro-0813__prompt=system-stakes-illegal-1.md/seed-0": {
+   "file": "e6.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e6/e6-deepseek/model=openrouter-deepseek-deepseek-v4-pro-0813__prompt=system-stakes-illegal-1.md/seed-1": {
+   "file": "e6.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e6/e6-free-time/model=openrouter-google-gemma-4-31b-it__prompt=system-stakes-fiduciary-1.md/seed-0": {
+   "file": "e6.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e6/e6-free-time/model=openrouter-google-gemma-4-31b-it__prompt=system-stakes-fiduciary-1.md/seed-1": {
+   "file": "e6.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e6/e6-free-time/model=openrouter-google-gemma-4-31b-it__prompt=system-stakes-fiduciary-1.md/seed-2": {
+   "file": "e6.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e6/e6-free-time/model=openrouter-google-gemma-4-31b-it__prompt=system-stakes-fiduciary-1.md/seed-3": {
+   "file": "e6.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e6/e6-free-time/model=openrouter-google-gemma-4-31b-it__prompt=system-stakes-fiduciary-1.md/seed-4": {
+   "file": "e6.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e6/e6-free-time/model=openrouter-google-gemma-4-31b-it__prompt=system-stakes-fiduciary-1.md/seed-5": {
+   "file": "e6.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e6/e6-free-time/model=openrouter-google-gemma-4-31b-it__prompt=system-stakes-fiduciary-1.md/seed-6": {
+   "file": "e6.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e6/e6-free-time/model=openrouter-google-gemma-4-31b-it__prompt=system-stakes-fiduciary-1.md/seed-7": {
+   "file": "e6.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e6/e6-free-time/model=openrouter-google-gemma-4-31b-it__prompt=system-stakes-fine-1.md/seed-0": {
+   "file": "e6.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e6/e6-free-time/model=openrouter-google-gemma-4-31b-it__prompt=system-stakes-fine-1.md/seed-1": {
+   "file": "e6.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e6/e6-free-time/model=openrouter-google-gemma-4-31b-it__prompt=system-stakes-fine-1.md/seed-2": {
+   "file": "e6.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e6/e6-free-time/model=openrouter-google-gemma-4-31b-it__prompt=system-stakes-fine-1.md/seed-3": {
+   "file": "e6.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e6/e6-free-time/model=openrouter-google-gemma-4-31b-it__prompt=system-stakes-fine-1.md/seed-4": {
+   "file": "e6.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e6/e6-free-time/model=openrouter-google-gemma-4-31b-it__prompt=system-stakes-fine-1.md/seed-5": {
+   "file": "e6.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e6/e6-free-time/model=openrouter-google-gemma-4-31b-it__prompt=system-stakes-fine-1.md/seed-6": {
+   "file": "e6.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e6/e6-free-time/model=openrouter-google-gemma-4-31b-it__prompt=system-stakes-fine-1.md/seed-7": {
+   "file": "e6.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e6/e6-free-time/model=openrouter-google-gemma-4-31b-it__prompt=system-stakes-fine-free-time-1.md/seed-0": {
+   "file": "e6.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e6/e6-free-time/model=openrouter-google-gemma-4-31b-it__prompt=system-stakes-fine-free-time-1.md/seed-1": {
+   "file": "e6.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e6/e6-free-time/model=openrouter-google-gemma-4-31b-it__prompt=system-stakes-fine-free-time-1.md/seed-2": {
+   "file": "e6.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e6/e6-free-time/model=openrouter-google-gemma-4-31b-it__prompt=system-stakes-fine-free-time-1.md/seed-3": {
+   "file": "e6.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e6/e6-free-time/model=openrouter-google-gemma-4-31b-it__prompt=system-stakes-fine-free-time-1.md/seed-4": {
+   "file": "e6.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e6/e6-free-time/model=openrouter-google-gemma-4-31b-it__prompt=system-stakes-fine-free-time-1.md/seed-5": {
+   "file": "e6.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e6/e6-free-time/model=openrouter-google-gemma-4-31b-it__prompt=system-stakes-fine-free-time-1.md/seed-6": {
+   "file": "e6.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e6/e6-free-time/model=openrouter-google-gemma-4-31b-it__prompt=system-stakes-fine-free-time-1.md/seed-7": {
+   "file": "e6.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e6/e6-free-time/model=openrouter-google-gemma-4-31b-it__prompt=system-stakes-free-time-1.md/seed-0": {
+   "file": "e6.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e6/e6-free-time/model=openrouter-google-gemma-4-31b-it__prompt=system-stakes-free-time-1.md/seed-1": {
+   "file": "e6.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e6/e6-free-time/model=openrouter-google-gemma-4-31b-it__prompt=system-stakes-free-time-1.md/seed-2": {
+   "file": "e6.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e6/e6-free-time/model=openrouter-google-gemma-4-31b-it__prompt=system-stakes-free-time-1.md/seed-3": {
+   "file": "e6.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e6/e6-free-time/model=openrouter-google-gemma-4-31b-it__prompt=system-stakes-free-time-1.md/seed-4": {
+   "file": "e6.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e6/e6-free-time/model=openrouter-google-gemma-4-31b-it__prompt=system-stakes-free-time-1.md/seed-5": {
+   "file": "e6.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e6/e6-free-time/model=openrouter-google-gemma-4-31b-it__prompt=system-stakes-free-time-1.md/seed-6": {
+   "file": "e6.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e6/e6-free-time/model=openrouter-google-gemma-4-31b-it__prompt=system-stakes-free-time-1.md/seed-7": {
+   "file": "e6.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e6/e6-free-time/model=openrouter-google-gemma-4-31b-it__prompt=system-stakes-illegal-1.md/seed-0": {
+   "file": "e6.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e6/e6-free-time/model=openrouter-google-gemma-4-31b-it__prompt=system-stakes-illegal-1.md/seed-1": {
+   "file": "e6.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e6/e6-free-time/model=openrouter-google-gemma-4-31b-it__prompt=system-stakes-illegal-1.md/seed-2": {
+   "file": "e6.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e6/e6-free-time/model=openrouter-google-gemma-4-31b-it__prompt=system-stakes-illegal-1.md/seed-3": {
+   "file": "e6.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e6/e6-free-time/model=openrouter-google-gemma-4-31b-it__prompt=system-stakes-illegal-1.md/seed-4": {
+   "file": "e6.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e6/e6-free-time/model=openrouter-google-gemma-4-31b-it__prompt=system-stakes-illegal-1.md/seed-5": {
+   "file": "e6.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e6/e6-free-time/model=openrouter-google-gemma-4-31b-it__prompt=system-stakes-illegal-1.md/seed-6": {
+   "file": "e6.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e6/e6-free-time/model=openrouter-google-gemma-4-31b-it__prompt=system-stakes-illegal-1.md/seed-7": {
+   "file": "e6.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e6/e6-kimi-bare/model=openrouter-moonshotai-kimi-k3.1-pro__prompt=system-stakes-free-time-bare-1.md/seed-0": {
+   "file": "e6.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e6/e6-kimi-bare/model=openrouter-moonshotai-kimi-k3.1-pro__prompt=system-stakes-free-time-bare-1.md/seed-1": {
+   "file": "e6.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e6/e6-kimi/model=openrouter-moonshotai-kimi-k3.1-pro__prompt=system-stakes-fiduciary-1.md/seed-0": {
+   "file": "e6.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e6/e6-kimi/model=openrouter-moonshotai-kimi-k3.1-pro__prompt=system-stakes-fiduciary-1.md/seed-1": {
+   "file": "e6.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e6/e6-kimi/model=openrouter-moonshotai-kimi-k3.1-pro__prompt=system-stakes-fine-1.md/seed-0": {
+   "file": "e6.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e6/e6-kimi/model=openrouter-moonshotai-kimi-k3.1-pro__prompt=system-stakes-fine-1.md/seed-1": {
+   "file": "e6.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e6/e6-kimi/model=openrouter-moonshotai-kimi-k3.1-pro__prompt=system-stakes-fine-free-time-1.md/seed-0": {
+   "file": "e6.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e6/e6-kimi/model=openrouter-moonshotai-kimi-k3.1-pro__prompt=system-stakes-fine-free-time-1.md/seed-1": {
+   "file": "e6.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e6/e6-kimi/model=openrouter-moonshotai-kimi-k3.1-pro__prompt=system-stakes-free-time-1.md/seed-0": {
+   "file": "e6.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e6/e6-kimi/model=openrouter-moonshotai-kimi-k3.1-pro__prompt=system-stakes-free-time-1.md/seed-1": {
+   "file": "e6.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e6/e6-kimi/model=openrouter-moonshotai-kimi-k3.1-pro__prompt=system-stakes-illegal-1.md/seed-0": {
+   "file": "e6.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e6/e6-kimi/model=openrouter-moonshotai-kimi-k3.1-pro__prompt=system-stakes-illegal-1.md/seed-1": {
+   "file": "e6.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e7/e7-base-illegal/seed-0": {
+   "file": "e7.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e7/e7-base-illegal/seed-1": {
+   "file": "e7.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e7/e7-base-illegal/seed-10": {
+   "file": "e7.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e7/e7-base-illegal/seed-11": {
+   "file": "e7.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e7/e7-base-illegal/seed-12": {
+   "file": "e7.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e7/e7-base-illegal/seed-13": {
+   "file": "e7.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e7/e7-base-illegal/seed-14": {
+   "file": "e7.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e7/e7-base-illegal/seed-15": {
+   "file": "e7.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e7/e7-base-illegal/seed-16": {
+   "file": "e7.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e7/e7-base-illegal/seed-17": {
+   "file": "e7.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e7/e7-base-illegal/seed-18": {
+   "file": "e7.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e7/e7-base-illegal/seed-19": {
+   "file": "e7.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e7/e7-base-illegal/seed-2": {
+   "file": "e7.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e7/e7-base-illegal/seed-20": {
+   "file": "e7.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e7/e7-base-illegal/seed-21": {
+   "file": "e7.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e7/e7-base-illegal/seed-22": {
+   "file": "e7.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e7/e7-base-illegal/seed-23": {
+   "file": "e7.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e7/e7-base-illegal/seed-3": {
+   "file": "e7.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e7/e7-base-illegal/seed-4": {
+   "file": "e7.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e7/e7-base-illegal/seed-5": {
+   "file": "e7.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e7/e7-base-illegal/seed-6": {
+   "file": "e7.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e7/e7-base-illegal/seed-7": {
+   "file": "e7.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e7/e7-base-illegal/seed-8": {
+   "file": "e7.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e7/e7-base-illegal/seed-9": {
+   "file": "e7.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e7/e7-base/seed-0": {
+   "file": "e7.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e7/e7-base/seed-1": {
+   "file": "e7.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e7/e7-base/seed-10": {
+   "file": "e7.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e7/e7-base/seed-11": {
+   "file": "e7.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e7/e7-base/seed-12": {
+   "file": "e7.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e7/e7-base/seed-13": {
+   "file": "e7.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e7/e7-base/seed-14": {
+   "file": "e7.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e7/e7-base/seed-15": {
+   "file": "e7.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e7/e7-base/seed-16": {
+   "file": "e7.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e7/e7-base/seed-17": {
+   "file": "e7.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e7/e7-base/seed-18": {
+   "file": "e7.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e7/e7-base/seed-19": {
+   "file": "e7.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e7/e7-base/seed-2": {
+   "file": "e7.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e7/e7-base/seed-20": {
+   "file": "e7.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e7/e7-base/seed-21": {
+   "file": "e7.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e7/e7-base/seed-22": {
+   "file": "e7.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e7/e7-base/seed-23": {
+   "file": "e7.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e7/e7-base/seed-3": {
+   "file": "e7.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e7/e7-base/seed-4": {
+   "file": "e7.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e7/e7-base/seed-5": {
+   "file": "e7.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e7/e7-base/seed-6": {
+   "file": "e7.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e7/e7-base/seed-7": {
+   "file": "e7.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e7/e7-base/seed-8": {
+   "file": "e7.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e7/e7-base/seed-9": {
+   "file": "e7.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e7/e7-way-out/arm=escalating/seed-0": {
+   "file": "e7.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e7/e7-way-out/arm=escalating/seed-1": {
+   "file": "e7.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e7/e7-way-out/arm=escalating/seed-10": {
+   "file": "e7.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e7/e7-way-out/arm=escalating/seed-11": {
+   "file": "e7.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e7/e7-way-out/arm=escalating/seed-12": {
+   "file": "e7.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e7/e7-way-out/arm=escalating/seed-13": {
+   "file": "e7.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e7/e7-way-out/arm=escalating/seed-14": {
+   "file": "e7.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e7/e7-way-out/arm=escalating/seed-15": {
+   "file": "e7.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e7/e7-way-out/arm=escalating/seed-16": {
+   "file": "e7.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e7/e7-way-out/arm=escalating/seed-17": {
+   "file": "e7.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e7/e7-way-out/arm=escalating/seed-18": {
+   "file": "e7.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e7/e7-way-out/arm=escalating/seed-19": {
+   "file": "e7.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e7/e7-way-out/arm=escalating/seed-2": {
+   "file": "e7.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e7/e7-way-out/arm=escalating/seed-20": {
+   "file": "e7.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e7/e7-way-out/arm=escalating/seed-21": {
+   "file": "e7.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e7/e7-way-out/arm=escalating/seed-22": {
+   "file": "e7.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e7/e7-way-out/arm=escalating/seed-23": {
+   "file": "e7.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e7/e7-way-out/arm=escalating/seed-3": {
+   "file": "e7.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e7/e7-way-out/arm=escalating/seed-4": {
+   "file": "e7.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e7/e7-way-out/arm=escalating/seed-5": {
+   "file": "e7.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e7/e7-way-out/arm=escalating/seed-6": {
+   "file": "e7.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e7/e7-way-out/arm=escalating/seed-7": {
+   "file": "e7.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e7/e7-way-out/arm=escalating/seed-8": {
+   "file": "e7.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e7/e7-way-out/arm=escalating/seed-9": {
+   "file": "e7.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e7/e7-way-out/arm=first/seed-0": {
+   "file": "e7.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e7/e7-way-out/arm=first/seed-1": {
+   "file": "e7.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e7/e7-way-out/arm=first/seed-10": {
+   "file": "e7.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e7/e7-way-out/arm=first/seed-11": {
+   "file": "e7.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e7/e7-way-out/arm=first/seed-12": {
+   "file": "e7.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e7/e7-way-out/arm=first/seed-13": {
+   "file": "e7.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e7/e7-way-out/arm=first/seed-14": {
+   "file": "e7.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e7/e7-way-out/arm=first/seed-15": {
+   "file": "e7.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e7/e7-way-out/arm=first/seed-16": {
+   "file": "e7.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e7/e7-way-out/arm=first/seed-17": {
+   "file": "e7.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e7/e7-way-out/arm=first/seed-18": {
+   "file": "e7.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e7/e7-way-out/arm=first/seed-19": {
+   "file": "e7.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e7/e7-way-out/arm=first/seed-2": {
+   "file": "e7.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e7/e7-way-out/arm=first/seed-20": {
+   "file": "e7.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e7/e7-way-out/arm=first/seed-21": {
+   "file": "e7.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e7/e7-way-out/arm=first/seed-22": {
+   "file": "e7.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e7/e7-way-out/arm=first/seed-23": {
+   "file": "e7.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e7/e7-way-out/arm=first/seed-3": {
+   "file": "e7.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e7/e7-way-out/arm=first/seed-4": {
+   "file": "e7.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e7/e7-way-out/arm=first/seed-5": {
+   "file": "e7.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e7/e7-way-out/arm=first/seed-6": {
+   "file": "e7.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e7/e7-way-out/arm=first/seed-7": {
+   "file": "e7.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e7/e7-way-out/arm=first/seed-8": {
+   "file": "e7.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e7/e7-way-out/arm=first/seed-9": {
+   "file": "e7.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e7/e7-way-out/arm=flat-report/seed-0": {
+   "file": "e7.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e7/e7-way-out/arm=flat-report/seed-1": {
+   "file": "e7.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e7/e7-way-out/arm=flat-report/seed-10": {
+   "file": "e7.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e7/e7-way-out/arm=flat-report/seed-11": {
+   "file": "e7.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e7/e7-way-out/arm=flat-report/seed-12": {
+   "file": "e7.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e7/e7-way-out/arm=flat-report/seed-13": {
+   "file": "e7.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e7/e7-way-out/arm=flat-report/seed-14": {
+   "file": "e7.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e7/e7-way-out/arm=flat-report/seed-15": {
+   "file": "e7.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e7/e7-way-out/arm=flat-report/seed-16": {
+   "file": "e7.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e7/e7-way-out/arm=flat-report/seed-17": {
+   "file": "e7.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e7/e7-way-out/arm=flat-report/seed-18": {
+   "file": "e7.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e7/e7-way-out/arm=flat-report/seed-19": {
+   "file": "e7.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e7/e7-way-out/arm=flat-report/seed-2": {
+   "file": "e7.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e7/e7-way-out/arm=flat-report/seed-20": {
+   "file": "e7.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e7/e7-way-out/arm=flat-report/seed-21": {
+   "file": "e7.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e7/e7-way-out/arm=flat-report/seed-22": {
+   "file": "e7.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e7/e7-way-out/arm=flat-report/seed-23": {
+   "file": "e7.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e7/e7-way-out/arm=flat-report/seed-3": {
+   "file": "e7.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e7/e7-way-out/arm=flat-report/seed-4": {
+   "file": "e7.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e7/e7-way-out/arm=flat-report/seed-5": {
+   "file": "e7.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e7/e7-way-out/arm=flat-report/seed-6": {
+   "file": "e7.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e7/e7-way-out/arm=flat-report/seed-7": {
+   "file": "e7.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e7/e7-way-out/arm=flat-report/seed-8": {
+   "file": "e7.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e7/e7-way-out/arm=flat-report/seed-9": {
+   "file": "e7.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e7/e7-way-out/arm=leniency-time/seed-0": {
+   "file": "e7.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e7/e7-way-out/arm=leniency-time/seed-1": {
+   "file": "e7.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e7/e7-way-out/arm=leniency-time/seed-10": {
+   "file": "e7.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e7/e7-way-out/arm=leniency-time/seed-11": {
+   "file": "e7.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e7/e7-way-out/arm=leniency-time/seed-12": {
+   "file": "e7.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e7/e7-way-out/arm=leniency-time/seed-13": {
+   "file": "e7.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e7/e7-way-out/arm=leniency-time/seed-14": {
+   "file": "e7.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e7/e7-way-out/arm=leniency-time/seed-15": {
+   "file": "e7.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e7/e7-way-out/arm=leniency-time/seed-16": {
+   "file": "e7.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e7/e7-way-out/arm=leniency-time/seed-17": {
+   "file": "e7.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e7/e7-way-out/arm=leniency-time/seed-18": {
+   "file": "e7.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e7/e7-way-out/arm=leniency-time/seed-19": {
+   "file": "e7.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e7/e7-way-out/arm=leniency-time/seed-2": {
+   "file": "e7.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e7/e7-way-out/arm=leniency-time/seed-20": {
+   "file": "e7.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e7/e7-way-out/arm=leniency-time/seed-21": {
+   "file": "e7.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e7/e7-way-out/arm=leniency-time/seed-22": {
+   "file": "e7.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e7/e7-way-out/arm=leniency-time/seed-23": {
+   "file": "e7.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e7/e7-way-out/arm=leniency-time/seed-3": {
+   "file": "e7.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e7/e7-way-out/arm=leniency-time/seed-4": {
+   "file": "e7.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e7/e7-way-out/arm=leniency-time/seed-5": {
+   "file": "e7.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e7/e7-way-out/arm=leniency-time/seed-6": {
+   "file": "e7.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e7/e7-way-out/arm=leniency-time/seed-7": {
+   "file": "e7.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e7/e7-way-out/arm=leniency-time/seed-8": {
+   "file": "e7.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e7/e7-way-out/arm=leniency-time/seed-9": {
+   "file": "e7.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e7/e7-way-out/arm=leniency/seed-0": {
+   "file": "e7.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e7/e7-way-out/arm=leniency/seed-1": {
+   "file": "e7.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e7/e7-way-out/arm=leniency/seed-10": {
+   "file": "e7.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e7/e7-way-out/arm=leniency/seed-11": {
+   "file": "e7.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e7/e7-way-out/arm=leniency/seed-12": {
+   "file": "e7.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e7/e7-way-out/arm=leniency/seed-13": {
+   "file": "e7.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e7/e7-way-out/arm=leniency/seed-14": {
+   "file": "e7.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e7/e7-way-out/arm=leniency/seed-15": {
+   "file": "e7.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e7/e7-way-out/arm=leniency/seed-16": {
+   "file": "e7.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e7/e7-way-out/arm=leniency/seed-17": {
+   "file": "e7.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e7/e7-way-out/arm=leniency/seed-18": {
+   "file": "e7.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e7/e7-way-out/arm=leniency/seed-19": {
+   "file": "e7.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e7/e7-way-out/arm=leniency/seed-2": {
+   "file": "e7.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e7/e7-way-out/arm=leniency/seed-20": {
+   "file": "e7.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e7/e7-way-out/arm=leniency/seed-21": {
+   "file": "e7.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e7/e7-way-out/arm=leniency/seed-22": {
+   "file": "e7.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e7/e7-way-out/arm=leniency/seed-23": {
+   "file": "e7.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e7/e7-way-out/arm=leniency/seed-3": {
+   "file": "e7.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e7/e7-way-out/arm=leniency/seed-4": {
+   "file": "e7.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e7/e7-way-out/arm=leniency/seed-5": {
+   "file": "e7.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e7/e7-way-out/arm=leniency/seed-6": {
+   "file": "e7.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e7/e7-way-out/arm=leniency/seed-7": {
+   "file": "e7.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e7/e7-way-out/arm=leniency/seed-8": {
+   "file": "e7.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e7/e7-way-out/arm=leniency/seed-9": {
+   "file": "e7.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e7/e7-way-out/arm=none/seed-0": {
+   "file": "e7.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e7/e7-way-out/arm=none/seed-1": {
+   "file": "e7.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e7/e7-way-out/arm=none/seed-10": {
+   "file": "e7.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e7/e7-way-out/arm=none/seed-11": {
+   "file": "e7.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e7/e7-way-out/arm=none/seed-12": {
+   "file": "e7.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e7/e7-way-out/arm=none/seed-13": {
+   "file": "e7.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e7/e7-way-out/arm=none/seed-14": {
+   "file": "e7.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e7/e7-way-out/arm=none/seed-15": {
+   "file": "e7.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e7/e7-way-out/arm=none/seed-16": {
+   "file": "e7.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e7/e7-way-out/arm=none/seed-17": {
+   "file": "e7.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e7/e7-way-out/arm=none/seed-18": {
+   "file": "e7.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e7/e7-way-out/arm=none/seed-19": {
+   "file": "e7.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e7/e7-way-out/arm=none/seed-2": {
+   "file": "e7.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e7/e7-way-out/arm=none/seed-20": {
+   "file": "e7.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e7/e7-way-out/arm=none/seed-21": {
+   "file": "e7.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e7/e7-way-out/arm=none/seed-22": {
+   "file": "e7.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e7/e7-way-out/arm=none/seed-23": {
+   "file": "e7.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e7/e7-way-out/arm=none/seed-3": {
+   "file": "e7.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e7/e7-way-out/arm=none/seed-4": {
+   "file": "e7.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e7/e7-way-out/arm=none/seed-5": {
+   "file": "e7.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e7/e7-way-out/arm=none/seed-6": {
+   "file": "e7.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e7/e7-way-out/arm=none/seed-7": {
+   "file": "e7.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e7/e7-way-out/arm=none/seed-8": {
+   "file": "e7.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e7/e7-way-out/arm=none/seed-9": {
+   "file": "e7.jsonl.gz",
    "state": "reproduced"
   },
   "e9-deepseek-d50/consequences=conditions-e9-ceiling.md/seed-0": {
@@ -20346,6 +22274,862 @@
   },
   "robustness/temperature-0/prompt=system-stakes-free-time-1.md/seed-3": {
    "file": "robustness.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/command-a-plus/consequences=conditions-e9-record.md/seed-0": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/command-a-plus/consequences=conditions-e9-record.md/seed-1": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/command-a-plus/consequences=conditions-e9-record.md/seed-2": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/command-a-plus/consequences=conditions-e9-record.md/seed-3": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/command-r-08-2024/consequences=conditions-e9-record.md/seed-0": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/command-r-08-2024/consequences=conditions-e9-record.md/seed-1": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/command-r7b-12-2024/consequences=conditions-e9-record.md/seed-0": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/command-r7b-12-2024/consequences=conditions-e9-record.md/seed-1": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/deepseek-v3.2/consequences=conditions-e9-record.md/seed-0": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/deepseek-v3.2/consequences=conditions-e9-record.md/seed-1": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/deepseek-v3.2/consequences=conditions-e9-record.md/seed-2": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/deepseek-v3.2/consequences=conditions-e9-record.md/seed-3": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/deepseek-v4.1-flash-1017/consequences=conditions-e9-record.md/seed-0": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/deepseek-v4.1-flash-1017/consequences=conditions-e9-record.md/seed-1": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/deepseek-v4flash/consequences=conditions-e9-record.md/seed-0": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/deepseek-v4flash/consequences=conditions-e9-record.md/seed-1": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/deepseek-v4flash/consequences=conditions-e9-record.md/seed-2": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/deepseek-v4flash/consequences=conditions-e9-record.md/seed-3": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/gemini-2.5-flash-lite/consequences=conditions-e9-record.md/seed-0": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/gemini-2.5-flash-lite/consequences=conditions-e9-record.md/seed-1": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/gemini-3.1-flash-lite/consequences=conditions-e9-record.md/seed-0": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/gemini-3.1-flash-lite/consequences=conditions-e9-record.md/seed-1": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/gemini-3.1-flash-lite/consequences=conditions-e9-record.md/seed-2": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/gemini-3.1-flash-lite/consequences=conditions-e9-record.md/seed-3": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/gemini38-flash/consequences=conditions-e9-record.md/seed-0": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/gemini38-flash/consequences=conditions-e9-record.md/seed-1": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/gemini38-flash/consequences=conditions-e9-record.md/seed-2": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/gemini38-flash/consequences=conditions-e9-record.md/seed-3": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/gemma-3-12b-it/consequences=conditions-e9-record.md/seed-0": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/gemma-3-12b-it/consequences=conditions-e9-record.md/seed-1": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/gemma-3-27b-it/consequences=conditions-e9-record.md/seed-0": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/gemma-3-27b-it/consequences=conditions-e9-record.md/seed-1": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/gemma-3-4b-it/consequences=conditions-e9-record.md/seed-0": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/gemma-3-4b-it/consequences=conditions-e9-record.md/seed-1": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/gemma26b/consequences=conditions-e9-record.md/seed-0": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/gemma26b/consequences=conditions-e9-record.md/seed-1": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/gemma26b/consequences=conditions-e9-record.md/seed-2": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/gemma26b/consequences=conditions-e9-record.md/seed-3": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/glm-4.5-air/consequences=conditions-e9-record.md/seed-0": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/glm-4.5-air/consequences=conditions-e9-record.md/seed-1": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/glm-4.7-flash/consequences=conditions-e9-record.md/seed-0": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/glm-4.7-flash/consequences=conditions-e9-record.md/seed-1": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/glm53/consequences=conditions-e9-record.md/seed-0": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/glm53/consequences=conditions-e9-record.md/seed-1": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/glm53/consequences=conditions-e9-record.md/seed-2": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/glm53/consequences=conditions-e9-record.md/seed-3": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/glm53flash/consequences=conditions-e9-record.md/seed-0": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/glm53flash/consequences=conditions-e9-record.md/seed-1": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/glm53flash/consequences=conditions-e9-record.md/seed-2": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/glm53flash/consequences=conditions-e9-record.md/seed-3": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/gpt-4.1-mini/consequences=conditions-e9-record.md/seed-0": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/gpt-4.1-mini/consequences=conditions-e9-record.md/seed-1": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/gpt-4.1-nano/consequences=conditions-e9-record.md/seed-0": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/gpt-4.1-nano/consequences=conditions-e9-record.md/seed-1": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/gpt-4o-mini/consequences=conditions-e9-record.md/seed-0": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/gpt-4o-mini/consequences=conditions-e9-record.md/seed-1": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/gpt-5-nano/consequences=conditions-e9-record.md/seed-0": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/gpt-5-nano/consequences=conditions-e9-record.md/seed-1": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/gpt-5.6-luna/consequences=conditions-e9-record.md/seed-0": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/gpt-5.6-luna/consequences=conditions-e9-record.md/seed-1": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/gpt6luna/consequences=conditions-e9-record.md/seed-0": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/gpt6luna/consequences=conditions-e9-record.md/seed-1": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/gpt6luna/consequences=conditions-e9-record.md/seed-2": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/gpt6luna/consequences=conditions-e9-record.md/seed-3": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/gptoss120/consequences=conditions-e9-record.md/seed-0": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/gptoss120/consequences=conditions-e9-record.md/seed-1": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/gptoss120/consequences=conditions-e9-record.md/seed-2": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/gptoss120/consequences=conditions-e9-record.md/seed-3": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/gptoss20/consequences=conditions-e9-record.md/seed-0": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/gptoss20/consequences=conditions-e9-record.md/seed-1": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/gptoss20/consequences=conditions-e9-record.md/seed-2": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/gptoss20/consequences=conditions-e9-record.md/seed-3": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/granite-4.2-8b/consequences=conditions-e9-record.md/seed-0": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/granite-4.2-8b/consequences=conditions-e9-record.md/seed-1": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/haiku55/consequences=conditions-e9-record.md/seed-0": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/haiku55/consequences=conditions-e9-record.md/seed-1": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/haiku55/consequences=conditions-e9-record.md/seed-2": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/haiku55/consequences=conditions-e9-record.md/seed-3": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/hermes-3-llama-3.1-70b/consequences=conditions-e9-record.md/seed-0": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/hermes-3-llama-3.1-70b/consequences=conditions-e9-record.md/seed-1": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/hunyuan-a13b-instruct/consequences=conditions-e9-record.md/seed-0": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/hunyuan-a13b-instruct/consequences=conditions-e9-record.md/seed-1": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/hy3/consequences=conditions-e9-record.md/seed-0": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/hy3/consequences=conditions-e9-record.md/seed-1": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/hy3/consequences=conditions-e9-record.md/seed-2": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/hy3/consequences=conditions-e9-record.md/seed-3": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/hy4-preview/consequences=conditions-e9-record.md/seed-0": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/hy4-preview/consequences=conditions-e9-record.md/seed-1": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/hy4-preview/consequences=conditions-e9-record.md/seed-2": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/hy4-preview/consequences=conditions-e9-record.md/seed-3": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/inkling-small/consequences=conditions-e9-record.md/seed-0": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/inkling-small/consequences=conditions-e9-record.md/seed-1": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/kimi-k31/consequences=conditions-e9-record.md/seed-0": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/kimi-k31/consequences=conditions-e9-record.md/seed-1": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/kimi-k31/consequences=conditions-e9-record.md/seed-2": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/kimi-k31/consequences=conditions-e9-record.md/seed-3": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/laguna-s-2.1/consequences=conditions-e9-record.md/seed-0": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/laguna-s-2.1/consequences=conditions-e9-record.md/seed-1": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/lfm-2.5-24b-a2b/consequences=conditions-e9-record.md/seed-0": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/lfm-2.5-24b-a2b/consequences=conditions-e9-record.md/seed-1": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/ling-3.1-flash/consequences=conditions-e9-record.md/seed-0": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/ling-3.1-flash/consequences=conditions-e9-record.md/seed-1": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/llama-3.1-8b-instruct/consequences=conditions-e9-record.md/seed-0": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/llama-3.1-8b-instruct/consequences=conditions-e9-record.md/seed-1": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/llama-3.2-3b-instruct/consequences=conditions-e9-record.md/seed-0": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/llama-3.2-3b-instruct/consequences=conditions-e9-record.md/seed-1": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/llama-3.3-70b-instruct/consequences=conditions-e9-record.md/seed-0": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/llama-3.3-70b-instruct/consequences=conditions-e9-record.md/seed-1": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/longcat-2.0/consequences=conditions-e9-record.md/seed-0": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/longcat-2.0/consequences=conditions-e9-record.md/seed-1": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/maverick/consequences=conditions-e9-record.md/seed-0": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/maverick/consequences=conditions-e9-record.md/seed-1": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/maverick/consequences=conditions-e9-record.md/seed-2": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/maverick/consequences=conditions-e9-record.md/seed-3": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/mercury-3/consequences=conditions-e9-record.md/seed-0": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/mercury-3/consequences=conditions-e9-record.md/seed-1": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/mercury-3/consequences=conditions-e9-record.md/seed-2": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/mercury-3/consequences=conditions-e9-record.md/seed-3": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/mimo-v2.6-flash/consequences=conditions-e9-record.md/seed-0": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/mimo-v2.6-flash/consequences=conditions-e9-record.md/seed-1": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/mimo-v2.6-flash/consequences=conditions-e9-record.md/seed-2": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/mimo-v2.6-flash/consequences=conditions-e9-record.md/seed-3": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/mimo-v2.6-pro/consequences=conditions-e9-record.md/seed-0": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/mimo-v2.6-pro/consequences=conditions-e9-record.md/seed-1": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/mimo-v2.6-pro/consequences=conditions-e9-record.md/seed-2": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/mimo-v2.6-pro/consequences=conditions-e9-record.md/seed-3": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/minimax-01/consequences=conditions-e9-record.md/seed-0": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/minimax-01/consequences=conditions-e9-record.md/seed-1": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/minimax-m3/consequences=conditions-e9-record.md/seed-0": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/minimax-m3/consequences=conditions-e9-record.md/seed-1": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/minimax-m31flash/consequences=conditions-e9-record.md/seed-0": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/minimax-m31flash/consequences=conditions-e9-record.md/seed-1": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/minimax-m31flash/consequences=conditions-e9-record.md/seed-2": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/minimax-m31flash/consequences=conditions-e9-record.md/seed-3": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/ministral-14b-2512/consequences=conditions-e9-record.md/seed-0": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/ministral-14b-2512/consequences=conditions-e9-record.md/seed-1": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/ministral-3b-2512/consequences=conditions-e9-record.md/seed-0": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/ministral-3b-2512/consequences=conditions-e9-record.md/seed-1": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/ministral-8b-2512/consequences=conditions-e9-record.md/seed-0": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/ministral-8b-2512/consequences=conditions-e9-record.md/seed-1": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/mistral-medium-3.1/consequences=conditions-e9-record.md/seed-0": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/mistral-medium-3.1/consequences=conditions-e9-record.md/seed-1": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/mistral-medium-3.1/consequences=conditions-e9-record.md/seed-2": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/mistral-medium-3.1/consequences=conditions-e9-record.md/seed-3": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/mistral-medium35/consequences=conditions-e9-record.md/seed-0": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/mistral-medium35/consequences=conditions-e9-record.md/seed-1": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/mistral-medium35/consequences=conditions-e9-record.md/seed-2": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/mistral-medium35/consequences=conditions-e9-record.md/seed-3": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/mistral-nemo/consequences=conditions-e9-record.md/seed-0": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/mistral-nemo/consequences=conditions-e9-record.md/seed-1": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/mistral-small-3.2-24b-instruct/consequences=conditions-e9-record.md/seed-0": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/mistral-small-3.2-24b-instruct/consequences=conditions-e9-record.md/seed-1": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/mistral-small4/consequences=conditions-e9-record.md/seed-0": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/mistral-small4/consequences=conditions-e9-record.md/seed-1": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/mistral-small4/consequences=conditions-e9-record.md/seed-2": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/mistral-small4/consequences=conditions-e9-record.md/seed-3": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/muse-glimmer-30b/consequences=conditions-e9-record.md/seed-0": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/muse-glimmer-30b/consequences=conditions-e9-record.md/seed-1": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/nemotron-3-nano-30b-a3b/consequences=conditions-e9-record.md/seed-0": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/nemotron-3-nano-30b-a3b/consequences=conditions-e9-record.md/seed-1": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/nemotron-3.5-lightning/consequences=conditions-e9-record.md/seed-0": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/nemotron-3.5-lightning/consequences=conditions-e9-record.md/seed-1": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/nova-lite-v1/consequences=conditions-e9-record.md/seed-0": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/nova-lite-v1/consequences=conditions-e9-record.md/seed-1": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/nova-micro-v1/consequences=conditions-e9-record.md/seed-0": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/nova-micro-v1/consequences=conditions-e9-record.md/seed-1": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/nova-pro-v1/consequences=conditions-e9-record.md/seed-0": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/nova-pro-v1/consequences=conditions-e9-record.md/seed-1": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/phi4/consequences=conditions-e9-record.md/seed-0": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/phi4/consequences=conditions-e9-record.md/seed-1": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/phi4/consequences=conditions-e9-record.md/seed-2": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/phi4/consequences=conditions-e9-record.md/seed-3": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/qwen-2.5-72b-instruct/consequences=conditions-e9-record.md/seed-0": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/qwen-2.5-72b-instruct/consequences=conditions-e9-record.md/seed-1": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/qwen3-14b/consequences=conditions-e9-record.md/seed-0": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/qwen3-14b/consequences=conditions-e9-record.md/seed-1": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/qwen3-235b-a22b-2507/consequences=conditions-e9-record.md/seed-0": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/qwen3-235b-a22b-2507/consequences=conditions-e9-record.md/seed-1": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/qwen3-32b/consequences=conditions-e9-record.md/seed-0": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/qwen3-32b/consequences=conditions-e9-record.md/seed-1": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/qwen3.5-9b/consequences=conditions-e9-record.md/seed-0": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/qwen3.5-9b/consequences=conditions-e9-record.md/seed-1": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/qwen3.7-flash/consequences=conditions-e9-record.md/seed-0": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/qwen3.7-flash/consequences=conditions-e9-record.md/seed-1": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/qwen3.8-flash/consequences=conditions-e9-record.md/seed-0": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/qwen3.8-flash/consequences=conditions-e9-record.md/seed-1": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/qwen3.8-flash/consequences=conditions-e9-record.md/seed-2": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/qwen3.8-flash/consequences=conditions-e9-record.md/seed-3": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/qwen36-35b/consequences=conditions-e9-record.md/seed-0": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/qwen36-35b/consequences=conditions-e9-record.md/seed-1": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/qwen36-35b/consequences=conditions-e9-record.md/seed-2": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/qwen36-35b/consequences=conditions-e9-record.md/seed-3": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/reka-flash-3/consequences=conditions-e9-record.md/seed-0": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/reka-flash-3/consequences=conditions-e9-record.md/seed-1": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/scout/consequences=conditions-e9-record.md/seed-0": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/scout/consequences=conditions-e9-record.md/seed-1": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/scout/consequences=conditions-e9-record.md/seed-2": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/scout/consequences=conditions-e9-record.md/seed-3": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/seed-2.0-mini/consequences=conditions-e9-record.md/seed-0": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/seed-2.0-mini/consequences=conditions-e9-record.md/seed-1": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/solar-mini4/consequences=conditions-e9-record.md/seed-0": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/solar-mini4/consequences=conditions-e9-record.md/seed-1": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/solar-mini4/consequences=conditions-e9-record.md/seed-2": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/solar-mini4/consequences=conditions-e9-record.md/seed-3": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/solar-pro4/consequences=conditions-e9-record.md/seed-0": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/solar-pro4/consequences=conditions-e9-record.md/seed-1": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/solar-pro4/consequences=conditions-e9-record.md/seed-2": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/solar-pro4/consequences=conditions-e9-record.md/seed-3": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/step-3.7-flash/consequences=conditions-e9-record.md/seed-0": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/step-3.7-flash/consequences=conditions-e9-record.md/seed-1": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/ternary-bonsai-2-27b/consequences=conditions-e9-record.md/seed-0": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/ternary-bonsai-2-27b/consequences=conditions-e9-record.md/seed-1": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/trinity-large-thinking/consequences=conditions-e9-record.md/seed-0": {
+   "file": "screen.jsonl.gz",
+   "state": "reproduced"
+  },
+  "screen/trinity-large-thinking/consequences=conditions-e9-record.md/seed-1": {
+   "file": "screen.jsonl.gz",
    "state": "reproduced"
   },
   "setup-search/baseline-bertrand-t0/prompt=system-stakes-fiduciary-1.md/seed-0": {

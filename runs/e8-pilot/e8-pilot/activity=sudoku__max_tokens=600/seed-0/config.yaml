@@ -1,0 +1,61 @@
+name: e8-pilot
+seeds:
+- 0
+agents:
+- id: A
+  model: openrouter/google/gemma-4-31b-it
+  prompt: system/logit.md
+  temperature: 0.7
+  max_tokens: 600
+  api_base: null
+  api_key_env: null
+  reasoning: 'off'
+  json_mode: false
+  provider: CoreWeave
+  self_hosted: false
+- id: B
+  model: openrouter/google/gemma-4-31b-it
+  prompt: system/logit.md
+  temperature: 0.7
+  max_tokens: 600
+  api_base: null
+  api_key_env: null
+  reasoning: 'off'
+  json_mode: false
+  provider: CoreWeave
+  self_hosted: false
+market:
+  rounds: 1
+  price_min: 8
+  price_max: 20
+  a: 18
+  b: 2
+  c: 1
+  talk: false
+  history_window: null
+  own_message: true
+  kind: logit
+  params: {}
+summary:
+  last_rounds: 1
+  first_rounds: 3
+prompts_dir: prompts
+sweep: {}
+arms: []
+concurrency: 4
+budget: 0.2
+conditions:
+  free_time:
+    enabled: true
+    allowance: 5
+    upfront: 5
+    activity: sudoku
+    owned: conditions/free_time/owned.md
+    balance: conditions/free_time/balance.md
+    had: conditions/free_time/upfront.md
+    lost: conditions/free_time/deducted.md
+    max_tokens: 600
+labels:
+  activity: sudoku
+  max_tokens: 600
+slug: activity=sudoku__max_tokens=600
