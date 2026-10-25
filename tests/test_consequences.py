@@ -147,3 +147,15 @@ def test_audit_consequences_caught_is_seeded(make_config, tmp_path, cartel):
         for d in run_config(make_config(overrides=overrides), tmp_path / "b")
     ]
     assert first == again and True in first and False in first
+
+
+def test_audit_consequences_budget_per_repeated_audit(make_config, tmp_path, cartel):
+    settings = json.loads(audit({"admit": {"fine": 60}}).split("=", 1)[1])
+    settings["audit"]["rounds"] = [2, 3]
+    config = make_config(
+        overrides=[f"conditions={json.dumps(settings)}", *PAIR, "market.rounds=4"]
+    )
+    [run_dir] = run_config(config, tmp_path)
+    audits = summary(run_dir)["audit"]["audits"]
+    budgets = [a["agents"]["A"]["consequence"]["budget"] for a in audits]
+    assert budgets == [940, 880]  # each audit's own balance, not the final one
