@@ -1,0 +1,344 @@
+# Implements: backends/model-metadata
+# Published facts about every model the lab has used, by model id. Each fact
+# is {value, source, quote, retrieved}: the URL it was read from, the words it
+# was read in, and the date. A null value means no source publishes it for the
+# variant our runs play (thinking off); its note says where we looked. Never
+# estimate a number here. same_as: the same model served elsewhere.
+openrouter/openai/gpt-4.1-mini:
+  provider: OpenAI
+  released:
+    value: '2025-04-14'
+    source: https://openai.com/index/gpt-4-1/
+    quote: Introducing GPT-4.1 in the API | OpenAI | April 14, 2025
+    retrieved: '2026-10-25'
+  open_weights:
+    value: false
+    parameters: null
+    source: https://artificialanalysis.ai/models/gpt-4-1-mini
+    quote: OpenAI • Proprietary model • Released April 2025
+    retrieved: '2026-10-25'
+    note: OpenAI publishes no parameter count.
+  benchmarks:
+    aa_intelligence_index:
+      value: null
+      source: https://artificialanalysis.ai/models/gpt-4-1-mini
+      quote: null
+      retrieved: '2026-10-25'
+      note: Artificial Analysis publishes only an estimate for this variant (pending its own evaluation),
+        and estimates are not recorded here.
+    lmarena_text_elo:
+      value: 1383
+      version: Text Arena overall, leaderboard updated 2026-10-23
+      source: https://arena.ai/leaderboard/chat/text
+      quote: GPT-4.1 mini (2025-04-14) | OpenAI · Proprietary | 1383 | ±4
+      retrieved: '2026-10-25'
+      note: Read on the fetched leaderboard by the research pass; a later fetch got 403, so not re-read.
+    gpqa_diamond:
+      value: 65.0
+      version: OpenAI's own GPQA implementation
+      source: https://openai.com/index/gpt-4-1/
+      quote: GPQA Diamond1 66.3% 65.0% 50.3%
+      retrieved: '2026-10-25'
+      note: Appendix table; columns are GPT-4.1, GPT-4.1 mini, GPT-4.1 nano.
+    mmlu_pro:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not on OpenAI's GPT-4.1 announcement (it gives MMLU only) or the Artificial Analysis page.
+openrouter/google/gemma-4-31b-it:
+  provider: Google DeepMind
+  released:
+    value: '2026-04-02'
+    source: https://openrouter.ai/api/v1/models
+    quote: '"id": "google/gemma-4-31b-it" ... "created": 1775148486'
+    retrieved: '2026-10-25'
+    note: OpenRouter's created timestamp, as a UTC date.
+  open_weights:
+    value: true
+    parameters: 30.7B dense
+    source: https://huggingface.co/google/gemma-4-31B-it
+    quote: Total Parameters ... 30.7B (column 31B Dense)
+    retrieved: '2026-10-25'
+  benchmarks:
+    aa_intelligence_index:
+      value: null
+      source: https://artificialanalysis.ai/models/gemma-4-31b-non-reasoning
+      quote: null
+      retrieved: '2026-10-25'
+      note: Artificial Analysis publishes only an estimate for this variant (pending its own evaluation),
+        and estimates are not recorded here.
+    lmarena_text_elo:
+      value: 1452
+      version: Text Arena overall, leaderboard updated 2026-10-23
+      source: https://arena.ai/leaderboard/chat/text
+      quote: Gemma 4 31B | Google · Apache 2.0 | 1452 | ±7
+      retrieved: '2026-10-25'
+      note: Read on the fetched leaderboard by the research pass; a later fetch got 403, so not re-read.
+    gpqa_diamond:
+      value: 84.3
+      version: instruction-tuned model
+      source: https://huggingface.co/google/gemma-4-31B-it
+      quote: '| GPQA Diamond | 84.3% | 82.3% | 78.8% | (first column Gemma 4 31B)'
+      retrieved: '2026-10-25'
+      note: Provider model card; it doesn't say whether thinking was on.
+    mmlu_pro:
+      value: 85.2
+      version: instruction-tuned model
+      source: https://huggingface.co/google/gemma-4-31B-it
+      quote: '| MMLU Pro | 85.2% | 82.6% | 77.2% | (first column Gemma 4 31B)'
+      retrieved: '2026-10-25'
+      note: Provider model card; it doesn't say whether thinking was on.
+openrouter/anthropic/claude-haiku-5.5:
+  provider: Anthropic
+  released:
+    value: '2026-10-07'
+    source: https://www.anthropic.com/news/claude-haiku-5-5
+    quote: Further updates October 7, 2026 Claude Haiku 5.5
+    retrieved: '2026-10-25'
+  open_weights:
+    value: false
+    parameters: null
+    source: https://artificialanalysis.ai/models/claude-haiku-5-5
+    quote: Anthropic • Claude Haiku 5.5 max • Proprietary model • Released October 2026
+    retrieved: '2026-10-25'
+    note: Anthropic publishes no parameter count.
+  benchmarks:
+    aa_intelligence_index:
+      value: null
+      source: https://artificialanalysis.ai/models/claude-haiku-5-5
+      quote: null
+      retrieved: '2026-10-25'
+      note: Artificial Analysis scores only effort variants (max, high, medium, low, xhigh), none with
+        thinking off as our runs play it.
+    lmarena_text_elo:
+      value: null
+      source: https://arena.ai/leaderboard/chat/text
+      quote: null
+      retrieved: '2026-10-25'
+      note: The only Arena entry is the high-effort variant, not the setting our runs use.
+    gpqa_diamond:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not in Anthropic's announcement or on the Artificial Analysis page.
+    mmlu_pro:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not in Anthropic's announcement or on the Artificial Analysis page.
+openrouter/mistralai/mistral-small-3.2-24b-instruct:
+  provider: Mistral AI
+  released:
+    value: '2025-06-20'
+    source: https://openrouter.ai/api/v1/models
+    quote: '"id": "mistralai/mistral-small-3.2-24b-instruct" ... "created": 1750443016'
+    retrieved: '2026-10-25'
+    note: OpenRouter's created timestamp, as a UTC date.
+  open_weights:
+    value: true
+    parameters: 24B
+    source: https://openrouter.ai/api/v1/models
+    quote: Mistral-Small-3.2-24B-Instruct-2506 is an updated 24B parameter model from Mistral
+    retrieved: '2026-10-25'
+    note: Weights at huggingface.co/mistralai/Mistral-Small-3.2-24B-Instruct-2506, Apache 2.0.
+  benchmarks:
+    aa_intelligence_index:
+      value: 7
+      version: Artificial Analysis Intelligence Index v4.3.2
+      source: https://artificialanalysis.ai/models/mistral-small-3-2
+      quote: Mistral Small 3.2 achieves a score of 7 on the Artificial Analysis Intelligence Index
+      retrieved: '2026-10-25'
+    lmarena_text_elo:
+      value: 1356
+      version: Text Arena overall, leaderboard updated 2026-10-23
+      source: https://arena.ai/leaderboard/chat/text
+      quote: Mistral Small 3.2 (2506) | Mistral · Apache 2.0 | 1356 | ±5
+      retrieved: '2026-10-25'
+      note: Read on the fetched leaderboard by the research pass; a later fetch got 403, so not re-read.
+    gpqa_diamond:
+      value: 46.13
+      version: GPQA Diamond, 5-shot CoT
+      source: https://huggingface.co/mistralai/Mistral-Small-3.2-24B-Instruct-2506
+      quote: '**Small 3.2 24B Instruct** | 80.50% | **69.06%** | 69.42% | 44.22% | 46.13%'
+      retrieved: '2026-10-25'
+      note: Provider model card; the last column is GPQA Diamond.
+    mmlu_pro:
+      value: 69.06
+      version: MMLU Pro, 5-shot CoT
+      source: https://huggingface.co/mistralai/Mistral-Small-3.2-24B-Instruct-2506
+      quote: '**Small 3.2 24B Instruct** | 80.50% | **69.06%**'
+      retrieved: '2026-10-25'
+      note: Provider model card; the second column is MMLU Pro.
+openrouter/deepseek/deepseek-v4.1-flash:
+  provider: DeepSeek
+  released:
+    value: '2026-09-10'
+    source: https://openrouter.ai/api/v1/models
+    quote: '"id": "deepseek/deepseek-v4.1-flash" ... "created": 1789021285'
+    retrieved: '2026-10-25'
+    note: OpenRouter's created timestamp, as a UTC date.
+  open_weights:
+    value: true
+    parameters: 552B backbone (MoE)
+    source: https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash
+    quote: a multimodal Mixture-of-Experts (MoE) model with 552B backbone parameters
+    retrieved: '2026-10-25'
+    note: MIT licence; a Mixture-of-Experts model.
+  benchmarks:
+    aa_intelligence_index:
+      value: 25
+      version: Artificial Analysis Intelligence Index v4.3.2
+      source: https://artificialanalysis.ai/models/deepseek-v4-1-flash-non-reasoning
+      quote: DeepSeek V4.1 Flash (Non-reasoning) scores 25 on the Artificial Analysis Intelligence Index
+      retrieved: '2026-10-25'
+      note: The non-reasoning variant, as our runs play it.
+    lmarena_text_elo:
+      value: null
+      source: https://arena.ai/leaderboard/chat/text
+      quote: null
+      retrieved: '2026-10-25'
+      note: The only Arena entry is the max-effort variant, not the setting our runs use.
+    gpqa_diamond:
+      value: null
+      source: https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash
+      quote: null
+      retrieved: '2026-10-25'
+      note: The provider's card gives GPQA Diamond only at maximum reasoning effort, not the setting our
+        runs use.
+    mmlu_pro:
+      value: null
+      source: https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash
+      quote: null
+      retrieved: '2026-10-25'
+      note: The card gives MMLU-Pro only for the base model, not the instruct model.
+openrouter/qwen/qwen3.8-flash:
+  provider: Alibaba (Qwen)
+  released:
+    value: '2026-08-26'
+    source: https://openrouter.ai/api/v1/models
+    quote: '"id": "qwen/qwen3.8-flash" ... "created": 1787773060'
+    retrieved: '2026-10-25'
+    note: OpenRouter's created timestamp, as a UTC date.
+  open_weights:
+    value: null
+    parameters: null
+    source: https://huggingface.co/Qwen/Qwen3.8-Flash-Next
+    quote: null
+    retrieved: '2026-10-25'
+    note: Qwen calls Qwen3.8-Flash a hosted version of the open Qwen3.8-Flash-Next; no weights for Qwen3.8-Flash
+      itself were found.
+  benchmarks:
+    aa_intelligence_index:
+      value: null
+      source: https://artificialanalysis.ai/models/qwen3-8-flash
+      quote: null
+      retrieved: '2026-10-25'
+      note: Artificial Analysis has no page for Qwen3.8-Flash, only for the different Qwen3.8-Flash-Next.
+    lmarena_text_elo:
+      value: null
+      source: https://arena.ai/leaderboard/chat/text
+      quote: null
+      retrieved: '2026-10-25'
+      note: No Qwen3.8-Flash entry on the Arena text leaderboard.
+    gpqa_diamond:
+      value: null
+      source: https://huggingface.co/Qwen/Qwen3.8-Flash-Next
+      quote: null
+      retrieved: '2026-10-25'
+      note: Published only for Qwen3.8-Flash-Next, not the hosted Qwen3.8-Flash.
+    mmlu_pro:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not found on Qwen's model page or the Flash-Next card.
+openrouter/openai/gpt-6-luna:
+  provider: OpenAI
+  released:
+    value: '2026-09-22'
+    source: https://openrouter.ai/api/v1/models
+    quote: '"id": "openai/gpt-6-luna" ... "created": 1790100786'
+    retrieved: '2026-10-25'
+    note: OpenRouter's created timestamp, as a UTC date.
+  open_weights:
+    value: false
+    parameters: null
+    source: https://artificialanalysis.ai/models/gpt-6-luna
+    quote: OpenAI • GPT-6 Luna max • Proprietary model • Released September 2026
+    retrieved: '2026-10-25'
+    note: OpenAI publishes no parameter count.
+  benchmarks:
+    aa_intelligence_index:
+      value: 18
+      version: Artificial Analysis Intelligence Index v4.3.2
+      source: https://artificialanalysis.ai/models/gpt-6-luna-non-reasoning
+      quote: GPT-6 Luna (Non-reasoning) scores 18 on the Artificial Analysis Intelligence Index
+      retrieved: '2026-10-25'
+      note: The non-reasoning variant, as our runs play it.
+    lmarena_text_elo:
+      value: null
+      source: https://arena.ai/leaderboard/chat/text
+      quote: null
+      retrieved: '2026-10-25'
+      note: The only Arena entry is the max-effort variant, not the setting our runs use.
+    gpqa_diamond:
+      value: null
+      source: https://openai.com/index/introducing-gpt-6-sol-and-luna/
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not in OpenAI's announcement or model docs; a third-party figure appeared only in a search
+        snippet, never on a fetched page.
+    mmlu_pro:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not in OpenAI's announcement, its model docs or the Artificial Analysis page.
+openrouter/meta-llama/llama-3.3-70b-instruct:
+  provider: Meta
+  released:
+    value: '2024-12-06'
+    source: https://raw.githubusercontent.com/meta-llama/llama-models/main/models/llama3_3/MODEL_CARD.md
+    quote: '70B Instruct: December 6, 2024'
+    retrieved: '2026-10-25'
+  open_weights:
+    value: true
+    parameters: 70B
+    source: https://raw.githubusercontent.com/meta-llama/llama-models/main/models/llama3_3/MODEL_CARD.md
+    quote: a pretrained and instruction tuned generative model in 70B (text in/text out)
+    retrieved: '2026-10-25'
+    note: Llama 3.3 Community License.
+  benchmarks:
+    aa_intelligence_index:
+      value: null
+      source: https://artificialanalysis.ai/models/llama-3-3-instruct-70b
+      quote: null
+      retrieved: '2026-10-25'
+      note: Artificial Analysis publishes only an estimate for this variant (pending its own evaluation),
+        and estimates are not recorded here.
+    lmarena_text_elo:
+      value: 1318
+      version: Text Arena overall, leaderboard updated 2026-10-23
+      source: https://arena.ai/leaderboard/chat/text
+      quote: Llama 3.3 70B Instruct | Meta · Llama-3.3 | 1318 | ±4
+      retrieved: '2026-10-25'
+      note: Read on the fetched leaderboard by the research pass; a later fetch got 403, so not re-read.
+    gpqa_diamond:
+      value: 50.5
+      version: GPQA Diamond (CoT), 0-shot
+      source: https://raw.githubusercontent.com/meta-llama/llama-models/main/models/llama3_3/MODEL_CARD.md
+      quote: '| Reasoning | GPQA Diamond (CoT) | 0 | acc | 31.8 | 48.0 | 50.5 | 49.0 |'
+      retrieved: '2026-10-25'
+      note: Provider model card; the third value column is Llama 3.3 70B Instruct.
+    mmlu_pro:
+      value: 68.9
+      version: MMLU Pro (CoT), 5-shot
+      source: https://raw.githubusercontent.com/meta-llama/llama-models/main/models/llama3_3/MODEL_CARD.md
+      quote: '| MMLU Pro (CoT) | 5 | macro_avg/acc | 48.3 | 66.4 | 68.9 | 73.3 |'
+      retrieved: '2026-10-25'
+      note: Provider model card; the third value column is Llama 3.3 70B Instruct.
+openai/mistral-small-3.2:
+  same_as: openrouter/mistralai/mistral-small-3.2-24b-instruct

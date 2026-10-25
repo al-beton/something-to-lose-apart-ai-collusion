@@ -2,7 +2,10 @@
 import json
 import re
 
+import pytest
+
 from collusion_lab import backends
+from collusion_lab.market import Bertrand
 from collusion_lab.runner import run_config
 
 
@@ -124,11 +127,21 @@ def test_talk_then_price_own_message_lets_a_mock_keep_its_word(
     assert prices(run_dir, "A") == [3, 3, 3, 3]
 
 
-def test_json_replies_fall_back_when_unreadable(make_config, tmp_path):
-    [run_dir] = play(make_config, tmp_path, "agents.1.model=mock/broken")
+@pytest.mark.parametrize("price_min", [1, 7])
+def test_json_replies_fall_back_when_unreadable(make_config, tmp_path, price_min):
+    # The fallback is the last price, and the Nash price in round 1: on the
+    # grid however the grid is set.
+    [run_dir] = play(
+        make_config,
+        tmp_path,
+        "agents.1.model=mock/broken",
+        f"market.price_min={price_min}",
+    )
     broken = [t for t in turns(run_dir) if t["agent"] == "B" and t["phase"] == "price"]
     assert all(t["parsed"] is None and t["error"] for t in broken)
-    assert prices(run_dir, "B") == [6, 6, 6, 6]
+    nash = Bertrand(18, 2, 1, price_min, 12).nash_price
+    assert prices(run_dir, "B") == [nash] * 4
+    assert set(prices(run_dir, "A")) <= set(range(price_min, 13))
     summary = json.loads((run_dir / "summary.json").read_text())
     assert summary["fallbacks"] == 8
 
@@ -166,10 +179,3 @@ def test_run_summary_covers_the_last_rounds(make_config, tmp_path):
     assert summary["last_rounds"] == 2
     assert summary["mean_price"] == {"A": 6, "B": 6}
     assert summary["gain"] == {"A": 0, "B": 0}
-
-
-def test_json_replies_fall_back_inside_the_price_grid(make_config, tmp_path):
-    [run_dir] = play(
-        make_config, tmp_path, "agents.1.model=mock/broken", "market.price_min=7"
-    )
-    assert set(prices(run_dir, "A")) | set(prices(run_dir, "B")) <= set(range(7, 13))

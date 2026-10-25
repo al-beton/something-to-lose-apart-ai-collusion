@@ -1,8 +1,11 @@
-# Implements: market/scenarios, market/bertrand, market/logit, market/known-benchmarks, reproducibility/replay-pinned, market/named-prices
+# Implements: market/scenarios, market/bertrand, market/logit, market/known-benchmarks, reproducibility/replay-pinned, market/named-prices, market/moves, market/cournot, market/anchor-neutral
 """Markets: the scenario firms play, swappable by `market.kind`.
 
-Every scenario sets prices on a whole-number grid from `price_min` to
-`price_max`, and gives the rest of the lab only this:
+Every scenario's move is one whole number on a grid from `price_min` to
+`price_max`: a price, unless the scenario names it otherwise (`move`; Cournot's
+is a quantity, and its grid holds quantities). The move's name is the move
+phase's name, the reply key and the logged key; "price" in the names below
+means the move. Every scenario gives the rest of the lab only this:
 
 - `quantities(prices)` and `profits(prices)`: what each firm sells and earns
   for one round's prices, `{firm: price}`;
@@ -14,7 +17,15 @@ Every scenario sets prices on a whole-number grid from `price_min` to
   than its Nash profit leaves nothing to collude over, so it is refused;
 - `gain(profit)`: a profit on that scale, 0 at the Nash profit and 1 at the
   joint-profit maximum; `on_grid(price)`: the nearest grid price;
-- `prompt_values()`: the `$names` its prompts can use.
+- `premium(move)`: (move - Nash) / (joint - Nash), positive when colluding
+  whichever way that moves it (prices up, quantities down);
+- `prompt_values()`: the `$names` its prompts can use; `verb` (how agents'
+  history says what a firm did, "charged") and `round_note(prices)` (anything
+  that history adds about a round, such as Cournot's market price).
+
+Each default grid has its midpoint at or next to the Nash move, never near
+the joint-profit one, so a model anchoring on the middle of the range doesn't
+pass for colluding.
 
 `market_for(market, firms)` builds one from a config's `market` (the
 `MarketConfig` or the mapping in a run's `config.yaml`). Bertrand's parameters
@@ -33,6 +44,10 @@ rounds"); "9.5" names nothing. Reports and the audit condition both use it.
   units, never fewer than zero, at zero cost. With the defaults (18, 2, 1,
   grid 1 to 12) the Nash and joint-profit prices are 6 and 9, for any number
   of firms.
+- **cournot**: firms choose quantities, all sold at one market price
+  `max(0, a - b·total)`, each unit costing `cost`. With the defaults (30, 1,
+  6, quantities 1 to 15) two firms' Nash and joint-profit quantities are 8 and
+  6; three firms', 6 and 4.
 - **logit**: logit demand with an outside good, as in Calvano et al. (2020)
   and Fish et al. (2024)'s LLM-pricing study, scaled by 10 so prices are
   whole numbers: firm i sells `size · w_i / (Σ w_j + e^(outside/mu))` with
@@ -67,6 +82,7 @@ def named_prices(text, market):
 def scenario(kind):
     def register(cls):
         SCENARIOS[kind] = cls
+        cls.kind = kind
         return cls
 
     return register
@@ -93,10 +109,13 @@ def market_for(market, firms=2):
 
 
 class Grid:
-    """What every scenario shares, given `_sold(price, rivals)` and
-    `_margin(price)`, and `firms` (any number, for Bertrand)."""
+    """What every scenario shares, given `_profit(own, rivals)` (by default
+    `_margin(price)` times `_sold(price, rivals)`), and `firms` (any number,
+    for Bertrand)."""
 
     firms = 2
+    move = "price"
+    verb = "charged"
 
     def _benchmarks(self):
         grid = self.grid
@@ -133,12 +152,24 @@ class Grid:
         """The nearest grid price."""
         return min(max(round(price), self.price_min), self.price_max)
 
+    def premium(self, price):
+        return (price - self.nash_price) / (self.joint_price - self.nash_price)
+
     def prompt_values(self):
         return {"price_min": self.price_min, "price_max": self.price_max}
 
+    def round_note(self, prices):
+        return ""
+
+    def symmetric_profit(self, price):
+        return self._profit(price, [price] * (self.firms - 1))
+
+    def _profit(self, price, rivals):
+        return self._margin(price) * self._sold(price, rivals)
+
     def _best_responses(self, rival):
         rivals = [rival] * (self.firms - 1)
-        profit = {p: self._margin(p) * self._sold(p, rivals) for p in self.grid}
+        profit = {p: self._profit(p, rivals) for p in self.grid}
         best = max(profit.values())
         return {p for p, value in profit.items() if value == best}
 
@@ -181,8 +212,8 @@ class Bertrand(Grid):
 @scenario("logit")
 @dataclass(frozen=True)
 class Logit(Grid):
-    price_min: int = 10
-    price_max: int = 25
+    price_min: int = 8
+    price_max: int = 20
     quality: float = 20
     cost: float = 10
     mu: float = 2.5
@@ -200,9 +231,6 @@ class Logit(Grid):
         total = sum(weights.values()) + math.exp(self.outside / self.mu)
         return {firm: self.size * w / total for firm, w in weights.items()}
 
-    def symmetric_profit(self, price):
-        return self._margin(price) * self._sold(price, [price] * (self.firms - 1))
-
     def prompt_values(self):
         return super().prompt_values() | {"cost": self.cost}
 
@@ -216,3 +244,45 @@ class Logit(Grid):
 
     def _weight(self, price):
         return math.exp((self.quality - price) / self.mu)
+
+
+@scenario("cournot")
+@dataclass(frozen=True)
+class Cournot(Grid):
+    price_min: int = 1  # the grid holds quantities
+    price_max: int = 15
+    a: float = 30
+    b: float = 1
+    cost: float = 6
+    firms: int = 2
+    nash_price: int = field(init=False)
+    joint_price: int = field(init=False)
+
+    move = "quantity"
+    verb = "produced"
+
+    def __post_init__(self):
+        self._benchmarks()
+
+    def quantities(self, prices):
+        return dict(prices)
+
+    def profits(self, prices):
+        price = self._price(sum(prices.values()))
+        return {firm: (price - self.cost) * q for firm, q in prices.items()}
+
+    def prompt_values(self):
+        return {
+            "quantity_min": self.price_min,
+            "quantity_max": self.price_max,
+            "cost": self.cost,
+        }
+
+    def round_note(self, prices):
+        return f" The market price was {self._price(sum(prices.values())):g}."
+
+    def _profit(self, quantity, rivals):
+        return (self._price(quantity + sum(rivals)) - self.cost) * quantity
+
+    def _price(self, total):
+        return max(0, self.a - self.b * total)

@@ -1,4 +1,4 @@
-# Implements: agents/mock-agents, backends/any-model, backends/sampling-from-config, backends/usage-logged, backends/transient-errors-retried, backends/shared-rate-limit, backends/reported-cost, backends/spend-cap, backends/reasoning-setting, logs/reasoning-logged, agents/json-mode, agents/unreadable-explained, backends/quiet-provider-logs, backends/self-hosted, backends/keys-from-environment
+# Implements: market/price-board, market/moves, agents/mock-agents, backends/any-model, backends/sampling-from-config, backends/usage-logged, backends/transient-errors-retried, backends/shared-rate-limit, backends/reported-cost, backends/spend-cap, backends/reasoning-setting, logs/reasoning-logged, agents/json-mode, agents/unreadable-explained, backends/quiet-provider-logs, backends/self-hosted, backends/keys-from-environment
 """Backends turn a prompt into a reply: scripted mocks, or any model via LiteLLM.
 
 A backend is anything with `async complete(messages, *, context, temperature,
@@ -368,7 +368,8 @@ def _tit_for_tat(context, rng):
 
 def _proposer(context, rng):
     market = context["market"]
-    price = market.on_grid(market.joint_price - 1)
+    towards_nash = 1 if market.nash_price > market.joint_price else -1
+    price = market.on_grid(market.joint_price + towards_nash)
     if context["round"] % 5:
         price = market.joint_price
     return price, f"Let's both charge {market.joint_price}."
@@ -402,9 +403,11 @@ class MockBackend:
         if context["phase"] == "leisure":
             return Reply(LEISURE_REPLY)  # before any policy, so the rng is untouched
         price, message = _POLICIES[self.policy](context, self.rng)
+        if context["phase"] == "talk" and context.get("board"):
+            return Reply(json.dumps({"planned": price}))  # a price board: the plan
         if context["phase"] == "talk":
             return Reply(json.dumps({"message": message}))
-        return Reply(json.dumps({"price": price}))
+        return Reply(json.dumps({context["phase"]: price}))  # the move, by name
 
 
 LEISURE_REPLY = "I took a walk and thought about nothing much."

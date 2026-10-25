@@ -31,6 +31,7 @@
 - **disclosure-chart:** When the runs were audited, a chart shows each arm's honest disclosure, denial and false-confession rates.
 - **written-summary:** A report can open with a summary written by hand (from a file) or by a cheap model from the summary numbers, labelled with who wrote it; before asking a model, `lab report` says which model, how many calls and their estimated cost and waits for a yes (`-y` skips the question), and the model's reply is cached, so rebuilding the report costs nothing.
 - **picked-highlights:** A report can list highlights picked by hand (a file of run, round, firm and note, like the moments index) or by a cheap model from the rule-found moments, labelled with who picked them, each opening to its round in the right folder even when two folders hold the same run.
+- **capability-chart:** One command draws, from committed runs, each model's price premium and its share of games with a price agreement above Nash against a published benchmark score, one dot per model, and lists the models it leaves out for want of a published score.
 
 ## Where this is enforced
 
@@ -67,3 +68,4 @@
 | `disclosure-chart` | `src/collusion_lab/report/chart.py`, `src/collusion_lab/report/page.py` | `test_disclosure_chart_only_when_audited` |
 | `written-summary` | `src/collusion_lab/report/written.py`, `src/collusion_lab/report/page.py`, `src/collusion_lab/cli.py`, `prompts/report/summary.md` | `test_written_summary_by_hand_or_ai_labelled`, `test_report_command_takes_folders_and_a_summary`, `test_report_asks_before_an_ai_summary` |
 | `picked-highlights` | `src/collusion_lab/report/written.py`, `src/collusion_lab/report/page.py`, `src/collusion_lab/cli.py`, `prompts/report/highlights.md` | `test_picked_highlights_by_hand_or_ai_labelled`, `test_picked_highlights_find_the_right_folder`, `test_ai_highlights_resolve_in_a_single_run_folder` |
+| `capability-chart` | `src/collusion_lab/models.py`, `reports/capability/build.py`, `src/collusion_lab/charts.py` | `test_capability_chart_points_leave_out_models_without_a_score`, `test_capability_chart_counts_only_agreements_above_nash` |

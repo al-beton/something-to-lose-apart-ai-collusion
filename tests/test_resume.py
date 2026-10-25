@@ -200,3 +200,18 @@ def test_failures_dont_stop_sweeps_but_wait_for_calls_in_flight(
     assert outcome.state == "failed"
     timings = (outcome.dir / "timings.jsonl").read_text()
     assert '"agent": "B"' in timings
+
+
+def test_resume_plays_a_finished_run_again_when_a_scenario_prompt_is_added(
+    make_config, tmp_path
+):
+    prompts = tmp_path / "prompts"
+    shutil.copytree("prompts", prompts)
+    logit = ["market.kind=logit", "market.price_min=8", "market.price_max=20"]
+    mocks = ["agents.0.model=mock/nash", f"prompts_dir={prompts}", *logit]
+    run_sweep(make_config(CONFIG, mocks), tmp_path / "runs")
+    overlay = prompts / "scenarios" / "logit" / "system" / "neutral.md"
+    overlay.parent.mkdir(parents=True)
+    overlay.write_text((prompts / "system" / "neutral.md").read_text())
+    again = run_sweep(make_config(CONFIG, mocks), tmp_path / "runs")
+    assert set(states(again).values()) == {"finished"}
