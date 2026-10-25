@@ -41,8 +41,25 @@ def test_reported_numbers_checked_tables_match_their_rebuild(tmp_path):
     committed, rebuilt = tmp_path / "committed", tmp_path / "rebuilt"
     for folder in (committed, rebuilt):
         folder.mkdir()
-        (folder / "ladder.md").write_text("| rung | share |\n| a | 0.5 |\n")
+        (folder / "ladder.md").write_text(
+            f"{reproduce.TABLE}\n| rung | share |\n| a | 0.5 |\n"
+        )
     assert reproduce.compare_tables(committed, rebuilt) == []
-    (rebuilt / "ladder.md").write_text("| rung | share |\n| a | 0.6 |\n")
+    (rebuilt / "ladder.md").write_text(
+        f"{reproduce.TABLE}\n| rung | share |\n| a | 0.6 |\n"
+    )
     [problem] = reproduce.compare_tables(committed, rebuilt)
     assert "ladder.md" in problem
+
+
+def test_reported_numbers_checked_tables_are_only_what_the_build_writes(tmp_path):
+    committed, rebuilt = tmp_path / "committed", tmp_path / "rebuilt"
+    committed.mkdir()
+    rebuilt.mkdir()
+    table = f"{reproduce.TABLE}\n| rung | share |\n"
+    (committed / "ladder.md").write_text(table)
+    (committed / "notes.md").write_text(
+        "<!-- Implements: research/outputs-home -->\n# Notes\n"
+    )
+    [problem] = reproduce.compare_tables(committed, rebuilt)
+    assert problem == "ladder.md: not rebuilt"

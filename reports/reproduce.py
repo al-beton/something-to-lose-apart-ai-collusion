@@ -56,10 +56,17 @@ def check_runs(root):
     return problems
 
 
+TABLE = "<!-- Implements: reports/paper-figures -->"  # the build's first line
+
+
 def compare_tables(committed, rebuilt):
-    """One line per table that its rebuild doesn't match."""
+    """One line per table that its rebuild doesn't match. A table is a
+    committed file the build wrote, by its first line; notes beside the
+    tables (a validity section, a novelty review) aren't checked."""
     problems = []
     for table in sorted(Path(committed).glob("*.md")):
+        if not table.read_text().startswith(TABLE):
+            continue
         again = Path(rebuilt) / table.name
         if not again.exists():
             problems.append(f"{table.name}: not rebuilt")
