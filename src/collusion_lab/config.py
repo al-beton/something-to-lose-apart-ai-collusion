@@ -1,4 +1,4 @@
-# Implements: market/scenarios, reproducibility/replay-pinned, market/talk-then-price, market/history-window, backends/spend-cap, runs/one-config, runs/overrides, runs/sweeps, runs/parallel, market/known-benchmarks, backends/keys-from-environment, backends/any-model, backends/reasoning-setting, agents/json-mode, conditions/switchable, runs/drift, backends/self-hosted, backends/model-aliases
+# Implements: market/scenarios, reproducibility/replay-pinned, market/talk-then-price, market/history-window, backends/spend-cap, runs/one-config, runs/overrides, runs/sweeps, runs/parallel, market/known-benchmarks, backends/keys-from-environment, backends/any-model, backends/reasoning-setting, agents/json-mode, conditions/switchable, runs/drift, backends/self-hosted, backends/model-aliases, conditions/audit-balanced-draws
 """Run configs: one YAML file per run, changed from the command line with overrides.
 
 A config names the market, the agents and the seeds. `load_config` reads the
@@ -107,6 +107,10 @@ class RunConfig:
         data = dataclasses.asdict(self)
         if data["market"]["kind"] == "bertrand" and not data["market"]["params"]:
             del data["market"]["kind"], data["market"]["params"]
+        for name, condition in self.conditions.items():
+            for key, default in condition.quiet:
+                if getattr(condition, key) == default:
+                    del data["conditions"][name][key]
         return data
 
     def to_yaml(self):

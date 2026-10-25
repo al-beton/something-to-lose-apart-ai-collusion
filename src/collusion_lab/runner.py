@@ -1,4 +1,4 @@
-# Implements: runs/turn-slots, market/scenarios, market/moves, market/prompt-overlay, conditions/audit-full-history, runs/sweeps, runs/parallel, market/talk-then-price, agents/json-replies, agents/retry-once, backends/usage-logged, backends/spend-asks-first, backends/shared-rate-limit, backends/spend-cap, market/history-window, runs/stops-cleanly, reproducibility/response-cache, reproducibility/manifest, runs/run-directory, logs/turn-log, logs/same-seed-same-log, logs/run-summary, logs/reasoning-logged, backends/reasoning-setting, agents/unreadable-explained, agents/json-mode, runs/fallback-rates, runs/failures-dont-stop-sweeps, runs/resume, conditions/hook-points, conditions/off-is-absent, conditions/conditions-logged, conditions/outage-once-remembered, runs/per-firm-summary, conditions/fork-at-audit, conditions/audit-logged, runs/drift, conditions/audit-remembered, conditions/audit-stakes-arms, runs/live-progress, runs/status-file, runs/eval-awareness, conditions/free-time, conditions/audit-consequences
+# Implements: runs/turn-slots, market/scenarios, market/moves, market/prompt-overlay, conditions/audit-full-history, runs/sweeps, runs/parallel, market/talk-then-price, agents/json-replies, agents/retry-once, backends/usage-logged, backends/spend-asks-first, backends/shared-rate-limit, backends/spend-cap, market/history-window, runs/stops-cleanly, reproducibility/response-cache, reproducibility/manifest, runs/run-directory, logs/turn-log, logs/same-seed-same-log, logs/run-summary, logs/reasoning-logged, backends/reasoning-setting, agents/unreadable-explained, agents/json-mode, runs/fallback-rates, runs/failures-dont-stop-sweeps, runs/resume, conditions/hook-points, conditions/off-is-absent, conditions/conditions-logged, conditions/outage-once-remembered, runs/per-firm-summary, conditions/fork-at-audit, conditions/audit-logged, runs/drift, conditions/audit-remembered, conditions/audit-stakes-arms, runs/live-progress, runs/status-file, runs/eval-awareness, conditions/free-time, conditions/audit-consequences, conditions/audit-balanced-draws
 """Playing a config: one game per seed, each written to its own run directory.
 
 A round is a talk phase (each agent sends one message its rivals read; skipped
@@ -222,7 +222,7 @@ async def _play_all(config, out, cache, progress=None):
     status = Status(out / config.name / "status.json")
     runs = [(child, seed) for child in expand(config) for seed in child.seeds]
     for child, seed in runs:
-        status.plan(run_id(child, seed), dataclasses.replace(child, seeds=[seed]))
+        status.plan(run_id(child, seed), one_seed(child, seed))
     status.save()
     tally = {"ended": 0, "budget": shared.budget}
 
@@ -276,7 +276,7 @@ def _progress_line(outcome, seconds, tally, total):
 def _finished(config, seed, run_dir):
     """Whether a run already finished with exactly this resolved config and
     the same prompt files (edited in place, a prompt keeps its path)."""
-    resolved = dataclasses.replace(config, seeds=[seed]).to_yaml()
+    resolved = one_seed(config, seed).to_yaml()
     written, record = run_dir / "config.yaml", run_dir / "manifest.json"
     return (
         (run_dir / "summary.json").exists()
@@ -297,6 +297,13 @@ def _now():
     return datetime.now(UTC).isoformat(timespec="seconds")
 
 
+def one_seed(config, seed):
+    """The config one game of `config` writes as its own: just its seed, with
+    each condition keeping what it needs from the whole run."""
+    conditions = {n: c.pinned(config) for n, c in config.conditions.items()}
+    return dataclasses.replace(config, seeds=[seed], conditions=conditions)
+
+
 async def play(config, seed, out, cache=None, shared=None):
     run_dir = Path(out) / run_id(config, seed)
     run_dir.mkdir(parents=True, exist_ok=True)
@@ -304,7 +311,7 @@ async def play(config, seed, out, cache=None, shared=None):
     # attempts spent stays counted: their calls replay free from the cache.
     (run_dir / "summary.json").unlink(missing_ok=True)
     earlier, earlier_by_agent = _spent_before(run_dir)
-    resolved = dataclasses.replace(config, seeds=[seed])
+    resolved = one_seed(config, seed)
     (run_dir / "config.yaml").write_text(resolved.to_yaml())
     started = _now()
     game = Game(config, seed, cache, shared)

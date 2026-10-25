@@ -1,4 +1,4 @@
-# Implements: conditions/audit-full-history, conditions/hook-points, conditions/outage-once-remembered, conditions/adding-a-condition, conditions/switchable, conditions/audit-remembered, conditions/free-time
+# Implements: conditions/audit-full-history, conditions/hook-points, conditions/outage-once-remembered, conditions/adding-a-condition, conditions/switchable, conditions/audit-remembered, conditions/free-time, conditions/audit-balanced-draws
 """Scenario conditions: named, switchable changes to what agents are told.
 
 A config's `conditions:` block maps a condition's name to its settings, for
@@ -92,6 +92,15 @@ class Condition:
 
     def replaced(self):
         return {}
+
+    def pinned(self, config):
+        """This condition as one game of `config` writes it in its own config:
+        anything it needs from the whole run (all its seeds) kept."""
+        return self
+
+    # Settings left out of a written config while at these defaults, so
+    # configs written before they existed still match.
+    quiet = ()  # (setting, default) pairs
 
     def active(self, number):
         return True
