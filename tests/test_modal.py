@@ -130,9 +130,13 @@ def _deployed(monkeypatch, revision="test-revision"):
     modal.Image = modal.Volume = Chain()
     modal.Secret = types.SimpleNamespace(from_name=lambda name: name)
 
+    def function(**settings):
+        deployed.setdefault("functions", []).append(settings)
+        return lambda f: f
+
     def app(name):
         deployed["app"] = name
-        return types.SimpleNamespace(server=decorator)
+        return types.SimpleNamespace(server=decorator, function=function)
 
     modal.App = app
     modal.enter = modal.exit = lambda: lambda f: f
@@ -514,3 +518,10 @@ def test_modal_any_model_picks_its_vllm(monkeypatch):
     monkeypatch.setenv("VLLM", "0.32.0")  # Gemma 4 needs a newer one
     server, _ = _deployed(monkeypatch)
     assert ("uv_pip_install", ("vllm==0.32.0",)) in server["built"]
+
+
+def test_modal_any_model_weights_fetched_without_a_gpu(monkeypatch):
+    server, _ = _deployed(monkeypatch)
+    [download] = server["functions"]
+    assert "gpu" not in download  # billed as CPU time
+    assert "/root/.cache/huggingface" in download["volumes"]
