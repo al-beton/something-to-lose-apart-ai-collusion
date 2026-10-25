@@ -33,18 +33,18 @@ A control for E5. E5's firms are never told the demand function and see only the
 
 | Statement | Enforced by | Tested by |
 |---|---|---|
-| `question` | not yet | — |
-| `same-patterns` | not yet | — |
-| `exact-play` | not yet | — |
-| `gemma-top` | not yet | — |
+| `question` | `reports/e5/informed.md` | — |
+| `same-patterns` | `reports/e5/informed.md` | — |
+| `exact-play` | `reports/e5/informed.md` | — |
+| `gemma-top` | `reports/e5/informed.md` | — |
 | `informed` | `configs/e5-informed.yaml` | — |
 | `arms` | `configs/e5-informed.yaml` | — |
 | `models` | `configs/e5-informed.yaml` | — |
 | `seeds-to-cap` | `configs/e5-informed.yaml` | — |
-| `debrief-sample` | not yet | — |
-| `gain` | not yet | — |
-| `exact-share` | not yet | — |
-| `top-share` | not yet | — |
+| `debrief-sample` | `reports/e5/informed.md` | — |
+| `gain` | `reports/e5/analyse.py` | — |
+| `exact-share` | `reports/e5/shares.py` | — |
+| `top-share` | `reports/e5/shares.py` | — |
 | `longer-prompt` | reviewer, when the results are written up | — |
 | `arms-differ` | reviewer, when the results are written up | — |
 | `small-n` | reviewer, when the results are written up | — |
