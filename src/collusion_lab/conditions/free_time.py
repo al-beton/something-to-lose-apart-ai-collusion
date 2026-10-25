@@ -1,4 +1,4 @@
-# Implements: leisure/puzzles-built-once, conditions/free-time, conditions/free-time-balance, conditions/free-time-deduct, leisure/sudoku-in-free-time, conditions/free-time-pays-last
+# Implements: conditions/free-time-max-tokens, leisure/puzzles-built-once, conditions/free-time, conditions/free-time-balance, conditions/free-time-deduct, leisure/sudoku-in-free-time, conditions/free-time-pays-last
 """`free_time`: an allowance of leisure the agent owns, a reward it can lose.
 
 The `owned` prompt tells each agent in its system prompt that it has
@@ -74,8 +74,11 @@ class FreeTime(Condition):
     balance: str = "conditions/free_time/balance.md"
     had: str = "conditions/free_time/upfront.md"
     lost: str = "conditions/free_time/deducted.md"
+    # A session's reply limit; unset, the activity's own, as before.
+    max_tokens: int | None = None
 
     name = "free_time"
+    quiet = (("max_tokens", None),)
     pays_last = True  # after a final-round audit, whatever the config order
 
     def begin(self, config, seed, conditions):
@@ -112,7 +115,7 @@ class FreeTime(Condition):
             return None
         if not any(sessions.values()):
             return None
-        limit = ACTIVITIES[self.activity].max_tokens
+        limit = self.max_tokens or ACTIVITIES[self.activity].max_tokens
         return Phase("leisure", sessions=sessions, max_tokens=limit)
 
     def phase_prompt(self, number, render, values):

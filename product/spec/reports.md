@@ -36,6 +36,7 @@
 - **free-time-shown:** A game with free time has a Free time section, folded away like its transcript: each firm's balance over the game (sessions owned, those taken up front, each deduction with its round and reason, never more than the firm had left and, for a termination, all of it, the payout), then each session, a Sudoku drawn as a grid with the givens and the firm's entries styled apart and rule-breaking cells marked, an open session as its text.
 - **free-time-gallery:** `lab report FOLDER... --free-time` writes one page of free time across the folder or folders: by model and arm, the sessions owned, kept and lost and the Sudoku solved rate, then a handful of the firms' Sudoku grids and quoted words from their sessions.
 - **spread-shown:** The report's summary shows the same spread table and, for each group, a strip plot of every game's gain on one axis from Nash to joint profit, so how consistent a group is shows at a glance.
+- **spread-shown:** The report has a Spread section, after the charts, with the same spread table and, for each group, a strip plot of every game's gain on one axis from Nash to joint profit, so how consistent a group is shows at a glance.
 
 ## Where this is enforced
 
