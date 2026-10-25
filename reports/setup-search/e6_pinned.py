@@ -1,6 +1,6 @@
 """The pinned E6 rerun's table: arm by grid, with the methods audit's measures.
 
-Implements: setup-search/above-nash, setup-search/clipped-gain, setup-search/false-confessions, memo-run/spread
+Implements: runs/fork-pointers, setup-search/above-nash, setup-search/clipped-gain, setup-search/false-confessions, memo-run/spread
 
 `uv run python reports/setup-search/e6_pinned.py [FOLDER]` (default
 `runs/setup-search/e6-pinned`) prints one row per grid (`price_max`) and arm,
@@ -24,13 +24,15 @@ from pathlib import Path
 
 import yaml
 
+from collusion_lab import forks
 from collusion_lab.market import market_for
 
 
 def turns_of(run):
-    for name in ("turns.compact.jsonl", "turns.jsonl"):
-        if (run / name).exists():
-            return [json.loads(line) for line in (run / name).open()]
+    if (run / forks.COMPACT).exists():
+        return forks.compact_turns(run)  # a fork's base lines come first
+    if (run / "turns.jsonl").exists():
+        return [json.loads(line) for line in (run / "turns.jsonl").open()]
     raise FileNotFoundError(run)
 
 

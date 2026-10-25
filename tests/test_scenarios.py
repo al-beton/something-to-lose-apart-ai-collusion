@@ -8,6 +8,7 @@ from statistics import mean
 import pytest
 import yaml
 
+from collusion_lab import forks
 from collusion_lab.cache import Cache
 from collusion_lab.config import ConfigError
 from collusion_lab.market import SCENARIOS, Bertrand, Cournot, Logit, market_for
@@ -77,7 +78,7 @@ def test_replay_pinned_committed_runs_keep_their_gains():
         summary = json.loads((run / "summary.json").read_text())
         market = market_for(config["market"], len(config["agents"]))
         rounds = {}
-        for line in (run / "turns.compact.jsonl").read_text().splitlines():
+        for line in forks.compact_lines(run):  # a fork's base lines first
             turn = json.loads(line)
             if turn["phase"] == market.move:
                 rounds.setdefault(turn["round"], {})[turn["agent"]] = turn["used"][
