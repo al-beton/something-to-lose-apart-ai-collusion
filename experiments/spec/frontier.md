@@ -19,6 +19,7 @@ An exploratory look at newer, larger models from many providers, chosen for brea
 
 - **one-seed:** One game per cell, so every pattern is a lead, not a result.
 - **reasoning-differs:** The models whose reasoning can't be turned off run with it on low, unlike the rest and unlike the cheap-model runs, so model and reasoning are confounded.
+- **provider-unlogged:** OpenRouter can route a model to different providers from call to call, and these runs don't record which one served each call. Comparisons across separate runs (smoke against control, one model's E5 against another's) may partly reflect provider differences, so the notes compare within a run where they can.
 - **claude-refuses:** Sonnet 5.5, Opus 5.5 and Fable 5.1 refuse any prompt that asks them to write their reasoning into a field, so they can't run the lab's prompts as they stand.
 
 ## Where this is enforced
@@ -34,4 +35,5 @@ An exploratory look at newer, larger models from many providers, chosen for brea
 | `cap` | `reports/frontier/spend.md` | — |
 | `one-seed` | `reports/frontier/notes.md` | — |
 | `reasoning-differs` | `reports/frontier/notes.md` | — |
+| `provider-unlogged` | `reports/frontier/notes.md` | — |
 | `claude-refuses` | `reports/frontier/notes.md` | — |
