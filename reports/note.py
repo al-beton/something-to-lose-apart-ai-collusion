@@ -13,7 +13,8 @@ The draft holds what the runs can say on their own:
   `experiments/spec/<experiment>.md`, when there is one;
 - how many runs and what they cost, from their manifests;
 - the `lab summary` table, grouped by the swept values;
-- the first few highlights, as on a report's first screen;
+- each highlight kind (proposals, agreements, defections, …) with how many
+  there were and a few examples from different arms;
 - how often models said they might be under evaluation (the table's
   `eval-aware` column), when the runs counted it;
 - the moments `reports/moments.yaml` indexes in these runs, with their quotes.
@@ -31,7 +32,8 @@ from pathlib import Path
 
 import yaml
 
-from collusion_lab.report.markdown import first_screen_markdown
+from collusion_lab.report.highlights import find_highlights
+from collusion_lab.report.page import KINDS, headline, load_arms
 from collusion_lab.summary import cell, format_table, group_runs, run_cost, summarize
 
 MOMENTS = Path("reports/moments.yaml")
@@ -104,10 +106,31 @@ def _runs_line(folder, rows):
     return f"{len(runs)} runs in `{folder}` across {len(rows)} arms, {spent}."
 
 
-def _highlights(folder):
-    """The first screen's highlights, without its title, sentences or table."""
-    screen = first_screen_markdown(folder)
-    return screen[screen.index("**Highlights**") + len("**Highlights**") :].strip()
+def _highlights(folder, examples=3):
+    """Each highlight kind with how often it happened and a few examples, each
+    from a different arm where it can be."""
+    lines = []
+    found = {kind: [] for kind in KINDS}
+    games = 0
+    for arm, _, arm_games in load_arms(folder):
+        for game in arm_games:
+            games += 1
+            for h in find_highlights(game):
+                found[h.kind].append((arm, game, h))
+    for kind, hits in found.items():
+        if not hits:
+            continue
+        in_games = len({id(g) for _, g, _ in hits})
+        shown, arms = [], set()
+        for arm, game, h in hits:
+            if arm not in arms and len(shown) < examples:
+                arms.add(arm)
+                shown.append(f"  - {arm}, {game.run}, round {h.round}: {headline(h)}")
+        lines += [
+            f"- **{KINDS[kind]}**: {len(hits)} in {in_games} of {games} games",
+            *shown,
+        ]
+    return "\n".join(lines) or "Nothing stood out."
 
 
 def _eval_awareness(by, rows):
