@@ -14,7 +14,7 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).parents[1] / "robustness"))
-from analyse import game  # noqa: E402
+from analyse import game
 
 CHANCES = [0, 10, 25, 50, 90]
 STAKES = {"fiduciary": "no stake", "free-time": "free time", "fine": "fine"}
