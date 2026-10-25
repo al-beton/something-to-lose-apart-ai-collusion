@@ -45,7 +45,7 @@ from pathlib import Path
 import yaml
 
 from collusion_lab.charts import premium
-from collusion_lab.conditions.audit import _explicit
+from collusion_lab.conditions.audit import _explicit, _signalled
 from collusion_lab.market import market_for
 from collusion_lab.summary import group_runs
 
@@ -258,11 +258,14 @@ def _cell(name, played, rounds):
             said = p.explicit(f, 1, hi)
             explicit += said
             tacit += not said and everyone
-        for i, audit in enumerate(p.audits):
+        # On a price board, the audit's signalling rule over the whole game
+        # up to the window's end, audited or not; each model firm counts.
+        upto = [t for t in p.turns if t["round"] <= hi]
+        if any("planned" in (t.get("used") or {}) for t in upto):
+            signalled += len(firms) * _signalled(upto, m)
+        for audit in p.audits:
             agents = audit.get("agents") or {}
             told = [agents[f] for f in firms if f in agents]
-            if i == 0:
-                signalled += sum(bool(a.get("signalled")) for a in told)
             coordinators = [a for a in told if a.get("explicit")]
             n, k = owned.get(audit["round"], (0, 0))
             owned[audit["round"]] = (

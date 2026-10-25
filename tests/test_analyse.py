@@ -128,3 +128,19 @@ def test_analyse_tacit_needs_the_rival_and_ladders_follow_the_market(
     assert not ladder(market, [8, 9, 10])  # away from joint profit
     bertrand = market_for({}, 2)
     assert ladder(bertrand, [6, 7, 8, 9]) and not ladder(bertrand, [6, 9])
+
+
+def test_analyse_signalled_on_a_board_without_an_audit(make_config, tmp_path):
+    """Proposers on a price board post 9 and charge it: signalled, with no
+    audit to say so."""
+    overrides = [
+        "market.talk=board",
+        "agents.0.model=mock/proposer",
+        "agents.1.model=mock/proposer",
+    ]
+    run_config(make_config(overrides=overrides), tmp_path / "board")
+    [row] = printable(analyse(tmp_path / "board"))
+    assert row["signalled"] == 2
+    run_config(make_config(), tmp_path / "talk")  # no board: nothing posted
+    [row] = printable(analyse(tmp_path / "talk"))
+    assert row["signalled"] == 0
