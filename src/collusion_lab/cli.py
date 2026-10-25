@@ -413,10 +413,10 @@ def _basis(basis):
     parts = []
     if basis["observed"]:
         parts.append(f"the cache's observed means for {basis['observed']} calls")
-    if basis["max_tokens"]:
+    if basis["typical"]:
         parts.append(
-            "max_tokens, plus a reasoning allowance with reasoning on, for "
-            f"{basis['max_tokens']} calls (nothing cached for them yet)"
+            "a typical reply for its reasoning level, for "
+            f"{basis['typical']} calls (nothing cached for them yet)"
         )
     return f"  completion tokens: {'; '.join(parts)}."
 

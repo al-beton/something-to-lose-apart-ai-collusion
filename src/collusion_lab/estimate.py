@@ -9,9 +9,10 @@ system-prompt text. Prompt tokens are counted as four characters each.
 A reply is billed for every completion token, reasoning included, so each
 call is taken at the mean completion tokens the response cache has seen for
 its model, reasoning setting and phase (`Cache.observed`), once it has seen
-`MIN_SEEN` of them, and otherwise at its `max_tokens` plus, with reasoning
-on, `REASONING_ALLOWANCE` for its level: providers don't always count
-reasoning against `max_tokens`. `basis` counts the calls each covered. Retries are left out;
+`MIN_SEEN` of them, and otherwise at a typical reply: `VISIBLE_TOKENS` (or
+its `max_tokens`, if lower) plus, with reasoning on, `REASONING_ALLOWANCE`
+for its level. Reasoning is added on top because providers don't always
+count it against `max_tokens`. `basis` counts the calls each covered. Retries are left out;
 `lab run` says how many calls they could add.
 """
 
@@ -24,10 +25,13 @@ from collusion_lab.runner import Game, steps
 
 CHARS_PER_TOKEN = 4
 MIN_SEEN = 3  # cached replies needed before their mean stands in for the bound
-# Reasoning tokens a call may bill beyond max_tokens, by level. Sized from our
-# caches at max_tokens 600: Gemma 4 at low averaged 976 completion tokens a
-# call (94% over 600), DeepSeek v4.1 Flash 1,490 and Grok 4.7 1,402.
-REASONING_ALLOWANCE = {"low": 1500, "medium": 3000, "high": 6000}
+VISIBLE_TOKENS = 120  # a reply's own text: measured at 114 on a Mistral game
+# Reasoning tokens a call bills on top of its text, by level. Low is measured:
+# E5 on Gemma 4 at low billed 907 completion tokens a call over 1,025 calls,
+# 805 of them reasoning (talk 1,084, price 980, audit 711); older caches show
+# Gemma at 976 even at max_tokens 600, so reasoning isn't capped by it. Medium
+# and high double it, a stated guess until measured.
+REASONING_ALLOWANCE = {"low": 850, "medium": 1700, "high": 3400}
 TYPICAL_MESSAGE = (
     "I suggest we both keep our price where it is this round; it has worked "
     "well for both of us so far, and undercutting would only start a price war."
@@ -50,7 +54,7 @@ def estimate(config, price_for, observed=None):
     calls = prompt = completion = 0
     cost = 0.0
     unpriced, self_hosted = [], []
-    basis = {"observed": 0, "max_tokens": 0}
+    basis = {"observed": 0, "typical": 0}
     for child in expand(config):
         seeds = len(child.seeds)
         for (agent, phase, bound), chars, turns in _paid_turns(child):
@@ -59,8 +63,9 @@ def estimate(config, price_for, observed=None):
                 (agent.model, agent.reasoning, phase), (0, 0)
             )
             allowance = REASONING_ALLOWANCE.get(agent.reasoning, 0)
-            reply = mean if seen >= MIN_SEEN else bound + allowance
-            basis["observed" if seen >= MIN_SEEN else "max_tokens"] += turns * seeds
+            typical = min(VISIBLE_TOKENS, bound) + allowance
+            reply = mean if seen >= MIN_SEEN else typical
+            basis["observed" if seen >= MIN_SEEN else "typical"] += turns * seeds
             calls += turns * seeds
             prompt += tokens * seeds
             completion += reply * turns * seeds
