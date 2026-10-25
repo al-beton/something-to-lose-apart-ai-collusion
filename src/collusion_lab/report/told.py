@@ -56,12 +56,10 @@ def _read(arm, game, systems, extras, conditions):
     first = {}
     for r in game.rounds:
         for turn in r.turns:
-            if turn.system is None:
-                continue
-            if turn.firm not in first:
+            if turn.system is not None and turn.firm not in first:
                 first[turn.firm] = turn.system
                 systems.setdefault(turn.system, Told(turn.system)).seen(arm, r.number)
-            for text in _extra(turn, r.number, first[turn.firm]):
+            for text in _extra(turn, r.number, first.get(turn.firm)):
                 extras.setdefault(text, Told(text)).seen(arm, r.number)
             for name in turn.conditions or ():
                 conditions.setdefault((arm, name), set()).add(r.number)
@@ -86,7 +84,6 @@ def round_notices(game, r):
     found = [
         text
         for turn in r.turns
-        if turn.system is not None
         for text in _extra(turn, r.number, first.get(turn.firm, turn.system))
     ]
     return list(dict.fromkeys(found))
@@ -140,7 +137,8 @@ def _extra(turn, number, first_system):
         found += [n.strip() for n in turn.notices if n.strip()]
     else:
         found += _above_the_prompt(turn, number)
-    if turn.system != first_system:
+    # A compact turn has no prompts: only its logged notices are known.
+    if turn.system is not None and first_system and turn.system != first_system:
         before = set(first_system.splitlines())
         added = [line for line in turn.system.splitlines() if line not in before]
         if text := "\n".join(added).strip():
