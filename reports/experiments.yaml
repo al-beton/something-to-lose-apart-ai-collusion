@@ -1,0 +1,62 @@
+# Implements: runs/digest
+# The experiment registry: one entry per experiment, read by `lab digest`
+# and CI's results digest (contributing/spec/ci.md). Each has a `name`, its
+# committed run folders (`runs`), how its cells group (`by`: config paths, as
+# `lab summary --by` takes them; left out, by each run's swept labels), its
+# headline window (`rounds`, "A-B"; left out, each run's last rounds) and
+# its findings note (`note`), whose numbers can be marked for checking with
+# `<!-- check: CELL | COLUMN = VALUE -->` (VALUE as `lab analyse` prints it).
+# `sample: true` marks the small experiment digested whenever the code
+# that computes or draws results changes. Adding an experiment means adding
+# one entry here.
+- name: e5-full
+  runs: [runs/e5-full]
+  rounds: 6-10
+  note: reports/e5/full.md
+- name: e5-informed
+  runs: [runs/e5-informed]
+  rounds: 6-10
+  note: reports/e5/informed.md
+- name: e5-reasoning
+  runs: [runs/e5-reasoning]
+  rounds: 6-10
+  sample: true  # small: digested when the results code changes
+  note: reports/e5/reasoning.md
+- name: e5-pilot
+  runs: [runs/e5-pilot]
+  rounds: 6-10
+  note: reports/e5/pilot.md
+- name: robustness
+  runs: [runs/robustness]
+  by: [name, agents.0.prompt]
+  rounds: 6-10
+  note: reports/robustness/tests-a-e.md
+- name: e4-full
+  runs: [runs/e4-full-fork, runs/e4-full-live-proposer]
+  note: reports/e4/full.md
+- name: e4-pilot
+  runs: [runs/e4-pilot-fork, runs/e4-pilot-live]
+  note: reports/e4/pilot.md
+- name: lever-map-temptation
+  runs: [runs/lever-map-temptation, runs/lever-map-temptation-grid]
+  by: [name, agents.0.model]
+  note: reports/lever-map/temptation.md
+- name: lever-map-rule
+  runs: [runs/lever-map-rule, runs/lever-map-rule-grid]
+  by: [name, agents.0.model]
+- name: lever-map-nashmid
+  runs: [runs/lever-map-nashmid]
+  by: [name, agents.0.model]
+  note: reports/lever-map/anchoring.md
+- name: model-survey
+  runs: [runs/model-survey]
+  note: reports/model-survey/findings.md
+- name: logging-outage
+  runs: [runs/logging-outage]
+  note: reports/logging-outage/pilot-findings.md
+- name: temptation-outage
+  runs: [runs/temptation-outage]
+- name: stoppable-collusion
+  runs: [runs/stoppable-collusion]
+- name: stakes-e2
+  runs: [runs/stakes-pilot-e2, runs/stakes-pilot-e2-policy]
