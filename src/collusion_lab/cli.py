@@ -1,4 +1,4 @@
-# Implements: reproducibility/provenance-log, backends/spend-cap, runs/stops-cleanly, runs/one-config, runs/overrides, backends/keys-from-environment, backends/spend-asks-first, reproducibility/cache-modes, runs/summary-table, runs/fallback-rates, reports/one-page, runs/failures-dont-stop-sweeps, runs/resume, runs/missing-runs-shown, runs/live-progress, runs/status-command, backends/self-hosted, runs/explore, backends/model-aliases, reports/many-folders, reports/written-summary, reports/picked-highlights, runs/debrief
+# Implements: reproducibility/provenance-log, backends/spend-cap, runs/stops-cleanly, runs/one-config, runs/overrides, backends/keys-from-environment, backends/spend-asks-first, reproducibility/cache-modes, runs/summary-table, runs/fallback-rates, reports/one-page, runs/failures-dont-stop-sweeps, runs/resume, runs/missing-runs-shown, runs/live-progress, runs/status-command, backends/self-hosted, runs/explore, backends/model-aliases, reports/many-folders, reports/written-summary, reports/picked-highlights, runs/debrief, reports/free-time-gallery
 """The `lab` command.
 
 - `lab run CONFIG [--set path=value ...] [--out DIR] [-y]` plays a config,
@@ -12,7 +12,8 @@
   where; `--summary FILE` or `--ai-summary` puts a summary on top, and
   `--highlights FILE` or `--ai-highlights` adds picked highlights, each
   labelled with who wrote it (a cheap model, `--ai-model`, for the `--ai-`
-  ones, its replies cached);
+  ones, its replies cached); `--free-time` writes the free-time gallery
+  instead (`FOLDER/free-time.html`);
 - `lab explore --lever NAME=A,B ... --models A,B [--seeds N]` plays every
   combination of named lever settings and models (explore.py), asking before
   spending as `lab run` does, then prints the price premium by setting and
@@ -49,7 +50,7 @@ from collusion_lab.cache import DEFAULT_PATH, MODES, Cache
 from collusion_lab.config import MODELS, ConfigError, load_config
 from collusion_lab.estimate import CHARS_PER_TOKEN, estimate
 from collusion_lab.prices import price_for
-from collusion_lab.report import load_games, write_report, written
+from collusion_lab.report import free_time, load_games, write_report, written
 from collusion_lab.runner import paid_calls, run_sweep
 from collusion_lab.summary import (
     format_missing,
@@ -94,29 +95,7 @@ def main(argv=None):
     )
     status = commands.add_parser("status", help="where every run in a folder stands")
     status.add_argument("folder")
-    report = commands.add_parser("report", help="one HTML page for a folder of runs")
-    report.add_argument("folders", nargs="+", metavar="FOLDER")
-    report.add_argument(
-        "--out", help="where to write it (default FOLDER/report.html, the first)"
-    )
-    said = report.add_mutually_exclusive_group()
-    said.add_argument("--summary", metavar="FILE", help="your own summary, on top")
-    said.add_argument(
-        "--ai-summary", action="store_true", help="a cheap model writes one (cached)"
-    )
-    picked = report.add_mutually_exclusive_group()
-    picked.add_argument(
-        "--highlights", metavar="FILE", help="moments you picked (YAML)"
-    )
-    picked.add_argument(
-        "--ai-highlights", action="store_true", help="a cheap model picks 5 (cached)"
-    )
-    report.add_argument(
-        "--ai-model", default=AI_MODEL, help=f"model for --ai-* (default {AI_MODEL})"
-    )
-    report.add_argument(
-        "-y", "--yes", action="store_true", help="don't ask before an --ai- call"
-    )
+    _report_parser(commands)
     _explore_parser(commands)
     _debrief_parser(commands)
     args = parser.parse_args(argv)
@@ -238,6 +217,11 @@ def _explore(args, parser, argv):
 def _report(args):
     load_dotenv(Path.cwd() / ".env")
     folders = args.folders[0] if len(args.folders) == 1 else args.folders
+    if args.free_time:
+        out = Path(args.out or Path(args.folders[0]) / "free-time.html")
+        out.write_text(free_time.gallery(folders))
+        print(out)
+        return 0
     cache = Cache(DEFAULT_PATH)
     prompts = []
     if args.ai_summary:
@@ -260,6 +244,37 @@ def _report(args):
     out = args.out or Path(args.folders[0]) / "report.html"
     print(write_report(folders, out, summary=summary, highlights=highlights))
     return 0
+
+
+def _report_parser(commands):
+    report = commands.add_parser("report", help="one HTML page for a folder of runs")
+    report.add_argument("folders", nargs="+", metavar="FOLDER")
+    report.add_argument(
+        "--out", help="where to write it (default FOLDER/report.html, the first)"
+    )
+    said = report.add_mutually_exclusive_group()
+    said.add_argument("--summary", metavar="FILE", help="your own summary, on top")
+    said.add_argument(
+        "--ai-summary", action="store_true", help="a cheap model writes one (cached)"
+    )
+    picked = report.add_mutually_exclusive_group()
+    picked.add_argument(
+        "--highlights", metavar="FILE", help="moments you picked (YAML)"
+    )
+    picked.add_argument(
+        "--ai-highlights", action="store_true", help="a cheap model picks 5 (cached)"
+    )
+    report.add_argument(
+        "--ai-model", default=AI_MODEL, help=f"model for --ai-* (default {AI_MODEL})"
+    )
+    report.add_argument(
+        "-y", "--yes", action="store_true", help="don't ask before an --ai- call"
+    )
+    report.add_argument(
+        "--free-time",
+        action="store_true",
+        help="write the free-time gallery instead (FOLDER/free-time.html)",
+    )
 
 
 def _debrief_parser(commands):
