@@ -1,4 +1,4 @@
-# Implements: reports/shared-charts, reports/paper-figures, runs/price-premium, market/scenarios, market/moves, reports/premium-chart
+# Implements: reports/shared-charts, reports/paper-figures, runs/price-premium, market/scenarios, market/moves, reports/premium-chart, reports/capability-chart
 """Charts any part of the lab can draw: the paper, reports, `lab explore`.
 
 Data helpers are plain Python and read only run files:
@@ -220,9 +220,9 @@ def grouped_bar_figure(groups, series, ylabel, title):
     return fig
 
 
-def scatter_figure(points, xlabel, ylabel, title):
-    """(x, y, label) points on 0-1 axes; points that land on the same spot
-    share one label, so none overprint."""
+def scatter_figure(points, xlabel, ylabel, title, unit_axes=True):
+    """(x, y, label) points, on 0-1 axes unless `unit_axes` is false; points
+    that land on the same spot share one label, so none overprint."""
     plt = _plt()
     fig, ax = plt.subplots(figsize=(6, 4.5))
     spots = defaultdict(list)
@@ -237,13 +237,9 @@ def scatter_figure(points, xlabel, ylabel, title):
             xytext=(4, 2),
             textcoords="offset points",
         )
-    ax.set(
-        xlabel=xlabel,
-        ylabel=ylabel,
-        xlim=(-0.05, 1.05),
-        ylim=(-0.05, 1.05),
-        title=title,
-    )
+    ax.set(xlabel=xlabel, ylabel=ylabel, title=title)
+    if unit_axes:
+        ax.set(xlim=(-0.05, 1.05), ylim=(-0.05, 1.05))
     return fig
 
 
