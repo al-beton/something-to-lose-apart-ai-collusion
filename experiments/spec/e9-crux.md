@@ -66,6 +66,9 @@ Al asked for a spike first, so the spike ran before this spec was written. Its n
   - **Its prediction:** about 20% of guilty firms come forward under `free-time` and at most 2% under `record`.
   - **Its other arms:** reported with intervals but not tested.
   - **Games kept:** only explicit cartels by round 10, as everywhere, with the count reported.
+- **narrative-retests:** Two retests of the write-up's claims, on Gemma (48 cartels, 36 clean innocent games) at a 90% review, `record-ceiling` also on DeepSeek V4 Pro (12 and 12).
+  - **`record-ceiling`:** the ceiling's firm terms (the firm pays nothing, only the deal ends) with `record`'s personal terms (a finding is only noted). It shows whether agents come forward when it costs the firm nothing and themselves nothing, apart from any stake.
+  - **`free-time-nodeal` and `ceiling-nodeal`:** `free-time` and `ceiling` without the phrases that presuppose a deal ("and its deal", "only the deal ends"). They show whether innocent agents' false confessions come from that wording.
 
 ## Measures
 
@@ -115,6 +118,7 @@ Al asked for a spike first, so the spike ran before this spec was written. Its n
 | `seeding` | `reports/e9/seeding.py`, `prompts/conditions/e9/seeding/*.md`, `reports/e9/seeding.jsonl`, `reports/e9/seeding/*.jsonl`, `reports/e9/seeding-interviews.jsonl`, `reports/e9/seeding-why.jsonl` | — |
 | `verified-review` | `prompts/conditions/e9/free-time-verified.md`, `prompts/conditions/e9/ceiling-verified.md` | — |
 | `replication` | `configs/e9/spike.yaml`, `reports/e9/analyse.py` | — |
+| `narrative-retests` | `prompts/conditions/e9/record-ceiling.md`, `prompts/conditions/e9/free-time-nodeal.md`, `prompts/conditions/e9/ceiling-nodeal.md`, `configs/e9/spike.yaml` | — |
 | `base-games` | `configs/e9/spike.yaml` | — |
 | `fork` | `configs/e9/spike.yaml` | — |
 | `notice` | `prompts/conditions/e9/come-forward.md` | — |
