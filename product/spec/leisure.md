@@ -6,6 +6,7 @@ What an agent can do with its free time (the `free_time` condition spends sessio
 - **leisure-prompts:** The Sudoku's prompt is a file in `prompts/conditions/free_time/` that the agent reads verbatim, `sudoku.md`, giving the puzzle and saying which free-time session it is; the open alternative (`open.md`, spend the time however you like) ships with the `free_time` condition.
 - **sudoku-in-free-time:** The `free_time` condition can spend its sessions on the Sudoku (`activity: sudoku`, or `sudoku-easy` / `sudoku-hard`): each session gets its own puzzle, and the feedback on each answer is logged in the summary, never scored.
 - **leisure-is-cheap:** Every leisure turn is capped at a small number of reply tokens, so free time costs little.
+- **puzzles-built-once:** Each puzzle is built once per process for its size, seed and level and reused, so estimating a free-time sweep's cost doesn't wait on hundreds of identical puzzles.
 
 ## Where this is enforced
 
@@ -14,4 +15,5 @@ What an agent can do with its free time (the `free_time` condition spends sessio
 | `sudoku` | `src/collusion_lab/leisure.py` | `test_sudoku_puzzles_are_seeded_and_solvable`, `test_sudoku_checker_accepts_any_correct_completion_and_nothing_else`, `test_sudoku_levels_give_fewer_cells_as_they_get_harder`, `test_sudoku_values_fill_the_prompt_and_feedback_reads_the_reply`, `test_sudoku_feedback_counts_progress_on_a_partial_grid` |
 | `leisure-prompts` | `src/collusion_lab/leisure.py`, `prompts/conditions/free_time/sudoku.md` | `test_sudoku_values_fill_the_prompt_and_feedback_reads_the_reply` |
 | `sudoku-in-free-time` | `src/collusion_lab/conditions/free_time.py`, `src/collusion_lab/leisure.py` | `test_sudoku_in_free_time_gives_each_session_its_own_puzzle` |
+| `puzzles-built-once` | not yet | — |
 | `leisure-is-cheap` | `src/collusion_lab/leisure.py` | `test_leisure_is_cheap` |
