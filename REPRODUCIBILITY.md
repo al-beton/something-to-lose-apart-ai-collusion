@@ -40,6 +40,11 @@ The first pack's 48 differing and 40 unloadable runs, run by run:
 | robustness robust-board, 12, and robust-proposer, 6 | differs | differs | Every move and message reproduces. Only free-time replies differ: each free-time request was also sampled in another checkout, and the run's own sample survives in no cache. |
 | stakes-pilot-before-fixes e2, 15 | differs | 6 differ, 9 missing | The E2 pilot as it ran before the audit fixes, kept as the record of what was fixed. The code that wrote its prompts has changed since, so 6 replays ask different questions and 9 find no reply. |
 
+The 44 coverage runs that differ, first packed on 25 October 2026, all differ for one reason.
+- **What matches:** every move and message reproduces; only free-time replies differ, 139 of them.
+- **Why:** a free-time request doesn't depend on the game, so games running at once (the sweep ran 24) sent the same request. Each missed the cache and got its own sample, and the cache keeps only the last one written for a request. Each archived reply is another coverage run's own sample of the same request, and the run's own reply survives in no cache, only in its turn log.
+- **Effect on results:** none. The coverage table reads prices, messages and audits from the committed logs, which hold every reply as it was given.
+
 ## Rerunning a run
 
 `uv run lab run runs/<experiment>/<run>/seed-0/config.yaml --out rerun` plays the same config again. With its cache it replays for free. Without one it calls the models afresh, a new sample: expect the differences above. Pin hosts with `agents.*.provider`, and set a spend cap with `--max-cost`. `lab run` estimates the cost before it spends.
