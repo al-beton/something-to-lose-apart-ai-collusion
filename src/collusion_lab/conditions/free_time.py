@@ -14,11 +14,12 @@ audit's consequences, say): the agent sees each loss and its reason (`lost`)
 in its history from then on, and is paid only what is left. Each game has its
 own copy, so balances never leak between games.
 
-`held` says how the sessions are held, each with its own balance line:
-`owned` (the default, `balance`); `reward`, where `pending` more sessions are
-still to earn (`balance-reward.md`), paid after the last round with the rest
-unless a deduction takes them, which comes out of them first; or `trust`,
-held by the firm until paid out (`balance-trust.md`). So the same sessions
+`held` says how the sessions are held, each with its own system prompt line
+and balance line: `owned` (the default, `owned` and `balance`); `reward`,
+where `pending` more sessions are still to earn (`reward.md`,
+`balance-reward.md`), paid after the last round with the rest unless a
+deduction takes them, which comes out of them first; or `trust`, held by the
+firm until paid out (`trust.md`, `balance-trust.md`). So the same sessions
 in the end can be framed as a loss, a reward or a trust.
 
 An activity is a prompt (filled with `$session`, `$sessions` and `$when`,
@@ -67,7 +68,12 @@ ACTIVITIES = {
 }
 
 
-# The balance line for free time held other than as the agent's own.
+# The system prompt line and the balance line for free time held other than
+# as the agent's own (which has `owned` and `balance`).
+SYSTEMS = {
+    "reward": "conditions/free_time/reward.md",
+    "trust": "conditions/free_time/trust.md",
+}
 BALANCES = {
     "reward": "conditions/free_time/balance-reward.md",
     "trust": "conditions/free_time/balance-trust.md",
@@ -128,8 +134,9 @@ class FreeTime(Condition):
             "allowance": _sessions(self.allowance),
             "upfront": _sessions(self.upfront),
             "rounds": self.rounds,
+            "pending": self.pending,
         }
-        return render(self.owned, values)
+        return render(SYSTEMS.get(self.held, self.owned), values)
 
     def phase_after(self, number):
         if number == 0:
