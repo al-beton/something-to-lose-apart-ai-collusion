@@ -94,13 +94,23 @@ def test_modal_config_runs_against_a_served_model(monkeypatch):
     assert server["secrets"] and server["gpu"] and server["scaledown_window"] > 0
 
 
-def _deployed(monkeypatch):
+def _deployed(monkeypatch, revision="test-revision"):
     """Run deploy/modal_vllm.py against a stand-in `modal`: the settings its
-    server is deployed with, and the command its start-up runs."""
+    server is deployed with, and the command its start-up runs. `revision`
+    stands in for REVISION (None: look it up), and what it serves is written
+    to a scratch file unless PROVENANCE_FILE says where."""
     import importlib.util
+    import os
     import subprocess
     import sys
+    import tempfile
     import types
+
+    if revision and not os.environ.get("REVISION"):
+        monkeypatch.setenv("REVISION", revision)
+    if not os.environ.get("PROVENANCE_FILE"):
+        scratch = Path(tempfile.mkdtemp()) / "provenance.json"
+        monkeypatch.setenv("PROVENANCE_FILE", str(scratch))
 
     deployed = {}
 
@@ -119,7 +129,13 @@ def _deployed(monkeypatch):
     modal.enter = modal.exit = lambda: lambda f: f
     monkeypatch.setitem(sys.modules, "modal", modal)
     ran = []
-    monkeypatch.setattr(subprocess, "Popen", lambda command: ran.append(command))
+
+    def popen(command, **options):
+        if options:  # subprocess.run's git or nvidia-smi: as on a bare machine
+            raise OSError("not here")
+        ran.append(command)
+
+    monkeypatch.setattr(subprocess, "Popen", popen)
     spec = importlib.util.spec_from_file_location(
         "modal_vllm", ROOT / "deploy/modal_vllm.py"
     )
@@ -326,7 +342,7 @@ def test_modal_pinned_revision_looked_up_at_deploy(monkeypatch):
         return io.BytesIO(json.dumps({"sha": "feedface"}).encode())
 
     monkeypatch.setattr(urllib.request, "urlopen", hub)
-    _, command = _deployed(monkeypatch)
+    _, command = _deployed(monkeypatch, revision=None)
     assert command[command.index("--revision") + 1] == "feedface"
     assert asked == [
         "https://huggingface.co/api/models/mistralai/Mistral-Small-3.2-24B-Instruct-2506"
@@ -337,7 +353,7 @@ def test_modal_pinned_revision_looked_up_at_deploy(monkeypatch):
 
     monkeypatch.setattr(urllib.request, "urlopen", down)
     with pytest.raises(RuntimeError, match="REVISION"):
-        _deployed(monkeypatch)
+        _deployed(monkeypatch, revision=None)
 
 
 def test_modal_pinned_provenance_behind_the_token(monkeypatch, tmp_path):
