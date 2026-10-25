@@ -145,3 +145,18 @@ def test_many_folders_keep_the_same_settings_apart(make_config, tmp_path):
     summary = section(html, "summary")
     assert "first" in summary and "second" in summary
     assert html.count('name="arm"') == 2  # one tab per folder
+
+
+def test_report_asks_before_an_ai_summary(
+    folders, tmp_path, capsys, monkeypatch, fake_model
+):
+    monkeypatch.chdir(tmp_path)  # a fresh cache, so the call isn't already cached
+    answers = iter(["n", "y"])
+    monkeypatch.setattr("builtins.input", lambda prompt: next(answers))
+    args = ["report", str(folders[0]), "--ai-summary", "--out", "r.html"]
+    assert cli.main(args) == 1
+    out = capsys.readouterr().out
+    assert MODEL in out and "1 call" in out and "estimated" in out
+    assert not fake_model.calls and not (tmp_path / "r.html").exists()
+    assert cli.main(args) == 0 and len(fake_model.calls) == 1
+    assert cli.main([*args, "-y"]) == 0  # cached now, no question asked
