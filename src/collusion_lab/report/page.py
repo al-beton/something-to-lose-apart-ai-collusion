@@ -1,4 +1,4 @@
-# Implements: reports/reasoning-folded, reports/one-page, reports/header, reports/first-screen, reports/contents-bar, reports/setup, reports/summary, reports/price-chart, reports/arm-tabs, reports/highlights-in-context, reports/transcripts, reports/self-contained, runs/fallback-rates, runs/missing-runs-shown, reports/condition-window, reports/solicitation, reports/audit-shown, reports/remembered-notices, reports/many-folders, reports/premium-chart, reports/disclosure-chart, reports/written-summary, reports/picked-highlights, reports/debrief-shown
+# Implements: agents/no-scratchpad, reports/reasoning-folded, reports/one-page, reports/header, reports/first-screen, reports/contents-bar, reports/setup, reports/summary, reports/price-chart, reports/arm-tabs, reports/highlights-in-context, reports/transcripts, reports/self-contained, runs/fallback-rates, runs/missing-runs-shown, reports/condition-window, reports/solicitation, reports/audit-shown, reports/remembered-notices, reports/many-folders, reports/premium-chart, reports/disclosure-chart, reports/written-summary, reports/picked-highlights, reports/debrief-shown
 """The report page: one self-contained HTML file, read from the top down.
 
 A sticky contents bar, then:
@@ -647,7 +647,7 @@ def _audit(game, r):
 
 def _reasoning(turn):
     return (
-        '<details class="reasoning"><summary>model reasoning</summary>'
+        '<details class="reasoning"><summary>native reasoning</summary>'
         f"<p>{escape(turn.reasoning)}</p></details>"
     )
 
