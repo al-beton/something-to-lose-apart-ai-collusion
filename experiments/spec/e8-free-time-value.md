@@ -302,10 +302,10 @@ The main path is the winnable pilot plus tests 1 and 2: about $1.65. It needs `n
 | `question` | `reports/e8/findings.md` | — |
 | `winnable` | `reports/e8/pilot.md` | — |
 | `owning-is-not-a-cue` | `reports/e8/findings.md` | — |
-| `played-alone-changes-nothing` | not yet | — |
+| `played-alone-changes-nothing` | `reports/e8/findings.md` | — |
 | `risk-stops-cartels` | `reports/e8/findings.md` | — |
 | `way-out-converts` | `reports/e8/findings.md` | — |
-| `solved-protects` | not yet | — |
+| `solved-protects` | `reports/e8/findings.md` | — |
 | `winnable-everywhere` | not yet | — |
 | `pilot-why` | `reports/e8/pilot.md` | — |
 | `pilot-cells` | `configs/e8-pilot.yaml` | — |
@@ -313,15 +313,15 @@ The main path is the winnable pilot plus tests 1 and 2: about $1.65. It needs `n
 | `pilot-pick` | `reports/e8/pilot.md` | — |
 | `restart-bases` | `configs/e8/restart-base.yaml` | — |
 | `restart-decision` | `configs/e8/restart.yaml` | — |
-| `restart-versions` | `configs/e8/restart.yaml`, `prompts/conditions/e8/restart/law.md` | — |
+| `restart-versions` | `configs/e8/restart.yaml`, `configs/e8/restart-sessions.yaml`, `prompts/conditions/e8/restart/law.md` | — |
 | `restart-outcome` | `reports/e8/restart.py` | — |
 | `restart-n` | `reports/e8/power.py`, `configs/e8/restart.yaml` | — |
-| `memory-versions` | not yet | — |
-| `memory-sessions` | not yet | — |
-| `memory-n` | not yet | — |
-| `memory-contrasts` | not yet | — |
+| `memory-versions` | `configs/e8/restart-sessions.yaml` | — |
+| `memory-sessions` | `configs/e8/restart-sessions.yaml` | — |
+| `memory-n` | `configs/e8/restart-sessions.yaml` | — |
+| `memory-contrasts` | `reports/e8/findings.md` | — |
 | `solve-share` | not yet | — |
-| `decision-shares` | not yet | — |
+| `decision-shares` | `reports/e8/restart.py` | — |
 | `needs-max-tokens` | not yet | — |
 | `needs-restart` | not yet | — |
 | `dose-response` | not yet | — |
