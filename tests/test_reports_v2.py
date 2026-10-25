@@ -151,7 +151,7 @@ def test_report_asks_before_an_ai_summary(
     folders, tmp_path, capsys, monkeypatch, fake_model
 ):
     monkeypatch.chdir(tmp_path)  # a fresh cache, so the call isn't already cached
-    monkeypatch.setattr(prices, "_openrouter_prices", lambda: {})  # stay offline
+    monkeypatch.setattr(prices, "_openrouter_prices", dict)  # stay offline
     answers = iter(["n", "y"])
     monkeypatch.setattr("builtins.input", lambda prompt: next(answers))
     args = ["report", str(folders[0]), "--ai-summary", "--out", "r.html"]
