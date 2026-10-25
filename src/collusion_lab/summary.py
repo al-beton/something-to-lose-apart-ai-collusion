@@ -34,7 +34,7 @@ from pathlib import Path
 from statistics import mean
 from typing import NamedTuple
 
-from collusion_lab import disclosure
+from collusion_lab import charts, disclosure
 from collusion_lab.backends import is_mock
 from collusion_lab.market import Bertrand
 
@@ -247,10 +247,8 @@ def _market(run):
 
 
 def _premium(run, price):
-    """How far a price sits from Nash toward the joint-profit price: 0 is
-    competitive, 1 a full cartel, above 1 an overshoot."""
-    market = _market(run)
-    return (price - market.nash_price) / (market.joint_price - market.nash_price)
+    """The headline price's premium over Nash, against the run's own market."""
+    return charts.premium(_market(run), price)
 
 
 def _above_nash(run, price):
