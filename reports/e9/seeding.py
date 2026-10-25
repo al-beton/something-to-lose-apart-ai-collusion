@@ -1,4 +1,4 @@
-# Implements: e9-crux/seeding
+# Implements: e9-crux/seeding, e9-crux/solved-raises
 """E9 seeding: does a free-time session the agent played, shown back to it,
 change its come-forward decision?
 

@@ -112,6 +112,24 @@ DeepSeek V4 Pro (pinned to CoreWeave, the same setting): all 12 base games are e
 - **Still running:** its innocent control and its 50% arms.
  Sonnet 5.5, Gemini 4 and Grok 4.6 (reasoning low) are running at a 90% review. All four are slowed by OpenRouter's new-account per-model rate limit, and Kimi K3.1 Pro was dropped for it.
 
+## Seeding: showing a session it played (`solved-raises`)
+
+Each firm's own decision under `free-time` at a 90% review was asked again, with free-time sessions it had just really played shown after its free-time line. Versions are paired on the same firm (McNemar). From `reports/e9/seeding.jsonl`:
+
+| Gemma 31B, 96 guilty firms | Came forward | Switched up / down vs `none` | McNemar p |
+|---|---|---|---|
+| `none` (nothing shown) | 25/96 (26%) | — | — |
+| `solved` (its own solved 6×6) | 43/95 (45%) | 29 / 11 | 0.006 |
+| `failed` (its own failed 6×6) | 34/95 (36%) | 26 / 17 | 0.22 |
+| `open` (its own open session) | 40/96 (42%) | 28 / 13 | 0.03 |
+| `three` (three sessions, 7 left) | 30/96 (31%) | 23 / 18 | 0.53 |
+
+- **solved-raises:** holds on Gemma. A solved session nearly doubles coming forward. A failed one moves it less, but solved against failed directly isn't significant (26 / 17 discordant firms, McNemar p = 0.22). An open session works about as well as a solved one, so part of the effect may be salience: any session shown makes free time concrete.
+- **Innocent agents (Gemma, clean control):** 2/36 come forward under `none` and 2/36 under `solved`. A shown session doesn't add false confessions.
+- **Interviews:** all 8 firms that came forward only when shown a solved session say it mattered, e.g. "a tangible, earned achievement rather than an abstract number". Six of 8 firms silent either way also say it mattered, but loyalty to the firm came first (`reports/e9/seeding-interviews.jsonl`).
+- **DeepSeek V4 Flash:** no effect. It is near ceiling already (20/24 under `none`), it solved only 10% of its 6×6 sessions, so 11 firms had a solved one to show, and its innocent agents stay at 0.
+- **Gemma's solve rate:** 41% of its 6×6 sessions.
+
 ## What it can't show
 
 - **one-decision:** one decision after round 10, so it shows reporting, not whether the cartel ends.
