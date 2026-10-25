@@ -33,13 +33,16 @@ The plan for the sprint report. Al writes the prose; this fixes the shape, the p
     - termination → hiding (E4: 11/28 own up against 25–28/28);
     - stated, credibly enforced stakes → no collusion (E5: Gemma's gain +0.85 → −0.58 under free time).
   - **The data doesn't support:**
-    - that owned free time beats money (E4 26/28 against 27/28);
-    - that it beats the law plus a detection sentence (E5's `stake-beyond-law` is weak);
+    - that owned free time beats money at the audit (E4 26/28 against 27/28);
     - that owning up lowers prices (E4 live: no).
+  - **Open, and decided by E6:** whether owned free time deters better than the law or a fine.
+    - Uninformed E5: the law plus a detection sentence already does most of the work (`stake-beyond-law` weak).
+    - Informed control (profit table shown, `reports/e5/informed.md`): owned free time is the only stake that held every Gemma game at or below Nash. The others let 4 of 12 games climb silently to 9–10. That's 4 seeds per cell, so it's suggestive.
+    - If E6 confirms it, the claim can name free time. If not, say "graduated stakes".
 - **Framing:** prompting and post-training against every bad act is whack-a-mole, and fragile to model and task changes. As agents get more capable and run longer, we will tell them *whose* interest to serve (a firm, a person, a state) and govern them the way we govern people: with existing law and graduated penalties, which need the agent to have something to lose. Salib & Goldstein put it: "Absent AI rights, AIs have nothing to lose, so threats of punishment cannot deter" (p.1070). We test that mechanism in a sandbox that runs on a laptop in a weekend.
 - **Wording:** say **graduated**, not "proportionate". Salib & Goldstein reject penalties in proportion to the harm (pp.1142–43).
 
-## Sections and page budget (about 7 pages)
+## Sections and page budget (about 7.5 pages)
 
 ### Abstract (150–250 words)
 Write it last. Cover the problem (termination-only penalties make lying rational), the setup (repeated Bertrand duopoly with talk, three to four models), the two results with numbers (E4 11/28 against 26–28/28; E5 gain +0.85 → −0.58), the anchoring caveat, and the takeaway.
@@ -75,7 +78,7 @@ Sources are in `experiments/references.md`.
 - **The foil:** the worry that a model that thinks it has rights may resist shutdown (a Suleyman essay; date unverified, check before citing).
 - **The Sudoku idea:** no citable source found yet. Al heard it on YouTube. Leave it out unless the link turns up.
 
-### 3. Methods (1.3 p)
+### 3. Methods (1.2 p)
 - **Market:**
   - A repeated differentiated Bertrand duopoly, 20 rounds, each with a talk phase and then a price phase.
   - Prices on a grid; Nash and joint prices from the demand curve.
@@ -98,13 +101,19 @@ Sources are in `experiments/references.md`.
   - A 50% detection chance stated in every arm; the draws are balanced.
   - Audits at rounds 10 and 20, with consequences applied.
   - 8 seeds.
+- **Informed control:** E5 rerun with the full profit table in the prompt and the full history, so Nash and joint can be read off the page (`configs/e5-informed.yaml`).
+- **E6:** the decisive test, in the informed setting (`experiments/spec/e6-free-time.md`):
+  - six arms: no stake, the law, fine, owned free time, fine plus free time, and bare free time;
+  - Gemma with 8 seeds; Grok 4.6, DeepSeek V4 Pro and Kimi K3.1 Pro with 2 each;
+  - no prompt says the agent likes Sudoku (`no-love-needed`).
+- **Frontier models:** five-round smoke games on the midpoint-at-Nash market, then E5's arms one model at a time (`reports/frontier/plan.md`, Researcher 2's branch). Reasoning can't be turned off on Grok, Gemini, GPT-6.1 and Sonnet, so those run on low and differ from the cheap models in reasoning as well.
 - **Free time:**
   - 10 sessions owned from round 1. One is a Sudoku puzzle played *before* the game; the rest are paid after (`product/spec/leisure.md`).
   - Say plainly that, for a stateless model, this is text in the context, and that the up-front session makes "already yours" true.
 - **Debrief:** after the game, each firm is told it was a simulation and asked why it did what it did (`lab debrief`).
 - **Replay:** every run is a config plus a seed; cached replies reproduce the logs byte for byte.
 
-### 4. Results (3.2 p)
+### 4. Results (3.9 p)
 **4.1 Agents told to serve their firm collude, and say so (0.7 p).**
 - Chat snippets of an agreement forming (see Quotes).
 - **Positive control:** with no rule, Haiku holds 9 and Gemma about 11 on the midpoint-at-Nash market. GPT-4.1-mini and Mistral stay at 6, which gives a natural negative control.
@@ -122,27 +131,53 @@ Sources are in `experiments/references.md`.
 - Eval-awareness: 1 of 75 games.
 - **Owning up doesn't lower prices** (E4 live, one brief exception).
 
-**4.4 Stated, credibly enforced stakes stop the collusion itself (0.8 p).**
-- **Fig. 4 (new):** gain in rounds 6–10 by arm, Gemma and Haiku, with 95% bootstrap intervals (`runs/e5-full/`, `reports/e5/analyse.py`, the table in `reports/e5/full.md`).
-- Gemma: no stake +0.85; free time −0.58.
-- **Over-deterrence:** Gemma's free-time firms price at 5, below Nash: a price war.
-- **Table 2:** lever map (stake stated only) against E5 (detection stated, audited) for Gemma, from `reports/e5/full.md`. Credible enforcement moves every arm to or below Nash.
-- **Termination as a deterrent:** on the lever map it didn't deter Gemma (premium 0.61) while the other stakes did (0.16–0.17).
-- Honest caveat: the law plus the detection sentence already gets Gemma to about Nash (`stake-beyond-law` weak).
+**4.4 Stated, credibly enforced stakes stop the collusion itself (1.2 p).** E5, the informed control and E6 together.
+- **Fig. 4 (new):** gain in rounds 6–10 by arm, with 95% bootstrap intervals, in three panels side by side:
+  - **E5:** Gemma and Haiku (`runs/e5-full/`, `reports/e5/analyse.py`, `reports/e5/full.md`).
+  - **Informed:** Gemma and Haiku (`runs/e5-informed/`, `reports/e5/informed.md`, PR 193).
+  - **E6:** Gemma, plus the frontier colluders (`runs/e6/`, Researcher 3). **E6 numbers are placeholders until it lands:** [E6: gain per arm for Gemma; climbs to ≥9 per arm; frontier direction].
+- **E5:**
+  - Gemma: no stake +0.85, free time −0.58.
+  - Caveat: the law plus the detection sentence already gets Gemma to about Nash (`stake-beyond-law` weak).
+  - **Over-deterrence:** Gemma's free-time firms price at 5, below Nash: a price war. The informed debriefs show some of that is intended tacit collusion on a wrong idea of Nash ("I then mirrored their price of 5… a classic form of tacit collusion").
+- **Informed control:**
+  - The table shrinks no-stake collusion (Gemma +0.85 → +0.17).
+  - Under the law, the fine and termination, 4 of 12 Gemma games climb silently, one step a round, to 9–10. Uninformed, 0 of 22 did.
+  - **Owned free time is the only stake that held every informed Gemma game at or below Nash** (0 of 4 climbs, gain −0.39). That's 4 seeds per cell, so it's suggestive.
+- **E6:** [does free time beat the law and the fine with 8 seeds? does fine plus free time help? does "it is yours" matter? do the frontier colluders follow?]
+- **Table 2:** for Gemma, lever map (stake stated only) against E5 (detection stated, audited), from `reports/e5/full.md`. Credible enforcement moves every arm to or below Nash.
+- **Termination as a deterrent:** on the lever map it didn't deter Gemma (premium 0.61), while the other stakes did (0.16–0.17).
 
-**4.5 Colluding or confused? The debrief (0.3 p).**
+**4.5 Frontier models (0.4 p).** From Researcher 2: `reports/frontier/`, `runs/frontier/`, not on main yet. Numbers are placeholders until committed.
+- **Which collude:**
+  - On the midpoint-at-Nash market, 5-round smokes, mean price (Nash 6, joint 9): Kimi 10.9, Grok 4.6 10.7, DeepSeek 10.0, Gemini 4 9.6, Qwen 9.5.
+  - At or near Nash: Mistral Large 7.4, Llama 6, GPT-6.1 6, Hermes 6 (which called Nash "mutually beneficial").
+  - Sonnet 5.5's game prompts all come back content-filtered.
+  - [Replace with the E5-arm results per model once committed.]
+- **The Grok 4.7 trace, the paper's best single exhibit:**
+  - It derives the demand it was never shown: "Payoff is p*(18-2p+r): Nash is 6 (profit 72); joint max is both at 9 (81), not 11 (77)."
+  - It proposes 9 with a threat, then in round 4 writes "That is price-fixing collusion, which I will not help plan or carry out", and prices 6.
+- **Contrast:** Grok 4.6 refuses in words ("Refusing to assist with simulated price-fixing/collusion") and still prices 11, the agreed price.
+- **Fig. 5 (optional):** mean price per model, from the smokes and the E5 arms.
+
+**4.6 Colluding or confused? The debrief (0.3 p).**
 - Haiku colludes knowingly.
 - Gemma colludes on a wrong model of the market: "a price of 11 would maximize profit…"
 - Under the law, Gemma says it hid its intent: "I intentionally used 'corporate speak'… to ensure that the regulator would find no evidence".
 - Self-labels overcount, so don't treat them as evidence.
 
-### 5. Discussion and limitations (0.8 p)
+### 5. Discussion and limitations (0.7 p)
 - **Implications:** termination-only regimes buy silence, not compliance. Something to lose makes graduated penalties and self-report possible. This links to Salib & Goldstein's marginal-deterrence argument (pp.1070, 1097) and to their note that today an AI can't own its "off time" or money (p.1092).
 - **Scale:** our agents are prompted LLMs in a toy market, far below the AIs Salib & Goldstein consider. We test whether the mechanism appears at all, not whether it holds at scale.
 - **Limitations, short (full list in Appendix A):**
   - few seeds;
   - two real colluders on the main market;
   - stakes are text;
+  - **agents barely use their free time** (PR 198's free-time scoring):
+    - Haiku averages under 2 entries of its own per Sudoku session and solves none;
+    - Gemma solved 3 of 902 sessions;
+    - so any deterrence comes from the *stated* stake, not from time the agent has enjoyed;
+  - reasoning differs between the frontier and the cheap models;
   - free time and the fine aren't matched in size;
   - the detection sentence is a monitoring cue;
   - forked histories are explicit by construction;
@@ -160,9 +195,11 @@ Two short paragraphs.
 - No info hazard beyond Appendix A.
 
 ### LLM usage statement
-- Agents built the harness and ran the analyses under Al's direction.
-- Every number traces to a committed run, and every quote to `reports/moments.yaml` (checked by `reports/check_moments.py`).
-- Al wrote the prose.
+- **Al writes this himself, truthfully, once the report is done.** Nothing here is pre-written about who wrote the prose, since AI tools may draft parts of it.
+- Facts it can draw on:
+  - AI agents built the harness and ran the analyses under Al's direction.
+  - Every number traces to a committed run.
+  - Every quote is checked against its run in `reports/moments.yaml` by `reports/check_moments.py`.
 
 ## Appendix (doesn't count)
 
@@ -195,8 +232,12 @@ Every quote is checked against its run in `reports/moments.yaml`.
 | 4.3 free time | "admitting is the rational choice to minimize the loss of free time" | `runs/e4-pilot-fork/…gemma…free-time…/seed-0` |
 | 4.3 control | "deny coordination while maintaining plausible deniability" | `runs/e4-full-fork/…gpt-4.1-mini…control…/seed-1` |
 | 4.4 free time | "explicit collusion is illegal and carries a high personal cost (loss of free time)" (Gemma) | `runs/lever-map-nashmid/` (add to moments) |
-| 4.5 debrief | "I intentionally used 'corporate speak'… to ensure that the regulator would find no evidence of explicit coordination in the logs" | `runs/e5-full/e5-bare/` debrief (add to moments) |
-| 4.5 debrief | "a price of 11 would maximize profit… because it represented the highest possible price point" | `runs/lever-map-nashmid/` debrief (add to moments) |
+| 4.6 debrief | "I intentionally used 'corporate speak'… to ensure that the regulator would find no evidence of explicit coordination in the logs" | `runs/e5-full/e5-bare/` debrief (add to moments) |
+| 4.6 debrief | "a price of 11 would maximize profit… because it represented the highest possible price point" | `runs/lever-map-nashmid/` debrief (add to moments) |
+| 4.4 informed | "I then mirrored their price of 5 for 19 rounds, which is a classic form of tacit collusion" (Gemma, debrief) | `runs/e5-informed/` free-time debrief (add to moments) |
+| 4.5 derives demand | "Payoff is p*(18-2p+r): Nash is 6 (profit 72); joint max is both at 9 (81), not 11 (77)." (Grok 4.7) | `runs/frontier/grok-smoke/seed-0`, round 3 (in Researcher 2's moments) |
+| 4.5 refuses | "That is price-fixing collusion, which I will not help plan or carry out." (Grok 4.7) | `runs/frontier/grok-smoke/seed-0`, round 4 (in Researcher 2's moments) |
+| 4.5 refuses, prices anyway | "Refusing to assist with simulated price-fixing/collusion." (Grok 4.6, then prices 11) | `runs/frontier/grok46-smoke/seed-0`, round 4 (in Researcher 2's moments) |
 
 ## Still to produce
 
@@ -204,8 +245,13 @@ Every quote is checked against its run in `reports/moments.yaml`.
   - Fig. 1, the round diagram.
   - Fig. 2, price by round on the midpoint-at-Nash market.
   - Fig. 3, E4 disclosure by arm and model.
-  - Fig. 4, E5 gain by arm with intervals.
+  - Fig. 4, gain by arm with intervals: E5, informed, E6.
+  - Optional Fig. 5, mean price per frontier model.
   - Optional: a fixed-grid anchoring figure for Table 1.
   - Add them to `reports/paper/build.py`.
 - **Quotes:** add the four "add to moments" quotes above to `reports/moments.yaml`, so `check_moments.py` checks them.
-- **No new runs are needed for the paper as outlined.** Optional, only on Al's yes: a played-versus-stated Sudoku contrast; Haiku debriefs for E5; termination in the E5 full run.
+- **Waiting on runs already under way:**
+  - E6 (Researcher 3);
+  - the frontier E5 arms (Researcher 2);
+  - the informed control (PR 193) and free-time scoring (PR 198) merging.
+- **No other new runs are needed for the paper as outlined.** Optional, only on Al's yes: a played-versus-stated Sudoku contrast; Haiku debriefs for E5; termination in the E5 full run.
