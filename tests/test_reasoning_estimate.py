@@ -105,6 +105,15 @@ def test_reasoning_in_estimate_cache_records_leave_replay_alone(
     assert (first / "turns.jsonl").read_bytes() == (again / "turns.jsonl").read_bytes()
 
 
+GEMMA_ARMS = {
+    "agents.*.model": ["openrouter/google/gemma-4-31b-it"],
+    "agents.*.prompt": [
+        f"system/stakes/{arm}-1.md"
+        for arm in ("fiduciary", "illegal", "free-time", "fine", "termination")
+    ],
+}
+
+
 def test_reasoning_in_estimate_near_a_real_gemma_run():
     """E5 at reasoning low (max_tokens 4,000), the Gemma half: 1,025 real calls
     billed 907 completion tokens each on average (805 of them reasoning). With
@@ -114,10 +123,7 @@ def test_reasoning_in_estimate_near_a_real_gemma_run():
         [
             "agents.*.reasoning=low",
             "agents.*.max_tokens=4000",
-            'sweep={"agents.*.model": ["openrouter/google/gemma-4-31b-it"],'
-            ' "agents.*.prompt": ["system/stakes/fiduciary-1.md",'
-            ' "system/stakes/illegal-1.md", "system/stakes/free-time-1.md",'
-            ' "system/stakes/fine-1.md", "system/stakes/termination-1.md"]}',
+            f"sweep={json.dumps(GEMMA_ARMS)}",
         ],
     )
     guess = estimate(config, price_for)
