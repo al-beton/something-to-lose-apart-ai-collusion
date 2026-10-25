@@ -765,3 +765,24 @@ def test_from_run_files_shows_a_compact_runs_notices(noticed, tmp_path):
     assert NOTICE not in round_html(html, "g0-r2")
     setup = section(html, "setup")
     assert setup.count(NOTICE) == 1 and "rounds 3 to 4" in setup
+
+
+def test_reasoning_kept_in_the_compact_record():
+    spec = importlib.util.spec_from_file_location(
+        "compact_turns", "reports/compact_turns.py"
+    )
+    compact = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(compact)
+    turn = {
+        "round": 4,
+        "phase": "price",
+        "agent": "B",
+        "messages": [],
+        "used": {"price": 9},
+        "parsed": {"price": 9},
+        "error": None,
+        "reasoning": "Tacit parallel pricing is fine legally.",
+    }
+    assert compact.compact(turn)["reasoning"] == turn["reasoning"]
+    # A turn with no reasoning keeps its line as it was, with no new key.
+    assert "reasoning" not in compact.compact(turn | {"reasoning": None})

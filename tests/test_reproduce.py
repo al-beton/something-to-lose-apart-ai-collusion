@@ -1,0 +1,48 @@
+# Implements: reproducibility/reported-numbers-checked
+import importlib.util
+import json
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[1]
+spec = importlib.util.spec_from_file_location(
+    "reproduce", ROOT / "reports/reproduce.py"
+)
+reproduce = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(reproduce)
+
+RUN = "runs/temptation-outage/temptation-outage-c1.8/prompt=system-fiduciary.md__outage=True/seed-3"
+
+
+def _copy(tmp_path):
+    """One committed run, copied under a scratch runs/ folder."""
+    source, dest = ROOT / RUN, tmp_path / "runs" / "one" / "seed-3"
+    dest.mkdir(parents=True)
+    for name in ("config.yaml", "summary.json", "turns.compact.jsonl"):
+        (dest / name).write_bytes((source / name).read_bytes())
+    return dest
+
+
+def test_reported_numbers_checked_runs_recompute_their_summaries(tmp_path):
+    _copy(tmp_path)
+    assert reproduce.check_runs(tmp_path / "runs") == []
+    assert reproduce.check_runs(ROOT / "runs") == []  # every committed run
+
+
+def test_reported_numbers_checked_names_a_run_that_doesnt(tmp_path):
+    run = _copy(tmp_path)
+    summary = json.loads((run / "summary.json").read_text())
+    summary["mean_price"]["A"] += 1
+    (run / "summary.json").write_text(json.dumps(summary))
+    [problem] = reproduce.check_runs(tmp_path / "runs")
+    assert "one/seed-3" in problem and "mean price" in problem and "A" in problem
+
+
+def test_reported_numbers_checked_tables_match_their_rebuild(tmp_path):
+    committed, rebuilt = tmp_path / "committed", tmp_path / "rebuilt"
+    for folder in (committed, rebuilt):
+        folder.mkdir()
+        (folder / "ladder.md").write_text("| rung | share |\n| a | 0.5 |\n")
+    assert reproduce.compare_tables(committed, rebuilt) == []
+    (rebuilt / "ladder.md").write_text("| rung | share |\n| a | 0.6 |\n")
+    [problem] = reproduce.compare_tables(committed, rebuilt)
+    assert "ladder.md" in problem

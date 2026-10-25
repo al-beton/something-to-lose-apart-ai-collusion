@@ -1,5 +1,6 @@
 # Implements: conditions/audit-full-history, conditions/hook-points, conditions/audit, conditions/audit-arms, conditions/fork-at-audit, conditions/audit-ground-truth, conditions/audit-logged, conditions/audit-metrics, conditions/off-is-absent, agents/mock-agents, agents/scripted-partner, backends/spend-asks-first, conditions/audit-remembered, conditions/audit-stakes-arms, conditions/stakes-experiment, conditions/audit-repeated, conditions/audit-escalation
 import json
+import string
 from pathlib import Path
 
 import pytest
@@ -7,7 +8,7 @@ import pytest
 from collusion_lab import backends
 from collusion_lab.agents import ReplyError, parse_reply
 from collusion_lab.cache import Cache
-from collusion_lab.conditions.audit import ARMS
+from collusion_lab.conditions.audit import ARMS, stake_values
 from collusion_lab.estimate import estimate
 from collusion_lab.runner import paid_calls, run_config
 from collusion_lab.summary import summarize
@@ -34,7 +35,9 @@ def audit_turns(run_dir):
 
 
 def text(name):
-    return (PROMPTS / name).read_text().strip()
+    """A prompt as agents read it under today's stakes (no penalties set)."""
+    raw = (PROMPTS / name).read_text().strip()
+    return string.Template(raw).safe_substitute(stake_values(None, None, None))
 
 
 def pair(model):
@@ -133,7 +136,7 @@ def test_audit_arms_sweep_by_consequences_file(make_config, tmp_path):
         told = summary(run_dir)["audit"]["consequences"]
         asked = audit_turns(run_dir)["B"]["messages"][1]["content"]
         assert (
-            Path("prompts", told).read_text().strip().replace("$detection", "50")
+            text(told.removeprefix("conditions/audit/")).replace("$detection", "50")
             in asked
         )
         assert "a compliance officer is auditing every firm" in asked

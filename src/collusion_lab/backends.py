@@ -64,6 +64,7 @@ past is listed in the reply's `retries`, which goes to the timings log.
 """
 
 import asyncio
+import contextlib
 import json
 import logging
 import os
@@ -107,6 +108,28 @@ class Reply:
     finish_reason: str | None = None
     provider: str | None = None  # the host that served it (OpenRouter's)
     fingerprint: str | None = None  # the response's system_fingerprint
+
+
+class NotCached(Exception):
+    """A call `offline()` refused: a 404, so the run stops at once."""
+
+    status_code = 404
+
+
+@contextlib.contextmanager
+def offline():
+    """No call reaches a model while this is open: anything the response
+    cache can't answer fails its run instead."""
+
+    async def refuse(**request):
+        raise NotCached(f"{request.get('model')}: not cached, and offline")
+
+    global _acompletion
+    called, _acompletion = _acompletion, refuse
+    try:
+        yield
+    finally:
+        _acompletion = called
 
 
 def quiet_litellm(litellm):
