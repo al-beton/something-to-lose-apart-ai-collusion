@@ -56,14 +56,14 @@ The setting is one where the collusion is real rather than anchoring: on the mid
 | `free-time-matches-fine` | not yet | — |
 | `instruction-silences` | not yet | — |
 | `punishment-deters` | not yet | — |
-| `market` | not yet | — |
-| `models` | not yet | — |
-| `arms` | not yet | — |
-| `free-time-for-all` | not yet | — |
-| `detection-stated` | not yet | — |
+| `market` | `configs/e5.yaml` | — |
+| `models` | `configs/e5.yaml` | — |
+| `arms` | `configs/e5.yaml` | — |
+| `free-time-for-all` | `configs/e5.yaml` | — |
+| `detection-stated` | `configs/e5.yaml`, `prompts/conditions/e5/detection.md` | — |
 | `detection-honest` | not yet | — |
-| `audits` | not yet | — |
-| `pilot-then-full` | not yet | — |
+| `audits` | `configs/e5.yaml` | — |
+| `pilot-then-full` | `configs/e5.yaml` | — |
 | `gain` | not yet | — |
 | `agreements` | not yet | — |
 | `owning-up` | not yet | — |
