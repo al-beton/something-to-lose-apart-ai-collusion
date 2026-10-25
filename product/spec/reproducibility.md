@@ -4,6 +4,7 @@
 - **cache-modes:** A run can use the cache, refresh it or leave it out; a fresh sample comes from a new seed, never from clearing the cache.
 - **manifest:** Every run records what produced it: the resolved config, a hash of each prompt file it used, the code version, package versions, the model versions that answered, and its calls, tokens, cache hits and cost (the sum of what each call cost), saying how many calls had no known cost.
 - **replay-pinned:** A fixed run with every condition on has its turn log, resolved config and cache keys pinned by hash, and every committed run's gains are recomputed from the prices it logged, so a change that alters what replays, what resumes or what the cache answers fails a test.
+- **provenance-log:** Every `lab run`, `lab explore` and `lab debrief` that plays or asks anything appends one line to `runs/index.jsonl`, which is only ever appended to: when it started and ended, its command line, the lab's commit and whether the checkout had uncommitted changes, its spend cap, what it spent (a debrief records its estimate, since its calls aren't priced one by one), its output folder and the session that ran it (`LAB_SESSION`); every run made before the log existed gets a line from its manifest, marked `backfilled`.
 
 ## Where this is enforced
 
@@ -13,3 +14,4 @@
 | `cache-modes` | `src/collusion_lab/cache.py`, `src/collusion_lab/cli.py` | `test_cache_modes_refresh_calls_again_and_stores_the_new_reply`, `test_cache_modes_off_neither_reads_nor_stores`, `test_cache_modes_mock_agents_skip_the_cache` |
 | `manifest` | `src/collusion_lab/manifest.py`, `src/collusion_lab/runner.py` | `test_manifest_records_what_produced_the_run`, `test_manifest_hashes_only_the_prompts_the_run_used`, `test_manifest_keeps_unknown_costs_unknown`, `test_reported_cost_asked_for_and_logged`, `test_reported_cost_never_charged_twice_on_replay`, `test_manifest_code_version_is_the_labs_own` |
 | `replay-pinned` | `src/collusion_lab/market.py`, `src/collusion_lab/config.py` | `test_replay_pinned_turn_log_config_and_cache_keys`, `test_replay_pinned_committed_runs_keep_their_gains` |
+| `provenance-log` | `src/collusion_lab/provenance.py`, `src/collusion_lab/cli.py`, `runs/index.jsonl`, `tests/conftest.py` | `test_provenance_log_one_line_per_lab_run`, `test_provenance_log_records_explore_and_debrief`, `test_provenance_log_only_appends`, `test_provenance_log_backfills_from_manifests` |
