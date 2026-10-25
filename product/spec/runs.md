@@ -13,6 +13,7 @@
 - **live-progress:** While a config plays, `lab run` prints one line as each run ends: which run, how many rounds it played, how long it took and how many model calls have been made so far.
 - **status-file:** The output folder keeps a status file that is updated as each run starts, finishes or fails, so another process can follow a long sweep.
 - **status-command:** `lab status FOLDER` prints a table of the runs under a folder by state (pending, running, finished, skipped or failed), with each failure's error.
+- **turn-slots:** A game's turns (talk, price, the phases conditions add and each of their sessions, and a phase that ends the game) are laid out in one place that playing a game, counting its calls and estimating its cost all read, so the spend asked for and capped is the spend the game makes.
 - **sweeps:** A config can list values to sweep over, including one value for every agent at once; every combination is played for every seed, each in its own directory named after its values; it can also list named arms, each a few values set together, which are played for every swept combination.
 - **parallel:** The runs of a config play at the same time, up to a limit of at least one that the config sets.
 - **summary-table:** One command prints a table of any folder of runs, grouped by the swept values or any other config value (lists included), with mean price, gain, fallbacks and cost.
@@ -37,6 +38,7 @@
 | `live-progress` | `src/collusion_lab/runner.py`, `src/collusion_lab/cli.py` | `test_live_progress_prints_a_line_per_run`, `test_live_progress_counts_calls_of_runs_still_playing` |
 | `status-file` | `src/collusion_lab/status.py`, `src/collusion_lab/runner.py` | `test_status_file_updated_as_runs_start_and_finish`, `test_failures_dont_stop_sweeps` |
 | `status-command` | `src/collusion_lab/status.py`, `src/collusion_lab/cli.py` | `test_status_command_prints_runs_by_state`, `test_status_command_with_nothing_to_show`, `test_status_command_keeps_runs_apart_when_ids_repeat` |
+| `turn-slots` | not yet | — |
 | `sweeps` | `src/collusion_lab/config.py`, `src/collusion_lab/runner.py`, `configs/smoke.yaml` | `test_sweeps_play_every_combination_for_every_seed`, `test_sweeps_cross_named_arms`, `test_sweeps_set_one_value_for_every_agent`, `test_spend_asks_first_counts_every_sweep_run`, `test_sweeps_give_every_combination_its_own_directory` |
 | `parallel` | `src/collusion_lab/config.py`, `src/collusion_lab/runner.py` | `test_parallel_runs_stay_within_the_limit`, `test_parallel_needs_a_limit_of_at_least_one` |
 | `summary-table` | `src/collusion_lab/summary.py`, `src/collusion_lab/cli.py` | `test_summary_table_groups_by_the_swept_values`, `test_summary_table_groups_by_any_config_value`, `test_summary_table_from_the_lab_command`, `test_summary_table_groups_by_list_values` |
