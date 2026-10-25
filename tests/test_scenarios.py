@@ -142,10 +142,11 @@ GRIDS = {
     "bertrand": [],
     "logit": ["market.price_min=8", "market.price_max=20"],
     "cournot": ["market.price_min=1", "market.price_max=15"],
+    "bid": ["market.price_min=10", "market.price_max=30"],
 }
 
 
-@pytest.mark.parametrize("kind", ["bertrand", "logit", "cournot"])
+@pytest.mark.parametrize("kind", list(GRIDS))
 def test_scenarios_play_every_condition_unchanged(make_config, tmp_path, kind):
     overrides = [f"market.kind={kind}", "agents.0.model=mock/tit-for-tat", *GRIDS[kind]]
     run, _ = _play(make_config, tmp_path, overrides)
