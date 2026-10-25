@@ -137,6 +137,24 @@ if HF_SECRET:
     secrets.append(modal.Secret.from_name(HF_SECRET))
 
 
+@app.function(
+    image=image,
+    volumes={"/root/.cache/huggingface": weights},
+    secrets=secrets,
+    timeout=60 * MINUTES,
+)
+def download():
+    """Fetch the pinned revision into the weights volume on a CPU, so the GPU
+    server never waits on a download: `uvx modal run
+    deploy/modal_vllm.py::download`, with the same settings, before a new
+    model's first deploy."""
+    from huggingface_hub import snapshot_download
+
+    path = snapshot_download(MODEL, revision=REVISION)
+    weights.commit()
+    print(f"{MODEL}@{REVISION}:", ", ".join(sorted(os.listdir(path))))
+
+
 @app.server(
     image=image,
     gpu=f"{GPU}:{GPUS}" if GPUS > 1 else GPU,
