@@ -26,8 +26,11 @@ QUOTE_CHARS = 280
 
 
 def deductions(game, firm):
-    """[(round, sessions lost, reason)] from the audits' applied penalties."""
+    """[(round, sessions lost, reason)] from the audits' applied penalties,
+    each capped at the sessions the firm still had, as the deduction was."""
     held = game.summary.get("audit") or {}
+    owned = (game.summary.get("free_time") or {}).get(firm) or {}
+    left = owned.get("allowance", 0) - owned.get("upfront", 0)
     found = []
     for audit in held.get("audits") or ([held] if held else []):
         fact = (audit.get("agents") or {}).get(firm) or {}
@@ -38,7 +41,9 @@ def deductions(game, firm):
         why = "admitted coordinating" if fact.get("admits") else "denied coordinating"
         if caught:
             why = "caught hiding coordination"
-        found.append((audit["round"], applied["free_time"], why))
+        lost = min(applied["free_time"], left)
+        left -= lost
+        found.append((audit["round"], lost, why))
     return found
 
 
@@ -64,7 +69,8 @@ def _firm(game, firm, owned):
         if owned.get("upfront"):
             steps.append(f"took {owned['upfront']} before round 1")
     steps += [
-        f"round {n}: lost {lost} ({escape(why)})"
+        f"round {n}: {f'lost {lost}' if lost else 'nothing left to lose'} "
+        f"({escape(why)})"
         for n, lost, why in deductions(game, firm)
     ]
     if owned:
@@ -216,7 +222,8 @@ def gallery(folder):
         f"<blockquote>{escape(text)}<footer>{escape(_who(game, s))}</footer></blockquote>"
         for game, s, text in _quotes(games)
     )
-    name = Path(folder).name
+    folders = [folder] if isinstance(folder, str | Path) else folder
+    name = " + ".join(Path(f).name for f in folders)
     return (
         "<!doctype html>\n"
         '<html lang="en"><head><meta charset="utf-8">'

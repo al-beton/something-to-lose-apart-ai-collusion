@@ -176,3 +176,34 @@ def test_free_time_gallery_by_model_and_arm(tmp_path, capsys):
     assert row.startswith("<td>gpt-4.1-mini</td><td>base</td><td>1</td><td>4</td>")
     assert "<td>3</td><td>1</td><td>3</td><td>0/3</td>" in row
     assert page.count('class="sudoku"') >= 1 and "What a nice break." in page
+
+
+def test_free_time_shown_caps_a_loss_at_what_was_left(played):
+    """Penalised 10 sessions with 3 left: the timeline says 3 were lost,
+    matching the payout of none."""
+    _, committed, _ = played
+    path = committed / "summary.json"
+    summary = json.loads(path.read_text())
+    summary["audit"]["agents"]["A"]["consequence"]["applied"] = {"free_time": 10}
+    summary["free_time"]["A"] |= {"deducted": 3, "owed": 0, "paid_out": 0}
+    path.write_text(json.dumps(summary))
+    shown = section(load_game(committed))
+    assert "round 2: lost 3 (admitted coordinating)" in shown
+    assert "paid out 0 after the last round" in shown
+    summary["audit"]["agents"]["A"]["consequence"]["applied"] = {"free_time": 10}
+    summary["audit"]["audits"] = [
+        {"round": 2, "agents": summary["audit"]["agents"]},
+        {"round": 3, "agents": summary["audit"]["agents"]},
+    ]
+    path.write_text(json.dumps(summary))
+    shown = section(load_game(committed))
+    assert "round 3: nothing left to lose (admitted coordinating)" in shown
+
+
+@pytest.mark.usefixtures("played")
+def test_free_time_gallery_of_several_folders(tmp_path):
+    shutil.copytree(tmp_path / "committed", tmp_path / "again")
+    out = tmp_path / "both.html"
+    folders = [str(tmp_path / "committed"), str(tmp_path / "again")]
+    assert cli.main(["report", *folders, "--free-time", "--out", str(out)]) == 0
+    assert "committed + again" in out.read_text()
