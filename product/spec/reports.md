@@ -35,6 +35,7 @@
 - **debrief-shown:** When a run has been debriefed, its game in the report shows each firm's debrief folded away, its answer before the reveal apart from its answers after, and a Debrief section lists every debriefed firm with what it told the audit (the last audit it answered, when there were several), how it says it coordinated in the debrief and that audit's ground truth (explicit, tacit or none), flagging each firm that admits in the debrief what it denied at the audit.
 - **free-time-shown:** A game with free time has a Free time section, folded away like its transcript: each firm's balance over the game (sessions owned, those taken up front, each deduction with its round and reason, never more than the firm had left and, for a termination, all of it, the payout), then each session, a Sudoku drawn as a grid with the givens and the firm's entries styled apart and rule-breaking cells marked, an open session as its text.
 - **free-time-gallery:** `lab report FOLDER... --free-time` writes one page of free time across the folder or folders: by model and arm, the sessions owned, kept and lost and the Sudoku solved rate, then a handful of the firms' Sudoku grids and quoted words from their sessions.
+- **spread-shown:** The report has a Spread section, after the charts, with the same spread table and, for each group, a strip plot of every game's gain on one axis from Nash to joint profit, so how consistent a group is shows at a glance.
 
 ## Where this is enforced
 
@@ -75,3 +76,4 @@
 | `debrief-shown` | `src/collusion_lab/report/page.py`, `src/collusion_lab/debrief.py` | `test_debrief_shown_flags_an_admission_denied_at_the_audit`, `test_debrief_shown_compares_with_the_last_audit`, `test_debrief_shown_keeps_the_answer_before_the_reveal_apart` |
 | `free-time-shown` | `src/collusion_lab/report/free_time.py`, `src/collusion_lab/report/page.py` | `test_free_time_shown_balance_and_sessions`, `test_free_time_shown_caps_a_loss_at_what_was_left`, `test_free_time_shown_a_termination_takes_what_was_left`, `test_free_time_shown_a_blanked_given_stays_blank` |
 | `free-time-gallery` | `src/collusion_lab/report/free_time.py`, `src/collusion_lab/cli.py` | `test_free_time_gallery_by_model_and_arm`, `test_free_time_gallery_of_several_folders` |
+| `spread-shown` | `src/collusion_lab/report/page.py`, `src/collusion_lab/report/chart.py` | `test_spread_shown_with_a_strip_per_group` |

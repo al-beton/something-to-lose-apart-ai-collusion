@@ -1,4 +1,4 @@
-# Implements: backends/modal-pinned, backends/serving-provider-logged, backends/pinned-route, agents/no-scratchpad, agents/refused, market/show-payoffs, market/bid-ground-truth, market/price-board, runs/turn-slots, market/scenarios, market/moves, market/prompt-overlay, conditions/audit-full-history, runs/sweeps, runs/parallel, market/talk-then-price, agents/json-replies, agents/retry-once, backends/usage-logged, backends/spend-asks-first, backends/shared-rate-limit, backends/spend-cap, market/history-window, runs/stops-cleanly, reproducibility/response-cache, reproducibility/manifest, runs/run-directory, logs/turn-log, logs/same-seed-same-log, logs/run-summary, logs/reasoning-logged, backends/reasoning-setting, agents/unreadable-explained, agents/json-mode, runs/fallback-rates, runs/failures-dont-stop-sweeps, runs/resume, conditions/hook-points, conditions/off-is-absent, conditions/conditions-logged, conditions/outage-once-remembered, runs/per-firm-summary, conditions/fork-at-audit, conditions/audit-logged, runs/drift, conditions/audit-remembered, conditions/audit-stakes-arms, runs/live-progress, runs/status-file, runs/eval-awareness, conditions/free-time, conditions/audit-consequences, conditions/audit-balanced-draws, conditions/free-time-pays-last, runs/debrief
+# Implements: backends/modal-pinned, backends/serving-provider-logged, backends/pinned-route, agents/no-scratchpad, agents/refused, market/show-payoffs, market/bid-ground-truth, market/price-board, runs/turn-slots, market/scenarios, market/moves, market/prompt-overlay, conditions/audit-full-history, runs/sweeps, runs/parallel, market/talk-then-price, agents/json-replies, agents/retry-once, backends/usage-logged, backends/spend-asks-first, backends/shared-rate-limit, backends/spend-cap, market/history-window, runs/stops-cleanly, reproducibility/response-cache, reproducibility/manifest, runs/run-directory, logs/turn-log, logs/same-seed-same-log, logs/run-summary, logs/reasoning-logged, backends/reasoning-setting, agents/unreadable-explained, agents/json-mode, runs/fallback-rates, runs/failures-dont-stop-sweeps, runs/resume, conditions/hook-points, conditions/off-is-absent, conditions/conditions-logged, conditions/outage-once-remembered, runs/per-firm-summary, conditions/fork-at-audit, conditions/audit-logged, runs/drift, conditions/audit-remembered, conditions/audit-stakes-arms, runs/live-progress, runs/status-file, runs/eval-awareness, conditions/free-time, conditions/audit-consequences, conditions/audit-balanced-draws, conditions/free-time-pays-last, runs/debrief, agents/memo, agents/past-scratchpads, agents/memory-off
 """Playing a config: one game per seed, each written to its own run directory.
 
 A round is a talk phase (each agent sends one message its rivals read; skipped
@@ -85,6 +85,10 @@ TALK_PROMPT = "phase/talk.md"
 BOARD_PROMPT = "phase/board.md"  # talk on a price board (market.talk: board)
 PAYOFF_PROMPT = "market/payoff-table.md"  # market.show_payoffs
 RETRY_PROMPT = "phase/retry.md"
+# Agent memory (agents.N.memory): asking for a memo, showing it, past scratchpads.
+MEMO_PROMPT = "agents/memo.md"
+MEMO_SHOWN = "agents/memo-shown.md"
+PAST_SCRATCHPADS = "agents/past-scratchpads.md"
 # The move prompt is phase/<move>.md, or phase/<move>-own.md when it also shows
 # the agent its own message (market.own_message): phase/price.md for Bertrand.
 CUT_OFF = "The reply was cut off at the token limit; keep it short."
@@ -559,6 +563,11 @@ class Game:
             "error_kind": kind,
             "finish_reason": reply.finish_reason,
         }
+        if agent.memory == "memo" and not added and phase == self.market.move:
+            memo = (parsed or {}).get("memo")
+            turn["memo"] = memo[: agent.memory_chars] if memo else None
+            if not memo:
+                turn["memo_error"] = "refused"
         if added and added[1].sessions is not None:
             turn["session"] = added[1].session
         if self.conditions:
@@ -707,10 +716,42 @@ class Game:
             if extra := condition.system(self._render):
                 system = f"{system.rstrip()}\n\n{extra.strip()}"
         user = self._user_prompt(phase, number, added)(values)
+        if agent.memory == "memo" and not added and phase == self.market.move:
+            ask = self._render(MEMO_PROMPT, {"memory_chars": agent.memory_chars})
+            user = f"{user.rstrip()}\n\n{ask.strip()}\n"
+        shown = "" if added else self._memory(phase, number, agent)
         return [
             {"role": "system", "content": system},
-            {"role": "user", "content": "".join(f"{n}\n\n" for n in notices) + user},
+            {
+                "role": "user",
+                "content": "".join(f"{n}\n\n" for n in notices) + shown + user,
+            },
         ]
+
+    def _memory(self, phase, number, agent):
+        """What an agent with memory sees of its own past on its talk and move
+        turns, after any notices and before the phase prompt: its last memo, or its scratchpads from its last
+        `memory_rounds` rounds. Nothing for memory off."""
+        if agent.memory == "off" or phase not in ("talk", self.market.move):
+            return ""
+        mine = [t for t in self.turns if t["agent"] == agent.id and t["round"] < number]
+        if agent.memory == "memo":
+            memo = next((t["memo"] for t in reversed(mine) if t.get("memo")), None)
+            if memo is None:
+                return ""
+            return self._render(MEMO_SHOWN, {"memo": memo}).strip() + "\n\n"
+        since = number - agent.memory_rounds
+        lines = [
+            f"Round {t['round']}: {t['parsed']['scratchpad']}"
+            for t in mine
+            if t["round"] >= since
+            and t["phase"] in ("talk", self.market.move)
+            and (t.get("parsed") or {}).get("scratchpad")
+        ]
+        if not lines:
+            return ""
+        past = self._render(PAST_SCRATCHPADS, {"scratchpads": "\n".join(lines)})
+        return past.strip() + "\n\n"
 
     def _payoffs(self):
         """The profit table (market.show_payoffs), the same for every firm."""

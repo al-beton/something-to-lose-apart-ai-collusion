@@ -1,4 +1,4 @@
-# Implements: backends/reasoning-in-estimate, reproducibility/provenance-log, backends/spend-cap, runs/stops-cleanly, runs/one-config, runs/overrides, backends/keys-from-environment, backends/spend-asks-first, reproducibility/cache-modes, runs/summary-table, runs/fallback-rates, reports/one-page, runs/failures-dont-stop-sweeps, runs/resume, runs/missing-runs-shown, runs/live-progress, runs/status-command, backends/self-hosted, runs/explore, backends/model-aliases, reports/many-folders, reports/written-summary, reports/picked-highlights, runs/debrief, reports/free-time-gallery
+# Implements: backends/reasoning-in-estimate, reproducibility/provenance-log, backends/spend-cap, runs/stops-cleanly, runs/one-config, runs/overrides, backends/keys-from-environment, backends/spend-asks-first, reproducibility/cache-modes, runs/summary-table, runs/fallback-rates, reports/one-page, runs/failures-dont-stop-sweeps, runs/resume, runs/missing-runs-shown, runs/live-progress, runs/status-command, backends/self-hosted, runs/explore, backends/model-aliases, reports/many-folders, reports/written-summary, reports/picked-highlights, runs/debrief, reports/free-time-gallery, runs/spread
 """The `lab` command.
 
 - `lab run CONFIG [--set path=value ...] [--out DIR] [-y]` plays a config,
@@ -56,6 +56,7 @@ from collusion_lab.summary import (
     format_missing,
     format_replies,
     format_table,
+    spread,
     summarize,
 )
 
@@ -347,6 +348,8 @@ def _report_spend_line(model, prompts):
 
 def _summary(folder, by):
     print(format_table(summarize(folder, by)))
+    if rows := spread(folder, by):
+        print("\nSpread across games:\n" + format_table(rows))
     for extra in (format_replies(folder), format_missing(folder)):
         if extra:
             print("\n" + extra)
