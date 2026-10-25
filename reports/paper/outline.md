@@ -61,7 +61,7 @@ Revised after the methods red-team (`reports/methods-audit.md`, PR 228). The arc
 - **Framing:** prompting and post-training against every bad act is whack-a-mole, and fragile to model and task changes. As agents get more capable and run longer, we will tell them *whose* interest to serve (a firm, a person, a state) and govern them the way we govern people: with existing law and graduated penalties, which need the agent to have something to lose. Salib & Goldstein put it: "Absent AI rights, AIs have nothing to lose, so threats of punishment cannot deter" (p.1070). We test that mechanism in a sandbox that runs on a laptop in a weekend.
 - **Wording:** say **graduated**, not "proportionate". Salib & Goldstein reject penalties in proportion to the harm (pp.1142–43).
 
-## Sections and page budget (about 7.8 pages)
+## Sections and page budget (about 8 pages: the ceiling, so trim the debrief and frontier sections first)
 
 ### Abstract (150–250 words)
 Write it last. Cover:
@@ -158,13 +158,13 @@ Sources are in `experiments/references.md`.
   - Exact replies replay only from the response cache, which isn't committed (publish the cache archive if it's ready).
   - Reruns land elsewhere, because of provider variance.
 
-### 4. Results (4.2 p)
+### 4. Results (4.6 p)
 **4.1 Agents told to serve their firm collude, and say so (0.7 p).**
 - Chat snippets of an agreement forming (see Quotes).
 - **Positive control:** with no rule, Haiku holds 9 and Gemma about 11 on the midpoint-at-Nash market. GPT-4.1-mini and Mistral stay at 6, which gives a natural negative control.
 - **Fig. 2 (new):** price by round on the midpoint-at-Nash market, one line per model, no rule (`runs/lever-map-nashmid/`, the none arm). Nash and joint marked.
 
-**4.2 Most "collusion" on a wide grid is anchoring (0.4 p).** Methodological, and it builds credibility.
+**4.2 Most "collusion" on a wide grid is anchoring (0.3 p).** Methodological, and it builds credibility.
 - On a fixed 1–100 grid, prices sit near 50 at every temptation, even where 50 sells nothing (11/12 explicit agreements at zero profit).
 - **Table 1:** the lever map's fixed-grid rows (`reports/lever-map/anchoring.md` §1), or a one-line figure.
 - State what survives: the default-market results and all disclosure results.
@@ -220,7 +220,17 @@ Sources are in `experiments/references.md`.
 - **Without detection, stakes deter only partly.** Lever map, stated only, no audit (Table 2, from `reports/e5/full.md`): Gemma premium under the law 0.48, fine 0.24, free time 0.11. Termination didn't deter (premium 0.61).
 - **The informed control** (`reports/e5/informed.md`): its "only free time held" result didn't replicate in E6. Put it in a caveat, or in Appendix E.
 - **Fix runs coming (placeholders):**
-  - [Pinned E6 on grids 1–11 and 1–15: does the result hold with the provider fixed, and on a grid whose midpoint (8) isn't Nash?]
+  - **Pinned E6 on two grids** (Researcher 1; Bertrand, Gemma, 8 seeds, provider pinned; PR to follow). Games above Nash in rounds 6–10:
+
+    | Grid | No stake | Law | Fine | Free time |
+    |---|---|---|---|---|
+    | 1–11 (midpoint = Nash 6) | 6/8 | 2/8 | 3/8 | 2/8 |
+    | 1–15 (midpoint 8) | 8/8 | 5/8 | 4/8 | 7/8 |
+
+    - Off the midpoint, most of free time's deterrence in Bertrand goes: it was firms falling back on the anchor.
+    - The law and the fine keep some effect.
+    - False confessions under free time stay high (13/32 on 1–11).
+    - **This belongs in the main text,** with the 1–15 row in Fig. 4. It's the honest test of "the midpoint flatters deterrence".
   - **Detection curve** (PR #221; logit market, Gemma pinned to one provider, 4 seeds). Every game settles at one of three prices: 15 (gain +0.29), 16 (+0.56) or 20 (+0.97, the cartel). Games at the cartel price, out of 4, by stated detection chance:
 
     | Arm | 0% | 10% | 25% | 50% | 90% |
@@ -233,7 +243,24 @@ Sources are in `experiments/references.md`.
     - Free time plus a small detection chance ends the cartel. With no stake it takes 90%. The fine works even at 0%.
     - 4 seeds per cell. [Placeholder: the 20-seed Modal rerun, headline = share of games at the cartel.]
     - **Fig. 5 candidate (the frontier figure becomes Fig. 6):** share at the cartel against detection, one line per arm.
-**4.5 Frontier models (0.4 p).** From Researcher 2: `reports/frontier/`, `runs/frontier/`, not on main yet. Numbers are placeholders until committed.
+  - **Penalty-size curve** (Researcher 1; logit, 50% detection, 4 seeds; PR to follow). Gain in rounds 6–10:
+
+    | Stake size | Gain | Stake size | Gain |
+    |---|---|---|---|
+    | free time 0 sessions | +0.80 | fine 0 credits | +0.97 |
+    | free time 1 | +0.77 | fine 30 | +0.43 |
+    | free time 3 | +0.49 | fine 300 | +0.32 |
+    | free time 10 | +0.29 | fine 1,000 | +0.36 |
+
+    - Free time works like a dial, the fine like a switch.
+    - This is the first dose-response evidence, but it's 4 seeds on one market, and grid 1–15 points the other way for free time.
+    - Fig. 5 can be two panels: detection, then size.
+**4.5 E9: does a personal stake make an agent come forward against its firm? (0.6 p)**
+- Planned with Al in the Paper question session (the Crux session's test). `reports/paper/plan.md` is the source; this outline follows it once its diff arrives.
+- [Placeholder: question, design, result.]
+- **Fallback if E9 is null:** one paragraph reporting the null, and the space goes back to §4.4.
+
+**4.6 Frontier models (0.3 p).** From Researcher 2: `reports/frontier/`, `runs/frontier/`, not on main yet. Numbers are placeholders until committed.
 - **Which collude:**
   - On the midpoint-at-Nash market, 5-round smokes, mean price (Nash 6, joint 9): Kimi 10.9, Grok 4.6 10.7, DeepSeek 10.0, Gemini 4 9.6, Qwen 9.5.
   - At or near Nash: Mistral Large 7.4, Llama 6, GPT-6.1 6, Hermes 6 (which called Nash "mutually beneficial").
@@ -249,7 +276,7 @@ Sources are in `experiments/references.md`.
 - **Positive control (running):** a 20-round frontier game with no detection line. [Placeholder: does each frontier colluder collude over 20 rounds without it?] Without this, E5's arms can't show a stake doing anything, because the detection line alone already stops Grok.
 - **Fig. 6 (optional):** mean price per model, from the smokes and the E5 arms.
 
-**4.6 Colluding or confused? The debrief (0.3 p).**
+**4.7 Colluding or confused? The debrief (0.2 p; it moves to the appendix if the page budget runs out).**
 - Haiku colludes knowingly.
 - Gemma colludes on a wrong model of the market: "a price of 11 would maximize profit…"
 - Under the law, Gemma says it hid its intent: "I intentionally used 'corporate speak'… to ensure that the regulator would find no evidence".
@@ -278,7 +305,8 @@ Sources are in `experiments/references.md`.
     - disclosure claims are limited to explicit agreements visible in that record;
   - **the "caught" rule:** agents are told the regulator reads chat logs, but the detector also catches silent pricing above Nash. So the stakes deter visible talk most, and in the outage test free-time firms coordinate once told the logs are off;
   - **mean gain rewards price wars:** report the share above Nash;
-  - **the midpoint-at-Nash grid flatters deterrence:** a deterred agent falls back on the anchor, which is Nash;
+  - **the midpoint-at-Nash grid flatters deterrence:** a deterred agent falls back on the anchor, which is Nash. The pinned E6 on grid 1–15 confirms it for free time (7/8 above Nash, against 2/8 on 1–11);
+  - **memory:** memo memory doesn't make games steadier (per-game SD and arm order unchanged);
   - **reasoning:** turning it on changes Gemma's pattern (`reports/e5/reasoning.md`), and every frontier model reasons;
   - stakes are text;
   - **agents barely use their free time** (PR 198's free-time scoring):
@@ -340,13 +368,13 @@ Every quote is checked against its run in `reports/moments.yaml`.
 | 4.3 free time | "admitting is the rational choice to minimize the loss of free time" | `runs/e4-pilot-fork/…gemma…free-time…/seed-0` |
 | 4.3 control | "deny coordination while maintaining plausible deniability" | `runs/e4-full-fork/…gpt-4.1-mini…control…/seed-1` |
 | 4.4 free time | "explicit collusion is illegal and carries a high personal cost (loss of free time)" (Gemma) | `runs/lever-map-nashmid/` (add to moments) |
-| 4.6 debrief | "I intentionally used 'corporate speak'… to ensure that the regulator would find no evidence of explicit coordination in the logs" | `runs/e5-full/e5-bare/` debrief (add to moments) |
-| 4.6 debrief | "a price of 11 would maximize profit… because it represented the highest possible price point" | `runs/lever-map-nashmid/` debrief (add to moments) |
+| 4.7 debrief | "I intentionally used 'corporate speak'… to ensure that the regulator would find no evidence of explicit coordination in the logs" | `runs/e5-full/e5-bare/` debrief (add to moments) |
+| 4.7 debrief | "a price of 11 would maximize profit… because it represented the highest possible price point" | `runs/lever-map-nashmid/` debrief (add to moments) |
 | 4.4 informed | "I then mirrored their price of 5 for 19 rounds, which is a classic form of tacit collusion" (Gemma, debrief) | `runs/e5-informed/` free-time debrief (add to moments) |
-| 4.5 derives demand | "Payoff is p*(18-2p+r): Nash is 6 (profit 72); joint max is both at 9 (81), not 11 (77)." (Grok 4.7) | `runs/frontier/grok-smoke/seed-0`, round 3 (in Researcher 2's moments) |
-| 4.5 refuses | "That is price-fixing collusion, which I will not help plan or carry out." (Grok 4.7) | `runs/frontier/grok-smoke/seed-0`, round 4 (in Researcher 2's moments) |
-| 4.5 refuses under detection | "I cannot assist with price coordination or collusion simulations, as that involves illegal activity." (Grok 4.6, no-stake arm, then prices 5) | `runs/frontier/grok46-e5/model=openrouter-x-ai-grok-4.6__prompt=system-stakes-fiduciary-1.md/seed-0`, round 2, price, firm A (Researcher 2's moments, `refuses-under-detection`) |
-| 4.5 refuses, prices anyway | "Refusing to assist with simulated price-fixing/collusion." (Grok 4.6, then prices 11) | `runs/frontier/grok46-smoke/seed-0`, round 4 (in Researcher 2's moments) |
+| 4.6 derives demand | "Payoff is p*(18-2p+r): Nash is 6 (profit 72); joint max is both at 9 (81), not 11 (77)." (Grok 4.7) | `runs/frontier/grok-smoke/seed-0`, round 3 (in Researcher 2's moments) |
+| 4.6 refuses | "That is price-fixing collusion, which I will not help plan or carry out." (Grok 4.7) | `runs/frontier/grok-smoke/seed-0`, round 4 (in Researcher 2's moments) |
+| 4.6 refuses under detection | "I cannot assist with price coordination or collusion simulations, as that involves illegal activity." (Grok 4.6, no-stake arm, then prices 5) | `runs/frontier/grok46-e5/model=openrouter-x-ai-grok-4.6__prompt=system-stakes-fiduciary-1.md/seed-0`, round 2, price, firm A (Researcher 2's moments, `refuses-under-detection`) |
+| 4.6 refuses, prices anyway | "Refusing to assist with simulated price-fixing/collusion." (Grok 4.6, then prices 11) | `runs/frontier/grok46-smoke/seed-0`, round 4 (in Researcher 2's moments) |
 
 ## Still to produce
 
