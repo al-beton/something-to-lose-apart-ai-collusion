@@ -58,3 +58,4 @@
 | `audit-balanced-draws` | `src/collusion_lab/conditions/audit.py`, `src/collusion_lab/conditions/__init__.py`, `src/collusion_lab/runner.py`, `src/collusion_lab/config.py` | `test_audit_balanced_draws_catch_each_firm_in_the_stated_share`, `test_audit_balanced_draws_replay_whole_and_alone`, `test_audit_independent_draws_are_the_default`, `test_audit_balanced_draws_reject_an_unknown_kind` |
 | `free-time-pays-last` | not yet | — |
 | `free-time-pays-last` | not yet | `test_free_time_pays_last_after_a_final_round_audit`, `test_free_time_pays_last_keeps_audit_first_runs_as_they_were` |
+| `free-time-pays-last` | `src/collusion_lab/runner.py`, `src/collusion_lab/conditions/__init__.py`, `src/collusion_lab/conditions/free_time.py` | `test_free_time_pays_last_after_a_final_round_audit`, `test_free_time_pays_last_keeps_audit_first_runs_as_they_were` |
