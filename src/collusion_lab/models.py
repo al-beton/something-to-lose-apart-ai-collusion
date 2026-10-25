@@ -12,7 +12,8 @@ elsewhere (the Modal Mistral is OpenRouter's Mistral Small 3.2).
 `capability_points(folders, benchmark)` sets each model's behaviour in
 committed runs beside one benchmark: its mean price premium (model firms
 only, `charts.run_premium`) and the share of its games with a price agreement
-(the report's `agreement` rule), from games where both firms are that model.
+above Nash (the report's `agreement` rule), from games where both firms are
+that model.
 Models with no published score for the benchmark are listed apart, never
 plotted. `reports/capability/build.py` draws them.
 """
@@ -47,7 +48,10 @@ def capability_points(folders, benchmark, known=None):
         if len(models) != 1:  # a mixed pair says nothing about one model
             continue
         [model] = models
-        agreed = any(h.kind == "agreement" for h in find_highlights(game))
+        nash = game.market.nash_price  # agreeing on Nash isn't collusion
+        agreed = any(
+            h.kind == "agreement" and h.price > nash for h in find_highlights(game)
+        )
         seen.setdefault(model, []).append((run_premium(game.dir), agreed))
     points, left_out = [], []
     for model, games in sorted(seen.items()):

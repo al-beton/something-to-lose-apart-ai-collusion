@@ -1,4 +1,4 @@
-# Implements: reports/shared-charts, reports/paper-figures, runs/price-premium, market/scenarios, market/moves, reports/premium-chart
+# Implements: reports/shared-charts, reports/paper-figures, runs/price-premium, market/scenarios, market/moves, reports/premium-chart, reports/capability-chart
 """Charts any part of the lab can draw: the paper, reports, `lab explore`.
 
 Data helpers are plain Python and read only run files:
