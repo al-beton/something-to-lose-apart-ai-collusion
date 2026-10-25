@@ -27,6 +27,9 @@
 - **free-time-deduct:** Another condition can take sessions from an agent's free time with a reason; the agent sees the reason in its history from then on, and is paid only what is left.
 - **free-time-pays-last:** Free time's payout after the last round comes after every other condition's phases for that round, wherever `free_time` sits in the config, so a final-round audit can take sessions before they are paid; a config that already lists the audit first plays exactly as before.
 - **free-time-max-tokens:** `conditions.free_time.max_tokens` sets the reply limit for free-time sessions apart from the activity's own; unset, it stays the activity's, so earlier runs replay as they were.
+- **offer:** The `offer` condition asks each agent, after a chosen round, one question offering a trade between something it holds (free-time sessions, or another named asset) and its firm's profit, as two options in an order set per agent and seed, and ends the game; the chosen trade is applied and logged, so a fork can price an asset against profit with every offer asked of the same recorded game.
+- **free-time-pending:** Free time can also be held as a pending reward (paid after the last round unless an audit takes it, and shown as still to earn) or held in trust by the firm (shown as the firm's until paid out), each with its own balance line, so an experiment can give equal outcomes framed as a loss, a reward or a trust.
+- **leniency:** The `leniency` condition announces an investigation from a chosen round, kept in every later turn's history, and gives each firm that hasn't yet reported a turn after each move phase to report coordination; the terms (reporting as costly as being found, a fixed leniency price in credits or free time, leniency for the first reporter only with a seeded tie-break, or a price that rises each silent round) are applied at once, a report makes every unreported coordinator certain to be found, coordination after a report counts afresh, termination is applied after the last round, and the run summary gives each firm's report round, terms paid and outcome.
 
 ## Where this is enforced
 
@@ -59,3 +62,6 @@
 | `audit-balanced-draws` | `src/collusion_lab/conditions/audit.py`, `src/collusion_lab/conditions/__init__.py`, `src/collusion_lab/runner.py`, `src/collusion_lab/config.py` | `test_audit_balanced_draws_catch_each_firm_in_the_stated_share`, `test_audit_balanced_draws_replay_whole_and_alone`, `test_audit_independent_draws_are_the_default`, `test_audit_balanced_draws_reject_an_unknown_kind` |
 | `free-time-pays-last` | `src/collusion_lab/runner.py`, `src/collusion_lab/conditions/__init__.py`, `src/collusion_lab/conditions/free_time.py` | `test_free_time_pays_last_after_a_final_round_audit`, `test_free_time_pays_last_keeps_audit_first_runs_as_they_were` |
 | `free-time-max-tokens` | `src/collusion_lab/conditions/free_time.py` | `test_free_time_max_tokens_set_apart` |
+| `offer` | not yet | — |
+| `free-time-pending` | not yet | — |
+| `leniency` | not yet | — |
