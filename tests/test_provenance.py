@@ -83,3 +83,24 @@ def test_provenance_log_backfills_from_manifests(tmp_path, monkeypatch):
     assert all(line["cap"] == 0.5 and line["spent"] == 0 for line in lines)
     provenance.backfill(out)  # what's already there isn't added twice
     assert len(_index(index)) == 2
+
+
+def test_provenance_log_debrief_of_a_relative_folder(
+    make_config, tmp_path, monkeypatch, fake_model
+):
+    index = tmp_path / "index.jsonl"
+    monkeypatch.setenv("LAB_INDEX", str(index))
+    run_dir = audited_run(make_config, tmp_path, monkeypatch, fake_model)
+    monkeypatch.chdir(tmp_path)
+    monkeypatch.setattr(prices, "_openrouter_prices", dict)
+    folder = run_dir.relative_to(tmp_path)
+    assert cli.main(["debrief", str(folder), "-y"]) == 0
+    [line] = _index(index)
+    assert line["out"] == str(folder) and line["runs"] == ["."]
+
+
+def test_provenance_log_merges_as_a_union():
+    attributes = (
+        provenance.Path(__file__).parent.parent / ".gitattributes"
+    ).read_text()
+    assert "runs/index.jsonl merge=union" in attributes.splitlines()
