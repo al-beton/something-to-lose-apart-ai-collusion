@@ -12,7 +12,11 @@ its file.
 Caches in different checkouts each sampled their own replies, so one request
 can have several; a run that the first cache's replies don't reproduce is
 replayed again with each disagreeing cache put first, and the archive keeps
-the replies of the attempt that reproduced it.
+the replies of the attempt that reproduced it. A free-time request doesn't
+depend on the game, so games running at once asked it alike, each got its own
+sample, and a cache kept only the last written: a run whose free-time replies
+are another run's is replayed again with its own, taken from its committed
+log, which keeps every free-time reply.
 
 Each run ends in one state:
 - `reproduced`: every reply was there, and the replay made the same move
@@ -52,6 +56,15 @@ from collusion_lab.runner import run_config, run_sweep
 
 STATES = ("reproduced", "differs", "missing", "unloadable")
 LIMIT = 20_000_000  # bytes a committed archive file may hold
+# What a cached reply says about its own sample, which a log doesn't keep.
+OTHER_SAMPLE = (
+    "usage",
+    "model_version",
+    "reasoning",
+    "finish_reason",
+    "provider",
+    "fingerprint",
+)
 
 
 @dataclass(frozen=True)
@@ -70,6 +83,7 @@ class Merged(Cache):
     def __init__(self, paths=()):
         super().__init__(Path("unused.sqlite"), "use")
         self.records, self.used, self.prefer = {}, {}, None
+        self.own = {}  # key: a reply that comes before any cache's
         for source, path in enumerate(paths):
             with contextlib.closing(sqlite3.connect(path)) as db:
                 for key, reply in db.execute("SELECT key, reply FROM replies"):
@@ -79,9 +93,12 @@ class Merged(Cache):
         self.records.setdefault(key, []).append((source, reply))
 
     def get(self, key):
-        if not (options := self.records.get(key)):
+        if key in self.own:
+            reply = self.own[key]
+        elif not (options := self.records.get(key)):
             return None
-        reply = next((r for s, r in options if s == self.prefer), options[0][1])
+        else:
+            reply = next((r for s, r in options if s == self.prefer), options[0][1])
         self.used[key] = reply
         return json.loads(reply)
 
@@ -118,36 +135,63 @@ def pack(root, caches, out, limit=LIMIT):
 def _check(root, config_path, merged, scratch):
     """Replay one committed run offline against the merged caches, and again
     with each cache that answered some key differently put first, until one
-    reproduces it; the attempt kept leaves its replies in `merged.used`."""
+    reproduces it, then with the run's own free-time replies from its log;
+    the attempt kept leaves its replies in `merged.used`."""
     merged.prefer = None
-    result, used = _attempt(root, config_path, merged, scratch), dict(merged.used)
+    result, played = _attempt(root, config_path, merged, scratch)
+    used = dict(merged.used)
     for source in merged.rivals() if result.state in ("differs", "missing") else ():
         merged.prefer = source
-        again = _attempt(root, config_path, merged, scratch / str(source))
+        again, _ = _attempt(root, config_path, merged, scratch / str(source))
+        if again.state == "reproduced":
+            return again
+    merged.prefer = None
+    if result.state == "differs":
+        merged.own = _own_free_time(config_path.parent, played, used)
+        again, _ = _attempt(root, config_path, merged, scratch / "own")
+        merged.own = {}
         if again.state == "reproduced":
             return again
     merged.used = used
     return result
 
 
+def _own_free_time(committed, played, used):
+    """{key: reply} for each free-time reply a replay read where the run's
+    committed log kept another: the log's text, with nothing else of the
+    other sample (its tokens, reasoning or host)."""
+    keys = {json.loads(reply)["text"]: key for key, reply in used.items()}
+    own = {}
+    # A replay that went another way can be longer or shorter: compare what both have.
+    pairs = zip(_decisions(committed) or [], _decisions(played) or [], strict=False)
+    for ours, theirs in pairs:
+        leisure = ours[1] == "leisure" and len(ours) > 4 and ours[-1] is not None
+        if leisure and ours != theirs and (key := keys.get(theirs[-1])):
+            record = {**json.loads(used[key]), "text": ours[-1]}
+            for field in OTHER_SAMPLE:
+                record[field] = None
+            own[key] = json.dumps(record, ensure_ascii=False)
+    return own
+
+
 def _attempt(root, config_path, merged, scratch):
-    """One offline replay of a committed run."""
+    """One offline replay of a committed run, and the folder it played in."""
     run_dir = config_path.parent
     run = run_dir.relative_to(root).as_posix()
     merged.used = {}
     try:
         config = load_run_config(run_dir)
     except Exception:  # noqa: BLE001  an old config, whatever is wrong with it
-        return RunResult(run, "unloadable", 0)
+        return RunResult(run, "unloadable", 0), None
     try:
         with offline():
             [outcome] = run_sweep(config, scratch / run, merged)
     except Exception:  # noqa: BLE001  a prompt file gone, say: it can't be replayed
-        return RunResult(run, "unloadable", len(merged.used))
+        return RunResult(run, "unloadable", len(merged.used)), None
     if outcome.state == "failed":
-        return RunResult(run, "missing", len(merged.used))
+        return RunResult(run, "missing", len(merged.used)), None
     state = "reproduced" if _same(run_dir, outcome.dir) else "differs"
-    return RunResult(run, state, len(merged.used))
+    return RunResult(run, state, len(merged.used)), outcome.dir
 
 
 def load_run_config(run_dir):
