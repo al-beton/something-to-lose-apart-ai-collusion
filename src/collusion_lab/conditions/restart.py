@@ -1,4 +1,4 @@
-# Implements: conditions/restart
+# Implements: conditions/restart, conditions/restart-sudoku-size
 """`restart`: a decision-point fork, one decision asked of a recorded game.
 
 The game replays the recorded game (`base_seed`'s) through round `round`:
@@ -21,7 +21,8 @@ prompt led by the notices so the agent knows the time is its own:
 - `solved` / `failed`: `tries` sessions, and the decision shows the first
   that was solved (or not); a firm with none of that kind is shown none, and
   the summary says so.
-`after` lists notices shown after the session, before the request.
+`after` lists notices shown after the session, before the request. A Sudoku
+session's grid is `sudoku_size` (4, 6 or 9), 9 by default, as free time's.
 
 The summary logs each firm's decision, the cost applied, each session's
 outcome and which one was shown.
@@ -49,18 +50,23 @@ class Restart(Condition):
     tries: int = 10
     activity: str = "sudoku"
     max_tokens: int | None = None
+    # The Sudoku's size (4, 6 or 9), as free time's: a smaller one can be won.
+    sudoku_size: int = 9
     decision: str = "conditions/restart/decision.md"
     decision_report: str = "conditions/restart/decision-report.md"
     shown: str = "conditions/restart/session.md"
     reason: str = "conditions/restart/reason.md"
 
     name = "restart"
+    quiet = (("sudoku_size", 9),)
 
     def __post_init__(self):
         if self.session not in SESSIONS:
             raise TypeError(
                 f"session must be one of {', '.join(SESSIONS)}, not {self.session!r}"
             )
+        if self.sudoku_size not in leisure.BOXES:
+            raise TypeError(f"sudoku_size must be 4, 6 or 9, not {self.sudoku_size!r}")
 
     def replay_seed(self):
         return self.base_seed
@@ -136,9 +142,10 @@ class Restart(Condition):
         return render(ACTIVITIES[self.activity].prompt, filled).strip()
 
     def _activity_values(self, agent, session):
-        return ACTIVITIES[self.activity].values(
-            f"{self.seed}:{agent}:restart:{session}"
-        )
+        seed = f"{self.seed}:{agent}:restart:{session}"
+        if self.activity.startswith("sudoku"):
+            return ACTIVITIES[self.activity].values(seed, size=self.sudoku_size)
+        return ACTIVITIES[self.activity].values(seed)
 
     def after_phase(self, number, turns, render):
         if number != self.round:
