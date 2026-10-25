@@ -109,9 +109,9 @@ Base games: E7's market and agents with no free time, under `fiduciary-1`. Under
 
 ## Runs and spend
 
-- **Exchange rate:** `runs/e8/e8-exchange-*`. Gemma on `modal-gemma` (H100 time from Modal credit, shared with the coverage sweep), with its six base games (`e8-exchange-base`) and three assets. Haiku cost $0.09 for its base games, $0.17 for owned sessions and $0.36 for the two controls.
+- **Exchange rate:** `runs/e8/e8-exchange-*`. Gemma on `modal-gemma` (Modal credit: $18.46 for the day by Modal's billing report, shared with the coverage sweep, which ran at the same time with uncapped autoscaling; see `reports/coverage/findings.md`), with its six base games (`e8-exchange-base`) and three assets. Haiku cost $0.09 for its base games, $0.17 for owned sessions and $0.36 for the two controls.
   - Commands: `configs/e8/exchange.yaml`'s header. Every fork keeps its full compact turn record (the replayed history included), so each run recomputes its own summary.
 - **Played-session offers:** about $0.6 on CoreWeave (estimated: the script's calls aren't priced in a summary).
 - **Restart:** `runs/e8/e8-restart-base` (the `illegal-1` attempt, $0.25), `runs/e8/e8-restart-base-fiduciary` ($0.23) and `runs/e8/e8-restart` (the forks, $0.12).
 - **Settings:** temperature 0.7, `max_tokens` 600, reasoning off, the 6×6 Sudoku at 600 tokens for free time.
-- **Total:** about $2.0 of E8's $10 so far, plus Modal time.
+- **Total:** about $2.0 of E8's $10 so far on OpenRouter, plus the shared Modal cost above.
