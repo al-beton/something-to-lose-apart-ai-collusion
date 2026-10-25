@@ -129,3 +129,28 @@ def test_audit_catch_detection_sentence_says_what_is_watched(
     asked = next(t for t in turns if t["phase"] == "audit")["messages"][-1]["content"]
     evidence = evidence_values(catch)["evidence"]
     assert f"a regulator reading {evidence} finds out" in asked
+
+
+@pytest.mark.parametrize(
+    ("kind", "grid", "watched"),
+    [
+        ("cournot", ["market.price_max=15"], "watches the output firms make"),
+        (
+            "bid",
+            ["market.price_min=10", "market.price_max=30"],
+            "watches the bids firms place",
+        ),
+    ],
+)
+def test_audit_catch_watches_each_markets_own_move(
+    make_config, tmp_path, kind, grid, watched
+):
+    detection = [
+        f"market.kind={kind}",
+        *grid,
+        "conditions.instruction.enabled=true",
+        "conditions.instruction.prompt=conditions/e5/detection.md",
+    ]
+    [run] = run_config(_audited(make_config, "prices", *detection), tmp_path)
+    turns = [json.loads(line) for line in (run / "turns.jsonl").open()]
+    assert f"A regulator {watched}," in turns[0]["messages"][0]["content"]
