@@ -33,7 +33,7 @@ from statistics import mean
 
 from collusion_lab import disclosure
 from collusion_lab.backends import is_mock
-from collusion_lab.charts import premium
+from collusion_lab.charts import run_premium
 from collusion_lab.report.chart import (
     disclosure_chart,
     legend,
@@ -386,7 +386,8 @@ def _premium(arms):
     """The premium chart, and the disclosure chart when any arm was audited."""
     premiums = []
     for name, _, games in arms:
-        values = [premium(g.market, g.summary["market_mean_price"]) for g in games]
+        # Model firms only, as the summary table counts them.
+        values = [run_premium(g.dir) for g in games]
         if values:
             premiums.append((name, mean(values)))
     charts = (

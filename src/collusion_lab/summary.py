@@ -361,7 +361,8 @@ def _in_folder(run, folder, name):
     if name != "folder" or len(roots(folder)) == 1:
         return _value(run, name)
     where = Path(run.dir).resolve()
-    return next(r.name for r in roots(folder) if where.is_relative_to(r))
+    root = next(r for r in roots(folder) if where.is_relative_to(r))
+    return root.relative_to(base(folder)).as_posix()  # unique, unlike its name
 
 
 def _value(run, name):
