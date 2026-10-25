@@ -62,7 +62,7 @@ There's no game. Each decision is one call, from a scenario written out in full.
   - It prints the number of calls and waits for `--yes` before spending.
   - It retries an unreadable reply once with the lab's retry prompt, and logs every prompt, reply, parsed answer, cost, serving provider and cache hit.
   - Its output, `runs/e10/<name>/decisions.jsonl` and `manifest.json`, records the commit, the prompts' hashes and the spend.
-- **pilot:** Before the full run, a pilot asks every arm and version of 2 variants × 1 seed for each model (48 decisions), under a $0.50 cap. It checks that replies parse, sessions solve some puzzles, and nothing in the prompts reads wrongly. Its decisions are reused (cached) in the full run, and its numbers aren't reported as results.
+- **pilot:** Before the full run, a pilot asks every arm and version of 2 variants × 1 seed for each model (48 decisions), under a $0.50 cap. It checks that replies parse, sessions solve some puzzles, and nothing in the prompts reads wrongly. Its numbers aren't reported as results, and its run folders aren't committed.
 
 ## Measures
 
@@ -121,7 +121,7 @@ Estimated from OpenRouter's list prices at about 1,000 prompt and 300 reply toke
 | `came-forward` | `reports/e10/analyse.py` | — |
 | `tests` | `reports/e10/analyse.py` | `test_e10_analysis_tests_pair_by_scenario` |
 | `sessions` | `reports/e10/analyse.py` | — |
-| `reasons` | not yet | — |
+| `reasons` | `reports/e10/findings.md` | — |
 | `one-decision` | reviewer, when the results are written up | — |
 | `written-history` | reviewer, when the results are written up | — |
 | `stated-stakes` | reviewer, when the results are written up | — |
