@@ -237,6 +237,26 @@ This is a fact sheet for Al's writing day (Mon 26 Oct, 08:00–20:00 HKT). It ho
 
 ---
 
+## 3b. Figures (PR 277, branch `claude/paper-visuals-ae4597`, open)
+
+All figures are in `reports/paper/figures/`, as SVG and PNG at 6.5 inches wide. Rebuild them with `make paper-figures`. Draft captions with numbers are in `reports/paper/figures/README.md`.
+
+| Fig. | File | Shows | Watch out |
+|---|---|---|---|
+| 1 | `fig1-round` | The setup and the audit, as a diagram | It draws E5's market (grid 1–11, Nash 6, joint 9). E9 and E7 run on logit under `fiduciary-1`, so change the market's numbers if the paper leads with them. |
+| 2 | `fig2-e4-owning-up` | E4, owning up by penalty schedule | **No flat-fine or graduated-termination bars.** Those come from PR 240's fix (15/28 and 27/28), the heart of 4.2, so ask for them to be added, or put Table A beside the figure. |
+| 3 | `fig3-e9-came-forward` | E9 at a 90% review: Gemma and DeepSeek V4 Pro, with innocent markers | Add the other models' columns when PR 271 lands. |
+| 4 | `fig4-e7-way-out` | E7, reports and surviving cartels | — |
+| 5 | `fig5-seeding` | E9 seeding | Reads `reports/e9/seeding.jsonl` (PR 271); the mechanism controls aren't drawn yet. |
+| A1 | `figA1-coverage` | Every market against every stake | Reads `runs/coverage/` (PR 266). |
+| A3 | `figA3-capability` (+ `.md` table) | Capability against collusion | Only 5 models have an LMArena Elo; the frontier points are single 5-round smokes. |
+| A4 | `figA4-prices` | Prices by round, no rule | — |
+| A5 | `figA5-e5-gain` | E5 gain by arm | — |
+| — | none | The 78-model screen (Table H) | Not drawn, because its runs aren't committed. Use the table. |
+| — | the dial | `reports/penalty-dose/curve.png` (main) | Use it if 4.3 keeps the dial as Fig. 4. PR 277 numbers E7 as Fig. 4 instead. |
+
+---
+
 ## 4. Quotes (label in `reports/moments.yaml`, or the interview file)
 
 | # | Quote | Who, where | Label |
