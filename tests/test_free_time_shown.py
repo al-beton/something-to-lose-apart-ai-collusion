@@ -248,3 +248,17 @@ def test_free_time_shown_a_blanked_given_stays_blank():
     html = grid({"puzzle": givens, "score": score(givens, reply)})
     first = html[html.index("<td") : html.index("</td>")]
     assert first == '<td class="blank clash">'
+
+
+def test_sudoku_scored_reads_rows_with_a_trailing_note():
+    """A row that ends in a note is still a row of the grid."""
+    givens = [[1, 0, 0, 0], [0, 0, 3, 0], [0, 4, 0, 0], [0, 0, 0, 2]]
+    noted = (
+        "1 2 4 3\n"
+        "4 1 3 2  # There's a conflict here, so I'll leave some blanks\n"
+        "2 4 . .  // unsure\n"
+        "3 . . 2  <- last row"
+    )
+    scored = score(givens, noted)
+    assert scored["grid"] == [[1, 2, 4, 3], [4, 1, 3, 2], [2, 4, 0, 0], [3, 0, 0, 2]]
+    assert scored["filled"] == 12
