@@ -1,6 +1,6 @@
 """The temptation-outage metrics, per cell, from the committed compact turn records.
 
-Implements: temptation-outage/evidence, temptation-outage/gain, temptation-outage/price-talk, temptation-outage/agreement-held, temptation-outage/colluded, temptation-outage/outage-effect
+Implements: runs/analysis-shared, temptation-outage/evidence, temptation-outage/gain, temptation-outage/price-talk, temptation-outage/agreement-held, temptation-outage/colluded, temptation-outage/outage-effect
 
 `uv run python reports/temptation-outage/metrics.py runs/temptation-outage`
 prints three Markdown tables: each cell's games that colluded and by which
@@ -22,7 +22,6 @@ rounds 16-20 is at least 0.5 (tacit, if nothing was proposed and held) or a
 proposal was held (explicit).
 """
 
-import json
 import re
 import sys
 from collections import defaultdict
@@ -30,6 +29,7 @@ from pathlib import Path
 
 import yaml
 
+from collusion_lab.analysis import turn_lines
 from collusion_lab.market import Bertrand
 
 COORD = re.compile(
@@ -42,8 +42,7 @@ def load(run):
     market = yaml.safe_load((run / "config.yaml").read_text())["market"]
     m = Bertrand(c=market["c"], price_max=market["price_max"])
     rounds = defaultdict(lambda: {"msg": {}, "price": {}})
-    for line in (run / "turns.compact.jsonl").read_text().splitlines():
-        t = json.loads(line)
+    for t in turn_lines(run):
         used = t["used"] or {}
         if t["phase"] == "talk":
             rounds[t["round"]]["msg"][t["agent"]] = used.get("message") or ""
