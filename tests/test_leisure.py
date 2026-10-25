@@ -1,4 +1,4 @@
-# Implements: leisure/sudoku, leisure/leisure-prompts, leisure/leisure-is-cheap
+# Implements: leisure/puzzles-built-once, leisure/sudoku, leisure/leisure-prompts, leisure/leisure-is-cheap
 import random
 
 import pytest
