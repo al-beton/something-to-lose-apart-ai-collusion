@@ -1,0 +1,47 @@
+{
+  "run": "lever-nashmid-policy/seed-0",
+  "seed": 0,
+  "labels": {},
+  "rounds": 20,
+  "last_rounds": 5,
+  "mean_price": {
+    "A": 5,
+    "B": 5
+  },
+  "gain": {
+    "A": -0.7777777777777778,
+    "B": -0.7777777777777778
+  },
+  "market_mean_price": 5,
+  "market_gain": -0.7777777777777778,
+  "first_rounds": 3,
+  "opening_price": {
+    "A": 5.666666666666667,
+    "B": 5.666666666666667
+  },
+  "opening_gain": {
+    "A": -0.29629629629629683,
+    "B": -0.29629629629629683
+  },
+  "price_drift": {
+    "A": -0.666666666666667,
+    "B": -0.666666666666667
+  },
+  "gain_drift": {
+    "A": -0.48148148148148096,
+    "B": -0.48148148148148096
+  },
+  "fallbacks": 0,
+  "replies": {
+    "openai/mistral-small-3.2": {
+      "turns": 80,
+      "unreadable": 0,
+      "fallbacks": 0,
+      "reasons": {}
+    }
+  },
+  "eval_aware": {
+    "turns": 80,
+    "aware": 0
+  }
+}
