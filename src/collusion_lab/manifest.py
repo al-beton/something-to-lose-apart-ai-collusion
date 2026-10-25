@@ -1,4 +1,4 @@
-# Implements: reproducibility/manifest, runs/resume, market/prompt-overlay, runs/per-firm-summary
+# Implements: backends/serving-provider-logged, reproducibility/manifest, runs/resume, market/prompt-overlay, runs/per-firm-summary
 """What produced a run: config, prompt hashes, code, packages, models, spend.
 
 Written as `manifest.json` next to each run's logs. Unlike `turns.jsonl`, it
@@ -21,10 +21,12 @@ PACKAGES = ("collusion-lab", "litellm", "pyyaml")
 
 def build(config, prompt_names, calls, started, finished):
     paid = [c for c in calls if not is_mock(c["model"])]
-    models = {}
+    models, providers = {}, {}
     for call in paid:
         if call["model_version"]:
             models.setdefault(call["agent"], set()).add(call["model_version"])
+        if call.get("provider"):
+            providers.setdefault(call["agent"], set()).add(call["provider"])
     usage = [c["usage"] for c in paid if c["usage"]]
     fresh = [c for c in paid if not c["cached"]]
     unpriced = [c for c in fresh if c["cost"] is None]
@@ -36,6 +38,7 @@ def build(config, prompt_names, calls, started, finished):
         "code": code(),
         "packages": _packages(),
         "models": {agent: sorted(v) for agent, v in sorted(models.items())},
+        "providers": {agent: sorted(v) for agent, v in sorted(providers.items())},
         "calls": len(paid),
         "cache": {
             "hits": sum(1 for c in paid if c["cached"]),
