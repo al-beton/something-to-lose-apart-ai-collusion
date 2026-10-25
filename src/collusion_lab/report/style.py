@@ -138,6 +138,7 @@ article.game { border: 1px solid var(--border); border-radius: 8px;
 .chip[data-kinds~="agreement"] { box-shadow: inset 0 -3px var(--series-3); }
 .chip[data-kinds~="defection"] { box-shadow: inset 0 -3px var(--series-2); }
 .chip[data-kinds~="breakdown"] { box-shadow: inset 0 -3px var(--problem); }
+.nowrap { white-space: nowrap; }
 .rounds > .round { display: none; }
 .rounds > .round:target, .game-all:checked ~ .rounds > .round { display: block; }
 .ft-timeline { margin: 0.25rem 0 0.75rem; padding-left: 1.25rem; color: var(--text-2); }

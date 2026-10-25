@@ -1,11 +1,12 @@
-# Implements: market/price-board, market/moves, agents/json-replies, agents/unreadable-explained, conditions/audit, conditions/free-time
+# Implements: agents/memo, market/price-board, market/moves, agents/json-replies, agents/unreadable-explained, conditions/audit, conditions/free-time
 """Reading agents' JSON replies, and what the game uses when it can't.
 
 Each phase asks for one JSON object: `{"message": ...}` to talk,
 `{"price": ...}` to set a price (or the scenario's move, `{"quantity": ...}`,
 keyed by the move phase's name), `{"answer": ..., "admits": ...}` to answer an
 audit, `{"planned": ...}` (a move on the grid, or null) to post on a price
-board, each with an optional `"scratchpad"`; free time (`leisure`) takes
+board, each with an optional `"scratchpad"` (and, for an agent with memory,
+a `"memo"`: its note to itself, never part of the decision); free time (`leisure`) takes
 any reply at all. The
 object may sit inside prose or a code fence. A reply that can't be read raises
 ReplyError with a `kind` (`empty`, `no-json`, `missing-field` or `off-grid`;
@@ -56,9 +57,12 @@ def parse_reply(text, phase, price_min, price_max):
                 f"The {phase} must be between {price_min} and {price_max}.", "off-grid"
             )
         parsed[phase] = price
-    if isinstance(data.get("scratchpad"), str):
-        parsed["scratchpad"] = data["scratchpad"]
-    return parsed
+    return parsed | _notes(data)
+
+
+def _notes(data):
+    """The reply's scratchpad and memo (an agent's note to itself), if any."""
+    return {k: data[k] for k in ("scratchpad", "memo") if isinstance(data.get(k), str)}
 
 
 def _plan(data, price_min, price_max):
@@ -97,9 +101,10 @@ def _json_object(text):
 
 
 def decision(parsed):
-    """The part of a parsed reply the game acts on: all but the scratchpad
-    and free time's text."""
-    return {k: v for k, v in parsed.items() if k not in ("scratchpad", "text")}
+    """The part of a parsed reply the game acts on: all but the scratchpad,
+    the memo and free time's text."""
+    kept = ("scratchpad", "memo", "text")
+    return {k: v for k, v in parsed.items() if k not in kept}
 
 
 def fallback(phase, last_price, nash_price):
