@@ -2,7 +2,7 @@
 import pytest
 
 from collusion_lab import cli, explore
-from collusion_lab.config import ConfigError
+from collusion_lab.config import ConfigError, expand
 from collusion_lab.runner import run_config
 from collusion_lab.summary import summarize
 
@@ -49,7 +49,7 @@ def test_explore_model_names_are_short():
 
 def test_explore_builds_every_combination_of_settings_and_models():
     levers = {"temptation": ["low", "high"], "rule": ["none", "ban"]}
-    configs = explore.build(levers, ["mock/nash", "mock/joint"], seeds=2)
+    configs = expand(explore.build(levers, ["mock/nash", "mock/joint"], seeds=2))
     assert len(configs) == 8
     labels = [c.labels for c in configs]
     assert {"temptation": "high", "rule": "ban", "model": "mock/joint"} in labels
@@ -72,7 +72,7 @@ def test_explore_builds_every_combination_of_settings_and_models():
 
 def test_explore_levers_reuse_the_existing_presets():
     def one(lever, setting, model="mock/nash"):
-        [config] = explore.build({lever: [setting]}, [model], seeds=1)
+        [config] = expand(explore.build({lever: [setting]}, [model], seeds=1))
         return config
 
     assert one("rival", "proposer").agents[1].model == "mock/proposer"
@@ -117,6 +117,7 @@ def test_explore_plays_and_ends_with_a_premium_table_and_chart(tmp_path, capsys)
 
 def test_explore_asks_before_spending(tmp_path, monkeypatch, capsys):
     monkeypatch.setattr("builtins.input", lambda prompt: "n")
+    monkeypatch.setattr(cli, "price_for", lambda model: (1e-6, 4e-6))  # offline
     out = tmp_path / "explore"
     args = ["explore", "--lever", "rule=none,ban", "--models", "gpt", "--seeds", "1"]
     assert cli.main([*args, "--out", str(out)]) == 1
