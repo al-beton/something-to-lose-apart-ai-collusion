@@ -1,4 +1,4 @@
-# Implements: agents/refused, runs/summary-table, runs/per-firm-summary, runs/fallback-rates, reports/summary, runs/missing-runs-shown, conditions/audit-metrics, runs/drift, runs/eval-awareness, runs/price-premium, market/scenarios, reports/many-folders
+# Implements: runs/spread, agents/refused, runs/summary-table, runs/per-firm-summary, runs/fallback-rates, reports/summary, runs/missing-runs-shown, conditions/audit-metrics, runs/drift, runs/eval-awareness, runs/price-premium, market/scenarios, reports/many-folders
 """One table for a folder of runs, grouped by swept values or any config value.
 
 `summarize` reads every `summary.json` under a folder (and the `manifest.json`
@@ -25,13 +25,19 @@ fallback rate and the reasons; `flagged_runs` names every run where more than
 `FLAG_RATE` of all turns fell back. Runs written before replies were counted
 contribute nothing to either.
 
+`spread` gives, per group, how consistent its games are: the gain's mean,
+standard deviation, range and a seeded 95% bootstrap interval for the mean,
+and the share of games past the Nash move towards joint profit and at or past
+the joint-profit move (by the price premium, so quantities read the same way) (`group_gains` gives each game's gain, for the report's strip plots).
+
 `group_runs` is the grouping on its own, for anything else that shows a
 folder group by group (reports).
 """
 
 import json
+import random
 from pathlib import Path
-from statistics import mean
+from statistics import mean, stdev
 from typing import NamedTuple
 
 from collusion_lab import charts, disclosure
@@ -93,6 +99,56 @@ def summarize(folder, by=None, only=None):
         dict.fromkeys(f for _, runs in groups for r in runs for f in _firms(r))
     )
     return [_row(by, key, runs) | _firm_columns(firms, runs) for key, runs in groups]
+
+
+BOOTSTRAP = 1000  # resamples for the spread's 95% interval
+
+
+def group_gains(folder, by=None):
+    """(group name, [(gain, price, run's market)] a game) in table order: each
+    played game's headline gain and price (the model firms' when a script
+    plays too)."""
+    by, groups = group_runs(folder, by)
+    found = []
+    for key, runs in groups:
+        played = [r for r in runs if r.summary]
+        games = [(g, p, _market(r)) for r in played for p, g in [_headline(r)]]
+        found.append((" / ".join(str(v) for v in key) or "all", games))
+    return found
+
+
+def spread(folder, by=None):
+    """Per group, how its games spread: their gain's mean, standard
+    deviation, range and seeded 95% bootstrap interval, and the share above
+    the Nash price and at or above the joint-profit price."""
+    rows = []
+    for group, games in group_gains(folder, by):
+        if not games:
+            continue
+        gains = [g for g, _, _ in games]
+        rng = random.Random(0)
+        means = sorted(mean(rng.choices(gains, k=len(gains))) for _ in range(BOOTSTRAP))
+        low, high = means[int(0.025 * BOOTSTRAP)], means[int(0.975 * BOOTSTRAP) - 1]
+        rows.append(
+            {
+                "group": group,
+                "games": len(gains),
+                "mean gain": round(mean(gains), 3),
+                "sd": round(stdev(gains), 3) if len(gains) > 1 else 0.0,
+                "range": f"{min(gains):.3f} to {max(gains):.3f}",
+                # By the premium (0 at Nash, 1 at joint), so a market where
+                # collusion means less, as quantities, reads the same way.
+                "above Nash": round(
+                    sum(charts.premium(m, p) > 0 for _, p, m in games) / len(games), 2
+                ),
+                "at joint": round(
+                    sum(charts.premium(m, p) >= 1 for _, p, m in games) / len(games),
+                    2,
+                ),
+                "95% CI": f"{low:.3f} to {high:.3f}",
+            }
+        )
+    return rows
 
 
 def _finished(folder):

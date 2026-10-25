@@ -1,4 +1,4 @@
-# Implements: reports/from-run-files, reports/setup, reports/reasoning-folded, reports/condition-window, reports/audit-shown, reports/remembered-notices, market/scenarios, market/moves, reports/many-folders
+# Implements: reports/from-run-files, reports/setup, reports/reasoning-folded, reports/condition-window, reports/audit-shown, reports/remembered-notices, market/scenarios, market/moves, reports/many-folders, runs/free-time-kept, agents/memo
 """A game read back from its run directory, round by round.
 
 Only the files every run writes are read: `config.yaml` for the market and
@@ -7,7 +7,9 @@ and answered an auditor, `summary.json` and `manifest.json` (the latter
 optional, as in `lab summary`). A committed run keeps `turns.compact.jsonl`
 instead of its full log: the same turns without their prompts, so profits
 are rebuilt from the prices and only the notice that opened a talk prompt is
-known.
+known. Free-time sessions are `Game.leisure` (`leisure.session_record`, as
+the compact record keeps them); a compact record written before free time
+was kept has none.
 Nothing is recomputed from a model, so a report of a folder of runs costs
 nothing and works offline.
 """
@@ -18,6 +20,7 @@ from pathlib import Path
 
 import yaml
 
+from collusion_lab.leisure import session_record
 from collusion_lab.market import Grid, market_for
 from collusion_lab.status import find
 
@@ -42,6 +45,7 @@ class Turn:
     answer: str | None = None  # an audit turn's answer to the auditor
     admits: bool | None = None
     reasoning: str | None = None  # the provider's, apart from the scratchpad
+    memo: str | None = None  # an agent with memory's note to itself
 
     @property
     def fallback(self):
@@ -75,6 +79,7 @@ class Game:
     summary: dict
     manifest: dict
     dir: Path | None = None  # where the run's files are
+    leisure: list = field(default_factory=list)  # free-time sessions, in order
 
     def windows(self):
         """Conditions in force for only part of the game, with their rounds.
@@ -128,6 +133,7 @@ def load_game(run_dir):
         summary,
         manifest,
         run_dir.resolve(),
+        _leisure(turns, full=log == full),
     )
 
 
@@ -135,6 +141,21 @@ def load_games(folder):
     """Every game under a folder or folders (or the folder itself), by run id."""
     games = [load_game(p.parent) for p in find(folder, "summary.json")]
     return sorted(games, key=lambda g: g.run)
+
+
+def _leisure(turns, full):
+    """Free-time sessions as {round, firm, session, activity, reply, ...}."""
+    found = []
+    for t in turns:
+        if t["phase"] != "leisure" or not (full or "session" in t):
+            continue
+        record = session_record(t) if full else t
+        keep = ("session", "activity", "reply", "puzzle", "score")
+        found.append(
+            {"round": t["round"], "firm": t["agent"]}
+            | {k: record[k] for k in keep if k in record}
+        )
+    return found
 
 
 def _by_firm(turns, number, phase, firms):
@@ -192,4 +213,5 @@ def _turn(line):
         answer=used.get("answer"),
         admits=used.get("admits"),
         reasoning=line.get("reasoning"),
+        memo=line.get("memo"),
     )

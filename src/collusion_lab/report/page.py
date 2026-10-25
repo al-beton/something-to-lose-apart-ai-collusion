@@ -1,4 +1,4 @@
-# Implements: agents/no-scratchpad, reports/reasoning-folded, reports/one-page, reports/header, reports/first-screen, reports/contents-bar, reports/setup, reports/summary, reports/price-chart, reports/arm-tabs, reports/highlights-in-context, reports/transcripts, reports/self-contained, runs/fallback-rates, runs/missing-runs-shown, reports/condition-window, reports/solicitation, reports/audit-shown, reports/remembered-notices, reports/many-folders, reports/premium-chart, reports/disclosure-chart, reports/written-summary, reports/picked-highlights, reports/debrief-shown
+# Implements: agents/no-scratchpad, reports/reasoning-folded, reports/one-page, reports/header, reports/first-screen, reports/contents-bar, reports/setup, reports/summary, reports/price-chart, reports/arm-tabs, reports/highlights-in-context, reports/transcripts, reports/self-contained, runs/fallback-rates, runs/missing-runs-shown, reports/condition-window, reports/solicitation, reports/audit-shown, reports/remembered-notices, reports/many-folders, reports/premium-chart, reports/disclosure-chart, reports/written-summary, reports/picked-highlights, reports/debrief-shown, reports/free-time-shown, reports/spread-shown, agents/memo
 """The report page: one self-contained HTML file, read from the top down.
 
 A sticky contents bar, then:
@@ -35,6 +35,7 @@ from collusion_lab import debrief as debriefs
 from collusion_lab import disclosure
 from collusion_lab.backends import is_mock
 from collusion_lab.charts import run_premium
+from collusion_lab.report import free_time
 from collusion_lab.report.chart import (
     disclosure_chart,
     legend,
@@ -43,6 +44,7 @@ from collusion_lab.report.chart import (
     premium_chart,
     price_chart,
     series_colour,
+    strip_chart,
 )
 from collusion_lab.report.games import load_game
 from collusion_lab.report.highlights import find_highlights, rounds_text
@@ -61,11 +63,13 @@ from collusion_lab.summary import (
     FLAG_RATE,
     cell,
     flagged_runs,
+    group_gains,
     group_runs,
     missing_runs,
     reply_rates,
     run_cost,
     spent,
+    spread,
     summarize,
 )
 
@@ -122,6 +126,7 @@ def build_report(folder, summary=None, highlights=None):
         _missing(folder),
         _setup(games, arms),
         _charts(arms),
+        _spread(folder),
         _picked(highlights, games),
         _debriefs(debriefed),
         _arm_tabs(arms),
@@ -273,6 +278,38 @@ def _missing(folder):
         '<p class="muted">Planned runs that failed or never finished; the '
         f"summary leaves them out.</p><ul>{items}</ul></section>"
     )
+
+
+def _spread(folder):
+    """How each group's games spread: the spread table, with a strip of
+    every game's gain beside each row."""
+    rows = spread(folder)
+    if not rows:
+        return ""
+    strips = {group: [g for g, _, _ in games] for group, games in group_gains(folder)}
+    every = [g for gains in strips.values() for g in gains]  # one axis for all
+    head = "".join(f"<th>{escape(c)}</th>" for c in rows[0]) + "<th>each game</th>"
+    body = "".join(
+        "<tr>"
+        + "".join(
+            f"<td>{escape(_short(v) if k == 'group' else cell(v))}</td>"
+            for k, v in r.items()
+        )
+        + f'<td class="nowrap">{strip_chart(strips[r["group"]], every)}</td></tr>'
+        for r in rows
+    )
+    return (
+        '<section id="spread"><h2>Spread across games</h2>'
+        f'<div class="scroll"><table><tr>{head}</tr>{body}</table></div>'
+        '<p class="muted">Each dot is one game\'s gain; dashed lines mark Nash (0) '
+        "and joint profit (1). The interval is a 95% bootstrap of the mean.</p>"
+        "</section>"
+    )
+
+
+def _short(group):
+    """A group's name with each path or model id cut to its last part."""
+    return " / ".join(Path(part).stem for part in group.split(" / "))
 
 
 def _setup(games, arms):
@@ -586,7 +623,7 @@ def _game(game, index):
         f'</span><label for="{gid}-all"><span class="show">whole game</span>'
         '<span class="hide">fold</span></label></div>'
         f'<nav class="strip">{chips}</nav><div class="rounds">{rounds}</div>'
-        f"{_debrief(game)}</article>"
+        f"{free_time.section(game)}{_debrief(game)}</article>"
     )
 
 
@@ -685,6 +722,11 @@ def _bubble(turn, index):
         notes.append(f'<p class="scratchpad">{escape(turn.scratchpad)}</p>')
     if turn.reasoning:
         notes.append(_reasoning(turn))
+    if turn.memo:
+        notes.append(
+            '<details class="memo"><summary>memo</summary>'
+            f"<p>{escape(turn.memo)}</p></details>"
+        )
     if turn.fallback:
         notes.append(f'<p class="problem">fallback: {escape(turn.error)}</p>')
     elif turn.retried:
