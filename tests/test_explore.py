@@ -204,3 +204,9 @@ def test_explore_chart_shows_premiums_below_nash():
     heights = [float(p.split(",")[1]) for p in points]
     assert all(0 <= h <= 260 for h in heights)  # inside the chart
     assert ">-0.5<" in svg or "-0.5" in svg  # the low end is labelled
+
+
+def test_explore_chart_marks_a_single_setting():
+    rows = [{"model": "a", "premium": 0.4}, {"model": "b", "premium": 0.9}]
+    svg = explore.premium_chart(rows, {})
+    assert svg.count("<circle") == 2  # one visible mark per model's result
