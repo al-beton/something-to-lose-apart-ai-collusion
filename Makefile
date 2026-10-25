@@ -1,5 +1,5 @@
-# Implements: tooling/one-command-each, tooling/locked-dependencies, ci/end-to-end, reports/paper-figures
-.PHONY: install lint test spec-check e2e paper-figures
+# Implements: reproducibility/reported-numbers-checked, tooling/one-command-each, tooling/locked-dependencies, ci/end-to-end, reports/paper-figures
+.PHONY: install lint test spec-check e2e paper-figures reproduce
 install:
 	uv sync --frozen
 lint:
@@ -13,3 +13,5 @@ e2e:  # free scripted agents: run -> summary -> report, offline, in seconds
 	uv run pytest tests/test_e2e.py
 paper-figures:  # the paper's figures and tables, offline, from committed runs
 	uv run python reports/paper/build.py
+reproduce:  # every committed number recomputed, offline; fails on a mismatch
+	uv run python reports/reproduce.py
