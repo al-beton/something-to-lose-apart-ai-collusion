@@ -1,3 +1,5 @@
+<!-- Implements: research/outputs-home -->
+
 # Refactor audit: swappable scenarios and lean tests
 
 Read-only audit of `main` at `80610b8` (Sun 25 Oct). Ranked within each section by what it costs us today. Each finding with an issue is filed as `improve` + `ready` and linked from the meta issue "Refactor: swappable scenarios and lean tests".

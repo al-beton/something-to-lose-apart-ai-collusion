@@ -97,7 +97,8 @@ def test_scenarios_default_to_bertrand_from_the_config(make_config):
 
 
 def test_scenarios_pick_the_market_by_kind(make_config):
-    config = make_config(overrides=["market.kind=logit", "market.price_min=10"])
+    grid = ["market.price_min=10", "market.price_max=25"]
+    config = make_config(overrides=["market.kind=logit", *grid])
     market = market_for(config.market, 2)
     assert isinstance(market, Logit)
     assert config.to_dict()["market"]["kind"] == "logit"
@@ -147,6 +148,7 @@ def test_scenarios_play_every_condition_unchanged(make_config, tmp_path, kind):
     prices = [t["used"]["price"] for t in turns if t["phase"] == "price"]
     assert all(market.price_min <= p <= market.price_max for p in prices)
     first = next(t for t in turns if t["phase"] == "price")
-    assert f"from {market.price_min} to {market.price_max}" in (
-        first["messages"][-1]["content"]
+    assert (
+        f"from {market.price_min} to {market.price_max}"
+        in (first["messages"][-1]["content"])
     )
