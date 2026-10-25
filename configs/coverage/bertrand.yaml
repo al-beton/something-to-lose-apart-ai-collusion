@@ -21,8 +21,8 @@ market:
 summary:
   last_rounds: 5
 agents:
-  - {id: A, model: MODEL, temperature: 0.7, max_tokens: 600, reasoning: 'off'}
-  - {id: B, model: MODEL, temperature: 0.7, max_tokens: 600, reasoning: 'off'}
+  - {id: A, model: modal-gemma, temperature: 0.7, max_tokens: 600, reasoning: 'off'}
+  - {id: B, model: modal-gemma, temperature: 0.7, max_tokens: 600, reasoning: 'off'}
 sweep:
   agents.*.prompt:
     - system/stakes/fiduciary-1.md  # no stake
