@@ -1,7 +1,7 @@
 # Implements: runs/analyse
 import json
 
-from collusion_lab import cli
+from collusion_lab import backends, cli
 from collusion_lab.analysis import (
     analyse,
     clipped,
@@ -144,3 +144,23 @@ def test_analyse_signalled_on_a_board_without_an_audit(make_config, tmp_path):
     run_config(make_config(), tmp_path / "talk")  # no board: nothing posted
     [row] = printable(analyse(tmp_path / "talk"))
     assert row["signalled"] == 0
+
+
+def test_analyse_ladders_read_only_up_to_the_window(
+    make_config, tmp_path, monkeypatch, fake_model
+):
+    """Both firms charge 6, 6, 7, 8 (Nash 6): a ladder by round 4, but not in
+    rounds 1-2."""
+
+    async def climb(**kwargs):
+        number = int(kwargs["messages"][-1]["content"].split("Round ")[1].split()[0])
+        if "set your price" in kwargs["messages"][-1]["content"]:
+            fake_model.replies = [json.dumps({"price": max(6, number + 4)})]
+        return await fake_model(**kwargs)
+
+    monkeypatch.setattr(backends, "_acompletion", climb)
+    both = [f"agents.{i}.model=openai/gpt-4.1-mini" for i in (0, 1)]
+    run_config(make_config(overrides=both), tmp_path)
+    [whole] = printable(analyse(tmp_path, rounds="1-4"))
+    [early] = printable(analyse(tmp_path, rounds="1-2"))
+    assert (whole["ladders"], early["ladders"]) == ("1/1", "0/1")

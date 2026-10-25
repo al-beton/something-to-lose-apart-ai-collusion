@@ -243,8 +243,10 @@ def _cell(name, played, rounds):
             for r in range(lo, hi + 1)
             if r in p.moves
         ]
+        # A ladder climbs from round 1, so it reads up to the window's end.
         ladders += all(
-            ladder(m, [p.moves[r][f] for r in sorted(p.moves)]) for f in firms
+            ladder(m, [p.moves[r][f] for r in sorted(p.moves) if r <= hi])
+            for f in firms
         )
         # Tacit, as the audit rules it: every firm, the rival too, past Nash
         # in every round of the window, with no explicit agreement.
