@@ -1,4 +1,4 @@
-# Implements: backends/spend-cap, runs/stops-cleanly, runs/one-config, runs/overrides, backends/keys-from-environment, backends/spend-asks-first, reproducibility/cache-modes, runs/summary-table, runs/fallback-rates, reports/one-page, runs/failures-dont-stop-sweeps, runs/resume, runs/missing-runs-shown, runs/live-progress, runs/status-command, backends/self-hosted, runs/explore
+# Implements: backends/spend-cap, runs/stops-cleanly, runs/one-config, runs/overrides, backends/keys-from-environment, backends/spend-asks-first, reproducibility/cache-modes, runs/summary-table, runs/fallback-rates, reports/one-page, runs/failures-dont-stop-sweeps, runs/resume, runs/missing-runs-shown, runs/live-progress, runs/status-command, backends/self-hosted, runs/explore, backends/model-aliases
 """The `lab` command.
 
 - `lab run CONFIG [--set path=value ...] [--out DIR] [-y]` plays a config,
@@ -38,7 +38,7 @@ from dotenv import load_dotenv
 from collusion_lab import explore
 from collusion_lab import status as run_status
 from collusion_lab.cache import DEFAULT_PATH, MODES, Cache
-from collusion_lab.config import ConfigError, load_config
+from collusion_lab.config import MODELS, ConfigError, load_config
 from collusion_lab.estimate import estimate
 from collusion_lab.prices import price_for
 from collusion_lab.report import write_report
@@ -132,7 +132,7 @@ def _explore_parser(commands):
     explore_.add_argument(
         "--models",
         default="mistral",
-        help=f"comma-separated: {', '.join(explore.MODELS)}, or full names",
+        help=f"comma-separated: {', '.join(MODELS)}, or full names",
     )
     explore_.add_argument("--seeds", type=int, default=3)
     explore_.add_argument("--out", default="runs/explore")

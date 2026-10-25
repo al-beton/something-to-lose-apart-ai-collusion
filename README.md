@@ -1,8 +1,4 @@
-<<<<<<< HEAD
-<!-- Implements: tooling/one-command-each, tooling/quick-start, tooling/key-setup, tooling/how-tos, tooling/how-we-work, backends/modal, runs/explore -->
-=======
-<!-- Implements: tooling/one-command-each, tooling/quick-start, tooling/key-setup, tooling/how-tos, tooling/how-we-work, backends/modal, backends/model-aliases -->
->>>>>>> 4a25b1c (Add short model aliases, with modal-mistral reading its address from .env)
+<!-- Implements: tooling/one-command-each, tooling/quick-start, tooling/key-setup, tooling/how-tos, tooling/how-we-work, backends/modal, runs/explore, backends/model-aliases -->
 # collusion-lab
 
 A small, quickly iterable environment for studying collusion between LLM agents in simulated markets, built for the [Apart AI Collusion Research Sprint](https://apartresearch.com/sprints/ai-collusion-research-sprint-2026-10-23-to-2026-10-25).

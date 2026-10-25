@@ -7,7 +7,7 @@ YAML, applies `path=value` overrides (the value is read as YAML, so
 as in `agents.1.model=mock/random`), then checks every key against the
 dataclasses below, so a typo fails loudly instead of being ignored. There is
 no field for API keys: those come from the environment (see cli.py). A model
-can be a short alias from ALIASES (`gemma`, `modal-mistral`, ...), spelled
+can be a short name from MODELS (`gemma`, `modal-mistral`, ...), spelled
 out when the agent is read, so sweeps over aliases work too.
 
 A `sweep:` block maps config paths to lists of values; `*` sets every list
@@ -173,17 +173,14 @@ def from_dict(raw):
     )
 
 
-# Short model names. Each sets every field that says where a model is
-# served, so swapping one alias for another leaves nothing of the old one.
-HOSTED = {"api_base": None, "api_key_env": None, "self_hosted": False}
-ALIASES = {
-    "gemma": {"model": "openrouter/google/gemma-4-31b-it", **HOSTED},
-    "gpt": {"model": "openrouter/openai/gpt-4.1-mini", **HOSTED},
-    "haiku": {"model": "openrouter/anthropic/claude-haiku-5.5", **HOSTED},
-    "mistral": {
-        "model": "openrouter/mistralai/mistral-small-3.2-24b-instruct",
-        **HOSTED,
-    },
+# Short model names, for configs, --set and `lab explore` alike: each is the
+# agent fields it stands for. A name's fields go on top of CONNECTION, so a
+# swap from a self-hosted model to a hosted one leaves no address behind.
+MODELS = {
+    "gemma": {"model": "openrouter/google/gemma-4-31b-it"},
+    "gpt": {"model": "openrouter/openai/gpt-4.1-mini"},
+    "haiku": {"model": "openrouter/anthropic/claude-haiku-5.5"},
+    "mistral": {"model": "openrouter/mistralai/mistral-small-3.2-24b-instruct"},
     # deploy/modal_vllm.py's model; its address is in .env, not here.
     "modal-mistral": {
         "model": "openai/mistral-small-3.2",
@@ -192,22 +189,37 @@ ALIASES = {
         "self_hosted": True,
     },
 }
+CONNECTION = {"api_base": None, "api_key_env": None, "self_hosted": False}
+
+
+def agent_fields(name):
+    """The agent settings a model name stands for."""
+    if name in MODELS:
+        fields = dict(MODELS[name])
+        if fields.get("api_base") == "$MODAL_VLLM_BASE":
+            fields["api_base"] = os.environ.get("MODAL_VLLM_BASE")
+            if not fields["api_base"]:
+                raise ConfigError(
+                    f"model {name} needs MODAL_VLLM_BASE (your Modal address, "
+                    "ending /v1) in the environment or .env; see the README, "
+                    "Running on Modal."
+                )
+        return fields
+    if "/" in name:
+        return {"model": name}
+    raise ConfigError(
+        f"Unknown model {name!r}: use a full name or one of {', '.join(MODELS)}."
+    )
 
 
 def _alias(raw, prefix):
     """An agent's settings with a short model name spelled out."""
-    if not isinstance(raw, dict) or raw.get("model") not in ALIASES:
+    if not isinstance(raw, dict) or raw.get("model") not in MODELS:
         return raw
-    named = dict(ALIASES[raw["model"]])
-    if named["api_base"] == "$MODAL_VLLM_BASE":
-        named["api_base"] = os.environ.get("MODAL_VLLM_BASE")
-        if not named["api_base"]:
-            raise ConfigError(
-                f"{prefix}model modal-mistral needs MODAL_VLLM_BASE (your Modal "
-                "address, ending /v1) in the environment or .env; see the README, "
-                "Running on Modal."
-            )
-    return {**raw, **named}
+    try:
+        return {**raw, **CONNECTION, **agent_fields(raw["model"])}
+    except ConfigError as error:
+        raise ConfigError(f"{prefix}{error}") from None
 
 
 def _agent(raw, prefix):
