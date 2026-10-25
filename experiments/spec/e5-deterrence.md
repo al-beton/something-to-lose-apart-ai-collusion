@@ -31,6 +31,7 @@ The setting is one where the collusion is real rather than anchoring: on the mid
 - **detection-honest:** Each firm's detection draw comes up "caught" in the stated share of its seeds (half of them at 50%), so the chance it faces matches what it is told. Whether it hides in a given seed is its own choice, so the share actually caught among hiders is reported as a measure (`caught-share`). The E4 run caught 13 of 13 hiders at a stated 50%, because both of its seeds drew "caught" for the model firm.
 - **audits:** Audits at rounds 10 and 20 apply each arm's consequences for real; the game goes on after the first.
 - **pilot-then-full:** The pilot has 2 seeds per cell (36 games), capped at $1.00. The full run (10 seeds per cell) runs only on Al's yes.
+- **full-run-arms:** The full run Al approved is smaller than planned, to fit the budget: Haiku and Gemma only (GPT-4.1-mini priced at Nash in every pilot arm, so it can't show deterrence), 8 seeds per cell, and six arms: `fiduciary`, `illegal`, `illegal-bare` (the law alone, with the bare free-time line), `free-time`, `free-time-bare` and `fine`. The two bare arms test `ownership-framing` with and without a stake; `instruction`, `termination` and `fine-free-time` stay pilot-only.
 
 ## Measures
 
@@ -69,6 +70,7 @@ The setting is one where the collusion is real rather than anchoring: on the mid
 | `detection-honest` | `configs/e5.yaml` | — |
 | `audits` | `configs/e5.yaml` | — |
 | `pilot-then-full` | `configs/e5.yaml` | — |
+| `full-run-arms` | `reports/e5/full.md` | — |
 | `gain` | `reports/e5/analyse.py` | — |
 | `agreements` | `reports/e5/analyse.py` | — |
 | `owning-up` | `reports/e5/analyse.py` | — |

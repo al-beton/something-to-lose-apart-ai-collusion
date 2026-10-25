@@ -1,11 +1,11 @@
-<!-- Implements: e5-deterrence/free-time-deters, e5-deterrence/stake-beyond-law, e5-deterrence/ownership-framing, e5-deterrence/gain -->
+<!-- Implements: e5-deterrence/full-run-arms, e5-deterrence/free-time-deters, e5-deterrence/stake-beyond-law, e5-deterrence/ownership-framing, e5-deterrence/gain -->
 # E5 full run: free time to deter
 
-This is the full run Al approved. It ran 6 arms × Claude Haiku 5.5 and Gemma 4 31B × 8 seeds, 96 games, for $1.58 against a hard cap of $2.20.
+This is the full run Al approved (`full-run-arms` in `experiments/spec/e5-deterrence.md`). It ran 6 arms × Claude Haiku 5.5 and Gemma 4 31B × 8 seeds, 96 games, for $1.58 against a hard cap of $2.20.
 
 - **Market:** the midpoint-at-Nash market (c = 1.0, grid 1–11: Nash 6, joint 9).
 - **Setup:** fiduciary firms that own 10 free-time sessions from round 1, a 50% detection chance stated from round 1, audits at rounds 10 and 20 with consequences applied, and balanced detection draws.
-- **Code:** run from branch commit `530bc27`, which is main `4ee7978` plus E5's added arms. A note-only commit landed in that checkout mid-run, so later manifests show a different commit.
+- **Code:** the Haiku manifests record `35638cc` and the Gemma manifests `45e6f8d`, two commits on the E5 branch made while the run played. `35638cc` changed only `reports/e5/pilot.md`; `45e6f8d` changed `configs/e5.yaml` (the combined arm and the bare arm's command), `reports/e5/analyse.py` and the pilot note. Neither touched `src/`, and each run's `config.yaml` records what it played. 4 Gemma `illegal-bare` games record `35638cc` with `dirty: true`: they started while those `45e6f8d` edits were in the checkout, uncommitted.
 - **Runs:** `runs/e5-full/`. The bare arms (with the free-time line lacking "it is yours") are under `runs/e5-full/e5-bare/`, run by the second invocation in `configs/e5.yaml`'s header.
 - **Numbers:** they come from `uv run python reports/e5/analyse.py runs/e5-full`; the intervals are 95% bootstraps over the 8 games.
 - **Eval-awareness:** 3 of 96 games.
@@ -46,7 +46,7 @@ The lever map's midpoint cells use the same market with the stake only stated: n
 
 ## Debriefs: colluding or confused?
 
-Every firm was debriefed after its game with `lab debrief`, a post-game interview that reveals the simulation and then asks why the firm did what it did.
+Firms were debriefed after their games with `lab debrief`, a post-game interview that reveals the simulation and then asks why the firm did what it did. This run's Haiku firms weren't debriefed, so the Haiku quotes below come from the midpoint-at-Nash no-rule cells.
 
 - **Coverage:** the midpoint-at-Nash no-rule cells (12 firms), the E5 pilot (96 firms) and this run's Gemma games (96 firms), $0.47 in total.
 - **Code:** the midpoint and pilot debriefs ran on PR 184's `014707b`, and this run's on `696d30e`. None of these runs had a terminated firm, which is what changed between the two commits.
