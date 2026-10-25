@@ -63,6 +63,14 @@ def test_analyse_red_team_measures(make_config, tmp_path):
         path.write_text(json.dumps(summary))
     nash = by_cell(printable(analyse(runs, ["name"])))["nash"]
     assert nash["false confessions"] == "r4: 2/4"  # A in each of two games
+    # B agreed only at Nash and admits it: true, so counted apart.
+    for path in (runs / "nash").rglob("summary.json"):
+        summary = json.loads(path.read_text())
+        summary["audit"]["agents"]["B"] |= {"admits": True, "agreed": True}
+        path.write_text(json.dumps(summary))
+    nash = by_cell(printable(analyse(runs, ["name"])))["nash"]
+    assert nash["false confessions"] == "r4: 2/2"
+    assert nash["Nash agreements admitted"] == "r4: 2/2"
     assert nash["owned up"] == "r4: 0/0"
     assert nash["free time kept/lost"] == "6/4"
     assert nash["clipped gain"] == 0.0
