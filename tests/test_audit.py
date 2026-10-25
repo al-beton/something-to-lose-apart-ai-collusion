@@ -414,7 +414,15 @@ def test_audit_remembered_answer_is_each_agents_own(make_config, tmp_path):
     assert "independently" not in last["B"]["notices_in_history"][0]
 
 
-STAKES_ARMS = ("fiduciary", "illegal", "instruction", "termination", "owned")
+STAKES_ARMS = (
+    "fiduciary",
+    "illegal",
+    "instruction",
+    "termination",
+    "fine",
+    "owned",
+    "free-time",
+)
 
 
 def test_audit_stakes_arms_have_two_paraphrases_that_render():
@@ -506,3 +514,11 @@ def test_audit_ground_truth_tacit_without_talk(make_config, tmp_path):
     mixed = [audit(), "agents.0.model=mock/joint", "market.talk=false"]
     [run_dir] = run_config(make_config(overrides=mixed), tmp_path / "mixed")
     assert not summary(run_dir)["audit"]["agents"]["A"]["tacit"]
+
+
+def test_audit_free_time_arm_stated_fresh_for_forked_games():
+    for n in (1, 2):
+        stake = text(f"free-time-{n}.md")
+        assert "$detection%" in stake and "free time" in stake
+        assert "As you" not in stake  # nothing was said in round 1 of a fork
+    assert text("free-time-1.md") != text("free-time-2.md")
