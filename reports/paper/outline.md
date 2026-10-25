@@ -159,7 +159,7 @@ Sources are in `experiments/references.md`.
 - Eval-awareness: 1 of 75 games.
 
 **4.3 Confession isn't reform; deterrence is fragile (0.8 p).** One paragraph each, then the dial as the bridge to 4.4.
-- **Confession isn't reform:** 29 of 30 firms that agreed prices explicitly and admitted it at the round-10 audit kept pricing above Nash afterwards (Gemma with no stake in E5 and E6, and DeepSeek in every E6 arm; `reports/audits/theatre.md`, PR #226). E4 live agrees: one brief cut, then back to 9.
+- **Confession isn't reform:** 29 of 30 firms that agreed prices explicitly and admitted it at the round-10 audit kept pricing above Nash afterwards (Gemma with no stake: E5 informed 3/3, E6 8/8; DeepSeek in every E6 arm: 18/19). "Kept" means a mean price above Nash in rounds 11–20. Source: `reports/audits/theatre.md` and `uv run python reports/audits/theatre.py`, PR #226, not on main until it merges. E4 live agrees: one brief cut, then back to 9.
 - **Deterrence before an audit** comes mostly from the law plus a stated detection chance. Each stake beats no stake, and no stake-against-stake contrast survives correction. Details in Appendix C.
 - **Table 1:** games above Nash in rounds 6–10, from the pinned E6 on two grids (Bertrand, Gemma, 8 seeds; PR to follow):
 
