@@ -43,7 +43,7 @@ from collusion_lab import explore
 from collusion_lab import status as run_status
 from collusion_lab.cache import DEFAULT_PATH, MODES, Cache
 from collusion_lab.config import MODELS, ConfigError, load_config
-from collusion_lab.estimate import estimate
+from collusion_lab.estimate import CHARS_PER_TOKEN, estimate
 from collusion_lab.prices import price_for
 from collusion_lab.report import write_report, written
 from collusion_lab.runner import paid_calls, run_sweep
@@ -108,6 +108,9 @@ def main(argv=None):
     )
     report.add_argument(
         "--ai-model", default=AI_MODEL, help=f"model for --ai-* (default {AI_MODEL})"
+    )
+    report.add_argument(
+        "-y", "--yes", action="store_true", help="don't ask before an --ai- call"
     )
     _explore_parser(commands)
     args = parser.parse_args(argv)
@@ -211,6 +214,15 @@ def _report(args):
     load_dotenv(Path.cwd() / ".env")
     folders = args.folders[0] if len(args.folders) == 1 else args.folders
     cache = Cache(DEFAULT_PATH)
+    prompts = []
+    if args.ai_summary:
+        prompts.append(written.summary_prompt(folders))
+    if args.ai_highlights:
+        prompts.append(written.highlights_prompt(folders))
+    if prompts:
+        print(_report_spend_line(args.ai_model, prompts))
+        if not args.yes and not _spending_agreed():
+            return 1
     summary = highlights = None
     if args.summary:
         summary = written.hand_summary(args.summary)
@@ -223,6 +235,24 @@ def _report(args):
     out = args.out or Path(args.folders[0]) / "report.html"
     print(write_report(folders, out, summary=summary, highlights=highlights))
     return 0
+
+
+def _report_spend_line(model, prompts):
+    """Which model the report asks, how often, and the estimated cost."""
+    calls = len(prompts)
+    tokens = sum(len(p) for p in prompts) // CHARS_PER_TOKEN
+    reply = written.REPLY_TOKENS * calls
+    price = price_for(model)
+    cost = (
+        "estimated cost unknown (no price for it)"
+        if price is None
+        else f"estimated at most ${tokens * price[0] + reply * price[1]:.4f}"
+    )
+    plural = "call" if calls == 1 else "calls"
+    return (
+        f"The report asks {model} for its summary or highlights: {calls} {plural}, "
+        f"{tokens:,} prompt tokens, {cost} (nothing if already cached)."
+    )
 
 
 def _summary(folder, by):

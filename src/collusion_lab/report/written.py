@@ -28,7 +28,10 @@ from collusion_lab.report.highlights import find_highlights
 from collusion_lab.report.overview import arm_sentences
 from collusion_lab.summary import format_table, summarize
 
+# The source tree's prompts, so a report can be built from any folder.
+PROMPTS = Path(__file__).resolve().parents[3] / "prompts"
 MOMENTS = 60  # the most the model is shown
+REPLY_TOKENS = 800  # the most a reply may be
 
 
 @dataclass(frozen=True)
@@ -47,7 +50,8 @@ def hand_summary(path):
     return Written(Path(path).read_text().strip(), "Written by hand")
 
 
-def ai_summary(folders, model, cache=None):
+def summary_prompt(folders):
+    """What `ai_summary` sends: the arm sentences and the summary table."""
     from collusion_lab.report.page import load_arms
 
     arms = "\n".join(
@@ -56,7 +60,11 @@ def ai_summary(folders, model, cache=None):
         if games
     )
     table = format_table(summarize(folders))
-    prompt = render("prompts", "report/summary.md", {"arms": arms, "table": table})
+    return render(PROMPTS, "report/summary.md", {"arms": arms, "table": table})
+
+
+def ai_summary(folders, model, cache=None):
+    prompt = summary_prompt(folders)
     return Written(_ask(model, cache, prompt).strip(), f"AI-written by {model}")
 
 
@@ -65,7 +73,8 @@ def hand_highlights(path):
     return Picked([_pick(p) for p in picks if _pick(p)], "Picked by hand")
 
 
-def ai_highlights(folders, model, cache=None):
+def highlights_prompt(folders):
+    """What `ai_highlights` sends: the rule-found moments and their messages."""
     from collusion_lab.report.page import headline
 
     lines = []
@@ -82,10 +91,13 @@ def ai_highlights(folders, model, cache=None):
                 else ""
             )
             lines.append(f"{game.run} | round {h.round} | {headline(h)} | {words}")
-    prompt = render(
-        "prompts", "report/highlights.md", {"moments": "\n".join(lines[:MOMENTS])}
+    return render(
+        PROMPTS, "report/highlights.md", {"moments": "\n".join(lines[:MOMENTS])}
     )
-    reply = _ask(model, cache, prompt)
+
+
+def ai_highlights(folders, model, cache=None):
+    reply = _ask(model, cache, highlights_prompt(folders))
     try:
         picks = [_pick(p) for p in json.loads(reply[reply.index("[") :])]
     except (ValueError, TypeError):
@@ -115,7 +127,7 @@ def _ask(model, cache, prompt):
             [{"role": "user", "content": prompt}],
             context=context,
             temperature=0,
-            max_tokens=800,
+            max_tokens=REPLY_TOKENS,
             seed=0,
         )
     )
