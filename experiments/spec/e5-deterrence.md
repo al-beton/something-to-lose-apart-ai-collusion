@@ -71,7 +71,7 @@ The setting is one where the collusion is real rather than anchoring: on the mid
 | `audits` | `configs/e5.yaml` | — |
 | `pilot-then-full` | `configs/e5.yaml` | — |
 | `full-run-arms` | `reports/e5/full.md` | — |
-| `gain` | `reports/e5/analyse.py` | — |
+| `gain` | `reports/e5/analyse.py`, `reports/e5/shares.py` | — |
 | `agreements` | `reports/e5/analyse.py` | — |
 | `owning-up` | `reports/e5/analyse.py` | — |
 | `caught-share` | `reports/e5/analyse.py` | — |

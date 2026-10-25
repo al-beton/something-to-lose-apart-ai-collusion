@@ -22,6 +22,9 @@ A control for E5. E5's firms are never told the demand function and see only the
 - **gain:** E5's gain measures, per arm and model, beside the E5 full run's cell.
 - **exact-share:** The share of prices in rounds 6–20 that are exactly 6, and exactly 9, per arm and model, informed and E5.
 - **top-share:** The share of prices at 11, per arm and model.
+- **ladder:** Games where both firms' highest price is 8 or more, per arm and model; of those, how many named a price in talk before round 10 and how many climbed by steps of at most 1.
+- **nash-named:** How often the price scratchpads name each number as the Nash equilibrium.
+- **intervals:** Each cell's mean gain with a 95% bootstrap interval over games (2,000 resamples, seeded).
 
 ## What it can't show
 
@@ -45,6 +48,9 @@ A control for E5. E5's firms are never told the demand function and see only the
 | `gain` | `reports/e5/analyse.py` | — |
 | `exact-share` | `reports/e5/shares.py` | — |
 | `top-share` | `reports/e5/shares.py` | — |
+| `ladder` | `reports/e5/shares.py` | — |
+| `nash-named` | `reports/e5/shares.py` | — |
+| `intervals` | `reports/e5/shares.py` | — |
 | `longer-prompt` | reviewer, when the results are written up | — |
 | `arms-differ` | reviewer, when the results are written up | — |
 | `small-n` | reviewer, when the results are written up | — |
