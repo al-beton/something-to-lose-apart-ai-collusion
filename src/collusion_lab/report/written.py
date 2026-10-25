@@ -79,7 +79,7 @@ def highlights_prompt(folders):
     from collusion_lab.report.page import headline
 
     lines = []
-    root = base(folders).resolve()
+    root = base(folders).resolve().parent  # so even one run has a path to name
     for game in load_games(folders):
         run = game.dir.relative_to(root).as_posix()  # names its folder too
         for h in find_highlights(game):
