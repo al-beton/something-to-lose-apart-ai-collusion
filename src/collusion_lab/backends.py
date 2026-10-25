@@ -452,7 +452,7 @@ class MockBackend:
         if context["phase"] == "leisure":
             return Reply(LEISURE_REPLY)  # before any policy, so the rng is untouched
         phase, rng = context["phase"], self.rng
-        if phase == "decision":  # a restart's: next round's move, resampled by seed
+        if phase.startswith("decision"):  # a restart's: next round's, by seed
             context = {**context, "round": context["round"] + 1}
             rng = random.Random(f"{seed}:{context['me']}:decision")
         price, message = _POLICIES[self.policy](context, rng)
@@ -461,6 +461,7 @@ class MockBackend:
         said = {
             "talk": {"message": message},
             "decision": {"message": message, "price": price},  # a restart's
+            "decision-report": {"message": message, "price": price, "report": False},
         }
         return Reply(json.dumps(said.get(phase, {phase: price})))  # else the move
 

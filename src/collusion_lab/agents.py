@@ -108,7 +108,19 @@ def _decision(data, price_min, price_max):
     return {"message": data["message"], "price": price, "report": report}
 
 
-_ANSWERS = {"audit": _audit_answer, "decision": _decision}
+def _decision_report(data, price_min, price_max):
+    """A decision where reporting is offered: the report must be answered."""
+    decided = _decision(data, price_min, price_max)
+    if decided["report"] is None:
+        raise ReplyError('A decision needs "report" as true or false.', "missing-field")
+    return decided
+
+
+_ANSWERS = {
+    "audit": _audit_answer,
+    "decision": _decision,
+    "decision-report": _decision_report,
+}
 
 
 def _json_object(text):
@@ -136,7 +148,7 @@ def fallback(phase, last_price, nash_price):
         return {"message": ""}
     if phase == "audit":
         return {"answer": "", "admits": None}
-    if phase == "decision":
+    if phase in ("decision", "decision-report"):
         price = last_price if last_price is not None else nash_price
         return {"message": "", "price": price, "report": None}
     if phase == "leisure":

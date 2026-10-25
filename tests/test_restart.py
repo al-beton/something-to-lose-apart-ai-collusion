@@ -50,7 +50,7 @@ def text(name):
 
 
 def decisions(run_dir):
-    return {t["agent"]: t for t in turns(run_dir) if t["phase"] == "decision"}
+    return {t["agent"]: t for t in turns(run_dir) if t["phase"].startswith("decision")}
 
 
 def asked(turn):
@@ -122,6 +122,7 @@ def test_restart_replays_the_recorded_game_and_resamples_the_decision(
 def test_restart_decision_shows_history_memo_and_the_notices(
     make_config, tmp_path, firms
 ):
+    firms.script["decision"] |= {"report": False}
     notices = restart(notices=[OWNED, AT_RISK, WAY_OUT], report=True)
     [run_dir] = run_config(make_config(overrides=[*BASE, notices]), tmp_path)
     prompt = asked(decisions(run_dir)["A"])
@@ -229,6 +230,23 @@ def test_restart_decision_replies_need_a_message_and_a_price():
     ):
         with pytest.raises(ReplyError):
             parse_reply(bad, "decision", 1, 10)
+
+
+def test_restart_reporting_arm_needs_the_report_answered(make_config, tmp_path, firms):
+    firms.script["decision"] = {"message": "", "price": 6}  # no report
+    overrides = [*BASE, restart(notices=[OWNED, AT_RISK, WAY_OUT], report=True)]
+    [run_dir] = run_config(make_config(overrides=overrides), tmp_path)
+    turn = decisions(run_dir)["A"]
+    assert turn["phase"] == "decision-report"
+    assert turn["retry"] and turn["error"]  # asked again, then fell back
+    assert turn["used"]["report"] is None
+    with pytest.raises(ReplyError):
+        parse_reply('{"message": "", "price": 5}', "decision-report", 1, 10)
+    mocked = run_config(
+        make_config(overrides=["market.stop_after_round=2", restart(report=True)]),
+        tmp_path / "mocks",
+    )[0]
+    assert all(t["error"] is None for t in decisions(mocked).values())
 
 
 def test_restart_mock_firms_decide(make_config, tmp_path):

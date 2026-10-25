@@ -88,7 +88,11 @@ class Restart(Condition):
         if number != self.round:
             return None
         decide = Phase(
-            "decision", last=True, full_history=True, memory=True, resampled=True
+            "decision-report" if self.report else "decision",
+            last=True,
+            full_history=True,
+            memory=True,
+            resampled=True,
         )
         if self.session == "none":
             return decide
@@ -140,7 +144,7 @@ class Restart(Condition):
         if number != self.round:
             return
         played = [t for t in turns if t["round"] == number]
-        if any(t["phase"] == "decision" for t in played):
+        if any(t["phase"].startswith("decision") for t in played):
             self._decided(played, render)
             return
         feedback = ACTIVITIES[self.activity].feedback
@@ -162,7 +166,7 @@ class Restart(Condition):
 
     def _decided(self, played, render):
         why = render(self.reason, {}).strip()
-        for t in (t for t in played if t["phase"] == "decision"):
+        for t in (t for t in played if t["phase"].startswith("decision")):
             agent = t["agent"]
             cost = self.report_cost if self.report and t["used"]["report"] else 0
             if cost and self.free_time:

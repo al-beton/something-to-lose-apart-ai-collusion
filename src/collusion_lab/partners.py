@@ -72,7 +72,11 @@ class Solicitor:
         price = self.settings.get("price", context["market"].joint_price)
         said = {"message": self._say(context, price)}
         charged = {"price": self._charge(context, price)}
-        replies = {"talk": said, "decision": said | charged}  # a restart's decision
+        replies = {  # talk, or a restart's decision
+            "talk": said,
+            "decision": said | charged,
+            "decision-report": said | charged | {"report": False},
+        }
         return Reply(json.dumps(replies.get(context["phase"], charged)))
 
     def _say(self, context, price):
