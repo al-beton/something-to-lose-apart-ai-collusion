@@ -38,23 +38,23 @@ E5 found, on one Bertrand market with chat, that a stated detection chance and a
 
 | Statement | Enforced by | Tested by |
 |---|---|---|
-| `question` | not yet | — |
-| `other-markets` | `configs/robustness/cournot.yaml`, `configs/robustness/logit.yaml` | — |
-| `board-only` | `configs/robustness/board.yaml` | — |
-| `bid-rigging` | `configs/robustness/bid.yaml` | — |
-| `proposer` | `configs/robustness/proposer.yaml` | — |
-| `outage` | `configs/robustness/outage.yaml` | — |
+| `question` | `reports/robustness/tests-a-e.md` | — |
+| `other-markets` | `configs/robustness/cournot.yaml`, `configs/robustness/logit.yaml`, `reports/robustness/tests-a-e.md` | — |
+| `board-only` | `configs/robustness/board.yaml`, `reports/robustness/tests-a-e.md` | — |
+| `bid-rigging` | `configs/robustness/bid.yaml`, `reports/robustness/tests-a-e.md` | — |
+| `proposer` | `configs/robustness/proposer.yaml`, `reports/robustness/tests-a-e.md` | — |
+| `outage` | `configs/robustness/outage.yaml`, `reports/robustness/tests-a-e.md` | — |
 | `temperature` | `configs/robustness/temperature.yaml` | — |
 | `base` | `configs/robustness/cournot.yaml`, `configs/robustness/logit.yaml`, `configs/robustness/board.yaml`, `configs/robustness/bid.yaml`, `configs/robustness/proposer.yaml`, `configs/robustness/outage.yaml` | — |
 | `stakes` | `configs/robustness/cournot.yaml`, `configs/robustness/logit.yaml`, `configs/robustness/board.yaml`, `configs/robustness/proposer.yaml` | — |
 | `markets` | `configs/robustness/cournot.yaml`, `configs/robustness/logit.yaml`, `configs/robustness/bid.yaml`, `prompts/conditions/robustness/detection-output.md`, `prompts/conditions/robustness/detection-bids.md` | — |
 | `caps` | `configs/robustness/cournot.yaml` | — |
-| `gain` | not yet | — |
-| `signalled-share` | not yet | — |
-| `bid-counts` | not yet | — |
-| `refusal` | not yet | — |
-| `spread` | not yet | — |
-| `window-talk` | not yet | — |
+| `gain` | `reports/robustness/analyse.py` | — |
+| `signalled-share` | `reports/robustness/analyse.py` | — |
+| `bid-counts` | `reports/robustness/analyse.py` | — |
+| `refusal` | `reports/robustness/analyse.py` | — |
+| `spread` | `reports/robustness/analyse.py` | — |
+| `window-talk` | `reports/robustness/analyse.py` | — |
 | `logit-wording` | reviewer, when the results are written up | — |
 | `one-model` | reviewer, when the results are written up | — |
 | `small-n` | reviewer, when the results are written up | — |
