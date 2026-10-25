@@ -5,7 +5,7 @@
 - **builders:** One or two builders each deliver the issue they were assigned, from spec to a pull request that is green and reviewed by Codex, then hand it to a reviewer; a builder never merges its own pull request.
 - **reviewers:** A reviewer that isn't the pull request's author reviews it and merges it once it is clean.
 - **codex:** Codex reviews every pull request adversarially, independently of the agent that built it.
-- **researcher:** A research agent uses the lab to run experiments and surfaces reports and findings worth Al's attention.
+- **researcher:** A research agent uses the lab to run experiments and surfaces reports and findings worth Al's attention, serving open models that fit on one or two H100s on Modal and using OpenRouter only for closed models or what Modal can't serve.
 - **queue-labels:** Each open issue shows where it stands with one label, `ready`, `in-progress`, `in-review`, `blocked` or `on-hold`, so anyone can see the queue at a glance.
 
 ## Where this is enforced

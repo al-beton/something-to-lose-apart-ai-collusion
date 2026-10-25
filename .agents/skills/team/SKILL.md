@@ -16,7 +16,7 @@ Al talks only to the manager. Everyone else works from GitHub issues and pull re
 | **Builder** (one or two) | Delivers its assigned issue with `deliver-issue` steps 1 to 4, then labels it `in-review` and tells the lead in one line; starts the next issue from `main` | merges its own pull request |
 | **Reviewer** (one or two) | Reviews pull requests labelled `in-review` (`review-pr`); if its review passes, merges (`merge-pr`) | merges a pull request it authored |
 | **Codex** | Reviews every pull request adversarially when it's marked ready or asked (`@codex review`) | merges |
-| **Researcher** | Runs experiments with the lab: specs in `experiments/spec/`, then runs, then reports and findings notes in `reports/` | spends without Al's yes |
+| **Researcher** | Runs experiments with the lab: specs in `experiments/spec/`, then runs, then reports and findings notes in `reports/`. Serves open models on Modal (any that fits on one or two H100s, as its own app: README, "Running on Modal"); OpenRouter only for closed models or when Modal can't serve one | spends without Al's yes |
 
 ## Queue labels
 
