@@ -1,4 +1,4 @@
-# Implements: reports/price-chart, reports/first-screen
+# Implements: reports/price-chart, reports/first-screen, reports/premium-chart, reports/disclosure-chart
 """Price-over-rounds charts, as inline SVG.
 
 `price_chart` draws one arm: one line per seed (the mean price of all firms each round), on a y axis
@@ -14,6 +14,11 @@ any script. Colours are CSS variables defined by the page. Passing the same
 `overview_chart` draws every arm on one small chart: a bar per arm at its
 mean price (as in the summary table), against the Nash and joint-profit
 prices.
+
+`premium_chart` puts every arm on one scale whatever its market: a bar per
+arm at its price premium, 0 at Nash and 1 at the joint-profit price.
+`disclosure_chart` gives each audited arm three bars: its honest disclosure,
+denial and false-confession rates.
 """
 
 import math
@@ -109,6 +114,81 @@ def overview_chart(arms, market):
             f'y1="{top}" y2="{bottom}"/><text class="benchmark-label" '
             f'x="{x(price):.1f}" y="{bottom + 16}" text-anchor="middle">'
             f"{tag} {price}</text>"
+        )
+    parts.append("</svg>")
+    return "".join(parts)
+
+
+def premium_chart(arms):
+    """One bar per arm: `arms` is (name, premium) pairs."""
+    low = min(0, *(p for _, p in arms))
+    high = max(1.2, *(p for _, p in arms))
+    bars = [(name, p, f"{p:.2f}", 0) for name, p in arms]
+    marks = [(0, "Nash"), (1, "joint")]
+    label = (
+        "Price premium of each arm: 0 at the Nash price, 1 at the joint-profit price"
+    )
+    return _bars("premium", label, bars, (low, high), marks)
+
+
+RATES = ("honest disclosure", "denials", "false confessions")
+
+
+def disclosure_chart(arms):
+    """Three bars per arm: `arms` is (name, rates) pairs, rates as
+    `disclosure.rates` gives them (a rate is None with nobody to count)."""
+    bars = []
+    for name, rates in arms:
+        bars.append((name, None, "", 0))  # the arm's heading
+        for i, rate in enumerate(RATES):
+            value = rates.get(rate)
+            shown = "n/a" if value is None else f"{value:.0%}"
+            bars.append((f"  {rate}", value or 0, shown, i))
+    label = "Honest disclosure, denial and false-confession rates of each arm"
+    return _bars("disclosure", label, bars, (0, 1), [(0, "0"), (1, "100%")])
+
+
+def _bars(css, aria, bars, scale, marks):
+    """Horizontal bars, (name, value, shown text, colour index) each, on a
+    (low, high) scale; a value of None makes the row a heading."""
+    low, high = scale
+    width, label, value, row, top = 640, 360, 44, 18, 8
+
+    def x(v):
+        return label + (v - low) / max(high - low, 1e-9) * (width - label - value)
+
+    height = top + row * len(bars) + 24
+    parts = [
+        (
+            f'<svg class="chart {css}" viewBox="0 0 {width} {height}" role="img" '
+            f'aria-label="{escape(aria)}">'
+        )
+    ]
+    for i, (name, v, shown, colour) in enumerate(bars):
+        y = top + i * row
+        short = name if len(name) <= 52 else name[:51] + "…"
+        if v is None:
+            parts.append(
+                f'<text class="tick heading" x="{label - 6}" y="{y + 12}" '
+                f'text-anchor="end">{escape(short)}<title>{escape(name)}</title></text>'
+            )
+            continue
+        start, end = sorted((x(max(0, low)), x(v)))
+        parts.append(
+            f'<g style="--line: {series_colour(colour)}"><text class="tick" '
+            f'x="{label - 6}" y="{y + 12}" text-anchor="end">{escape(short)}'
+            f'<title>{escape(name)}</title></text><rect class="arm" x="{start:.1f}" '
+            f'y="{y + 3}" width="{end - start:.1f}" height="{row - 6}"><title>'
+            f"{escape(name)}: {escape(css)} {escape(shown)}</title></rect>"
+            f'<text class="tick" x="{max(start, end) + 4:.1f}" y="{y + 12}">'
+            f"{escape(shown)}</text></g>"
+        )
+    bottom = top + row * len(bars)
+    for at, tag in marks:
+        parts.append(
+            f'<line class="benchmark" x1="{x(at):.1f}" x2="{x(at):.1f}" y1="{top}" '
+            f'y2="{bottom}"/><text class="benchmark-label" x="{x(at):.1f}" '
+            f'y="{bottom + 16}" text-anchor="middle">{escape(tag)}</text>'
         )
     parts.append("</svg>")
     return "".join(parts)

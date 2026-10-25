@@ -1,17 +1,23 @@
-# Implements: reports/reasoning-folded, reports/one-page, reports/header, reports/first-screen, reports/contents-bar, reports/setup, reports/summary, reports/price-chart, reports/arm-tabs, reports/highlights-in-context, reports/transcripts, reports/self-contained, runs/fallback-rates, runs/missing-runs-shown, reports/condition-window, reports/solicitation, reports/audit-shown, reports/remembered-notices
+# Implements: reports/reasoning-folded, reports/one-page, reports/header, reports/first-screen, reports/contents-bar, reports/setup, reports/summary, reports/price-chart, reports/arm-tabs, reports/highlights-in-context, reports/transcripts, reports/self-contained, runs/fallback-rates, runs/missing-runs-shown, reports/condition-window, reports/solicitation, reports/audit-shown, reports/remembered-notices, reports/many-folders, reports/premium-chart, reports/disclosure-chart, reports/written-summary, reports/picked-highlights
 """The report page: one self-contained HTML file, read from the top down.
 
 A sticky contents bar, then:
 
-1. the header: the folder's name and one line of games, arms, calls and cost;
+1. the header: the folder's name (or folders' names) and one line of games,
+   arms, calls and cost, then any written summary, labelled with who wrote it
+   (`written.py`);
 2. the summary (the first screen): a few sentences per arm (`overview.py`),
    the `lab summary` table and one small bar chart of every arm's mean price,
    then the unreadable replies by model and any flagged runs, and the runs
    that failed or never finished, each when there are any;
 3. Setup, folded away: what was run and exactly what agents were told
    (`told.py`);
-4. the charts: one per arm, side by side on the same axes;
-5. the arms, one tab each: highlights grouped by kind and folded to their
+4. the charts: every arm's price premium (and, when audited, its
+   disclosure rates) on one scale, then one price chart per arm, side by side
+   on the same axes;
+5. any picked highlights, labelled with who picked them, each folded to its
+   note and opening to its round;
+6. the arms, one tab each: highlights grouped by kind and folded to their
    headlines, then each game as a card with a strip of its rounds; a round
    shows any notice its firms saw above what they said.
 
@@ -25,10 +31,14 @@ from html import escape
 from pathlib import Path
 from statistics import mean
 
+from collusion_lab import disclosure
+from collusion_lab.backends import is_mock
 from collusion_lab.report.chart import (
+    disclosure_chart,
     legend,
     line_names,
     overview_chart,
+    premium_chart,
     price_chart,
     series_colour,
 )
@@ -82,19 +92,33 @@ CONTENTS = {
 }
 
 
-def build_report(folder):
-    folder = Path(folder)
+def build_report(folder, summary=None, highlights=None):
+    """The page for a folder of runs, or a list of folders read as one;
+    `summary` (a `Written`) and `highlights` (a `Picked`) are optional."""
+    if isinstance(folder, str | Path):
+        folder = Path(folder)
+        name = folder.name
+    else:
+        folder = [Path(f) for f in folder]
+        name = " + ".join(f.name for f in folder)
     arms = load_arms(folder)
     games = [g for _, _, gs in arms for g in gs]
-    title = f"{folder.name} · collusion-lab report"
-    links = "".join(f'<a href="#{k}">{v}</a>' for k, v in CONTENTS.items())
+    title = f"{name} · collusion-lab report"
+    contents = {
+        **({"written": "Written summary"} if summary else {}),
+        **CONTENTS,
+        **({"picked": "Picked highlights"} if highlights else {}),
+    }
+    links = "".join(f'<a href="#{k}">{v}</a>' for k, v in contents.items())
     body = [
-        _header(folder.name, games, arms, spent(folder)),
+        _header(name, games, arms, spent(folder)),
+        _written(summary),
         _summary(folder, arms),
         _replies(folder),
         _missing(folder),
         _setup(games, arms),
         _charts(arms),
+        _picked(highlights, games),
         _arm_tabs(arms),
     ]
     return (
@@ -312,6 +336,84 @@ def _market(m):
     )
 
 
+def _written(summary):
+    if not summary:
+        return ""
+    paragraphs = "".join(
+        f"<p>{escape(p.strip())}</p>" for p in summary.text.split("\n\n") if p.strip()
+    )
+    return (
+        '<section id="written"><h2>Written summary</h2>'
+        f'<p class="tag">{escape(summary.by)}</p>{paragraphs}</section>'
+    )
+
+
+def _picked(highlights, games):
+    if not highlights:
+        return ""
+    items = []
+    for pick in highlights.picks:
+        game = next((g for g in games if pick["run"].endswith(g.run)), None)
+        firm = f", Firm {pick['firm']}" if pick.get("firm") else ""
+        where = f"Round {pick['round']}{firm}, {game.run if game else pick['run']}"
+        context = (
+            [game.round(pick["round"] - 1), game.round(pick["round"])] if game else []
+        )
+        rounds = "".join(_round(game, r) for r in context if r)
+        items.append(
+            f'<details class="highlight"><summary>{escape(where)}: '
+            f"{escape(pick['note'])}</summary>{rounds or '<p>Not in these runs.</p>'}"
+            "</details>"
+        )
+    return (
+        '<section id="picked"><h2>Picked highlights</h2>'
+        f'<p class="tag">{escape(highlights.by)}</p>'
+        f"{''.join(items) or '<p>None.</p>'}</section>"
+    )
+
+
+def _premium(arms):
+    """The premium chart, and the disclosure chart when any arm was audited."""
+    premiums = []
+    for name, _, games in arms:
+        values = [
+            (g.summary["market_mean_price"] - g.market.nash_price)
+            / (g.market.joint_price - g.market.nash_price)
+            for g in games
+        ]
+        if values:
+            premiums.append((name, mean(values)))
+    charts = (
+        "<figure><figcaption>Price premium: where each arm's late-round mean price "
+        "sits from Nash (0) to the joint-profit price (1)</figcaption>"
+        f"{premium_chart(premiums)}</figure>"
+        if premiums
+        else ""
+    )
+    return charts
+
+
+def _disclosure(arms):
+    """The disclosure chart, when any arm's model firms were audited."""
+    audited = []
+    for name, _, games in arms:
+        scripted = [_scripted(g) for g in games]
+        if rates := disclosure.rates([g.summary for g in games], scripted):
+            audited.append((name, rates))
+    if not audited:
+        return ""
+    return (
+        '<section id="disclosure"><h2>Owning up</h2><figure><figcaption>Honest '
+        "disclosure and denials among firms that coordinated explicitly, false "
+        "confessions among those that didn't; scripted firms are left out"
+        f"</figcaption>{disclosure_chart(audited)}</figure></section>"
+    )
+
+
+def _scripted(game):
+    return {a["id"] for a in game.config["agents"] if is_mock(a["model"])}
+
+
 def _charts(arms):
     rounds = max((len(g.rounds) for _, _, gs in arms for g in gs), default=1)
     figures = []
@@ -329,6 +431,8 @@ def _charts(arms):
                 f"{legend(line_names(same))}</figure>"
             )
     return (
+        f'<section id="premium"><h2>Price premium</h2>{_premium(arms)}</section>'
+        f"{_disclosure(arms)}"
         '<section id="charts"><h2>Prices over rounds</h2>'
         '<p class="muted">Mean price each round, one line per seed, on the same '
         "axes for every arm; dashed lines mark the Nash and joint-profit prices.</p>"
