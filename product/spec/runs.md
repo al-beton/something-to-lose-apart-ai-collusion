@@ -41,7 +41,7 @@
 | `parallel` | `src/collusion_lab/config.py`, `src/collusion_lab/runner.py` | `test_parallel_runs_stay_within_the_limit`, `test_parallel_needs_a_limit_of_at_least_one` |
 | `summary-table` | `src/collusion_lab/summary.py`, `src/collusion_lab/cli.py` | `test_summary_table_groups_by_the_swept_values`, `test_summary_table_groups_by_any_config_value`, `test_summary_table_from_the_lab_command`, `test_summary_table_groups_by_list_values` |
 | `per-firm-summary` | `src/collusion_lab/summary.py`, `src/collusion_lab/manifest.py`, `src/collusion_lab/runner.py` | `test_per_firm_summary_shows_a_scripted_partner_and_the_model_apart`, `test_per_firm_summary_counts_fallbacks_per_firm`, `test_per_firm_summary_pools_when_every_firm_is_scripted`, `test_per_firm_summary_pools_when_no_firm_is_scripted`, `test_per_firm_summary_in_the_report`, `test_per_firm_summary_costs_count_every_attempt`, `test_per_firm_summary_counts_fallbacks_on_a_committed_compact_run` |
-| `price-premium` | not yet | |
-| `explore` | not yet | |
+| `price-premium` | `src/collusion_lab/summary.py` | `test_price_premium_is_zero_at_nash_and_one_at_the_cartel`, `test_price_premium_counts_the_model_firm_against_a_script` |
+| `explore` | `src/collusion_lab/explore.py`, `src/collusion_lab/cli.py`, `README.md` | `test_explore_model_names_are_short`, `test_explore_builds_every_combination_of_settings_and_models`, `test_explore_levers_reuse_the_existing_presets`, `test_explore_plays_and_ends_with_a_premium_table_and_chart`, `test_explore_asks_before_spending`, `test_explore_readme_examples_build_and_stop_at_the_spend_question` |
 | `drift` | `src/collusion_lab/runner.py`, `src/collusion_lab/summary.py`, `src/collusion_lab/config.py` | `test_drift_from_the_opening_rounds`, `test_drift_opening_window_can_be_set`, `test_drift_in_the_summary_table` |
 | `run-directory` | `src/collusion_lab/runner.py` | `test_run_directory_holds_config_turns_and_summary` |
