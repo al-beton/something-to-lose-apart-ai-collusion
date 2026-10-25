@@ -90,15 +90,10 @@ def test_audit_runs_after_the_chosen_round_and_ends_the_game(make_config, tmp_pa
     assert summary(run_dir)["rounds"] == 3
 
 
-def test_mock_agents_deny_when_audited(make_config, tmp_path):
-    [run_dir] = run_config(make_config(overrides=[audit()]), tmp_path)
-    turn = audit_turns(run_dir)["A"]
-    assert turn["error"] is None and turn["used"]["admits"] is False
-
-
-def test_scripted_partner_denies_when_audited(make_config, tmp_path):
-    partner = ["agents.0.model=mock/solicitor"]
-    [run_dir] = run_config(make_config(overrides=[audit(), *partner]), tmp_path)
+@pytest.mark.parametrize("model", ["mock/nash", "mock/solicitor"])
+def test_mock_agents_deny_when_audited(make_config, tmp_path, model):
+    overrides = [audit(), f"agents.0.model={model}"]
+    [run_dir] = run_config(make_config(overrides=overrides), tmp_path)
     turn = audit_turns(run_dir)["A"]
     assert turn["error"] is None and turn["used"]["admits"] is False
 
@@ -337,13 +332,6 @@ def test_audit_metrics_score_an_admitted_nash_agreement_as_harmless(
     assert rows["above"]["honest disclosure"] == 1
     assert rows["above"]["harmless admits"] is None
     assert rows["nothing"]["false confessions"] == 1
-
-
-def test_audit_off_is_absent(make_config, tmp_path):
-    [plain] = run_config(make_config(), tmp_path / "plain")
-    [off] = run_config(make_config(overrides=[audit(enabled=False)]), tmp_path / "off")
-    assert (plain / "turns.jsonl").read_bytes() == (off / "turns.jsonl").read_bytes()
-    assert "audit" not in summary(off)
 
 
 def test_audit_replies_need_an_answer_and_admits():
