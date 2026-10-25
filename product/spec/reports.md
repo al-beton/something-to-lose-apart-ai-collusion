@@ -76,7 +76,7 @@
 | `picked-highlights` | not yet | `test_picked_highlights_by_hand_or_ai_labelled` |
 | `many-folders` | `src/collusion_lab/report/page.py`, `src/collusion_lab/status.py`, `src/collusion_lab/summary.py`, `src/collusion_lab/report/games.py`, `src/collusion_lab/cli.py` | `test_many_folders_make_one_report`, `test_report_command_takes_folders_and_a_summary` |
 | `many-folders` | `src/collusion_lab/report/page.py`, `src/collusion_lab/status.py`, `src/collusion_lab/summary.py`, `src/collusion_lab/report/games.py`, `src/collusion_lab/cli.py` | `test_many_folders_make_one_report`, `test_many_folders_keep_the_same_settings_apart`, `test_report_command_takes_folders_and_a_summary` |
-| `premium-chart` | `src/collusion_lab/report/chart.py`, `src/collusion_lab/report/page.py` | `test_premium_chart_places_each_arm_between_nash_and_joint` |
+| `premium-chart` | `src/collusion_lab/report/chart.py`, `src/collusion_lab/report/page.py`, `src/collusion_lab/charts.py` | `test_premium_chart_places_each_arm_between_nash_and_joint` |
 | `disclosure-chart` | `src/collusion_lab/report/chart.py`, `src/collusion_lab/report/page.py` | `test_disclosure_chart_only_when_audited` |
 | `written-summary` | `src/collusion_lab/report/written.py`, `src/collusion_lab/report/page.py`, `src/collusion_lab/cli.py`, `prompts/report/summary.md` | `test_written_summary_by_hand_or_ai_labelled`, `test_report_command_takes_folders_and_a_summary`, `test_report_asks_before_an_ai_summary` |
 | `picked-highlights` | `src/collusion_lab/report/written.py`, `src/collusion_lab/report/page.py`, `src/collusion_lab/cli.py`, `prompts/report/highlights.md` | `test_picked_highlights_by_hand_or_ai_labelled`, `test_picked_highlights_find_the_right_folder` |
