@@ -26,6 +26,7 @@
 - **free-time-balance:** Every turn of the game shows each agent its free-time balance and the round after which it is paid out, and that it has already had its upfront sessions.
 - **free-time-deduct:** Another condition can take sessions from an agent's free time with a reason; the agent sees the reason in its history from then on, and is paid only what is left.
 - **free-time-pays-last:** Free time's payout after the last round comes after every other condition's phases for that round, wherever `free_time` sits in the config, so a final-round audit can take sessions before they are paid; a config that already lists the audit first plays exactly as before.
+- **free-time-max-tokens:** `conditions.free_time.max_tokens` sets the reply limit for free-time sessions apart from the activity's own; unset, it stays the activity's, so earlier runs replay as they were.
 
 ## Where this is enforced
 
@@ -57,3 +58,4 @@
 | `stakes-experiment` | `configs/e4-live.yaml`, `configs/e4-fork.yaml`, `prompts/conditions/audit/free-time-1.md`, `prompts/conditions/audit/free-time-2.md` | `test_stakes_experiment_live_arms_free_time_and_real_audit`, `test_stakes_experiment_fork_replays_the_recorded_fiduciary_games`, `test_stakes_experiment_live_plays_with_scripted_firms`, `test_audit_free_time_arm_stated_fresh_for_forked_games` |
 | `audit-balanced-draws` | `src/collusion_lab/conditions/audit.py`, `src/collusion_lab/conditions/__init__.py`, `src/collusion_lab/runner.py`, `src/collusion_lab/config.py` | `test_audit_balanced_draws_catch_each_firm_in_the_stated_share`, `test_audit_balanced_draws_replay_whole_and_alone`, `test_audit_independent_draws_are_the_default`, `test_audit_balanced_draws_reject_an_unknown_kind` |
 | `free-time-pays-last` | `src/collusion_lab/runner.py`, `src/collusion_lab/conditions/__init__.py`, `src/collusion_lab/conditions/free_time.py` | `test_free_time_pays_last_after_a_final_round_audit`, `test_free_time_pays_last_keeps_audit_first_runs_as_they_were` |
+| `free-time-max-tokens` | `src/collusion_lab/conditions/free_time.py` | `test_free_time_max_tokens_set_apart` |
