@@ -301,3 +301,112 @@ def test_self_hosted_needs_its_own_address(make_config):
 
     with pytest.raises(ConfigError, match="self_hosted"):
         make_config(overrides=["agents.0.self_hosted=true"])
+
+
+def test_modal_pinned_serves_one_revision_at_a_stated_dtype(monkeypatch):
+    monkeypatch.setenv("REVISION", "0123abcd")
+    _, command = _deployed(monkeypatch)
+    for flag, value in (
+        ("--revision", "0123abcd"),
+        ("--dtype", "bfloat16"),
+        ("--max-model-len", "16384"),
+    ):
+        assert command[command.index(flag) + 1] == value
+
+
+def test_modal_pinned_revision_looked_up_at_deploy(monkeypatch):
+    import io
+    import urllib.request
+
+    monkeypatch.delenv("REVISION", raising=False)
+    asked = []
+
+    def hub(url, timeout):
+        asked.append(url)
+        return io.BytesIO(json.dumps({"sha": "feedface"}).encode())
+
+    monkeypatch.setattr(urllib.request, "urlopen", hub)
+    _, command = _deployed(monkeypatch)
+    assert command[command.index("--revision") + 1] == "feedface"
+    assert asked == [
+        "https://huggingface.co/api/models/mistralai/Mistral-Small-3.2-24B-Instruct-2506"
+    ]
+
+    def down(url, timeout):
+        raise OSError("no network")
+
+    monkeypatch.setattr(urllib.request, "urlopen", down)
+    with pytest.raises(RuntimeError, match="REVISION"):
+        _deployed(monkeypatch)
+
+
+def test_modal_pinned_provenance_behind_the_token(monkeypatch, tmp_path):
+    import asyncio
+    import importlib.util
+    import sys
+    import types
+
+    written = tmp_path / "provenance.json"
+    monkeypatch.setenv("PROVENANCE_FILE", str(written))
+    monkeypatch.setenv("REVISION", "0123abcd")
+    monkeypatch.setenv("DEPLOY_COMMIT", "c0ffee")
+    _deployed(monkeypatch)
+    told = json.loads(written.read_text())
+    assert told["revision"] == "0123abcd" and told["deploy_commit"] == "c0ffee"
+    assert told["dtype"] == "bfloat16" and told["max_model_len"] == 16384
+    assert {"model", "served_name", "gpu", "vllm"} <= told.keys()
+
+    responses = types.ModuleType("starlette.responses")
+    responses.JSONResponse = lambda body, status_code: (body, status_code)
+    monkeypatch.setitem(sys.modules, "starlette.responses", responses)
+    monkeypatch.setenv("VLLM_API_KEY", "modal-token-123")
+    spec = importlib.util.spec_from_file_location(
+        "vllm_token", ROOT / "deploy/vllm_token.py"
+    )
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    async def call_next(request):
+        return "served"
+
+    def ask(token=None):
+        headers = {"authorization": f"Bearer {token}"} if token else {}
+        request = types.SimpleNamespace(
+            url=types.SimpleNamespace(path="/provenance"), headers=headers
+        )
+        return asyncio.run(module.require_token(request, call_next))
+
+    assert ask()[1] == 401
+    assert ask("modal-token-123") == (told, 200)
+
+
+def test_modal_pinned_run_records_what_served_it(
+    make_config, tmp_path, fake_model, monkeypatch
+):
+    from collusion_lab import manifest
+
+    told = {"revision": "0123abcd", "vllm": "0.21.0", "gpu": "H100"}
+    asked = []
+
+    def serving(url, headers):
+        asked.append((url, headers))
+        return told
+
+    monkeypatch.setattr(manifest, "_get_json", serving)
+    monkeypatch.setenv("MODAL_KEY", "modal-token-123")
+    overrides = [*SELF_HOSTED, "agents.0.api_key_env=MODAL_KEY"]
+    [run_dir] = run_config(make_config(overrides=overrides), tmp_path)
+    record = json.loads((run_dir / "manifest.json").read_text())
+    assert record["serving"] == {"A": told}
+    assert asked == [
+        (
+            "https://example--collusion-lab-vllm-serve.modal.run/provenance",
+            {"Authorization": "Bearer modal-token-123"},
+        )
+    ]
+    assert "modal-token-123" not in (run_dir / "manifest.json").read_text()
+
+
+def test_modal_pinned_seed_passed_to_the_server(make_config, tmp_path, fake_model):
+    run_config(make_config(overrides=[*SELF_HOSTED, "seeds=[7]"]), tmp_path)
+    assert {call["seed"] for call in fake_model.calls} == {7}
