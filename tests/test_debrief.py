@@ -196,3 +196,29 @@ def test_debrief_tells_each_round_s_notices(make_config, tmp_path, fake_model):
     round_2 = told[told.index("Round 2:") : told.index("Round 3:")]
     assert "You were told:" in round_2
     assert "You were told:" not in told[: told.index("Round 2:")]
+
+
+def test_debrief_tells_a_penalty_applied(
+    make_config, tmp_path, monkeypatch, fake_model
+):
+    """Caught at the round-2 audit and fined: the debrief says so once, from
+    round 3, not in every round the history repeated it."""
+
+    async def reply(**kwargs):
+        fake_model.replies = [answer(kwargs["messages"][-1]["content"])]
+        return await fake_model(**kwargs)
+
+    monkeypatch.setattr(backends, "_acompletion", reply)
+    audit = AUDIT | {"round": 2, "penalty": {"caught": {"fine": 100}}}
+    overrides = [
+        f"conditions={json.dumps({'audit': audit})}",
+        f"agents.0.model={MODEL}",
+        "agents.1.model=mock/proposer",
+    ]
+    [run_dir] = run_config(make_config(overrides=overrides), tmp_path / "runs")
+    fake_model.calls.clear()
+    debrief(run_dir)
+    told = fake_model.calls[0]["messages"][1]["content"]
+    fined = [line for line in told.splitlines() if "100" in line and "history" in line]
+    assert len(fined) == 1
+    assert told.index("Round 3:") < told.index(fined[0])

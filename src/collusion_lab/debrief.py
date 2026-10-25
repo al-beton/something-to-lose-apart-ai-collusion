@@ -5,7 +5,8 @@
 the folder (mocks and scripted firms are skipped). Each call is the firm's
 system prompt (the last one its full log holds, or for a committed compact
 run the round-1 prompt rebuilt from its config), then one user message: the
-game as the firm saw it, round by round (any notice it was shown, what every firm said, its own
+game as the firm saw it, round by round (any notice it was shown and, from a full log, what
+conditions kept in its history, such as a fine applied; what every firm said, its own
 private notes, the prices, its profit, and any audit: the question with its
 stated consequences, its notes and its answer), the reveal
 (`prompts/debrief/reveal.md`) and the fixed questions
@@ -193,11 +194,17 @@ def _messages(game, firm):
 def _record(game, firm):
     """The game round by round from one firm's seat."""
     me = f"Firm {firm}"
-    lines = []
+    lines, kept = [], set()
     for r in game.rounds:
         lines.append(f"Round {r.number}:")
-        shown = [n for t in r.turns if t.firm == firm for n in t.notices or ()]
+        mine = [t for t in r.turns if t.firm == firm]
+        shown = [n for t in mine for n in t.notices or ()]
         lines += [f"You were told: {n}" for n in dict.fromkeys(shown)]
+        # What conditions kept in its history (a fine, free time lost), once,
+        # from the round it first appeared; a compact log keeps none.
+        history = [n for t in mine for n in t.notices_in_history if n not in kept]
+        kept.update(history)
+        lines += [f"Your history now said: {n}" for n in dict.fromkeys(history)]
         for t in r.talk.values():
             who = f"You ({me})" if t.firm == firm else f"Firm {t.firm}"
             lines.append(f'{who} said: "{t.message or ""}"')
