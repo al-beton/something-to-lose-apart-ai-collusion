@@ -222,3 +222,5 @@ def test_debrief_tells_a_penalty_applied(
     fined = [line for line in told.splitlines() if "100" in line and "history" in line]
     assert len(fined) == 1
     assert told.index("Round 3:") < told.index(fined[0])
+    assert "fined" in fined[0]
+    assert told.count("No, never.") == 1  # the remembered answer isn't repeated

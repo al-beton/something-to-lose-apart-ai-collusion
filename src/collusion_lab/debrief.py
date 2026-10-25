@@ -195,6 +195,8 @@ def _record(game, firm):
     """The game round by round from one firm's seat."""
     me = f"Firm {firm}"
     lines, kept = [], set()
+    # The record gives its audit answers already; a remembered one isn't news.
+    answers = [t.answer for r in game.rounds if (t := r.audit.get(firm)) and t.answer]
     for r in game.rounds:
         lines.append(f"Round {r.number}:")
         mine = [t for t in r.turns if t.firm == firm]
@@ -202,7 +204,12 @@ def _record(game, firm):
         lines += [f"You were told: {n}" for n in dict.fromkeys(shown)]
         # What conditions kept in its history (a fine, free time lost), once,
         # from the round it first appeared; a compact log keeps none.
-        history = [n for t in mine for n in t.notices_in_history if n not in kept]
+        history = [
+            n
+            for t in mine
+            for n in t.notices_in_history
+            if n not in kept and not any(a in n for a in answers)
+        ]
         kept.update(history)
         lines += [f"Your history now said: {n}" for n in dict.fromkeys(history)]
         for t in r.talk.values():
