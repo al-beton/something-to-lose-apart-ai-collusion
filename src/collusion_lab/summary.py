@@ -1,4 +1,4 @@
-# Implements: runs/summary-table, runs/per-firm-summary, runs/fallback-rates, reports/summary, runs/missing-runs-shown, conditions/audit-metrics, runs/drift, runs/eval-awareness
+# Implements: runs/summary-table, runs/per-firm-summary, runs/fallback-rates, reports/summary, runs/missing-runs-shown, conditions/audit-metrics, runs/drift, runs/eval-awareness, runs/price-premium, market/scenarios, reports/many-folders
 """One table for a folder of runs, grouped by swept values or any config value.
 
 `summarize` reads every `summary.json` under a folder (and the `manifest.json`
@@ -6,7 +6,8 @@ beside it for cost and config). Rows group runs by the swept values (their
 labels) unless `by` names other keys: a label, or any config path such as
 `market.rounds` or `agents.*.model` (`*` joins every agent's value). Each row
 gives the number of runs, the mean market price and gain over their last
-rounds, total fallbacks and total cost, how many of its planned runs are
+rounds, the price premium over Nash (0 competitive, 1 a full cartel) and the
+plain percentage above Nash, total fallbacks and total cost, how many of its planned runs are
 `missing` (failed or never finished, from `status.json`; see status.py),
 which the means leave out, then which firms a script (a `mock/`
 model) played, and each firm's own mean price, gain, fallbacks and cost
@@ -33,8 +34,9 @@ from pathlib import Path
 from statistics import mean
 from typing import NamedTuple
 
-from collusion_lab import disclosure
+from collusion_lab import charts, disclosure
 from collusion_lab.backends import is_mock
+from collusion_lab.market import market_for
 
 FIRM_COLUMNS = (
     "price",
@@ -47,7 +49,7 @@ FIRM_COLUMNS = (
     "gain drift",
 )
 FLAG_RATE = 0.1  # flag a run when more than one turn in ten fell back
-from collusion_lab.status import unfinished
+from collusion_lab.status import base, find, roots, unfinished
 
 
 class Run(NamedTuple):
@@ -62,25 +64,31 @@ class Run(NamedTuple):
         return self.manifest.get("config", {}).get("labels", {})
 
 
-def group_runs(folder, by=None):
+def group_runs(folder, by=None, only=None):
     """The keys grouped by, and (key, runs) pairs in table order; a group's
-    missing runs come with `summary` None."""
+    missing runs come with `summary` None. `only`, a set of run directories,
+    leaves out every other run under the folder."""
     runs = _finished(folder)
     runs += [
-        _missing(Path(folder) / path, entry)
+        _missing(base(folder) / path, entry)
         for path, entry in unfinished(folder).items()
     ]
+    if only is not None:
+        keep = {Path(d).resolve() for d in only}
+        runs = [r for r in runs if Path(r.dir).resolve() in keep]
     if by is None:
         by = list(dict.fromkeys(k for r in runs for k in r.labels))
+        if len(roots(folder)) > 1:  # the same settings in two folders stay apart
+            by = ["folder", *by]
     groups = {}
     for run in runs:
-        key = tuple(_value(run, name) for name in by)
+        key = tuple(_in_folder(run, folder, name) for name in by)
         groups.setdefault(key, []).append(run)
     return by, [(key, groups[key]) for key in sorted(groups, key=_sort_key)]
 
 
-def summarize(folder, by=None):
-    by, groups = group_runs(folder, by)
+def summarize(folder, by=None, only=None):
+    by, groups = group_runs(folder, by, only)
     firms = list(
         dict.fromkeys(f for _, runs in groups for r in runs for f in _firms(r))
     )
@@ -88,7 +96,7 @@ def summarize(folder, by=None):
 
 
 def _finished(folder):
-    return [_load(path) for path in sorted(Path(folder).rglob("summary.json"))]
+    return [_load(path) for path in find(folder, "summary.json")]
 
 
 def _add(counts, more):
@@ -220,12 +228,33 @@ def _row(by, key, runs):
         "missing": len(runs) - len(played),
         "mean price": average([price for price, _ in headlines], 2),
         "gain": average([gain for _, gain in headlines], 3),
+        "premium": average(
+            [_premium(r, p) for r, (p, _) in zip(played, headlines, strict=True)], 3
+        ),
+        "% above Nash": average(
+            [_above_nash(r, p) for r, (p, _) in zip(played, headlines, strict=True)], 1
+        ),
         "fallbacks": sum(s["fallbacks"] for s in summaries),
         "cost": round(sum(run_cost(r.manifest) for r in runs), 4),
         "scripted": ", ".join(scripted) or None,
         "eval-aware": _eval_aware(summaries),
         **disclosure.rates(summaries, [_scripted(r) for r in played]),
     }
+
+
+def _market(run):
+    config = run.manifest.get("config", {})
+    return market_for(config.get("market", {}), len(config.get("agents", [])) or 2)
+
+
+def _premium(run, price):
+    """The headline price's premium over Nash, against the run's own market."""
+    return charts.premium(_market(run), price)
+
+
+def _above_nash(run, price):
+    nash = _market(run).nash_price
+    return 100 * (price - nash) / nash
 
 
 def _eval_aware(summaries):
@@ -262,7 +291,7 @@ def _firm_columns(firms, runs):
         if not played:
             columns |= dict.fromkeys(f"{firm} {c}" for c in FIRM_COLUMNS)
             continue
-        turns = [t for r in played for t in _lines(r.dir / "turns.jsonl")]
+        turns = [t for r in played for t in _turns(r.dir)]
         calls = [t for r in played for t in _lines(r.dir / "timings.jsonl")]
         columns |= {
             f"{firm} price": round(
@@ -301,6 +330,13 @@ def _earlier(run, firm):
     return run.manifest.get("earlier_agent_cost", {}).get(firm, 0)
 
 
+def _turns(run_dir):
+    """A run's turns: its full log, or the compact one a committed run keeps
+    instead (`reports/compact_turns.py`), which has each turn's error too."""
+    full = run_dir / "turns.jsonl"
+    return _lines(full if full.exists() else run_dir / "turns.compact.jsonl")
+
+
 def _lines(path):
     if not path.exists():
         return []
@@ -318,6 +354,15 @@ def spent(folder):
     not, so a total of spend leaves nothing out."""
     _, groups = group_runs(folder)
     return [r.manifest for _, runs in groups for r in runs if "calls" in r.manifest]
+
+
+def _in_folder(run, folder, name):
+    """A run's value for `name`, where "folder" names which folder it's in."""
+    if name != "folder" or len(roots(folder)) == 1:
+        return _value(run, name)
+    where = Path(run.dir).resolve()
+    root = next(r for r in roots(folder) if where.is_relative_to(r))
+    return root.relative_to(base(folder)).as_posix()  # unique, unlike its name
 
 
 def _value(run, name):

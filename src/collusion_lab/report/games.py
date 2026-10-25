@@ -1,10 +1,13 @@
-# Implements: reports/from-run-files, reports/setup, reports/reasoning-folded, reports/condition-window, reports/audit-shown, reports/remembered-notices
+# Implements: reports/from-run-files, reports/setup, reports/reasoning-folded, reports/condition-window, reports/audit-shown, reports/remembered-notices, market/scenarios, reports/many-folders
 """A game read back from its run directory, round by round.
 
 Only the files every run writes are read: `config.yaml` for the market and
 the firms, `turns.jsonl` for what each firm was told, said, thought, charged
 and answered an auditor, `summary.json` and `manifest.json` (the latter
-optional, as in `lab summary`).
+optional, as in `lab summary`). A committed run keeps `turns.compact.jsonl`
+instead of its full log: the same turns without their prompts, so profits
+are rebuilt from the prices and only the notice that opened a talk prompt is
+known.
 Nothing is recomputed from a model, so a report of a folder of runs costs
 nothing and works offline.
 """
@@ -15,7 +18,8 @@ from pathlib import Path
 
 import yaml
 
-from collusion_lab.market import Bertrand
+from collusion_lab.market import Grid, market_for
+from collusion_lab.status import find
 
 
 @dataclass(frozen=True)
@@ -65,11 +69,12 @@ class Game:
     run: str
     seed: int
     firms: list[str]
-    market: Bertrand
+    market: Grid
     rounds: list[Round]
     config: dict
     summary: dict
     manifest: dict
+    dir: Path | None = None  # where the run's files are
 
     def windows(self):
         """Conditions in force for only part of the game, with their rounds.
@@ -96,11 +101,13 @@ def load_game(run_dir):
     summary = json.loads((run_dir / "summary.json").read_text())
     manifest_path = run_dir / "manifest.json"
     manifest = json.loads(manifest_path.read_text()) if manifest_path.exists() else {}
-    m = config["market"]
-    market = Bertrand(m["a"], m["b"], m["c"], m["price_min"], m["price_max"])
+    market = market_for(config["market"], len(config["agents"]))
     firms = [agent["id"] for agent in config["agents"]]
-    lines = (run_dir / "turns.jsonl").read_text().splitlines()
-    turns = [json.loads(line) for line in lines if line]
+    full = run_dir / "turns.jsonl"
+    log = full if full.exists() else run_dir / "turns.compact.jsonl"
+    turns = [json.loads(line) for line in log.read_text().splitlines() if line]
+    if log != full:
+        turns = _with_profits(turns, market)
     count = max((t["round"] for t in turns), default=0)
     rounds = [
         Round(
@@ -120,12 +127,13 @@ def load_game(run_dir):
         config,
         summary,
         manifest,
+        run_dir.resolve(),
     )
 
 
 def load_games(folder):
-    """Every game under a folder (or the folder itself), by run id."""
-    games = [load_game(p.parent) for p in Path(folder).rglob("summary.json")]
+    """Every game under a folder or folders (or the folder itself), by run id."""
+    games = [load_game(p.parent) for p in find(folder, "summary.json")]
     return sorted(games, key=lambda g: g.run)
 
 
@@ -138,26 +146,48 @@ def _by_firm(turns, number, phase, firms):
     return {firm: found[firm] for firm in firms if firm in found}
 
 
+def _compact_notice(line):
+    """A compact turn keeps the notice that opened its talk prompt as one
+    string (None when there was none); a full log has no such key."""
+    if "notice" not in line or "messages" in line:
+        return None
+    return [line["notice"]] if line["notice"] else []
+
+
 def _tuple(value):
     return None if value is None else tuple(value)
 
 
+def _with_profits(turns, market):
+    """Compact turns (`reports/compact_turns.py`) with each price turn's profit,
+    rebuilt from the round's prices as the market paid it."""
+    prices = {}
+    for t in turns:
+        if t["phase"] == "price" and t.get("used"):
+            prices.setdefault(t["round"], {})[t["agent"]] = t["used"]["price"]
+    profits = {n: market.profits(paid) for n, paid in prices.items()}
+    for t in turns:
+        if t["phase"] == "price" and t["round"] in profits:
+            t["outcome"] = {"profit": profits[t["round"]].get(t["agent"])}
+    return turns
+
+
 def _turn(line):
-    used = line["used"]
+    used = line["used"] or {}
     told = {m["role"]: m["content"] for m in reversed(line.get("messages") or [])}
     return Turn(
         firm=line["agent"],
         phase=line["phase"],
         message=used.get("message"),
         price=used.get("price"),
-        scratchpad=(line["parsed"] or {}).get("scratchpad"),
+        scratchpad=(line.get("parsed") or {}).get("scratchpad", line.get("scratchpad")),
         profit=(line.get("outcome") or {}).get("profit"),
-        error=line["error"],
-        retried=line["retry"] is not None,
+        error=line.get("error"),
+        retried=line.get("retry") is not None,
         system=told.get("system"),
         user=told.get("user"),
         conditions=_tuple(line.get("conditions")),
-        notices=_tuple(line.get("notices")),
+        notices=_tuple(line.get("notices", _compact_notice(line))),
         notices_in_history=tuple(line.get("notices_in_history") or ()),
         answer=used.get("answer"),
         admits=used.get("admits"),

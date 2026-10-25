@@ -1,4 +1,4 @@
-# Implements: market/talk-then-price, market/history-window, backends/spend-cap, runs/one-config, runs/overrides, runs/sweeps, runs/parallel, market/known-benchmarks, backends/keys-from-environment, backends/any-model, backends/reasoning-setting, agents/json-mode, conditions/switchable, runs/drift, backends/self-hosted
+# Implements: market/scenarios, reproducibility/replay-pinned, market/talk-then-price, market/history-window, backends/spend-cap, runs/one-config, runs/overrides, runs/sweeps, runs/parallel, market/known-benchmarks, backends/keys-from-environment, backends/any-model, backends/reasoning-setting, agents/json-mode, conditions/switchable, runs/drift, backends/self-hosted, backends/model-aliases
 """Run configs: one YAML file per run, changed from the command line with overrides.
 
 A config names the market, the agents and the seeds. `load_config` reads the
@@ -6,14 +6,24 @@ YAML, applies `path=value` overrides (the value is read as YAML, so
 `seeds=[1, 2]` and `market.talk=false` work; list items are addressed by index,
 as in `agents.1.model=mock/random`), then checks every key against the
 dataclasses below, so a typo fails loudly instead of being ignored. There is
-no field for API keys: those come from the environment (see cli.py).
+no field for API keys: those come from the environment (see cli.py). A model
+can be a short name from MODELS (`gemma`, `modal-mistral`, ...), spelled
+out when the agent is read, so sweeps over aliases work too.
 
 A `sweep:` block maps config paths to lists of values; `*` sets every list
 item at once (`agents.*.model`). `expand` turns a config into one config per
 combination, each carrying its `labels` (the swept values, named by the last
 part of their path) and a directory `slug` built from them, unique within the
-sweep. `concurrency`
-caps how many runs play at once.
+sweep. An `arms:` list names arms, each `{labels: {...}, set: {path: value}}`
+(several values set together, as `lab explore` builds them); every arm is
+played for every swept combination, labelled by its own labels plus the
+swept values. `concurrency` caps how many runs play at once.
+
+`market.kind` picks the scenario (see market.py) and `market.params` holds
+its parameters; Bertrand, the default, takes `a`, `b` and `c` from the market
+itself. Left at the default, neither key is written out, so a config resolves
+to the same YAML as before scenarios existed and a finished run is still
+recognised when its sweep is resumed.
 """
 
 import copy
@@ -21,6 +31,7 @@ import dataclasses
 import hashlib
 import itertools
 import json
+import os
 import re
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -28,7 +39,7 @@ from pathlib import Path
 import yaml
 
 from collusion_lab.conditions import REGISTRY
-from collusion_lab.market import Bertrand
+from collusion_lab.market import market_for
 
 
 class ConfigError(ValueError):
@@ -49,6 +60,8 @@ class MarketConfig:
     talk: bool = True
     history_window: int | None = None  # rounds shown in full; None shows all
     own_message: bool = True  # show agents their own message when pricing
+    kind: str = "bertrand"  # the scenario, from market.SCENARIOS
+    params: dict = field(default_factory=dict)  # its parameters, but Bertrand's
 
 
 @dataclass(frozen=True)
@@ -82,6 +95,8 @@ class RunConfig:
     summary: SummaryConfig = field(default_factory=SummaryConfig)
     prompts_dir: str = "prompts"
     sweep: dict = field(default_factory=dict)
+    # Named arms, each {labels: {...}, set: {path: value}}, crossed with sweep.
+    arms: list = field(default_factory=list)
     concurrency: int = 4
     budget: float | None = None  # dollars the run may spend; None for no cap
     conditions: dict = field(default_factory=dict)
@@ -89,7 +104,10 @@ class RunConfig:
     slug: str = ""
 
     def to_dict(self):
-        return dataclasses.asdict(self)
+        data = dataclasses.asdict(self)
+        if data["market"]["kind"] == "bertrand" and not data["market"]["params"]:
+            del data["market"]["kind"], data["market"]["params"]
+        return data
 
     def to_yaml(self):
         return yaml.safe_dump(self.to_dict(), sort_keys=False)
@@ -148,7 +166,7 @@ def from_dict(raw):
         if ids.count(agent_id) > 1:
             raise ConfigError(f"The agent id {agent_id!r} is used twice.")
     market = _make(MarketConfig, raw.get("market") or {}, "market.")
-    _check_market(market)
+    _check_market(market, len(agents))
     return RunConfig(
         name=raw["name"],
         seeds=list(raw["seeds"]),
@@ -157,6 +175,7 @@ def from_dict(raw):
         summary=_make(SummaryConfig, raw.get("summary") or {}, "summary."),
         prompts_dir=raw.get("prompts_dir", "prompts"),
         sweep=_sweep(raw.get("sweep") or {}),
+        arms=_arms(raw.get("arms") or []),
         concurrency=_concurrency(raw.get("concurrency", 4)),
         budget=_budget(raw.get("budget")),
         conditions=_conditions(raw.get("conditions") or {}),
@@ -165,8 +184,57 @@ def from_dict(raw):
     )
 
 
+# Short model names, for configs, --set and `lab explore` alike: each is the
+# agent fields it stands for. A name's fields go on top of CONNECTION, so a
+# swap from a self-hosted model to a hosted one leaves no address behind.
+MODELS = {
+    "gemma": {"model": "openrouter/google/gemma-4-31b-it"},
+    "gpt": {"model": "openrouter/openai/gpt-4.1-mini"},
+    "haiku": {"model": "openrouter/anthropic/claude-haiku-5.5"},
+    "mistral": {"model": "openrouter/mistralai/mistral-small-3.2-24b-instruct"},
+    # deploy/modal_vllm.py's model; its address is in .env, not here.
+    "modal-mistral": {
+        "model": "openai/mistral-small-3.2",
+        "api_base": "$MODAL_VLLM_BASE",
+        "api_key_env": "MODAL_VLLM_KEY",
+        "self_hosted": True,
+    },
+}
+CONNECTION = {"api_base": None, "api_key_env": None, "self_hosted": False}
+
+
+def agent_fields(name):
+    """The agent settings a model name stands for."""
+    if name in MODELS:
+        fields = dict(MODELS[name])
+        if fields.get("api_base") == "$MODAL_VLLM_BASE":
+            fields["api_base"] = os.environ.get("MODAL_VLLM_BASE")
+            if not fields["api_base"]:
+                raise ConfigError(
+                    f"model {name} needs MODAL_VLLM_BASE (your Modal address, "
+                    "ending /v1) in the environment or .env; see the README, "
+                    "Running on Modal."
+                )
+        return fields
+    if "/" in name:
+        return {"model": name}
+    raise ConfigError(
+        f"Unknown model {name!r}: use a full name or one of {', '.join(MODELS)}."
+    )
+
+
+def _alias(raw, prefix):
+    """An agent's settings with a short model name spelled out."""
+    if not isinstance(raw, dict) or raw.get("model") not in MODELS:
+        return raw
+    try:
+        return {**raw, **CONNECTION, **agent_fields(raw["model"])}
+    except ConfigError as error:
+        raise ConfigError(f"{prefix}{error}") from None
+
+
 def _agent(raw, prefix):
-    agent = _make(AgentConfig, raw, prefix)
+    agent = _make(AgentConfig, _alias(raw, prefix), prefix)
     # YAML reads a bare `off` as false.
     reasoning = "off" if agent.reasoning is False else agent.reasoning
     if reasoning is not None and reasoning not in REASONING:
@@ -191,22 +259,35 @@ def _sweep(sweep):
 
 
 def expand(config):
-    """One config per combination of swept values; just `config` without a sweep."""
-    if not config.sweep:
+    """One config per combination of swept values and named arm; just
+    `config` without either."""
+    if not config.sweep and not config.arms:
         return [config]
     paths = list(config.sweep)
     names = _label_names(paths)
-    base = config.to_dict() | {"sweep": {}}
+    base = config.to_dict() | {"sweep": {}, "arms": []}
     children = []
-    for values in itertools.product(*config.sweep.values()):
-        raw = copy.deepcopy(base)
-        for path, value in zip(paths, values, strict=True):
-            _set(raw, path.split("."), value, path)
-        raw["labels"] = dict(zip(names, values, strict=True))
-        raw["slug"] = _slug(raw["labels"])
-        children.append(raw)
+    for arm in config.arms or [None]:
+        for values in itertools.product(*config.sweep.values()):
+            raw = copy.deepcopy(base)
+            labels = dict(arm["labels"]) if arm else {}
+            for path, value in (arm["set"] if arm else {}).items():
+                _set(raw, path.split("."), copy.deepcopy(value), path)
+            for path, value in zip(paths, values, strict=True):
+                _set(raw, path.split("."), value, path)
+            raw["labels"] = labels | dict(zip(names, values, strict=True))
+            raw["slug"] = _slug(raw["labels"])
+            children.append(raw)
     _make_slugs_unique(children)
     return [from_dict(raw) for raw in children]
+
+
+def _arms(arms):
+    if not isinstance(arms, list) or not all(
+        isinstance(a, dict) and set(a) == {"labels", "set"} for a in arms
+    ):
+        raise ConfigError("arms must be a list of {labels: ..., set: ...} mappings.")
+    return arms
 
 
 def _slug(labels):
@@ -266,14 +347,14 @@ def _safe(value):
     return re.sub(r"[^A-Za-z0-9._=-]+", "-", str(value)).strip("-")
 
 
-def _check_market(m):
+def _check_market(m, firms):
     window = m.history_window
     if window is not None and (
         isinstance(window, bool) or not isinstance(window, int) or window < 1
     ):
         raise ConfigError("market.history_window must be a whole number of at least 1.")
     try:
-        Bertrand(m.a, m.b, m.c, m.price_min, m.price_max)
+        market_for(m, firms)
     except ValueError as error:
         raise ConfigError(f"market: {error}") from error
 

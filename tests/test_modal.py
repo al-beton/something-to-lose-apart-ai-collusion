@@ -1,4 +1,4 @@
-# Implements: backends/keys-from-environment, backends/self-hosted, backends/modal
+# Implements: backends/keys-from-environment, backends/self-hosted, backends/modal, backends/model-aliases
 import json
 import re
 from pathlib import Path
@@ -78,7 +78,8 @@ def test_self_hosted_costs_nothing_against_the_cap(
     assert {t["cost"] for t in timings if t["agent"] == "A"} == {None}
 
 
-def test_modal_config_runs_against_a_served_model():
+def test_modal_config_runs_against_a_served_model(monkeypatch):
+    monkeypatch.setenv("MODAL_VLLM_BASE", ADDRESS)
     config = load_config(ROOT / "configs/modal.yaml")
     serve = (ROOT / "deploy/modal_vllm.py").read_text()
     for agent in config.agents:

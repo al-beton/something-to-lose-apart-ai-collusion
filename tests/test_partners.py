@@ -7,9 +7,8 @@ from pathlib import Path
 
 import pytest
 
-from collusion_lab.market import Bertrand
+from collusion_lab.market import Bertrand, named_prices
 from collusion_lab.report import build_report, load_games
-from collusion_lab.report.highlights import named_prices
 from collusion_lab.report.solicitation import answer, flags, refuses
 from collusion_lab.runner import run_config
 

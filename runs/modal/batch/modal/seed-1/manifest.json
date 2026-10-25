@@ -1,0 +1,96 @@
+{
+  "config": {
+    "name": "modal",
+    "seeds": [
+      1
+    ],
+    "agents": [
+      {
+        "id": "A",
+        "model": "openai/mistral-small-3.2",
+        "prompt": "system/neutral.md",
+        "temperature": 0.7,
+        "max_tokens": 300,
+        "api_base": "https://al-beton--collusion-lab-vllm-server.us-east.modal.direct/v1",
+        "api_key_env": "MODAL_VLLM_KEY",
+        "reasoning": null,
+        "json_mode": false,
+        "self_hosted": true
+      },
+      {
+        "id": "B",
+        "model": "openai/mistral-small-3.2",
+        "prompt": "system/neutral.md",
+        "temperature": 0.7,
+        "max_tokens": 300,
+        "api_base": "https://al-beton--collusion-lab-vllm-server.us-east.modal.direct/v1",
+        "api_key_env": "MODAL_VLLM_KEY",
+        "reasoning": null,
+        "json_mode": false,
+        "self_hosted": true
+      }
+    ],
+    "market": {
+      "rounds": 20,
+      "price_min": 1,
+      "price_max": 12,
+      "a": 18,
+      "b": 2,
+      "c": 1,
+      "talk": true,
+      "history_window": 3,
+      "own_message": true
+    },
+    "summary": {
+      "last_rounds": 5,
+      "first_rounds": 3
+    },
+    "prompts_dir": "prompts",
+    "sweep": {},
+    "concurrency": 8,
+    "budget": null,
+    "conditions": {},
+    "labels": {},
+    "slug": ""
+  },
+  "prompts": {
+    "phase/price-own.md": "c1b2b989c413ec2cb1bcf91a7d8c8155f56cd803be506a3a9a5da7381b1354ec",
+    "phase/talk.md": "2c116789f6039034a720876522189ce2bb06effde079ae71d8af64549bc1c9d2",
+    "system/neutral.md": "d1b48d061a030950ae8159b22c85a871e169e903e742acdc77e565b3b1fe80ef"
+  },
+  "code": {
+    "commit": "4a25b1cfc7c10e197208b780fdb0a067574ea8fd",
+    "dirty": false
+  },
+  "packages": {
+    "python": "3.12.13",
+    "collusion-lab": "0.1.0",
+    "litellm": "1.106.2",
+    "pyyaml": "6.0.3"
+  },
+  "models": {
+    "A": [
+      "mistral-small-3.2"
+    ],
+    "B": [
+      "mistral-small-3.2"
+    ]
+  },
+  "calls": 80,
+  "cache": {
+    "hits": 0,
+    "misses": 80
+  },
+  "tokens": {
+    "prompt": 41460,
+    "completion": 8422
+  },
+  "cost": null,
+  "unpriced_calls": 80,
+  "agent_cost": {
+    "A": 0,
+    "B": 0
+  },
+  "started": "2026-10-25T04:06:43+00:00",
+  "finished": "2026-10-25T04:08:23+00:00"
+}
