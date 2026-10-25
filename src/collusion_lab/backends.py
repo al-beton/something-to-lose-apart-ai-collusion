@@ -1,4 +1,4 @@
-# Implements: market/bid-ground-truth, market/price-board, market/moves, agents/mock-agents, backends/any-model, backends/sampling-from-config, backends/usage-logged, backends/transient-errors-retried, backends/shared-rate-limit, backends/reported-cost, backends/spend-cap, backends/reasoning-setting, logs/reasoning-logged, agents/json-mode, agents/unreadable-explained, backends/quiet-provider-logs, backends/self-hosted, backends/keys-from-environment
+# Implements: backends/serving-provider-logged, backends/pinned-route, market/bid-ground-truth, market/price-board, market/moves, agents/mock-agents, backends/any-model, backends/sampling-from-config, backends/usage-logged, backends/transient-errors-retried, backends/shared-rate-limit, backends/reported-cost, backends/spend-cap, backends/reasoning-setting, logs/reasoning-logged, agents/json-mode, agents/unreadable-explained, backends/quiet-provider-logs, backends/self-hosted, backends/keys-from-environment
 """Backends turn a prompt into a reply: scripted mocks, or any model via LiteLLM.
 
 A backend is anything with `async complete(messages, *, context, temperature,
@@ -105,6 +105,8 @@ class Reply:
     retries: list | None = None
     reasoning: str | None = None
     finish_reason: str | None = None
+    provider: str | None = None  # the host that served it (OpenRouter's)
+    fingerprint: str | None = None  # the response's system_fingerprint
 
 
 def quiet_litellm(litellm):
@@ -208,6 +210,7 @@ class LiteLLMBackend:
         self.json_mode = options.get("json_mode", False)
         self.api_key_env = options.get("api_key_env")
         self.self_hosted = options.get("self_hosted", False)
+        self.provider = options.get("provider")  # pin OpenRouter to one host
 
     def _extra(self):
         """Request fields beyond the sampling ones: address, usage, reasoning
@@ -220,6 +223,8 @@ class LiteLLMBackend:
         off = self.reasoning == "off"
         if self.model.startswith("openrouter/"):
             body = {"usage": {"include": True}}
+            if self.provider:
+                body["provider"] = {"order": [self.provider], "allow_fallbacks": False}
             if self.reasoning is not None:
                 body["reasoning"] = (
                     {"enabled": False} if off else {"effort": self.reasoning}
@@ -280,6 +285,8 @@ class LiteLLMBackend:
             seconds=time.perf_counter() - started,
             cost=cost,
             retries=retries or None,
+            provider=_text(getattr(response, "provider", None)),
+            fingerprint=_text(getattr(response, "system_fingerprint", None)),
         )
 
     async def _call(self, **request):
@@ -321,6 +328,11 @@ class LiteLLMBackend:
                 else:
                     await _sleep(wait)
                     wait *= 2
+
+
+def _text(value):
+    """A response field that should be a string, or None."""
+    return value if isinstance(value, str) else None
 
 
 def _usage(usage):

@@ -1,4 +1,4 @@
-# Implements: reproducibility/response-cache, reproducibility/cache-modes, logs/reasoning-logged, agents/json-mode
+# Implements: backends/serving-provider-logged, backends/pinned-route, reproducibility/response-cache, reproducibility/cache-modes, logs/reasoning-logged, agents/json-mode
 """A response cache, so a seeded run can be replayed exactly and for free.
 
 Provider seeds are best-effort (some providers ignore them, and even
@@ -92,6 +92,8 @@ class CachedBackend:
             setting["reasoning"] = reasoning
         if getattr(self.inner, "json_mode", False):
             setting["json_mode"] = True
+        if provider := getattr(self.inner, "provider", None):
+            setting["provider"] = provider  # a pinned route; unset adds nothing
         key = Cache.key(
             **setting,
             model=self.inner.model,
@@ -141,6 +143,8 @@ class CachedBackend:
                 "model_version": reply.model_version,
                 "reasoning": reply.reasoning,
                 "finish_reason": reply.finish_reason,
+                "provider": reply.provider,
+                "fingerprint": reply.fingerprint,
             },
         )
         shared.set_result(reply)
