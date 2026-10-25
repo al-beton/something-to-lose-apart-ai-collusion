@@ -193,11 +193,11 @@ class Server:
         if MODEL.startswith("mistralai/"):
             # Mistral's own tokenizer and weight format, as its model card asks.
             command += ["--tokenizer-mode", "mistral", "--config-format", "mistral"]
+            command += ["--load-format", "mistral"]
         if GPUS > 1:
             command += ["--tensor-parallel-size", str(GPUS)]
         if TEXT_ONLY:  # no image encoder memory for a game that sends none
             command += ["--limit-mm-per-prompt", json.dumps({"image": 0})]
-            command += ["--load-format", "mistral"]
         self.process = subprocess.Popen(command)
 
     @modal.exit()
