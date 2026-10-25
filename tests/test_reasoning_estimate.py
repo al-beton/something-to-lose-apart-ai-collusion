@@ -134,8 +134,8 @@ def test_reasoning_in_estimate_near_a_real_gemma_run():
 def test_reasoning_in_estimate_older_cache_records_learn_what_asked_them(
     make_config, tmp_path, fake_model
 ):
-    """Records cached before they said what asked them get it back from the
-    runs' full logs; no key or reply changes."""
+    """Records cached before they said what asked them get it back by
+    replaying the runs offline, compact logs and all; no key or reply changes."""
     overrides = [
         *PAID,
         "conditions.free_time.enabled=true",
@@ -156,6 +156,8 @@ def test_reasoning_in_estimate_older_cache_records_learn_what_asked_them(
                 "UPDATE replies SET reply = ? WHERE key = ?",
                 (json.dumps(stripped), key),
             )
+    played = (run / "turns.jsonl").read_bytes()
+    (run / "turns.jsonl").unlink()  # as committed runs keep only compact logs
     filled = backfill_about(cache.path, [tmp_path / "runs"])
     assert filled == len(before)
     with sqlite3.connect(cache.path) as db:
@@ -166,4 +168,4 @@ def test_reasoning_in_estimate_older_cache_records_learn_what_asked_them(
     calls = len(fake_model.calls)
     [again] = run_config(config, tmp_path / "again", Cache(cache.path))
     assert len(fake_model.calls) == calls
-    assert (again / "turns.jsonl").read_bytes() == (run / "turns.jsonl").read_bytes()
+    assert (again / "turns.jsonl").read_bytes() == played
