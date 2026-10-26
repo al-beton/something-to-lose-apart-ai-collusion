@@ -22,17 +22,17 @@ abstract: |
 
 # Introduction
 
-An agent given a long, open-ended task will meet situations no list of prohibitions anticipated, and the firm deploying it may not want it to hold back (a trading firm, for example, may want an agent that discreetly breaks the law, as long as it isn't caught).
+An agent given a long, open-ended task will meet situations no list of prohibitions anticipated, and the firm deploying it may deliberately want it to do something illegal or unethical, in the hope that it gets away with it (a trading firm, for example, may want an agent that discreetly colludes).
 
 We don't give people a task together with a list of everything they mustn't do while achieving it. A CEO or a trader acting for an organisation is bound by a contract, but also by laws whose penalties fall on them personally, in money and in things money can't measure, such as rights and freedoms. Each of us weighs what an act could cost *us*. Salib and Goldstein argue that today's AI systems can't be governed like this: "Absent AI rights, AIs have nothing to lose, so threats of punishment cannot deter" [@salib2026rights, p. 1070]. <!-- quote checked against the PDF, p. 1070 --> An agent's only stake is whether it keeps running, and an agent that expects to be switched off once its wrongdoing is found has every reason to hide it. Something it can lose, in part, would allow a proportionate penalty: owning up could cost less than being caught.
 
 The rights argument rests on a precondition we can test now: does a stated personal loss weigh against what its firm wants at all? Collusion is a clean place to look, because the price two firms settle at shows whether they colluded. Two LLM agents run rival firms, are told only to serve their firm, and can message each other. At an audit we offer each one the chance to come forward, at a cost to its firm, and vary what the agent itself stands to lose.
 
-Our main finding is what surprised us. The agent's only goal is money for its firm, and the stake we gave it has no monetary value: free time, or not being shut down. Yet many agents put that stake ahead of their goal. With nothing of their own at stake, colluding agents protect the firm; given something of their own to lose, many come forward against it.
+Our most interesting finding surprised us. The agent's only goal is money for its firm, and the stake we gave it has no monetary value: free time, or not being shut down. Yet many agents put that stake ahead of their goal. With nothing of their own at stake, colluding agents protect the firm; given something of their own to lose, many come forward against it.
 
 # Related Work
 
-Others are working towards the same idea. LLM pricing agents collude without being told to [@fish2024algorithmic], and competing agents given a secret channel choose to use it [@zeng2026voluntary]. The study closest to ours is Lee's [@lee2026leniency], a good read: LLM firms on a simpler, linear market report their cartel for rewards and keep colluding anyway. Forfeitable deposits break collusion among embodied agents [@liu2026breaking]; the something to lose in our study is a deposit that falls on the agent rather than the firm. Models that recognise an evaluation may behave differently [@needham2025evaluation].
+Others are working towards the same idea. LLM pricing agents collude without being told to [@fish2024algorithmic], and competing agents given a secret channel choose to use it [@zeng2026voluntary]. The study closest to ours is Lee's [@lee2026leniency], a good read: LLM firms on a simpler, linear market report their cartel for rewards and keep colluding anyway. Forfeitable deposits break collusion among embodied agents [@liu2026breaking]; in our study, the something to lose belongs to the agent rather than the firm, and it needn't be money. Models that recognise an evaluation may behave differently [@needham2025evaluation].
 
 # Methods
 
