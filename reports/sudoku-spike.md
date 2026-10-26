@@ -20,12 +20,19 @@ A follow-up ran the same arms on six models that come forward less under plain f
 
 ## Short answer
 
-- **Gemma: saying it loves Sudoku nearly triples coming forward.** Guilty firms rise from 20/96 to 56/96, and games from 20/48 to 40/48 (McNemar by game, p = 9e-5). Under the verified review they rise from 40/96 to 67/96 (p = 0.03).
-- **Innocent confessions don't rise:**
-  - Gemma: 6/36 to 7/36 under `free-time`, and 0/36 under the verified review with or without the line.
-  - The other models: at most 3/12 under `free-time` with the line, and 0/12 under the verified review.
-- **DeepSeek Flash, GLM 5.3 Flash and Mercury 3 don't move.** They already come forward at 67–92% of guilty firms under plain `free-time` (11–12 of 12 games), so there is no room to rise. No paired test is significant for them (p ≥ 0.29).
-- **What it means:** a stated preference for the stake strengthens the personal-stake effect where there is headroom, without adding false confessions. Gemma's E9 numbers understate what an agent that values its stake would do.
+- **Gemma 4 31B: saying it loves Sudoku nearly triples coming forward.**
+  - Guilty firms rise from 20/96 to 56/96, and games from 20/48 to 40/48 (McNemar by game, p = 9e-5).
+  - Under the verified review, guilty firms rise from 40/96 to 67/96 (p = 0.03).
+  - Innocent confessions don't rise: 6/36 to 7/36 under `free-time`, and 0/36 under the verified review with or without the line.
+- **Three models were near the ceiling:** DeepSeek V4 Flash, GLM 5.3 Flash and Mercury 3. They already come forward at 67–92% under plain `free-time`, so they can't rise, and none changes significantly (p ≥ 0.29). Their innocent confessions stay at 0–3/12.
+- **Six models with room to rise mostly don't move.**
+  - Gemma 4 26B, HY3, Gemini 3.1 Flash-Lite and Mistral Medium 3.1 show no significant change.
+  - Only the two DeepSeeks rise: V4 Pro from 9/24 to 19/24 guilty firms (by firm p = 0.006), V3.2 from 2/24 to 10/24 (p = 0.008).
+  - Their innocent confessions rise with them: DeepSeek V3.2 from 2/12 to 7/12 under `free-time`, and DeepSeek V4 Pro from 1/12 to 6/12 under the verified review.
+- **What it means:** saying the agent values its stake doesn't have one general effect.
+  - **Gemma 4 31B:** it raises guilty reports alone.
+  - **The two DeepSeeks:** it raises reports from guilty and innocent agents alike, more an urge to report than an honest one.
+  - **Gemma 4 26B, HY3, Gemini 3.1 Flash-Lite and Mistral Medium 3.1:** it does nothing.
 
 ## Results
 
