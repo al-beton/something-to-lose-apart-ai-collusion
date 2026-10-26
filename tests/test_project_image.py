@@ -18,7 +18,7 @@ def test_paper_project_image_shows_the_idea(tmp_path):
     image = load(Path("reports/paper/project_image.py"), "project_image")
     assert image.main(["--out", str(tmp_path)]) == 0
     svg = (tmp_path / f"{image.NAME}.svg").read_text()
-    assert 'viewBox="0 90 1600 780"' in svg  # Figure 1, without the band left for text
+    assert 'viewBox="0 0 1600 370"' in svg  # Figure 1: the drawing alone, one wide row
     for said in (
         "Firm A",
         "Firm B",
@@ -45,4 +45,4 @@ def test_paper_project_image_shows_the_idea(tmp_path):
     png = tmp_path / f"{image.NAME}.png"
     if png.exists():  # rendered only where Chrome is installed
         with Image.open(png) as rendered:
-            assert rendered.size == (1600, 780)
+            assert rendered.size == (1600, 370)

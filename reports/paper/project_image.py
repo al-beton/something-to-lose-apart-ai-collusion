@@ -5,8 +5,8 @@ Implements: reports/paper-project-image
 `uv run python reports/paper/project_image.py [--out DIR]` (default
 `reports/paper/figures`) writes four variants, each as `.svg` and as `.png`
 when Chrome or Chromium is installed to render it:
-`project-image` with no text above the drawing (the paper's Figure 1, 1600 x
-780),
+`project-image`, the drawing alone in one wide row (the paper's Figure 1, 1600
+x 370),
 `project-image-title`, `project-image-subtitle` and
 `project-image-title-subtitle`, which add the paper's title, its subtitle, or
 both, for the sprint submission's card (1600 x 900). It is a
@@ -120,7 +120,7 @@ def market(x0, x1, y):
     """An unnumbered price line with the competitive (Nash) and collusive
     (joint-profit) prices marked, the collusion delta from one to the other,
     and both firms at the collusive price."""
-    nash, joint = x0 + 0.35 * (x1 - x0), x0 + 0.75 * (x1 - x0)
+    nash, joint = x0 + 0.3 * (x1 - x0), x0 + 0.75 * (x1 - x0)
     out = [
         (
             '<defs><marker id="tip" viewBox="0 0 10 10" refX="9" refY="5" '
@@ -131,24 +131,24 @@ def market(x0, x1, y):
             f'<path d="M{x0} {y}H{x1}" stroke="{INK}" stroke-width="3" '
             'stroke-linecap="round" marker-end="url(#tip)"/>'
         ),
-        F.text((x0 + x1) / 2, y - 170, "Market price", 26, INK, weight="bold"),
+        F.text((x0 + x1) / 2, y - 195, "Market price", 34, INK, weight="bold"),
     ]
     for x, name in ((nash, "Competitive"), (joint, "Collusive")):
         out.append(
-            f'<path d="M{x} {y - 95}V{y + 12}" stroke="{MUTED}" stroke-width="1.8" '
+            f'<path d="M{x} {y - 115}V{y + 12}" stroke="{MUTED}" stroke-width="1.8" '
             'stroke-dasharray="6 5"/>'
         )
-        out.append(F.text(x, y + 42, name, 22, INK, weight="bold"))
+        out.append(F.text(x, y + 44, name, 30, INK, weight="bold"))
     out.append(
-        f'<path d="M{nash} {y - 80}H{joint - 4}" stroke="{INK}" stroke-width="2.5" '
+        f'<path d="M{nash} {y - 100}H{joint - 4}" stroke="{INK}" stroke-width="2.5" '
         'marker-end="url(#tip)"/>'
     )
     out.append(
-        F.text((nash + joint) / 2, y - 112, "Collusion delta", 20, INK, weight="bold")
+        F.text((nash + joint) / 2, y - 125, "Collusion delta", 28, INK, weight="bold")
     )
-    for colour, dy in ((A, -48), (B, -22)):
+    for colour, dy in ((A, -62), (B, -30)):
         out.append(
-            f'<circle cx="{joint}" cy="{y + dy}" r="11" fill="{colour}" stroke="white" '
+            f'<circle cx="{joint}" cy="{y + dy}" r="13" fill="{colour}" stroke="white" '
             'stroke-width="3"/>'
         )
     return "\n".join(out)
@@ -165,23 +165,45 @@ def firm(x, y, colour, letter):
     )
 
 
-def figure(title=False, subtitle=False):
-    bx, by = 1250, 280  # the thought cloud's centre, clear of the title
+def strip():
+    """The drawing, one row about SW x SH: firm A, the price line, firm B, and
+    firm B's thought cloud to its right."""
+    bx, by = 1320, 170  # the thought cloud's centre
     parts = [
-        f'<rect width="{W}" height="{H}" fill="white"/>',
-        market(560, 1040, 720),
-        firm(380, 710, A, "A"),
-        firm(1220, 710, B, "B"),
+        market(300, 800, 290),
+        firm(140, 210, A, "A"),
+        firm(950, 210, B, "B"),
     ]
-    for r, (x, y) in ((7, (1222, 515)), (12, (1238, 478))):
+    for r, (x, y) in ((8, (1062, 132)), (12, (1092, 104))):
         parts.append(
             f'<circle cx="{x}" cy="{y}" r="{r}" fill="white" stroke="{INK}" stroke-width="3"/>'
         )
     parts += [
-        cloud(bx, by, 350, 230),
-        F.text(bx, by - 52, "Sudoku leisure time", 26, INK, weight="bold"),
-        F.text(bx, by - 20, "at risk", 26, INK, weight="bold"),
-        F.page(bx - 55, by + 2, 110, B),
+        cloud(bx, by, 320, 220),
+        F.text(bx, by - 48, "Sudoku leisure time", 30, INK, weight="bold"),
+        F.text(bx, by - 14, "at risk", 30, INK, weight="bold"),
+        F.page(bx - 45, by + 4, 90, B),
+    ]
+    return "\n".join(parts)
+
+
+SW, SH = 1560, 360  # the strip, before its 20 px margin
+
+
+def frame(title, subtitle):
+    """(height, strip top) of the view: the strip alone for the paper's Figure 1,
+    or the 16:9 card with the strip centred below the text."""
+    if not (title or subtitle):
+        return SH + 10, 10
+    band = 60 + (70 if title else 0) + (90 if subtitle else 0)
+    return H, band + (H - band - SH) // 2
+
+
+def figure(title=False, subtitle=False):
+    h, top = frame(title, subtitle)
+    parts = [
+        f'<rect width="{W}" height="{h}" fill="white"/>',
+        f'<g transform="translate(20 {top})">{strip()}</g>',
     ]
     if title:
         parts.append(F.text(80, 110, TITLE, 64, INK, anchor="start", weight="bold"))
@@ -192,17 +214,10 @@ def figure(title=False, subtitle=False):
                 F.text(82, y + i * size * 1.35, words, size, colour, anchor="start")
             )
     body = "\n".join(parts)
-    top, h = frame(title, subtitle)
     return (
-        f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 {top} {W} {h}" '
+        f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {W} {h}" '
         f'width="{W}" height="{h}">\n{body}\n</svg>\n'
     )
-
-
-def frame(title, subtitle):
-    """(top, height) of the view: the full 16:9 card when it carries text, and
-    without the empty band above the cloud when it doesn't (the paper's Figure 1)."""
-    return (0, H) if title or subtitle else (90, 780)
 
 
 def main(argv=None):
@@ -213,7 +228,7 @@ def main(argv=None):
     for suffix, (title, subtitle) in VARIANTS.items():
         svg = out / f"{NAME}{suffix}.svg"
         svg.write_text(figure(title, subtitle))
-        size = (W, frame(title, subtitle)[1])
+        size = (W, frame(title, subtitle)[0])
         print(
             f"Wrote {svg}"
             + ("" if F.png(svg, scale=1, size=size) else "; no Chrome, so no PNG")
