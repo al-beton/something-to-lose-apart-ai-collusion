@@ -36,3 +36,35 @@ def test_paper_source_builds_to_latex_with_title_and_sections(tmp_path):
     for name in SECTIONS:
         assert f"{{{name}}}" in tex, name
     assert r"\appendix" in tex
+
+
+def _check():
+    import importlib.util
+
+    spec = importlib.util.spec_from_file_location("paper_check", ROOT / "paper" / "check.py")
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+def test_paper_rules_warn_on_abstract_length_and_page_cap(tmp_path):
+    check = _check()
+    paper = tmp_path / "paper.md"
+    paper.write_text("---\ntitle: T\nabstract: |\n  " + "word " * 120 + "\n---\n\n# Introduction\n")
+    assert "120 words" in " ".join(check.warnings(paper))
+    paper.write_text("---\nabstract: |\n  " + "word " * 200 + "\n---\n")
+    aux = tmp_path / "paper.aux"
+    aux.write_text(r"\newlabel{references}{{}{11}{References}{section*.9}{}}" + "\n")
+    found = " ".join(check.warnings(paper, aux))
+    assert "words" not in found and "10 pages" in found
+    aux.write_text(r"\newlabel{references}{{}{9}{References}{section*.9}{}}" + "\n")
+    assert check.warnings(paper, aux) == []
+
+
+def test_paper_rules_skeleton_carries_the_sprint_requirements():
+    text = (ROOT / "paper" / "paper.md").read_text()
+    assert "# Limitations and Dual-Use / Ethical Considerations" in text
+    results = text.split("# Results", 1)[1].split("\n# ", 1)[0]
+    for word in ("variance", "seeds", "baselines", "positive control"):
+        assert word in results, word
+    assert "written during the sprint" in text.split("# Code and Data", 1)[1]
