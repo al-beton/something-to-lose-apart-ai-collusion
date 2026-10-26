@@ -41,7 +41,7 @@ jobs:
           curl -sSL -o /tmp/pandoc.deb https://github.com/jgm/pandoc/releases/download/3.12.1/pandoc-3.12.1-1-amd64.deb
           sudo dpkg -i /tmp/pandoc.deb
           curl -sSL https://github.com/tectonic-typesetting/tectonic/releases/download/tectonic%400.17.0/tectonic-0.17.0-x86_64-unknown-linux-musl.tar.gz | sudo tar xz -C /usr/local/bin
-          sudo apt-get install -y -qq poppler-utils >/dev/null
+          sudo apt-get update -qq && sudo apt-get install -y -qq poppler-utils >/dev/null
       - uses: actions/cache@v4
         with:
           path: ~/.cache/Tectonic
