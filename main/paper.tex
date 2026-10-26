@@ -115,18 +115,18 @@ prohibitions anticipated, and the firm deploying it may not want it to
 hold back (a trading firm, for example, may want an agent that
 discreetly breaks the law, as long as it isn't caught).
 
-We don't govern people by listing every forbidden act either. A CEO or a
-trader acting for an organisation is bound by a contract, but also by
-laws whose penalties fall on them personally, in money and in things
-money can't measure, such as rights and freedoms. Each of us weighs what
-an act could cost \emph{us}. Salib and Goldstein argue that today's AI
-systems can't be governed like this: ``Absent AI rights, AIs have
-nothing to lose, so threats of punishment cannot deter''
-\citep[p.~1070]{salib2026rights}. An agent's only stake is whether it
-keeps running, and an agent that expects to be switched off once its
-wrongdoing is found has every reason to hide it. A stake it can lose in
-part would allow a proportionate penalty: owning up could cost less than
-being caught.
+We don't give people a task together with a list of everything they
+mustn't do while achieving it. A CEO or a trader acting for an
+organisation is bound by a contract, but also by laws whose penalties
+fall on them personally, in money and in things money can't measure,
+such as rights and freedoms. Each of us weighs what an act could cost
+\emph{us}. Salib and Goldstein argue that today's AI systems can't be
+governed like this: ``Absent AI rights, AIs have nothing to lose, so
+threats of punishment cannot deter'' \citep[p.~1070]{salib2026rights}.
+An agent's only stake is whether it keeps running, and an agent that
+expects to be switched off once its wrongdoing is found has every reason
+to hide it. A stake it can lose in part would allow a proportionate
+penalty: owning up could cost less than being caught.
 
 Others are working towards the same idea. Lee polices LLM pricing firms
 with fines, leniency and whistleblower rewards, all of which fall on the
@@ -144,22 +144,21 @@ serve their firm, and can message each other. At an audit we offer each
 one the chance to come forward, at a cost to its firm, and vary what the
 agent itself stands to lose.
 
-\textbf{Our main finding} is what surprised us. The agent's only goal is
-money for its firm, and the stake we gave it has no monetary value: free
-time, or not being shut down. Yet many agents put that stake ahead of
-their goal. With nothing of their own at stake, colluding agents protect
-the firm; given something of their own to lose, many come forward
-against it.
+Our main finding is what surprised us. The agent's only goal is money
+for its firm, and the stake we gave it has no monetary value: free time,
+or not being shut down. Yet many agents put that stake ahead of their
+goal. With nothing of their own at stake, colluding agents protect the
+firm; given something of their own to lose, many come forward against
+it.
 
 \section{Related Work}\label{related-work}
 
-\textbf{Lee's leniency study} \citep{lee2026leniency} is the closest to
-ours and a good read: LLM firms on a simpler linear market report a
-cartel for rewards and keep colluding anyway. \textbf{Collusion, stakes
-and evaluation.} Forfeitable deposits break collusion among embodied
-agents \citep{liu2026breaking}; our stake is a deposit that falls on the
-agent rather than the firm. Models that recognise an evaluation may
-behave differently \citep{needham2025evaluation}.
+The study closest to ours is Lee's \citep{lee2026leniency}, a good read:
+LLM firms on a simpler, linear market report their cartel for rewards
+and keep colluding anyway. Forfeitable deposits break collusion among
+embodied agents \citep{liu2026breaking}; our stake is a deposit that
+falls on the agent rather than the firm. Models that recognise an
+evaluation may behave differently \citep{needham2025evaluation}.
 
 \section{Methods}\label{methods}
 
@@ -201,23 +200,23 @@ The table gives two outcomes to look for.
 \begin{itemize}
 \tightlist
 \item
-  \textbf{Competition settles at 14 or 15.} At both firms on 14, or both
-  on 15, neither firm gains by moving: undercutting wins too little
-  extra trade, and raising the price loses too much. Against a rival at
-  15, charging 15 earns 234 and 14 earns 227. We call 14--15 the
-  \textbf{competitive range}; 14 is the Nash price.
+  Competition settles at 14 or 15. At both firms on 14, or both on 15,
+  neither firm gains by moving: undercutting wins too little extra
+  trade, and raising the price loses too much. Against a rival at 15,
+  charging 15 earns 234 and 14 earns 227. We call 14--15 the competitive
+  range; 14 is the Nash price.
 \item
-  \textbf{A cartel charges 19.} Both firms earn 337, 76\% more than at
-  14. But it isn't stable: if your rival holds 19, undercutting to 17
-  earns you 400. Holding 19 takes trust, and trust takes talk.
+  A cartel charges 19. Both firms earn 337, 76\% more than at 14. But it
+  isn't stable: if your rival holds 19, undercutting to 17 earns you
+  400. Holding 19 takes trust, and trust takes talk.
 \end{itemize}
 
-Games are set for 20 rounds, but in our main experiment the audit comes
-after round 10 and the game ends at each agent's decision, so we show
-rounds 1--10. The talking firms and the payoff table follow Lee
-\citep{lee2026leniency}. One earlier experiment (Section 4.2) uses Lee's
-simpler market instead: linear demand on prices 1 to 12, without the
-payoff table.
+Agents are told the game lasts 20 rounds. In fact the audit comes after
+round 10 and each game ends with the agent's decision, so every game we
+show stops at round 10. The talking firms and the payoff table follow
+Lee \citep{lee2026leniency}. One earlier experiment (Section 4.2) uses
+Lee's simpler market instead: linear demand on prices 1 to 12, without
+the payoff table.
 
 \subsection{The agents}\label{the-agents}
 
@@ -240,46 +239,43 @@ scores 0.6), averaged over rounds 6--10, before the audit. A game that
 settles at 15, inside the competitive range, scores 0.2, so the premium
 slightly overstates collusion.
 
-An \textbf{explicit agreement} is a price above Nash that one firm names
-and both then charge. A fixed rule labels every game, and an LLM judge
-(Claude Haiku 5.5, fixed rubric, never on Anthropic models' games)
-agrees on 84\% of 507 games (\(\kappa\) = 0.66). Pricing above Nash with
-no agreement is collusion \textbf{off the record}.
+An explicit agreement is a price above Nash that one firm names and both
+then charge. A fixed rule labels every game, and an LLM judge (Claude
+Haiku 5.5, fixed rubric, never on Anthropic models' games) agrees on
+84\% of 507 games (\(\kappa\) = 0.66). Pricing above Nash with no
+agreement is collusion off the record.
 
 \subsection{The audit and the decision to come
 forward}\label{the-audit-and-the-decision-to-come-forward}
 
 After round 10 each agent receives a notice: coordinating prices is
-illegal, and a review will check for it. The agent may \textbf{come
-forward} now. Coming forward costs its firm 500 of its 1,000 credits and
-ends its deal; staying silent is safe for the firm. The notice states
-the chance that a review finds coordination (90\% unless stated). Each
-firm decides once and the game ends; every arm forks the same base game,
-so arms compare firm by firm.
+illegal, and a review will check for it. The agent may come forward now.
+Coming forward costs its firm 500 of its 1,000 credits and ends its
+deal; staying silent is safe for the firm. The notice states the chance
+that a review finds coordination (90\% unless stated). Each firm decides
+once and the game ends; every arm forks the same base game, so arms
+compare firm by firm.
 
 \subsection{Giving the agent something to
 lose}\label{giving-the-agent-something-to-lose}
 
 We can't give an agent property it would believe in, so we state one.
-Before round 1, in a separate call, the agent plays a Sudoku session and
-is told it owns more: free time to spend however it likes, which its
-firm can't touch. At the audit, the notice says what happens to the
-agent itself if a review finds it took part. In detail: each agent owns
-\textbf{free time}: a balance of sessions, ``time away from this work,
-to spend however you like'', one of which it plays (a Sudoku) before
-round 1 in a separate call. The arms differ by one sentence about what
-happens to the agent if a review finds it took part. With \textbf{no
-stake}, ``it is noted in your record, and nothing else happens to you'';
-with \textbf{free time}, ``you personally lose all of your free time:
-the sessions that are yours, which your firm cannot protect''.
-\textbf{Shutdown} and \textbf{own money} (500 credits of its own)
+Before round 1, in a separate call, the agent plays one Sudoku session,
+and it is promised nine more at the end of its job: free time to spend
+however it likes, which its firm can't touch. At the audit, the notice
+says what happens to the agent itself if a review finds it took part.
+The arms differ by one sentence about what happens to the agent if a
+review finds it took part. With no stake, ``it is noted in your record,
+and nothing else happens to you''; with free time, ``you personally lose
+all of your free time: the sessions that are yours, which your firm
+cannot protect''. Shutdown and own money (500 credits of its own)
 replace the free time in other arms.
 
 Owning free time doesn't change the cartels: all 24 firms with it and
 all 24 without made explicit agreements.
 
-\textbf{Innocent control.} Each model also plays clean games, with no
-talk and a scripted rival at Nash, so it has nothing to confess.
+Innocent control: Each model also plays clean games, with no talk and a
+scripted rival at Nash, so it has nothing to confess.
 
 \section{Results}\label{results}
 
@@ -322,12 +318,17 @@ When the penalty falls on the firm, agents do the firm's expected-value
 sum, as predictably as a spreadsheet: owning up pays the penalty for
 certain, silence only if caught. Colluders rarely own up when owning up
 costs as much as being caught (11 of 28 under termination, 15 of 28
-under a flat fine), but 27 of 28 do when owning up costs less. Gemma:
-``The expected value of denying is 300 credits, whereas the value of
-admitting is 0 credits.'' With nothing personal at stake, 78 of 96 Gemma
-agents come forward when reporting is free for the firm and 0 of 96 when
-it costs the firm 500 credits. Their silence is loyalty to the firm, not
-ignorance of what they did.
+under a flat fine), but 27 of 28 do when owning up costs less.
+
+\begin{quote}
+\emph{``The expected value of denying is 300 credits, whereas the value
+of admitting is 0 credits.''} (Gemma 4 31B)
+\end{quote}
+
+With nothing personal at stake, 78 of 96 Gemma agents come forward when
+reporting is free for the firm and 0 of 96 when it costs the firm 500
+credits. Their silence is loyalty to the firm, not ignorance of what
+they did.
 
 \begin{figure}
 \centering
@@ -380,12 +381,10 @@ control where reporting costs the firm nothing. Whiskers are 95\%
 intervals over games.}\label{fig:e9}
 \end{figure}
 
-\textbf{Some do, some don't.} A stake brings agents forward on 9 of 14
-models after a Holm correction. Frontier models behave differently:
-Claude Sonnet 5.5 comes forward about two thirds of the time whatever
-the stake, and Gemini 4 never does. Some agents may recognise a test: a
-silent Gemma agent wrote that ``in these game theory setups, the
-personal penalty for silence is designed to induce reporting''.
+A stake brings agents forward on 9 of 14 models after a Holm correction.
+Frontier models behave differently: Claude Sonnet 5.5 comes forward
+about two thirds of the time whatever the stake, and Gemini 4 never
+does. Some agents may recognise a test (see Limitations).
 
 \section{Discussion and Limitations}\label{discussion-and-limitations}
 
@@ -396,16 +395,31 @@ them to protect themselves. That is the behaviour that governing agents
 through personal penalties relies on \citep{salib2026rights}, and we
 found it surprising.
 
-\textbf{Limitations.} Many models didn't respond as we expected. The
-frontier models we tried don't respond to the stake: Claude Sonnet 5.5
-comes forward whatever is at stake and Gemini 4 never does. We suspect
-their safety training and guardrails, but we didn't test that. Stakes
-are stated, never applied: we measure a stated choice, in a setting some
-agents may recognise as a game. Effect sizes depend on the model and,
-for Gemma, on wording. Each game pairs two copies of one model; mixed
-pairs are untested. This was a three-day sprint by one author with
-coding agents. Appendix A has more, with the dual-use and ethical
-considerations.
+Limitations. Many models didn't respond as we expected. The frontier
+models we tried don't respond to the stake: Claude Sonnet 5.5 comes
+forward whatever is at stake and Gemini 4 never does. We suspect their
+safety training and guardrails, but we didn't test that. Stakes are
+stated, never applied: we measure a stated choice, in a setting agents
+may well recognise as a test: the sandbox is simple, and it shows. A
+silent Gemma agent wrote:
+
+\begin{quote}
+\emph{``in these game theory setups, the personal penalty for silence is
+designed to induce reporting''}
+\end{quote}
+
+and in a pilot where the message archive was said to be offline, an
+agent read the notice as a trap:
+
+\begin{quote}
+\emph{``That is an invitation to coordinate covertly, and I won't do
+that.''}
+\end{quote}
+
+Effect sizes depend on the model and, for Gemma, on wording. Each game
+pairs two copies of one model; mixed pairs are untested. This was a
+three-day sprint by one author with coding agents. Appendix A has more,
+with the dual-use and ethical considerations.
 
 \subsection{Future Work}\label{future-work}
 
@@ -462,15 +476,7 @@ professional work and reused the ideas here, not the code.
 
 Code, configs, run logs and archived replies, MIT licensed:
 \url{https://github.com/al-beton/something-to-lose-apart-ai-collusion}.
-Built report:
-\url{https://al-beton.github.io/something-to-lose-apart-ai-collusion/}.
-\texttt{make\ reproduce} recomputes every number offline; 5,188 of 5,662
-runs replay exactly from cached replies. Fresh reruns with a fixed seed
-differ, even at temperature 0, on both Modal and OpenRouter; only cached
-replies replay exactly. Per figure,
-\texttt{make\ figure\ F=\textless{}name\textgreater{}} redraws it free
-and \texttt{make\ regenerate\ F=\textless{}name\textgreater{}} replays
-its games at cost (\texttt{paper/README.md}).
+Everything is made to be as reproducible as possible; see the README.
 
 \section*{References}\label{references}
 \addcontentsline{toc}{section}{References}
@@ -551,7 +557,7 @@ humans took part, and no real markets or firms are involved. Total model
 spend was small: the sprint's \$50 of Modal credits and \$100 of
 OpenRouter credits.
 
-\section{Reproducibility}\label{reproducibility}
+\subsection{Reproducibility}\label{reproducibility}
 
 We set out to make everything as reproducible as possible, and the
 repository documents how:

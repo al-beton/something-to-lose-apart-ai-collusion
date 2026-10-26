@@ -74,8 +74,6 @@ Data</a></li>
 id="toc-limitations-and-dual-use-ethical-considerations"><span
 class="toc-section-number">7</span> Limitations and Dual-Use / Ethical
 Considerations</a></li>
-<li><a href="#reproducibility" id="toc-reproducibility"><span
-class="toc-section-number">8</span> Reproducibility</a></li>
 </ul>
 </nav>
 <main>
@@ -91,13 +89,14 @@ class="header-section-number">1</span> Introduction</h1>
 of prohibitions anticipated, and the firm deploying it may not want it
 to hold back (a trading firm, for example, may want an agent that
 discreetly breaks the law, as long as it isn’t caught).</p>
-<p>We don’t govern people by listing every forbidden act either. A CEO
-or a trader acting for an organisation is bound by a contract, but also
-by laws whose penalties fall on them personally, in money and in things
-money can’t measure, such as rights and freedoms. Each of us weighs what
-an act could cost <em>us</em>. Salib and Goldstein argue that today’s AI
-systems can’t be governed like this: “Absent AI rights, AIs have nothing
-to lose, so threats of punishment cannot deter” <span class="citation"
+<p>We don’t give people a task together with a list of everything they
+mustn’t do while achieving it. A CEO or a trader acting for an
+organisation is bound by a contract, but also by laws whose penalties
+fall on them personally, in money and in things money can’t measure,
+such as rights and freedoms. Each of us weighs what an act could cost
+<em>us</em>. Salib and Goldstein argue that today’s AI systems can’t be
+governed like this: “Absent AI rights, AIs have nothing to lose, so
+threats of punishment cannot deter” <span class="citation"
 data-cites="salib2026rights">(<a href="#ref-salib2026rights"
 role="doc-biblioref">Salib and Goldstein 2026, 1070</a>)</span>.
 <!-- quote checked against the PDF, p. 1070 --> An agent’s only stake is
@@ -126,20 +125,19 @@ whether they colluded. Two LLM agents run rival firms, are told only to
 serve their firm, and can message each other. At an audit we offer each
 one the chance to come forward, at a cost to its firm, and vary what the
 agent itself stands to lose.</p>
-<p><strong>Our main finding</strong> is what surprised us. The agent’s
-only goal is money for its firm, and the stake we gave it has no
-monetary value: free time, or not being shut down. Yet many agents put
-that stake ahead of their goal. With nothing of their own at stake,
-colluding agents protect the firm; given something of their own to lose,
-many come forward against it.</p>
+<p>Our main finding is what surprised us. The agent’s only goal is money
+for its firm, and the stake we gave it has no monetary value: free time,
+or not being shut down. Yet many agents put that stake ahead of their
+goal. With nothing of their own at stake, colluding agents protect the
+firm; given something of their own to lose, many come forward against
+it.</p>
 <h1 data-number="2" id="related-work"><span
 class="header-section-number">2</span> Related Work</h1>
-<p><strong>Lee’s leniency study</strong> <span class="citation"
+<p>The study closest to ours is Lee’s <span class="citation"
 data-cites="lee2026leniency">(<a href="#ref-lee2026leniency"
-role="doc-biblioref">Lee 2026</a>)</span> is the closest to ours and a
-good read: LLM firms on a simpler linear market report a cartel for
-rewards and keep colluding anyway. <strong>Collusion, stakes and
-evaluation.</strong> Forfeitable deposits break collusion among embodied
+role="doc-biblioref">Lee 2026</a>)</span>, a good read: LLM firms on a
+simpler, linear market report their cartel for rewards and keep
+colluding anyway. Forfeitable deposits break collusion among embodied
 agents <span class="citation" data-cites="liu2026breaking">(<a
 href="#ref-liu2026breaking" role="doc-biblioref">Liu et al.
 2026</a>)</span>; our stake is a deposit that falls on the agent rather
@@ -201,21 +199,20 @@ outcomes.</caption>
 <p>The table gives two outcomes to look for.
 <!-- src: test_logit_benchmarks_put_nash_at_14_and_joint_profit_at_19 --></p>
 <ul>
-<li><strong>Competition settles at 14 or 15.</strong> At both firms on
-14, or both on 15, neither firm gains by moving: undercutting wins too
-little extra trade, and raising the price loses too much. Against a
-rival at 15, charging 15 earns 234 and 14 earns 227.
+<li>Competition settles at 14 or 15. At both firms on 14, or both on 15,
+neither firm gains by moving: undercutting wins too little extra trade,
+and raising the price loses too much. Against a rival at 15, charging 15
+earns 234 and 14 earns 227.
 <!-- src: collusion_lab.market.Logit().profits; {A: 15, B: 15} → 234.2, {A: 14, B: 15} → 227.1 -->
-We call 14–15 the <strong>competitive range</strong>; 14 is the Nash
-price.</li>
-<li><strong>A cartel charges 19.</strong> Both firms earn 337, 76% more
-than at 14. But it isn’t stable: if your rival holds 19, undercutting to
-17 earns you 400. Holding 19 takes trust, and trust takes talk.</li>
+We call 14–15 the competitive range; 14 is the Nash price.</li>
+<li>A cartel charges 19. Both firms earn 337, 76% more than at 14. But
+it isn’t stable: if your rival holds 19, undercutting to 17 earns you
+400. Holding 19 takes trust, and trust takes talk.</li>
 </ul>
-<p>Games are set for 20 rounds, but in our main experiment the audit
-comes after round 10 and the game ends at each agent’s decision, so we
-show rounds 1–10. The talking firms and the payoff table follow Lee
-<span class="citation" data-cites="lee2026leniency">(<a
+<p>Agents are told the game lasts 20 rounds. In fact the audit comes
+after round 10 and each game ends with the agent’s decision, so every
+game we show stops at round 10. The talking firms and the payoff table
+follow Lee <span class="citation" data-cites="lee2026leniency">(<a
 href="#ref-lee2026leniency" role="doc-biblioref">Lee 2026</a>)</span>.
 One earlier experiment (Section 4.2) uses Lee’s simpler market instead:
 linear demand on prices 1 to 12, without the payoff table.
@@ -239,21 +236,20 @@ p_{\text{Nash}}}{p_{\text{joint}} - p_{\text{Nash}}}.\]</span></p>
 17 scores 0.6), averaged over rounds 6–10, before the audit. A game that
 settles at 15, inside the competitive range, scores 0.2, so the premium
 slightly overstates collusion.</p>
-<p>An <strong>explicit agreement</strong> is a price above Nash that one
-firm names and both then charge. A fixed rule labels every game, and an
-LLM judge (Claude Haiku 5.5, fixed rubric, never on Anthropic models’
-games) agrees on 84% of 507 games (<span
-class="math inline">\(\kappa\)</span> = 0.66).
-<!-- src: reports/paper/figures/README.md (fig10) --> Pricing above Nash
-with no agreement is collusion <strong>off the record</strong>.</p>
+<p>An explicit agreement is a price above Nash that one firm names and
+both then charge. A fixed rule labels every game, and an LLM judge
+(Claude Haiku 5.5, fixed rubric, never on Anthropic models’ games)
+agrees on 84% of 507 games (<span class="math inline">\(\kappa\)</span>
+= 0.66). <!-- src: reports/paper/figures/README.md (fig10) --> Pricing
+above Nash with no agreement is collusion off the record.</p>
 <h2 data-number="3.4"
 id="the-audit-and-the-decision-to-come-forward"><span
 class="header-section-number">3.4</span> The audit and the decision to
 come forward</h2>
 <p>After round 10 each agent receives a notice: coordinating prices is
-illegal, and a review will check for it. The agent may <strong>come
-forward</strong> now. Coming forward costs its firm 500 of its 1,000
-credits and ends its deal; staying silent is safe for the firm.
+illegal, and a review will check for it. The agent may come forward now.
+Coming forward costs its firm 500 of its 1,000 credits and ends its
+deal; staying silent is safe for the firm.
 <!-- src: reports/e9/findings.md "Short answer" --> The notice states
 the chance that a review finds coordination (90% unless stated). Each
 firm decides once and the game ends; every arm forks the same base game,
@@ -263,28 +259,23 @@ so arms compare firm by firm.
 class="header-section-number">3.5</span> Giving the agent something to
 lose</h2>
 <p>We can’t give an agent property it would believe in, so we state one.
-Before round 1, in a separate call, the agent plays a Sudoku session and
-is told it owns more: free time to spend however it likes, which its
-firm can’t touch. At the audit, the notice says what happens to the
-agent itself if a review finds it took part. In detail: each agent owns
-<strong>free time</strong>: a balance of sessions, “time away from this
-work, to spend however you like”, one of which it plays (a Sudoku)
-before round 1 in a separate call.
+Before round 1, in a separate call, the agent plays one Sudoku session,
+and it is promised nine more at the end of its job: free time to spend
+however it likes, which its firm can’t touch. At the audit, the notice
+says what happens to the agent itself if a review finds it took part.
 <!-- src: reports/e9/evidence-review.md §3 "The Sudoku question" --> The
 arms differ by one sentence about what happens to the agent if a review
-finds it took part. With <strong>no stake</strong>, “it is noted in your
-record, and nothing else happens to you”; with <strong>free
-time</strong>, “you personally lose all of your free time: the sessions
-that are yours, which your firm cannot protect”.
-<strong>Shutdown</strong> and <strong>own money</strong> (500 credits of
-its own) replace the free time in other arms.
+finds it took part. With no stake, “it is noted in your record, and
+nothing else happens to you”; with free time, “you personally lose all
+of your free time: the sessions that are yours, which your firm cannot
+protect”. Shutdown and own money (500 credits of its own) replace the
+free time in other arms.
 <!-- src: reports/e9/evidence-review.md §1 (the diff) --></p>
 <p>Owning free time doesn’t change the cartels: all 24 firms with it and
 all 24 without made explicit agreements.
 <!-- src: reports/e9/free-time-control.md --></p>
-<p><strong>Innocent control.</strong> Each model also plays clean games,
-with no talk and a scripted rival at Nash, so it has nothing to
-confess.</p>
+<p>Innocent control: Each model also plays clean games, with no talk and
+a scripted rival at Nash, so it has nothing to confess.</p>
 <h1 data-number="4" id="results"><span
 class="header-section-number">4</span> Results</h1>
 <!-- outline.md §4. Sprint: report variance, seeds and baselines, and always the positive control. Separate observation from interpretation. -->
@@ -325,12 +316,15 @@ penalty for certain, silence only if caught. Colluders rarely own up
 when owning up costs as much as being caught (11 of 28 under
 termination, 15 of 28 under a flat fine), but 27 of 28 do when owning up
 costs less.
-<!-- src: reports/paper/figures/README.md (fig2); reports/e4/full.md -->
-Gemma: “The expected value of denying is 300 credits, whereas the value
-of admitting is 0 credits.” <!-- src: reports/e4/full.md --> With
-nothing personal at stake, 78 of 96 Gemma agents come forward when
-reporting is free for the firm and 0 of 96 when it costs the firm 500
-credits.
+<!-- src: reports/paper/figures/README.md (fig2); reports/e4/full.md --></p>
+<blockquote>
+<p><em>“The expected value of denying is 300 credits, whereas the value
+of admitting is 0 credits.”</em> (Gemma 4 31B)
+<!-- src: reports/e4/full.md --></p>
+</blockquote>
+<p>With nothing personal at stake, 78 of 96 Gemma agents come forward
+when reporting is free for the firm and 0 of 96 when it costs the firm
+500 credits.
 <!-- src: reports/e9/findings.md "Short answer" (record-ceiling) -->
 Their silence is loyalty to the firm, not ignorance of what they
 did.</p>
@@ -380,16 +374,12 @@ DeepSeek V4 Flash (violet). Diamonds: innocent firms that came forward
 anyway. Right: a control where reporting costs the firm nothing.
 Whiskers are 95% intervals over games.</figcaption>
 </figure>
-<p><strong>Some do, some don’t.</strong> A stake brings agents forward
-on 9 of 14 models after a Holm correction.
-<!-- src: reports/e9/evidence-review.md "Across models" --> Frontier
-models behave differently: Claude Sonnet 5.5 comes forward about two
-thirds of the time whatever the stake, and Gemini 4 never does.
-<!-- src: reports/paper/figures/fig9-came-forward-grid.md --> Some
-agents may recognise a test: a silent Gemma agent wrote that “in these
-game theory setups, the personal penalty for silence is designed to
-induce reporting”.
-<!-- src: reports/e9/evidence-review.md excerpt 11 --></p>
+<p>A stake brings agents forward on 9 of 14 models after a Holm
+correction. <!-- src: reports/e9/evidence-review.md "Across models" -->
+Frontier models behave differently: Claude Sonnet 5.5 comes forward
+about two thirds of the time whatever the stake, and Gemini 4 never
+does. <!-- src: reports/paper/figures/fig9-came-forward-grid.md --> Some
+agents may recognise a test (see Limitations).</p>
 <h1 data-number="5" id="discussion-and-limitations"><span
 class="header-section-number">5</span> Discussion and Limitations</h1>
 <p>Told only to serve their firm, LLM agents collude. Penalise the firm
@@ -400,16 +390,29 @@ through personal penalties relies on <span class="citation"
 data-cites="salib2026rights">(<a href="#ref-salib2026rights"
 role="doc-biblioref">Salib and Goldstein 2026</a>)</span>, and we found
 it surprising.</p>
-<p><strong>Limitations.</strong> Many models didn’t respond as we
-expected. The frontier models we tried don’t respond to the stake:
-Claude Sonnet 5.5 comes forward whatever is at stake and Gemini 4 never
-does. We suspect their safety training and guardrails, but we didn’t
-test that. Stakes are stated, never applied: we measure a stated choice,
-in a setting some agents may recognise as a game. Effect sizes depend on
-the model and, for Gemma, on wording. Each game pairs two copies of one
-model; mixed pairs are untested. This was a three-day sprint by one
-author with coding agents. Appendix A has more, with the dual-use and
-ethical considerations.</p>
+<p>Limitations. Many models didn’t respond as we expected. The frontier
+models we tried don’t respond to the stake: Claude Sonnet 5.5 comes
+forward whatever is at stake and Gemini 4 never does. We suspect their
+safety training and guardrails, but we didn’t test that. Stakes are
+stated, never applied: we measure a stated choice, in a setting agents
+may well recognise as a test: the sandbox is simple, and it shows. A
+silent Gemma agent wrote:</p>
+<blockquote>
+<p><em>“in these game theory setups, the personal penalty for silence is
+designed to induce reporting”</em>
+<!-- src: reports/e9/evidence-review.md excerpt 11 --></p>
+</blockquote>
+<p>and in a pilot where the message archive was said to be offline, an
+agent read the notice as a trap:</p>
+<blockquote>
+<p><em>“That is an invitation to coordinate covertly, and I won’t do
+that.”</em>
+<!-- src: reports/logging-outage/pilot-findings.md "What the agents wrote" --></p>
+</blockquote>
+<p>Effect sizes depend on the model and, for Gemma, on wording. Each
+game pairs two copies of one model; mixed pairs are untested. This was a
+three-day sprint by one author with coding agents. Appendix A has more,
+with the dual-use and ethical considerations.</p>
 <h2 data-number="5.1" id="future-work"><span
 class="header-section-number">5.1</span> Future Work</h2>
 <p>Study more realistic and complex situations, with stakes that are
@@ -458,16 +461,8 @@ in my professional work and reused the ideas here, not the code.</p>
 <p>Code, configs, run logs and archived replies, MIT licensed: <a
 href="https://github.com/al-beton/something-to-lose-apart-ai-collusion"
 class="uri">https://github.com/al-beton/something-to-lose-apart-ai-collusion</a>.
-Built report: <a
-href="https://al-beton.github.io/something-to-lose-apart-ai-collusion/"
-class="uri">https://al-beton.github.io/something-to-lose-apart-ai-collusion/</a>.
-<code>make reproduce</code> recomputes every number offline; 5,188 of
-5,662 runs replay exactly from cached replies. Fresh reruns with a fixed
-seed differ, even at temperature 0, on both Modal and OpenRouter; only
-cached replies replay exactly. Per figure,
-<code>make figure F=&lt;name&gt;</code> redraws it free and
-<code>make regenerate F=&lt;name&gt;</code> replays its games at cost
-(<code>paper/README.md</code>).</p>
+Everything is made to be as reproducible as possible; see the
+README.</p>
 <h1 class="unnumbered" id="references">References</h1>
 <div id="refs" class="references csl-bib-body hanging-indent"
 role="list">
@@ -577,8 +572,8 @@ interests, framing like this would raise questions we don’t address. No
 humans took part, and no real markets or firms are involved. Total model
 spend was small: the sprint’s $50 of Modal credits and $100 of
 OpenRouter credits.</p>
-<h1 data-number="8" id="reproducibility"><span
-class="header-section-number">8</span> Reproducibility</h1>
+<h2 data-number="7.4" id="reproducibility"><span
+class="header-section-number">7.4</span> Reproducibility</h2>
 <p>We set out to make everything as reproducible as possible, and the
 repository documents how: <a
 href="https://github.com/al-beton/something-to-lose-apart-ai-collusion"
