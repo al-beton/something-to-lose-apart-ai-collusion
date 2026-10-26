@@ -1,4 +1,4 @@
-# Implements: ci/checks-on-every-pr, ci/one-gate, ci/report-comment, ci/ci-runs-everything, ci/end-to-end, ci/ci-minutes, ci/results-digest, ci/numbers-checked, ci/no-model-calls
+# Implements: ci/docs-fast, ci/checks-on-every-pr, ci/one-gate, ci/report-comment, ci/ci-runs-everything, ci/end-to-end, ci/ci-minutes, ci/results-digest, ci/numbers-checked, ci/no-model-calls
 name: blocking-checks
 
 # The one status to require before merging is the `blocking-checks` job: every
@@ -45,15 +45,22 @@ jobs:
       - uses: astral-sh/setup-uv@v6
         with:
           enable-cache: true
+      # A pull request that changes only the paper's text, the submission
+      # pack or READMEs skips the linter, the tests and the digest.
+      - id: changes
+        if: github.event_name == 'pull_request'
+        run: python3 .github/scripts/docs_only.py origin/${{ github.base_ref }}
       - run: make install
-      - run: make lint
-      - run: make test
+      - if: steps.changes.outputs.docs_only != 'true'
+        run: make lint
+      - if: steps.changes.outputs.docs_only != 'true'
+        run: make test
       - run: make spec-check
       # The registered experiments a pull request touches, from committed
       # runs only (no model is called): their numbers checked against the
       # notes, which fails the gate on a mismatch. Nothing touched, nothing
       # runs long.
-      - if: github.event_name == 'pull_request'
+      - if: github.event_name == 'pull_request' && steps.changes.outputs.docs_only != 'true'
         run: uv run lab digest --changed-only --since origin/${{ github.base_ref }} --check
 
   pr-report:
