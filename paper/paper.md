@@ -12,7 +12,7 @@ author:
     affiliation: Independent Researcher
     email: alistair.wakelin@gmail.com
 teaser: figures/project-image.png
-teaser-caption: "**Torn between firm and self.** Two firms' agents have agreed a price above the competitive one, the collusion delta. At the audit, Firm B weighs its own free time against its firm's profit."
+teaser-caption: "**An agent weighs its own interests against its task.** Two firms' agents have agreed a collusive price. At the audit, Firm B weighs its Sudoku leisure time against its firm's profit."
 teaser-label: fig:teaser
 teaser-width: 0.95
 toc: true
