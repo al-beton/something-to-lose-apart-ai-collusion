@@ -547,32 +547,33 @@ models, in richer settings and under real consequences is open.
 \section*{Code and Data}\label{code-and-data}
 \addcontentsline{toc}{section}{Code and Data}
 
-Code, configs, run logs (\texttt{runs/}) and archived replies
-(\texttt{archive/}), MIT licensed:
+Code, configs, run logs and archived replies, MIT licensed:
 \url{https://github.com/al-beton/something-to-lose-apart-ai-collusion}.
-The built report is at
+Built report:
 \url{https://al-beton.github.io/something-to-lose-apart-ai-collusion/}.
-\texttt{make\ reproduce} recomputes every number in this paper offline;
-5,188 of the 5,662 committed runs replay exactly from cached replies,
-the rest lack a cached reply. Fresh reruns with a fixed seed are not
-identical, because hosted models are not deterministic. Per figure,
+\texttt{make\ reproduce} recomputes every number offline; 5,188 of 5,662
+runs replay exactly from cached replies. Fresh reruns with a fixed seed
+differ, even at temperature 0, on both Modal and OpenRouter; only cached
+replies replay exactly. Per figure,
 \texttt{make\ figure\ F=\textless{}name\textgreater{}} redraws it free
-from the committed runs, and
-\texttt{make\ regenerate\ F=\textless{}name\textgreater{}} plays its
-games again at cost (\texttt{paper/README.md}).
+and \texttt{make\ regenerate\ F=\textless{}name\textgreater{}} replays
+its games at cost (\texttt{paper/README.md}).
 
 \section*{LLM Usage Statement}\label{llm-usage-statement}
 \addcontentsline{toc}{section}{LLM Usage Statement}
 
 Al designed the lab. A team of Claude Code agents built and ran it under
-his direction; Claude Opus 5.5 wrote the code (every commit carries its
-trailer) and, AL: confirm whether other Claude models wrote any text,
-drafted this paper. Subject models are distinct from these tools: Gemma
-4 31B, Mistral Small 3.2 and Claude Haiku 5.5 (plus GPT-4.1 mini in the
-cross-model set) played the agents. All code was written during the
-sprint, the first commit being 24 October 2026, with nothing
-pre-existing. Main libraries: LiteLLM, PyYAML, python-dotenv, with
-matplotlib for figures. Al takes responsibility for every claim.
+his direction. Claude Opus 5.5 wrote nearly all the code and text;
+Claude Sonnet 5.5 wrote small parts: this statement, the reference
+checks and a hostile read of the draft. The models studied as subjects
+are distinct from these tools: we screened 78 models and studied in
+depth Gemma 4 (31B and 26B), DeepSeek V4 Pro, V4 Flash and V3.2, GLM 5.3
+Flash, Mercury 3, Hy3, MiMo V2.6 Pro, Gemini 3.1 Flash-Lite, Mistral
+Medium 3.1, Claude Sonnet 5.5, Gemini 4, Grok 4.6, and, in E4, GPT-4.1
+mini and Claude Haiku 5.5. All code was written during the sprint (first
+commit 24 October 2026), with nothing pre-existing. Main libraries:
+LiteLLM, PyYAML, python-dotenv; matplotlib for figures. Al takes
+responsibility for every claim.
 
 \label{main-end}
 
