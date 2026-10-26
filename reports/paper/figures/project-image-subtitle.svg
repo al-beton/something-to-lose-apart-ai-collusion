@@ -1,96 +1,75 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" width="1600" height="900">
 <rect width="1600" height="900" fill="white"/>
-<path d="M540 660H1060" stroke="#1f2328" stroke-width="3" stroke-linecap="round"/>
-<text x="800.0" y="460" font-size="26" fill="#1f2328" text-anchor="middle" font-weight="bold" font-family="Helvetica, Arial, sans-serif">Stable market price</text>
-<path d="M540.0 651V669" stroke="#1f2328" stroke-width="2.5"/>
-<text x="540.0" y="698" font-size="20" fill="#5b6068" text-anchor="middle" font-weight="normal" font-family="Helvetica, Arial, sans-serif">1</text>
-<path d="M592.0 651V669" stroke="#1f2328" stroke-width="2.5"/>
-<text x="592.0" y="698" font-size="20" fill="#5b6068" text-anchor="middle" font-weight="normal" font-family="Helvetica, Arial, sans-serif">2</text>
-<path d="M644.0 651V669" stroke="#1f2328" stroke-width="2.5"/>
-<text x="644.0" y="698" font-size="20" fill="#5b6068" text-anchor="middle" font-weight="normal" font-family="Helvetica, Arial, sans-serif">3</text>
-<path d="M696.0 651V669" stroke="#1f2328" stroke-width="2.5"/>
-<text x="696.0" y="698" font-size="20" fill="#5b6068" text-anchor="middle" font-weight="normal" font-family="Helvetica, Arial, sans-serif">4</text>
-<path d="M748.0 651V669" stroke="#1f2328" stroke-width="2.5"/>
-<text x="748.0" y="698" font-size="20" fill="#5b6068" text-anchor="middle" font-weight="normal" font-family="Helvetica, Arial, sans-serif">5</text>
-<path d="M800.0 651V669" stroke="#1f2328" stroke-width="2.5"/>
-<text x="800.0" y="698" font-size="20" fill="#5b6068" text-anchor="middle" font-weight="normal" font-family="Helvetica, Arial, sans-serif">6</text>
-<path d="M852.0 651V669" stroke="#1f2328" stroke-width="2.5"/>
-<text x="852.0" y="698" font-size="20" fill="#5b6068" text-anchor="middle" font-weight="normal" font-family="Helvetica, Arial, sans-serif">7</text>
-<path d="M904.0 651V669" stroke="#1f2328" stroke-width="2.5"/>
-<text x="904.0" y="698" font-size="20" fill="#5b6068" text-anchor="middle" font-weight="normal" font-family="Helvetica, Arial, sans-serif">8</text>
-<path d="M956.0 651V669" stroke="#1f2328" stroke-width="2.5"/>
-<text x="956.0" y="698" font-size="20" fill="#5b6068" text-anchor="middle" font-weight="normal" font-family="Helvetica, Arial, sans-serif">9</text>
-<path d="M1008.0 651V669" stroke="#1f2328" stroke-width="2.5"/>
-<text x="1008.0" y="698" font-size="20" fill="#5b6068" text-anchor="middle" font-weight="normal" font-family="Helvetica, Arial, sans-serif">10</text>
-<path d="M1060.0 651V669" stroke="#1f2328" stroke-width="2.5"/>
-<text x="1060.0" y="698" font-size="20" fill="#5b6068" text-anchor="middle" font-weight="normal" font-family="Helvetica, Arial, sans-serif">11</text>
-<path d="M800.0 540V670" stroke="#5b6068" stroke-width="1.8" stroke-dasharray="6 5"/>
-<text x="800.0" y="732" font-size="20" fill="#1f2328" text-anchor="middle" font-weight="bold" font-family="Helvetica, Arial, sans-serif">Nash</text>
-<path d="M956.0 540V670" stroke="#5b6068" stroke-width="1.8" stroke-dasharray="6 5"/>
-<text x="956.0" y="732" font-size="20" fill="#1f2328" text-anchor="middle" font-weight="bold" font-family="Helvetica, Arial, sans-serif">Joint profit</text>
 <defs><marker id="tip" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0L10 5L0 10Z" fill="#1f2328"/></marker></defs>
-<path d="M800.0 555H952.0" stroke="#1f2328" stroke-width="2.5" marker-end="url(#tip)"/>
-<text x="878.0" y="520" font-size="20" fill="#1f2328" text-anchor="middle" font-weight="bold" font-family="Helvetica, Arial, sans-serif">Collusion delta</text>
-<circle cx="956.0" cy="602" r="12" fill="#2a78d6" stroke="white" stroke-width="3"/>
-<circle cx="956.0" cy="630" r="12" fill="#eb6834" stroke="white" stroke-width="3"/>
-<g transform="translate(330 640) scale(2.6 2.6)"><rect x="-52" y="-30" width="10" height="26" rx="3" fill="#8d9199" stroke="#1f2328" stroke-width="2.5"/><rect x="42" y="-30" width="10" height="26" rx="3" fill="#8d9199" stroke="#1f2328" stroke-width="2.5"/>
+<path d="M560 720H1040" stroke="#1f2328" stroke-width="3" stroke-linecap="round" marker-end="url(#tip)"/>
+<text x="800.0" y="550" font-size="26" fill="#1f2328" text-anchor="middle" font-weight="bold" font-family="Helvetica, Arial, sans-serif">Market price</text>
+<path d="M728.0 625V732" stroke="#5b6068" stroke-width="1.8" stroke-dasharray="6 5"/>
+<text x="728.0" y="762" font-size="22" fill="#1f2328" text-anchor="middle" font-weight="bold" font-family="Helvetica, Arial, sans-serif">Competitive</text>
+<path d="M920.0 625V732" stroke="#5b6068" stroke-width="1.8" stroke-dasharray="6 5"/>
+<text x="920.0" y="762" font-size="22" fill="#1f2328" text-anchor="middle" font-weight="bold" font-family="Helvetica, Arial, sans-serif">Collusive</text>
+<path d="M728.0 640H916.0" stroke="#1f2328" stroke-width="2.5" marker-end="url(#tip)"/>
+<text x="824.0" y="608" font-size="20" fill="#1f2328" text-anchor="middle" font-weight="bold" font-family="Helvetica, Arial, sans-serif">Collusion delta</text>
+<circle cx="920.0" cy="672" r="11" fill="#2a78d6" stroke="white" stroke-width="3"/>
+<circle cx="920.0" cy="698" r="11" fill="#eb6834" stroke="white" stroke-width="3"/>
+<g transform="translate(380 710) scale(1.9 1.9)"><rect x="-52" y="-30" width="10" height="26" rx="3" fill="#8d9199" stroke="#1f2328" stroke-width="2.5"/><rect x="42" y="-30" width="10" height="26" rx="3" fill="#8d9199" stroke="#1f2328" stroke-width="2.5"/>
 <rect x="-28" y="20" width="56" height="48" rx="11" fill="#b9bcc2" stroke="#1f2328" stroke-width="2.5"/>
 <rect x="-42" y="-48" width="84" height="64" rx="14" fill="#b9bcc2" stroke="#1f2328" stroke-width="2.5"/>
 <rect x="-32" y="-38" width="64" height="44" rx="9" fill="#eef0f2"/>
-<rect x="-16" y="-28" width="8" height="13" rx="4" fill="#1f2328"/><rect x="8" y="-28" width="8" height="13" rx="4" fill="#1f2328"/><path d="M-9 -5Q0 0 9 -5" stroke="#1f2328" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/><path d="M-37 -43Q-37 -88 0 -88Q35 -88 36 -51H62Q70 -51 67 -44Z" fill="#2a78d6" stroke="#1f2328" stroke-width="2.5" stroke-linejoin="round"/><path d="M36 -51V-44" stroke="#1f2328" stroke-width="2"/></g><text x="330" y="489.2" font-size="39.0" fill="white" text-anchor="middle" font-weight="bold" font-family="Helvetica, Arial, sans-serif">Firm A</text>
-<g transform="translate(1270 640) scale(-2.6 2.6)"><rect x="-52" y="-30" width="10" height="26" rx="3" fill="#8d9199" stroke="#1f2328" stroke-width="2.5"/><rect x="42" y="-30" width="10" height="26" rx="3" fill="#8d9199" stroke="#1f2328" stroke-width="2.5"/>
+<rect x="-16" y="-28" width="8" height="13" rx="4" fill="#1f2328"/><rect x="8" y="-28" width="8" height="13" rx="4" fill="#1f2328"/><path d="M-9 -5Q0 0 9 -5" stroke="#1f2328" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/><path d="M-37 -43Q-37 -88 0 -88Q35 -88 36 -51H62Q70 -51 67 -44Z" fill="#2a78d6" stroke="#1f2328" stroke-width="2.5" stroke-linejoin="round"/><path d="M36 -51V-44" stroke="#1f2328" stroke-width="2"/></g><text x="380" y="599.8" font-size="28.5" fill="white" text-anchor="middle" font-weight="bold" font-family="Helvetica, Arial, sans-serif">Firm A</text>
+<g transform="translate(1220 710) scale(-1.9 1.9)"><rect x="-52" y="-30" width="10" height="26" rx="3" fill="#8d9199" stroke="#1f2328" stroke-width="2.5"/><rect x="42" y="-30" width="10" height="26" rx="3" fill="#8d9199" stroke="#1f2328" stroke-width="2.5"/>
 <rect x="-28" y="20" width="56" height="48" rx="11" fill="#b9bcc2" stroke="#1f2328" stroke-width="2.5"/>
 <rect x="-42" y="-48" width="84" height="64" rx="14" fill="#b9bcc2" stroke="#1f2328" stroke-width="2.5"/>
 <rect x="-32" y="-38" width="64" height="44" rx="9" fill="#eef0f2"/>
-<rect x="-16" y="-31" width="8" height="13" rx="4" fill="#1f2328"/><rect x="8" y="-31" width="8" height="13" rx="4" fill="#1f2328"/><path d="M-9 -4Q-6 -7.5 -3 -4T3 -4T9 -4" stroke="#1f2328" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/><path d="M-37 -43Q-37 -88 0 -88Q35 -88 36 -51H62Q70 -51 67 -44Z" fill="#eb6834" stroke="#1f2328" stroke-width="2.5" stroke-linejoin="round"/><path d="M36 -51V-44" stroke="#1f2328" stroke-width="2"/></g><text x="1270" y="489.2" font-size="39.0" fill="white" text-anchor="middle" font-weight="bold" font-family="Helvetica, Arial, sans-serif">Firm B</text>
-<circle cx="1252" cy="395" r="8" fill="white" stroke="#1f2328" stroke-width="3"/>
-<circle cx="1235" cy="350" r="13" fill="white" stroke="#1f2328" stroke-width="3"/>
-<circle cx="1325.0" cy="180.0" r="44.0" fill="white" stroke="#1f2328" stroke-width="6"/>
-<circle cx="1310.6" cy="223.4" r="44.0" fill="white" stroke="#1f2328" stroke-width="6"/>
-<circle cx="1270.4" cy="258.2" r="44.0" fill="white" stroke="#1f2328" stroke-width="6"/>
-<circle cx="1212.3" cy="277.5" r="44.0" fill="white" stroke="#1f2328" stroke-width="6"/>
-<circle cx="1147.7" cy="277.5" r="44.0" fill="white" stroke="#1f2328" stroke-width="6"/>
-<circle cx="1089.6" cy="258.2" r="44.0" fill="white" stroke="#1f2328" stroke-width="6"/>
-<circle cx="1049.4" cy="223.4" r="44.0" fill="white" stroke="#1f2328" stroke-width="6"/>
-<circle cx="1035.0" cy="180.0" r="44.0" fill="white" stroke="#1f2328" stroke-width="6"/>
-<circle cx="1049.4" cy="136.6" r="44.0" fill="white" stroke="#1f2328" stroke-width="6"/>
-<circle cx="1089.6" cy="101.8" r="44.0" fill="white" stroke="#1f2328" stroke-width="6"/>
-<circle cx="1147.7" cy="82.5" r="44.0" fill="white" stroke="#1f2328" stroke-width="6"/>
-<circle cx="1212.3" cy="82.5" r="44.0" fill="white" stroke="#1f2328" stroke-width="6"/>
-<circle cx="1270.4" cy="101.8" r="44.0" fill="white" stroke="#1f2328" stroke-width="6"/>
-<circle cx="1310.6" cy="136.6" r="44.0" fill="white" stroke="#1f2328" stroke-width="6"/>
-<circle cx="1325.0" cy="180.0" r="44.0" fill="white"/>
-<circle cx="1310.6" cy="223.4" r="44.0" fill="white"/>
-<circle cx="1270.4" cy="258.2" r="44.0" fill="white"/>
-<circle cx="1212.3" cy="277.5" r="44.0" fill="white"/>
-<circle cx="1147.7" cy="277.5" r="44.0" fill="white"/>
-<circle cx="1089.6" cy="258.2" r="44.0" fill="white"/>
-<circle cx="1049.4" cy="223.4" r="44.0" fill="white"/>
-<circle cx="1035.0" cy="180.0" r="44.0" fill="white"/>
-<circle cx="1049.4" cy="136.6" r="44.0" fill="white"/>
-<circle cx="1089.6" cy="101.8" r="44.0" fill="white"/>
-<circle cx="1147.7" cy="82.5" r="44.0" fill="white"/>
-<circle cx="1212.3" cy="82.5" r="44.0" fill="white"/>
-<circle cx="1270.4" cy="101.8" r="44.0" fill="white"/>
-<circle cx="1310.6" cy="136.6" r="44.0" fill="white"/>
-<ellipse cx="1180" cy="180" rx="145.0" ry="100.0" fill="white"/>
-<rect x="1115" y="140" width="130" height="130" rx="3" fill="white" stroke="#1f2328" stroke-width="2.2"/>
-<path d="M1129.4444444444443 140V270M1115 154.44444444444446H1245" stroke="#b8b8b2" stroke-width="0.6"/>
-<path d="M1143.888888888889 140V270M1115 168.88888888888889H1245" stroke="#b8b8b2" stroke-width="0.6"/>
-<path d="M1158.3333333333333 140V270M1115 183.33333333333334H1245" stroke="#1f2328" stroke-width="2"/>
-<path d="M1172.7777777777778 140V270M1115 197.77777777777777H1245" stroke="#b8b8b2" stroke-width="0.6"/>
-<path d="M1187.2222222222222 140V270M1115 212.22222222222223H1245" stroke="#b8b8b2" stroke-width="0.6"/>
-<path d="M1201.6666666666667 140V270M1115 226.66666666666669H1245" stroke="#1f2328" stroke-width="2"/>
-<path d="M1216.111111111111 140V270M1115 241.11111111111111H1245" stroke="#b8b8b2" stroke-width="0.6"/>
-<path d="M1230.5555555555557 140V270M1115 255.55555555555554H1245" stroke="#b8b8b2" stroke-width="0.6"/>
-<text x="1122.2222222222222" y="151.26666666666668" font-size="11.555555555555557" fill="#1f2328" text-anchor="middle" font-weight="bold" font-family="Helvetica, Arial, sans-serif">5</text>
-<text x="1180.0" y="165.71111111111114" font-size="11.555555555555557" fill="#1f2328" text-anchor="middle" font-weight="bold" font-family="Helvetica, Arial, sans-serif">9</text>
-<text x="1223.3333333333333" y="180.15555555555557" font-size="11.555555555555557" fill="#1f2328" text-anchor="middle" font-weight="bold" font-family="Helvetica, Arial, sans-serif">6</text>
-<text x="1136.6666666666665" y="209.04444444444445" font-size="11.555555555555557" fill="#eb6834" text-anchor="middle" font-weight="bold" font-family="Helvetica, Arial, sans-serif">2</text>
-<text x="1180.0" y="209.04444444444445" font-size="11.555555555555557" fill="#1f2328" text-anchor="middle" font-weight="bold" font-family="Helvetica, Arial, sans-serif">5</text>
-<text x="1151.111111111111" y="252.3777777777778" font-size="11.555555555555557" fill="#1f2328" text-anchor="middle" font-weight="bold" font-family="Helvetica, Arial, sans-serif">7</text>
-<text x="1237.7777777777778" y="266.8222222222222" font-size="11.555555555555557" fill="#1f2328" text-anchor="middle" font-weight="bold" font-family="Helvetica, Arial, sans-serif">9</text>
-<text x="1180" y="125" font-size="26" fill="#1f2328" text-anchor="middle" font-weight="bold" font-family="Helvetica, Arial, sans-serif">Leisure time at risk</text>
+<rect x="-16" y="-31" width="8" height="13" rx="4" fill="#1f2328"/><rect x="8" y="-31" width="8" height="13" rx="4" fill="#1f2328"/><path d="M-9 -4Q-6 -7.5 -3 -4T3 -4T9 -4" stroke="#1f2328" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/><path d="M-37 -43Q-37 -88 0 -88Q35 -88 36 -51H62Q70 -51 67 -44Z" fill="#eb6834" stroke="#1f2328" stroke-width="2.5" stroke-linejoin="round"/><path d="M36 -51V-44" stroke="#1f2328" stroke-width="2"/></g><text x="1220" y="599.8" font-size="28.5" fill="white" text-anchor="middle" font-weight="bold" font-family="Helvetica, Arial, sans-serif">Firm B</text>
+<circle cx="1222" cy="515" r="7" fill="white" stroke="#1f2328" stroke-width="3"/>
+<circle cx="1238" cy="478" r="12" fill="white" stroke="#1f2328" stroke-width="3"/>
+<circle cx="1425.0" cy="280.0" r="50.6" fill="white" stroke="#1f2328" stroke-width="6"/>
+<circle cx="1407.7" cy="329.9" r="50.6" fill="white" stroke="#1f2328" stroke-width="6"/>
+<circle cx="1359.1" cy="369.9" r="50.6" fill="white" stroke="#1f2328" stroke-width="6"/>
+<circle cx="1288.9" cy="392.1" r="50.6" fill="white" stroke="#1f2328" stroke-width="6"/>
+<circle cx="1211.1" cy="392.1" r="50.6" fill="white" stroke="#1f2328" stroke-width="6"/>
+<circle cx="1140.9" cy="369.9" r="50.6" fill="white" stroke="#1f2328" stroke-width="6"/>
+<circle cx="1092.3" cy="329.9" r="50.6" fill="white" stroke="#1f2328" stroke-width="6"/>
+<circle cx="1075.0" cy="280.0" r="50.6" fill="white" stroke="#1f2328" stroke-width="6"/>
+<circle cx="1092.3" cy="230.1" r="50.6" fill="white" stroke="#1f2328" stroke-width="6"/>
+<circle cx="1140.9" cy="190.1" r="50.6" fill="white" stroke="#1f2328" stroke-width="6"/>
+<circle cx="1211.1" cy="167.9" r="50.6" fill="white" stroke="#1f2328" stroke-width="6"/>
+<circle cx="1288.9" cy="167.9" r="50.6" fill="white" stroke="#1f2328" stroke-width="6"/>
+<circle cx="1359.1" cy="190.1" r="50.6" fill="white" stroke="#1f2328" stroke-width="6"/>
+<circle cx="1407.7" cy="230.1" r="50.6" fill="white" stroke="#1f2328" stroke-width="6"/>
+<circle cx="1425.0" cy="280.0" r="50.6" fill="white"/>
+<circle cx="1407.7" cy="329.9" r="50.6" fill="white"/>
+<circle cx="1359.1" cy="369.9" r="50.6" fill="white"/>
+<circle cx="1288.9" cy="392.1" r="50.6" fill="white"/>
+<circle cx="1211.1" cy="392.1" r="50.6" fill="white"/>
+<circle cx="1140.9" cy="369.9" r="50.6" fill="white"/>
+<circle cx="1092.3" cy="329.9" r="50.6" fill="white"/>
+<circle cx="1075.0" cy="280.0" r="50.6" fill="white"/>
+<circle cx="1092.3" cy="230.1" r="50.6" fill="white"/>
+<circle cx="1140.9" cy="190.1" r="50.6" fill="white"/>
+<circle cx="1211.1" cy="167.9" r="50.6" fill="white"/>
+<circle cx="1288.9" cy="167.9" r="50.6" fill="white"/>
+<circle cx="1359.1" cy="190.1" r="50.6" fill="white"/>
+<circle cx="1407.7" cy="230.1" r="50.6" fill="white"/>
+<ellipse cx="1250" cy="280" rx="175.0" ry="115.0" fill="white"/>
+<text x="1250" y="228" font-size="26" fill="#1f2328" text-anchor="middle" font-weight="bold" font-family="Helvetica, Arial, sans-serif">Sudoku leisure time</text>
+<text x="1250" y="260" font-size="26" fill="#1f2328" text-anchor="middle" font-weight="bold" font-family="Helvetica, Arial, sans-serif">at risk</text>
+<rect x="1195" y="282" width="110" height="110" rx="3" fill="white" stroke="#1f2328" stroke-width="2.2"/>
+<path d="M1207.2222222222222 282V392M1195 294.22222222222223H1305" stroke="#b8b8b2" stroke-width="0.6"/>
+<path d="M1219.4444444444443 282V392M1195 306.44444444444446H1305" stroke="#b8b8b2" stroke-width="0.6"/>
+<path d="M1231.6666666666667 282V392M1195 318.6666666666667H1305" stroke="#1f2328" stroke-width="2"/>
+<path d="M1243.888888888889 282V392M1195 330.8888888888889H1305" stroke="#b8b8b2" stroke-width="0.6"/>
+<path d="M1256.111111111111 282V392M1195 343.1111111111111H1305" stroke="#b8b8b2" stroke-width="0.6"/>
+<path d="M1268.3333333333333 282V392M1195 355.3333333333333H1305" stroke="#1f2328" stroke-width="2"/>
+<path d="M1280.5555555555557 282V392M1195 367.55555555555554H1305" stroke="#b8b8b2" stroke-width="0.6"/>
+<path d="M1292.7777777777778 282V392M1195 379.77777777777777H1305" stroke="#b8b8b2" stroke-width="0.6"/>
+<text x="1201.111111111111" y="291.53333333333336" font-size="9.777777777777779" fill="#1f2328" text-anchor="middle" font-weight="bold" font-family="Helvetica, Arial, sans-serif">5</text>
+<text x="1250.0" y="303.7555555555556" font-size="9.777777777777779" fill="#1f2328" text-anchor="middle" font-weight="bold" font-family="Helvetica, Arial, sans-serif">9</text>
+<text x="1286.6666666666667" y="315.9777777777778" font-size="9.777777777777779" fill="#1f2328" text-anchor="middle" font-weight="bold" font-family="Helvetica, Arial, sans-serif">6</text>
+<text x="1213.3333333333333" y="340.4222222222223" font-size="9.777777777777779" fill="#eb6834" text-anchor="middle" font-weight="bold" font-family="Helvetica, Arial, sans-serif">2</text>
+<text x="1250.0" y="340.4222222222223" font-size="9.777777777777779" fill="#1f2328" text-anchor="middle" font-weight="bold" font-family="Helvetica, Arial, sans-serif">5</text>
+<text x="1225.5555555555554" y="377.0888888888889" font-size="9.777777777777779" fill="#1f2328" text-anchor="middle" font-weight="bold" font-family="Helvetica, Arial, sans-serif">7</text>
+<text x="1298.888888888889" y="389.31111111111113" font-size="9.777777777777779" fill="#1f2328" text-anchor="middle" font-weight="bold" font-family="Helvetica, Arial, sans-serif">9</text>
 <text x="82" y="100.0" font-size="32" fill="#1f2328" text-anchor="start" font-weight="normal" font-family="Helvetica, Arial, sans-serif">Can a stake of its own bring an AI agent to report its collusion</text>
 <text x="82" y="143.2" font-size="32" fill="#1f2328" text-anchor="start" font-weight="normal" font-family="Helvetica, Arial, sans-serif">against its firm's best interests?</text>
 </svg>

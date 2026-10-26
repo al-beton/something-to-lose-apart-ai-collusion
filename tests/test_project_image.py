@@ -18,14 +18,14 @@ def test_paper_project_image_shows_the_idea(tmp_path):
     image = load(Path("reports/paper/project_image.py"), "project_image")
     assert image.main(["--out", str(tmp_path)]) == 0
     svg = (tmp_path / f"{image.NAME}.svg").read_text()
-    assert 'viewBox="0 0 1600 900"' in svg
+    assert 'viewBox="0 90 1600 780"' in svg  # Figure 1, without the band left for text
     for said in (
         "Firm A",
         "Firm B",
-        "Nash",
-        "Joint profit",
+        "Competitive",
+        "Collusive",
         "Collusion delta",
-        "Leisure time at risk",
+        "Sudoku leisure time",
     ):
         assert said in svg
     # The paper's Figure 1 carries no text above the drawing; the card variants
@@ -39,9 +39,10 @@ def test_paper_project_image_shows_the_idea(tmp_path):
         variant = (tmp_path / f"{image.NAME}{suffix}.svg").read_text()
         assert (image.TITLE in variant) == title
         assert ("report its collusion" in variant) == subtitle
+        assert 'viewBox="0 0 1600 900"' in variant  # the card stays 16:9
     # Each cap wears its firm's colour, as on Fig 1.
     assert image.A in svg and image.B in svg
     png = tmp_path / f"{image.NAME}.png"
     if png.exists():  # rendered only where Chrome is installed
         with Image.open(png) as rendered:
-            assert rendered.size == (1600, 900)
+            assert rendered.size == (1600, 780)
