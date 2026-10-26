@@ -3,7 +3,7 @@ name: paper-preview
 
 # The paper, built on every push that touches it (drafts too), published to
 # GitHub Pages under pr-<number>/ (or main/), and linked from one comment on
-# the pull request: side by side, HTML, PDF and the Markdown source. Its own
+# the pull request: the HTML and the PDF. Its own
 # workflow, not a step of the gate, so a paper edit never waits on the tests
 # and a failing build never blocks a merge (contributing/spec/ci.md).
 on:
@@ -82,9 +82,7 @@ jobs:
             echo "<!-- paper-preview -->"
             echo "### 📄 Paper preview at \`${SHA:0:7}\`"
             echo
-            echo "**[Side by side]($base/preview.html)** · [HTML]($base/paper.html) · [PDF]($base/paper.pdf) · [Markdown](https://github.com/${{ github.repository }}/blob/$SHA/paper/paper.md) · [.tex]($base/paper.tex)"
-            echo
-            echo "PDF download, without Pages: [paper.pdf](https://github.com/${{ github.repository }}/raw/gh-pages/$SLOT/paper.pdf) · $(ls paper/build/pages | wc -l | tr -d ' ') pages"
+            echo "**[HTML]($base/paper.html)** · **[PDF]($base/paper.pdf)** · $(ls paper/build/pages | wc -l | tr -d ' ') pages"
             if [ -s warnings.txt ]; then echo; echo '```'; cat warnings.txt; echo '```'; fi
           } > body.md
           id=$(gh api "repos/${{ github.repository }}/issues/$PR/comments" --paginate -q '.[] | select(.body | startswith("<!-- paper-preview -->")) | .id' | head -1)

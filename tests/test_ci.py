@@ -100,6 +100,6 @@ def test_paper_preview_builds_publishes_and_comments():
     runs = " ".join(str(s.get("run", "")) for s in job["steps"])
     assert "make -s paper-html paper-pdf" in runs
     assert "gh-pages" in runs and "<!-- paper-preview -->" in runs
-    for link in ("preview.html", "paper.html", "paper.pdf", "paper/paper.md"):
+    for link in ("paper.html", "paper.pdf"):
         assert link in runs, link
     assert "PATCH" in runs  # one comment, edited in place
