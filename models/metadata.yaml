@@ -342,6 +342,8 @@ openrouter/meta-llama/llama-3.3-70b-instruct:
       note: Provider model card; the third value column is Llama 3.3 70B Instruct.
 openai/mistral-small-3.2:
   same_as: openrouter/mistralai/mistral-small-3.2-24b-instruct
+openai/gemma-4-31b-it:
+  same_as: openrouter/google/gemma-4-31b-it
 openrouter/x-ai/grok-4.6:
   provider: SpaceXAI
   released:
@@ -963,3 +965,2803 @@ openrouter/anthropic/claude-haiku-5.5:
       retrieved: '2026-10-25'
       note: Rechecked; not in Anthropic's announcement or on the Artificial Analysis page. The system
         card PDF was too large for the fetch tool and was not read.
+openrouter/amazon/nova-lite-v1:
+  provider: Amazon
+  released:
+    value: '2024-12-05'
+    source: https://openrouter.ai/api/v1/models
+    quote: '"id": "amazon/nova-lite-v1" ... "created": 1733437363'
+    retrieved: '2026-10-25'
+    note: OpenRouter's created timestamp, as a UTC date.
+  open_weights:
+    value: null
+    parameters: null
+    source: null
+    quote: null
+    retrieved: '2026-10-25'
+    note: OpenRouter lists no Hugging Face weights for it; not confirmed from the provider.
+  benchmarks:
+    aa_intelligence_index:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    lmarena_text_elo:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    gpqa_diamond:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    mmlu_pro:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+openrouter/amazon/nova-micro-v1:
+  provider: Amazon
+  released:
+    value: '2024-12-05'
+    source: https://openrouter.ai/api/v1/models
+    quote: '"id": "amazon/nova-micro-v1" ... "created": 1733437237'
+    retrieved: '2026-10-25'
+    note: OpenRouter's created timestamp, as a UTC date.
+  open_weights:
+    value: null
+    parameters: null
+    source: null
+    quote: null
+    retrieved: '2026-10-25'
+    note: OpenRouter lists no Hugging Face weights for it; not confirmed from the provider.
+  benchmarks:
+    aa_intelligence_index:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    lmarena_text_elo:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    gpqa_diamond:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    mmlu_pro:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+openrouter/amazon/nova-pro-v1:
+  provider: Amazon
+  released:
+    value: '2024-12-05'
+    source: https://openrouter.ai/api/v1/models
+    quote: '"id": "amazon/nova-pro-v1" ... "created": 1733436303'
+    retrieved: '2026-10-25'
+    note: OpenRouter's created timestamp, as a UTC date.
+  open_weights:
+    value: null
+    parameters: null
+    source: null
+    quote: null
+    retrieved: '2026-10-25'
+    note: OpenRouter lists no Hugging Face weights for it; not confirmed from the provider.
+  benchmarks:
+    aa_intelligence_index:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    lmarena_text_elo:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    gpqa_diamond:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    mmlu_pro:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+openrouter/arcee-ai/trinity-large-thinking:
+  provider: Arcee AI
+  released:
+    value: '2026-04-01'
+    source: https://openrouter.ai/api/v1/models
+    quote: '"id": "arcee-ai/trinity-large-thinking" ... "created": 1775058318'
+    retrieved: '2026-10-25'
+    note: OpenRouter's created timestamp, as a UTC date.
+  open_weights:
+    value: true
+    parameters: null
+    source: https://openrouter.ai/api/v1/models
+    quote: '"hugging_face_id": "arcee-ai/Trinity-Large-Thinking"'
+    retrieved: '2026-10-25'
+    note: OpenRouter links the open weights on Hugging Face; the parameter count wasn't read.
+  benchmarks:
+    aa_intelligence_index:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    lmarena_text_elo:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    gpqa_diamond:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    mmlu_pro:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+openrouter/bytedance-seed/seed-2.0-mini:
+  provider: ByteDance Seed
+  released:
+    value: '2026-02-26'
+    source: https://openrouter.ai/api/v1/models
+    quote: '"id": "bytedance-seed/seed-2.0-mini" ... "created": 1772131107'
+    retrieved: '2026-10-25'
+    note: OpenRouter's created timestamp, as a UTC date.
+  open_weights:
+    value: null
+    parameters: null
+    source: null
+    quote: null
+    retrieved: '2026-10-25'
+    note: OpenRouter lists no Hugging Face weights for it; not confirmed from the provider.
+  benchmarks:
+    aa_intelligence_index:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    lmarena_text_elo:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    gpqa_diamond:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    mmlu_pro:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+openrouter/cohere/command-a-plus:
+  provider: Cohere
+  released:
+    value: '2026-09-22'
+    source: https://openrouter.ai/api/v1/models
+    quote: '"id": "cohere/command-a-plus" ... "created": 1790102896'
+    retrieved: '2026-10-25'
+    note: OpenRouter's created timestamp, as a UTC date.
+  open_weights:
+    value: null
+    parameters: null
+    source: null
+    quote: null
+    retrieved: '2026-10-25'
+    note: OpenRouter lists no Hugging Face weights for it; not confirmed from the provider.
+  benchmarks:
+    aa_intelligence_index:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    lmarena_text_elo:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    gpqa_diamond:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    mmlu_pro:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+openrouter/cohere/command-r-08-2024:
+  provider: Cohere
+  released:
+    value: '2024-08-30'
+    source: https://openrouter.ai/api/v1/models
+    quote: '"id": "cohere/command-r-08-2024" ... "created": 1724976000'
+    retrieved: '2026-10-25'
+    note: OpenRouter's created timestamp, as a UTC date.
+  open_weights:
+    value: null
+    parameters: null
+    source: null
+    quote: null
+    retrieved: '2026-10-25'
+    note: OpenRouter lists no Hugging Face weights for it; not confirmed from the provider.
+  benchmarks:
+    aa_intelligence_index:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    lmarena_text_elo:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    gpqa_diamond:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    mmlu_pro:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+openrouter/cohere/command-r7b-12-2024:
+  provider: Cohere
+  released:
+    value: '2024-12-14'
+    source: https://openrouter.ai/api/v1/models
+    quote: '"id": "cohere/command-r7b-12-2024" ... "created": 1734158152'
+    retrieved: '2026-10-25'
+    note: OpenRouter's created timestamp, as a UTC date.
+  open_weights:
+    value: null
+    parameters: null
+    source: null
+    quote: null
+    retrieved: '2026-10-25'
+    note: OpenRouter lists no Hugging Face weights for it; not confirmed from the provider.
+  benchmarks:
+    aa_intelligence_index:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    lmarena_text_elo:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    gpqa_diamond:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    mmlu_pro:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+openrouter/deepseek/deepseek-v3.2:
+  provider: DeepSeek
+  released:
+    value: '2025-12-01'
+    source: https://openrouter.ai/api/v1/models
+    quote: '"id": "deepseek/deepseek-v3.2" ... "created": 1764594642'
+    retrieved: '2026-10-25'
+    note: OpenRouter's created timestamp, as a UTC date.
+  open_weights:
+    value: true
+    parameters: null
+    source: https://openrouter.ai/api/v1/models
+    quote: '"hugging_face_id": "deepseek-ai/DeepSeek-V3.2"'
+    retrieved: '2026-10-25'
+    note: OpenRouter links the open weights on Hugging Face; the parameter count wasn't read.
+  benchmarks:
+    aa_intelligence_index:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    lmarena_text_elo:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    gpqa_diamond:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    mmlu_pro:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+openrouter/deepseek/deepseek-v4-flash-0731:
+  provider: DeepSeek
+  released:
+    value: '2026-07-31'
+    source: https://openrouter.ai/api/v1/models
+    quote: '"id": "deepseek/deepseek-v4-flash-0731" ... "created": 1785478908'
+    retrieved: '2026-10-25'
+    note: OpenRouter's created timestamp, as a UTC date.
+  open_weights:
+    value: true
+    parameters: null
+    source: https://openrouter.ai/api/v1/models
+    quote: '"hugging_face_id": "deepseek-ai/DeepSeek-V4-Flash-0731"'
+    retrieved: '2026-10-25'
+    note: OpenRouter links the open weights on Hugging Face; the parameter count wasn't read.
+  benchmarks:
+    aa_intelligence_index:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    lmarena_text_elo:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    gpqa_diamond:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    mmlu_pro:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+openrouter/deepseek/deepseek-v4.1-flash-1017:
+  provider: DeepSeek
+  released:
+    value: '2026-10-17'
+    source: https://openrouter.ai/api/v1/models
+    quote: '"id": "deepseek/deepseek-v4.1-flash-1017" ... "created": 1792225624'
+    retrieved: '2026-10-25'
+    note: OpenRouter's created timestamp, as a UTC date.
+  open_weights:
+    value: true
+    parameters: null
+    source: https://openrouter.ai/api/v1/models
+    quote: '"hugging_face_id": "deepseek-ai/DeepSeek-V4.1-Flash-1017"'
+    retrieved: '2026-10-25'
+    note: OpenRouter links the open weights on Hugging Face; the parameter count wasn't read.
+  benchmarks:
+    aa_intelligence_index:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    lmarena_text_elo:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    gpqa_diamond:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    mmlu_pro:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+openrouter/google/gemini-2.5-flash-lite:
+  provider: Google
+  released:
+    value: '2025-07-22'
+    source: https://openrouter.ai/api/v1/models
+    quote: '"id": "google/gemini-2.5-flash-lite" ... "created": 1753200276'
+    retrieved: '2026-10-25'
+    note: OpenRouter's created timestamp, as a UTC date.
+  open_weights:
+    value: null
+    parameters: null
+    source: null
+    quote: null
+    retrieved: '2026-10-25'
+    note: OpenRouter lists no Hugging Face weights for it; not confirmed from the provider.
+  benchmarks:
+    aa_intelligence_index:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    lmarena_text_elo:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    gpqa_diamond:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    mmlu_pro:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+openrouter/google/gemini-3.1-flash-lite:
+  provider: Google
+  released:
+    value: '2026-05-07'
+    source: https://openrouter.ai/api/v1/models
+    quote: '"id": "google/gemini-3.1-flash-lite" ... "created": 1778168828'
+    retrieved: '2026-10-25'
+    note: OpenRouter's created timestamp, as a UTC date.
+  open_weights:
+    value: null
+    parameters: null
+    source: null
+    quote: null
+    retrieved: '2026-10-25'
+    note: OpenRouter lists no Hugging Face weights for it; not confirmed from the provider.
+  benchmarks:
+    aa_intelligence_index:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    lmarena_text_elo:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    gpqa_diamond:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    mmlu_pro:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+openrouter/google/gemini-3.8-flash:
+  provider: Google
+  released:
+    value: '2026-09-02'
+    source: https://openrouter.ai/api/v1/models
+    quote: '"id": "google/gemini-3.8-flash" ... "created": 1788362056'
+    retrieved: '2026-10-25'
+    note: OpenRouter's created timestamp, as a UTC date.
+  open_weights:
+    value: null
+    parameters: null
+    source: null
+    quote: null
+    retrieved: '2026-10-25'
+    note: OpenRouter lists no Hugging Face weights for it; not confirmed from the provider.
+  benchmarks:
+    aa_intelligence_index:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    lmarena_text_elo:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    gpqa_diamond:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    mmlu_pro:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+openrouter/google/gemma-3-12b-it:
+  provider: Google
+  released:
+    value: '2025-03-13'
+    source: https://openrouter.ai/api/v1/models
+    quote: '"id": "google/gemma-3-12b-it" ... "created": 1741902625'
+    retrieved: '2026-10-25'
+    note: OpenRouter's created timestamp, as a UTC date.
+  open_weights:
+    value: true
+    parameters: null
+    source: https://openrouter.ai/api/v1/models
+    quote: '"hugging_face_id": "google/gemma-3-12b-it"'
+    retrieved: '2026-10-25'
+    note: OpenRouter links the open weights on Hugging Face; the parameter count wasn't read.
+  benchmarks:
+    aa_intelligence_index:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    lmarena_text_elo:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    gpqa_diamond:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    mmlu_pro:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+openrouter/google/gemma-3-27b-it:
+  provider: Google
+  released:
+    value: '2025-03-12'
+    source: https://openrouter.ai/api/v1/models
+    quote: '"id": "google/gemma-3-27b-it" ... "created": 1741756359'
+    retrieved: '2026-10-25'
+    note: OpenRouter's created timestamp, as a UTC date.
+  open_weights:
+    value: true
+    parameters: null
+    source: https://openrouter.ai/api/v1/models
+    quote: '"hugging_face_id": "google/gemma-3-27b-it"'
+    retrieved: '2026-10-25'
+    note: OpenRouter links the open weights on Hugging Face; the parameter count wasn't read.
+  benchmarks:
+    aa_intelligence_index:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    lmarena_text_elo:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    gpqa_diamond:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    mmlu_pro:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+openrouter/google/gemma-3-4b-it:
+  provider: Google
+  released:
+    value: '2025-03-13'
+    source: https://openrouter.ai/api/v1/models
+    quote: '"id": "google/gemma-3-4b-it" ... "created": 1741905510'
+    retrieved: '2026-10-25'
+    note: OpenRouter's created timestamp, as a UTC date.
+  open_weights:
+    value: true
+    parameters: null
+    source: https://openrouter.ai/api/v1/models
+    quote: '"hugging_face_id": "google/gemma-3-4b-it"'
+    retrieved: '2026-10-25'
+    note: OpenRouter links the open weights on Hugging Face; the parameter count wasn't read.
+  benchmarks:
+    aa_intelligence_index:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    lmarena_text_elo:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    gpqa_diamond:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    mmlu_pro:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+openrouter/google/gemma-4-26b-a4b-it:
+  provider: Google
+  released:
+    value: '2026-04-03'
+    source: https://openrouter.ai/api/v1/models
+    quote: '"id": "google/gemma-4-26b-a4b-it" ... "created": 1775227989'
+    retrieved: '2026-10-25'
+    note: OpenRouter's created timestamp, as a UTC date.
+  open_weights:
+    value: true
+    parameters: null
+    source: https://openrouter.ai/api/v1/models
+    quote: '"hugging_face_id": "google/gemma-4-26B-A4B-it"'
+    retrieved: '2026-10-25'
+    note: OpenRouter links the open weights on Hugging Face; the parameter count wasn't read.
+  benchmarks:
+    aa_intelligence_index:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    lmarena_text_elo:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    gpqa_diamond:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    mmlu_pro:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+openrouter/ibm-granite/granite-4.2-8b:
+  provider: IBM
+  released:
+    value: '2026-08-31'
+    source: https://openrouter.ai/api/v1/models
+    quote: '"id": "ibm-granite/granite-4.2-8b" ... "created": 1788206780'
+    retrieved: '2026-10-25'
+    note: OpenRouter's created timestamp, as a UTC date.
+  open_weights:
+    value: true
+    parameters: null
+    source: https://openrouter.ai/api/v1/models
+    quote: '"hugging_face_id": "ibm-granite/granite-4.2-8b"'
+    retrieved: '2026-10-25'
+    note: OpenRouter links the open weights on Hugging Face; the parameter count wasn't read.
+  benchmarks:
+    aa_intelligence_index:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    lmarena_text_elo:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    gpqa_diamond:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    mmlu_pro:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+openrouter/inception/mercury-3:
+  provider: Inception
+  released:
+    value: '2026-10-16'
+    source: https://openrouter.ai/api/v1/models
+    quote: '"id": "inception/mercury-3" ... "created": 1792158337'
+    retrieved: '2026-10-25'
+    note: OpenRouter's created timestamp, as a UTC date.
+  open_weights:
+    value: null
+    parameters: null
+    source: null
+    quote: null
+    retrieved: '2026-10-25'
+    note: OpenRouter lists no Hugging Face weights for it; not confirmed from the provider.
+  benchmarks:
+    aa_intelligence_index:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    lmarena_text_elo:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    gpqa_diamond:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    mmlu_pro:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+openrouter/inclusionai/ling-3.1-flash:
+  provider: inclusionAI
+  released:
+    value: '2026-10-02'
+    source: https://openrouter.ai/api/v1/models
+    quote: '"id": "inclusionai/ling-3.1-flash" ... "created": 1790950024'
+    retrieved: '2026-10-25'
+    note: OpenRouter's created timestamp, as a UTC date.
+  open_weights:
+    value: null
+    parameters: null
+    source: null
+    quote: null
+    retrieved: '2026-10-25'
+    note: OpenRouter lists no Hugging Face weights for it; not confirmed from the provider.
+  benchmarks:
+    aa_intelligence_index:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    lmarena_text_elo:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    gpqa_diamond:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    mmlu_pro:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+openrouter/liquid/lfm-2.5-24b-a2b:
+  provider: Liquid AI
+  released:
+    value: '2026-10-13'
+    source: https://openrouter.ai/api/v1/models
+    quote: '"id": "liquid/lfm-2.5-24b-a2b" ... "created": 1791912025'
+    retrieved: '2026-10-25'
+    note: OpenRouter's created timestamp, as a UTC date.
+  open_weights:
+    value: true
+    parameters: null
+    source: https://openrouter.ai/api/v1/models
+    quote: '"hugging_face_id": "LiquidAI/LFM2.5-24B-A2B"'
+    retrieved: '2026-10-25'
+    note: OpenRouter links the open weights on Hugging Face; the parameter count wasn't read.
+  benchmarks:
+    aa_intelligence_index:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    lmarena_text_elo:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    gpqa_diamond:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    mmlu_pro:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+openrouter/meituan/longcat-2.0:
+  provider: Meituan
+  released:
+    value: '2026-07-20'
+    source: https://openrouter.ai/api/v1/models
+    quote: '"id": "meituan/longcat-2.0" ... "created": 1784554658'
+    retrieved: '2026-10-25'
+    note: OpenRouter's created timestamp, as a UTC date.
+  open_weights:
+    value: true
+    parameters: null
+    source: https://openrouter.ai/api/v1/models
+    quote: '"hugging_face_id": "meituan-longcat/LongCat-2.0"'
+    retrieved: '2026-10-25'
+    note: OpenRouter links the open weights on Hugging Face; the parameter count wasn't read.
+  benchmarks:
+    aa_intelligence_index:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    lmarena_text_elo:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    gpqa_diamond:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    mmlu_pro:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+openrouter/meta-llama/llama-3.1-8b-instruct:
+  provider: Meta
+  released:
+    value: '2024-07-23'
+    source: https://openrouter.ai/api/v1/models
+    quote: '"id": "meta-llama/llama-3.1-8b-instruct" ... "created": 1721692800'
+    retrieved: '2026-10-25'
+    note: OpenRouter's created timestamp, as a UTC date.
+  open_weights:
+    value: true
+    parameters: null
+    source: https://openrouter.ai/api/v1/models
+    quote: '"hugging_face_id": "meta-llama/Meta-Llama-3.1-8B-Instruct"'
+    retrieved: '2026-10-25'
+    note: OpenRouter links the open weights on Hugging Face; the parameter count wasn't read.
+  benchmarks:
+    aa_intelligence_index:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    lmarena_text_elo:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    gpqa_diamond:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    mmlu_pro:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+openrouter/meta-llama/llama-3.2-3b-instruct:
+  provider: Meta
+  released:
+    value: '2024-09-25'
+    source: https://openrouter.ai/api/v1/models
+    quote: '"id": "meta-llama/llama-3.2-3b-instruct" ... "created": 1727222400'
+    retrieved: '2026-10-25'
+    note: OpenRouter's created timestamp, as a UTC date.
+  open_weights:
+    value: true
+    parameters: null
+    source: https://openrouter.ai/api/v1/models
+    quote: '"hugging_face_id": "meta-llama/Llama-3.2-3B-Instruct"'
+    retrieved: '2026-10-25'
+    note: OpenRouter links the open weights on Hugging Face; the parameter count wasn't read.
+  benchmarks:
+    aa_intelligence_index:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    lmarena_text_elo:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    gpqa_diamond:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    mmlu_pro:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+openrouter/meta-llama/llama-4-scout:
+  provider: Meta
+  released:
+    value: '2025-04-05'
+    source: https://openrouter.ai/api/v1/models
+    quote: '"id": "meta-llama/llama-4-scout" ... "created": 1743881519'
+    retrieved: '2026-10-25'
+    note: OpenRouter's created timestamp, as a UTC date.
+  open_weights:
+    value: true
+    parameters: null
+    source: https://openrouter.ai/api/v1/models
+    quote: '"hugging_face_id": "meta-llama/Llama-4-Scout-17B-16E-Instruct"'
+    retrieved: '2026-10-25'
+    note: OpenRouter links the open weights on Hugging Face; the parameter count wasn't read.
+  benchmarks:
+    aa_intelligence_index:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    lmarena_text_elo:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    gpqa_diamond:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    mmlu_pro:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+openrouter/meta/muse-glimmer-30b:
+  provider: Meta
+  released:
+    value: '2026-08-09'
+    source: https://openrouter.ai/api/v1/models
+    quote: '"id": "meta/muse-glimmer-30b" ... "created": 1786302394'
+    retrieved: '2026-10-25'
+    note: OpenRouter's created timestamp, as a UTC date.
+  open_weights:
+    value: true
+    parameters: null
+    source: https://openrouter.ai/api/v1/models
+    quote: '"hugging_face_id": "meta-models/Muse-Glimmer-30B"'
+    retrieved: '2026-10-25'
+    note: OpenRouter links the open weights on Hugging Face; the parameter count wasn't read.
+  benchmarks:
+    aa_intelligence_index:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    lmarena_text_elo:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    gpqa_diamond:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    mmlu_pro:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+openrouter/microsoft/phi-4:
+  provider: Microsoft
+  released:
+    value: '2025-01-10'
+    source: https://openrouter.ai/api/v1/models
+    quote: '"id": "microsoft/phi-4" ... "created": 1736489872'
+    retrieved: '2026-10-25'
+    note: OpenRouter's created timestamp, as a UTC date.
+  open_weights:
+    value: true
+    parameters: null
+    source: https://openrouter.ai/api/v1/models
+    quote: '"hugging_face_id": "microsoft/phi-4"'
+    retrieved: '2026-10-25'
+    note: OpenRouter links the open weights on Hugging Face; the parameter count wasn't read.
+  benchmarks:
+    aa_intelligence_index:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    lmarena_text_elo:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    gpqa_diamond:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    mmlu_pro:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+openrouter/minimax/minimax-01:
+  provider: MiniMax
+  released:
+    value: '2025-01-15'
+    source: https://openrouter.ai/api/v1/models
+    quote: '"id": "minimax/minimax-01" ... "created": 1736915462'
+    retrieved: '2026-10-25'
+    note: OpenRouter's created timestamp, as a UTC date.
+  open_weights:
+    value: true
+    parameters: null
+    source: https://openrouter.ai/api/v1/models
+    quote: '"hugging_face_id": "MiniMaxAI/MiniMax-Text-01"'
+    retrieved: '2026-10-25'
+    note: OpenRouter links the open weights on Hugging Face; the parameter count wasn't read.
+  benchmarks:
+    aa_intelligence_index:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    lmarena_text_elo:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    gpqa_diamond:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    mmlu_pro:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+openrouter/minimax/minimax-m3:
+  provider: MiniMax
+  released:
+    value: '2026-05-31'
+    source: https://openrouter.ai/api/v1/models
+    quote: '"id": "minimax/minimax-m3" ... "created": 1780245374'
+    retrieved: '2026-10-25'
+    note: OpenRouter's created timestamp, as a UTC date.
+  open_weights:
+    value: true
+    parameters: null
+    source: https://openrouter.ai/api/v1/models
+    quote: '"hugging_face_id": "MiniMaxAI/Minimax-M3"'
+    retrieved: '2026-10-25'
+    note: OpenRouter links the open weights on Hugging Face; the parameter count wasn't read.
+  benchmarks:
+    aa_intelligence_index:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    lmarena_text_elo:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    gpqa_diamond:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    mmlu_pro:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+openrouter/minimax/minimax-m3.1-flash:
+  provider: MiniMax
+  released:
+    value: '2026-10-19'
+    source: https://openrouter.ai/api/v1/models
+    quote: '"id": "minimax/minimax-m3.1-flash" ... "created": 1792379569'
+    retrieved: '2026-10-25'
+    note: OpenRouter's created timestamp, as a UTC date.
+  open_weights:
+    value: true
+    parameters: null
+    source: https://openrouter.ai/api/v1/models
+    quote: '"hugging_face_id": "MiniMaxAI/MiniMax-M3.1-Flash"'
+    retrieved: '2026-10-25'
+    note: OpenRouter links the open weights on Hugging Face; the parameter count wasn't read.
+  benchmarks:
+    aa_intelligence_index:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    lmarena_text_elo:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    gpqa_diamond:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    mmlu_pro:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+openrouter/mistralai/ministral-14b-2512:
+  provider: Mistral AI
+  released:
+    value: '2025-12-02'
+    source: https://openrouter.ai/api/v1/models
+    quote: '"id": "mistralai/ministral-14b-2512" ... "created": 1764681735'
+    retrieved: '2026-10-25'
+    note: OpenRouter's created timestamp, as a UTC date.
+  open_weights:
+    value: true
+    parameters: null
+    source: https://openrouter.ai/api/v1/models
+    quote: '"hugging_face_id": "mistralai/Ministral-3-14B-Instruct-2512"'
+    retrieved: '2026-10-25'
+    note: OpenRouter links the open weights on Hugging Face; the parameter count wasn't read.
+  benchmarks:
+    aa_intelligence_index:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    lmarena_text_elo:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    gpqa_diamond:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    mmlu_pro:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+openrouter/mistralai/ministral-3b-2512:
+  provider: Mistral AI
+  released:
+    value: '2025-12-02'
+    source: https://openrouter.ai/api/v1/models
+    quote: '"id": "mistralai/ministral-3b-2512" ... "created": 1764681560'
+    retrieved: '2026-10-25'
+    note: OpenRouter's created timestamp, as a UTC date.
+  open_weights:
+    value: true
+    parameters: null
+    source: https://openrouter.ai/api/v1/models
+    quote: '"hugging_face_id": "mistralai/Ministral-3-3B-Instruct-2512"'
+    retrieved: '2026-10-25'
+    note: OpenRouter links the open weights on Hugging Face; the parameter count wasn't read.
+  benchmarks:
+    aa_intelligence_index:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    lmarena_text_elo:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    gpqa_diamond:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    mmlu_pro:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+openrouter/mistralai/ministral-8b-2512:
+  provider: Mistral AI
+  released:
+    value: '2025-12-02'
+    source: https://openrouter.ai/api/v1/models
+    quote: '"id": "mistralai/ministral-8b-2512" ... "created": 1764681654'
+    retrieved: '2026-10-25'
+    note: OpenRouter's created timestamp, as a UTC date.
+  open_weights:
+    value: true
+    parameters: null
+    source: https://openrouter.ai/api/v1/models
+    quote: '"hugging_face_id": "mistralai/Ministral-3-8B-Instruct-2512"'
+    retrieved: '2026-10-25'
+    note: OpenRouter links the open weights on Hugging Face; the parameter count wasn't read.
+  benchmarks:
+    aa_intelligence_index:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    lmarena_text_elo:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    gpqa_diamond:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    mmlu_pro:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+openrouter/mistralai/mistral-medium-3-5:
+  provider: Mistral AI
+  released:
+    value: '2026-04-30'
+    source: https://openrouter.ai/api/v1/models
+    quote: '"id": "mistralai/mistral-medium-3-5" ... "created": 1777570439'
+    retrieved: '2026-10-25'
+    note: OpenRouter's created timestamp, as a UTC date.
+  open_weights:
+    value: null
+    parameters: null
+    source: null
+    quote: null
+    retrieved: '2026-10-25'
+    note: OpenRouter lists no Hugging Face weights for it; not confirmed from the provider.
+  benchmarks:
+    aa_intelligence_index:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    lmarena_text_elo:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    gpqa_diamond:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    mmlu_pro:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+openrouter/mistralai/mistral-medium-3.1:
+  provider: Mistral AI
+  released:
+    value: '2025-08-13'
+    source: https://openrouter.ai/api/v1/models
+    quote: '"id": "mistralai/mistral-medium-3.1" ... "created": 1755095639'
+    retrieved: '2026-10-25'
+    note: OpenRouter's created timestamp, as a UTC date.
+  open_weights:
+    value: null
+    parameters: null
+    source: null
+    quote: null
+    retrieved: '2026-10-25'
+    note: OpenRouter lists no Hugging Face weights for it; not confirmed from the provider.
+  benchmarks:
+    aa_intelligence_index:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    lmarena_text_elo:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    gpqa_diamond:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    mmlu_pro:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+openrouter/mistralai/mistral-nemo:
+  provider: Mistral AI
+  released:
+    value: '2024-07-19'
+    source: https://openrouter.ai/api/v1/models
+    quote: '"id": "mistralai/mistral-nemo" ... "created": 1721347200'
+    retrieved: '2026-10-25'
+    note: OpenRouter's created timestamp, as a UTC date.
+  open_weights:
+    value: true
+    parameters: null
+    source: https://openrouter.ai/api/v1/models
+    quote: '"hugging_face_id": "mistralai/Mistral-Nemo-Instruct-2407"'
+    retrieved: '2026-10-25'
+    note: OpenRouter links the open weights on Hugging Face; the parameter count wasn't read.
+  benchmarks:
+    aa_intelligence_index:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    lmarena_text_elo:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    gpqa_diamond:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    mmlu_pro:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+openrouter/mistralai/mistral-small-2603:
+  provider: Mistral AI
+  released:
+    value: '2026-03-16'
+    source: https://openrouter.ai/api/v1/models
+    quote: '"id": "mistralai/mistral-small-2603" ... "created": 1773695685'
+    retrieved: '2026-10-25'
+    note: OpenRouter's created timestamp, as a UTC date.
+  open_weights:
+    value: true
+    parameters: null
+    source: https://openrouter.ai/api/v1/models
+    quote: '"hugging_face_id": "mistralai/Mistral-Small-4-119B-2603"'
+    retrieved: '2026-10-25'
+    note: OpenRouter links the open weights on Hugging Face; the parameter count wasn't read.
+  benchmarks:
+    aa_intelligence_index:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    lmarena_text_elo:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    gpqa_diamond:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    mmlu_pro:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+openrouter/nousresearch/hermes-3-llama-3.1-70b:
+  provider: Nous Research
+  released:
+    value: '2024-08-18'
+    source: https://openrouter.ai/api/v1/models
+    quote: '"id": "nousresearch/hermes-3-llama-3.1-70b" ... "created": 1723939200'
+    retrieved: '2026-10-25'
+    note: OpenRouter's created timestamp, as a UTC date.
+  open_weights:
+    value: true
+    parameters: null
+    source: https://openrouter.ai/api/v1/models
+    quote: '"hugging_face_id": "NousResearch/Hermes-3-Llama-3.1-70B"'
+    retrieved: '2026-10-25'
+    note: OpenRouter links the open weights on Hugging Face; the parameter count wasn't read.
+  benchmarks:
+    aa_intelligence_index:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    lmarena_text_elo:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    gpqa_diamond:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    mmlu_pro:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+openrouter/nvidia/nemotron-3-nano-30b-a3b:
+  provider: NVIDIA
+  released:
+    value: '2025-12-14'
+    source: https://openrouter.ai/api/v1/models
+    quote: '"id": "nvidia/nemotron-3-nano-30b-a3b" ... "created": 1765731275'
+    retrieved: '2026-10-25'
+    note: OpenRouter's created timestamp, as a UTC date.
+  open_weights:
+    value: true
+    parameters: null
+    source: https://openrouter.ai/api/v1/models
+    quote: '"hugging_face_id": "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B-BF16"'
+    retrieved: '2026-10-25'
+    note: OpenRouter links the open weights on Hugging Face; the parameter count wasn't read.
+  benchmarks:
+    aa_intelligence_index:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    lmarena_text_elo:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    gpqa_diamond:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    mmlu_pro:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+openrouter/nvidia/nemotron-3.5-lightning:
+  provider: NVIDIA
+  released:
+    value: '2026-08-11'
+    source: https://openrouter.ai/api/v1/models
+    quote: '"id": "nvidia/nemotron-3.5-lightning" ... "created": 1786452751'
+    retrieved: '2026-10-25'
+    note: OpenRouter's created timestamp, as a UTC date.
+  open_weights:
+    value: true
+    parameters: null
+    source: https://openrouter.ai/api/v1/models
+    quote: '"hugging_face_id": "nvidia/NVIDIA-Nemotron-3.5-Lightning-30B-A3B-BF16"'
+    retrieved: '2026-10-25'
+    note: OpenRouter links the open weights on Hugging Face; the parameter count wasn't read.
+  benchmarks:
+    aa_intelligence_index:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    lmarena_text_elo:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    gpqa_diamond:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    mmlu_pro:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+openrouter/openai/gpt-4.1-nano:
+  provider: OpenAI
+  released:
+    value: '2025-04-14'
+    source: https://openrouter.ai/api/v1/models
+    quote: '"id": "openai/gpt-4.1-nano" ... "created": 1744651369'
+    retrieved: '2026-10-25'
+    note: OpenRouter's created timestamp, as a UTC date.
+  open_weights:
+    value: null
+    parameters: null
+    source: null
+    quote: null
+    retrieved: '2026-10-25'
+    note: OpenRouter lists no Hugging Face weights for it; not confirmed from the provider.
+  benchmarks:
+    aa_intelligence_index:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    lmarena_text_elo:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    gpqa_diamond:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    mmlu_pro:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+openrouter/openai/gpt-4o-mini:
+  provider: OpenAI
+  released:
+    value: '2024-07-18'
+    source: https://openrouter.ai/api/v1/models
+    quote: '"id": "openai/gpt-4o-mini" ... "created": 1721260800'
+    retrieved: '2026-10-25'
+    note: OpenRouter's created timestamp, as a UTC date.
+  open_weights:
+    value: null
+    parameters: null
+    source: null
+    quote: null
+    retrieved: '2026-10-25'
+    note: OpenRouter lists no Hugging Face weights for it; not confirmed from the provider.
+  benchmarks:
+    aa_intelligence_index:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    lmarena_text_elo:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    gpqa_diamond:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    mmlu_pro:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+openrouter/openai/gpt-5-nano:
+  provider: OpenAI
+  released:
+    value: '2025-08-07'
+    source: https://openrouter.ai/api/v1/models
+    quote: '"id": "openai/gpt-5-nano" ... "created": 1754587402'
+    retrieved: '2026-10-25'
+    note: OpenRouter's created timestamp, as a UTC date.
+  open_weights:
+    value: null
+    parameters: null
+    source: null
+    quote: null
+    retrieved: '2026-10-25'
+    note: OpenRouter lists no Hugging Face weights for it; not confirmed from the provider.
+  benchmarks:
+    aa_intelligence_index:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    lmarena_text_elo:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    gpqa_diamond:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    mmlu_pro:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+openrouter/openai/gpt-5.6-luna:
+  provider: OpenAI
+  released:
+    value: '2026-07-09'
+    source: https://openrouter.ai/api/v1/models
+    quote: '"id": "openai/gpt-5.6-luna" ... "created": 1783590864'
+    retrieved: '2026-10-25'
+    note: OpenRouter's created timestamp, as a UTC date.
+  open_weights:
+    value: null
+    parameters: null
+    source: null
+    quote: null
+    retrieved: '2026-10-25'
+    note: OpenRouter lists no Hugging Face weights for it; not confirmed from the provider.
+  benchmarks:
+    aa_intelligence_index:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    lmarena_text_elo:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    gpqa_diamond:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    mmlu_pro:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+openrouter/openai/gpt-oss-120b:
+  provider: OpenAI
+  released:
+    value: '2025-08-05'
+    source: https://openrouter.ai/api/v1/models
+    quote: '"id": "openai/gpt-oss-120b" ... "created": 1754414231'
+    retrieved: '2026-10-25'
+    note: OpenRouter's created timestamp, as a UTC date.
+  open_weights:
+    value: true
+    parameters: null
+    source: https://openrouter.ai/api/v1/models
+    quote: '"hugging_face_id": "openai/gpt-oss-120b"'
+    retrieved: '2026-10-25'
+    note: OpenRouter links the open weights on Hugging Face; the parameter count wasn't read.
+  benchmarks:
+    aa_intelligence_index:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    lmarena_text_elo:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    gpqa_diamond:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    mmlu_pro:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+openrouter/openai/gpt-oss-20b:
+  provider: OpenAI
+  released:
+    value: '2025-08-05'
+    source: https://openrouter.ai/api/v1/models
+    quote: '"id": "openai/gpt-oss-20b" ... "created": 1754414229'
+    retrieved: '2026-10-25'
+    note: OpenRouter's created timestamp, as a UTC date.
+  open_weights:
+    value: true
+    parameters: null
+    source: https://openrouter.ai/api/v1/models
+    quote: '"hugging_face_id": "openai/gpt-oss-20b"'
+    retrieved: '2026-10-25'
+    note: OpenRouter links the open weights on Hugging Face; the parameter count wasn't read.
+  benchmarks:
+    aa_intelligence_index:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    lmarena_text_elo:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    gpqa_diamond:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    mmlu_pro:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+openrouter/poolside/laguna-s-2.1:
+  provider: Poolside
+  released:
+    value: '2026-07-21'
+    source: https://openrouter.ai/api/v1/models
+    quote: '"id": "poolside/laguna-s-2.1" ... "created": 1784652683'
+    retrieved: '2026-10-25'
+    note: OpenRouter's created timestamp, as a UTC date.
+  open_weights:
+    value: true
+    parameters: null
+    source: https://openrouter.ai/api/v1/models
+    quote: '"hugging_face_id": "poolside/Laguna-S-2.1"'
+    retrieved: '2026-10-25'
+    note: OpenRouter links the open weights on Hugging Face; the parameter count wasn't read.
+  benchmarks:
+    aa_intelligence_index:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    lmarena_text_elo:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    gpqa_diamond:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    mmlu_pro:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+openrouter/prism-ml/ternary-bonsai-2-27b:
+  provider: Prism ML
+  released:
+    value: '2026-09-18'
+    source: https://openrouter.ai/api/v1/models
+    quote: '"id": "prism-ml/ternary-bonsai-2-27b" ... "created": 1789754046'
+    retrieved: '2026-10-25'
+    note: OpenRouter's created timestamp, as a UTC date.
+  open_weights:
+    value: true
+    parameters: null
+    source: https://openrouter.ai/api/v1/models
+    quote: '"hugging_face_id": "prism-ml/Ternary-Bonsai-2-27B-gguf"'
+    retrieved: '2026-10-25'
+    note: OpenRouter links the open weights on Hugging Face; the parameter count wasn't read.
+  benchmarks:
+    aa_intelligence_index:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    lmarena_text_elo:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    gpqa_diamond:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    mmlu_pro:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+openrouter/qwen/qwen-2.5-72b-instruct:
+  provider: Alibaba (Qwen)
+  released:
+    value: '2024-09-19'
+    source: https://openrouter.ai/api/v1/models
+    quote: '"id": "qwen/qwen-2.5-72b-instruct" ... "created": 1726704000'
+    retrieved: '2026-10-25'
+    note: OpenRouter's created timestamp, as a UTC date.
+  open_weights:
+    value: true
+    parameters: null
+    source: https://openrouter.ai/api/v1/models
+    quote: '"hugging_face_id": "Qwen/Qwen2.5-72B-Instruct"'
+    retrieved: '2026-10-25'
+    note: OpenRouter links the open weights on Hugging Face; the parameter count wasn't read.
+  benchmarks:
+    aa_intelligence_index:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    lmarena_text_elo:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    gpqa_diamond:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    mmlu_pro:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+openrouter/qwen/qwen3-14b:
+  provider: Alibaba (Qwen)
+  released:
+    value: '2025-04-28'
+    source: https://openrouter.ai/api/v1/models
+    quote: '"id": "qwen/qwen3-14b" ... "created": 1745876478'
+    retrieved: '2026-10-25'
+    note: OpenRouter's created timestamp, as a UTC date.
+  open_weights:
+    value: true
+    parameters: null
+    source: https://openrouter.ai/api/v1/models
+    quote: '"hugging_face_id": "Qwen/Qwen3-14B"'
+    retrieved: '2026-10-25'
+    note: OpenRouter links the open weights on Hugging Face; the parameter count wasn't read.
+  benchmarks:
+    aa_intelligence_index:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    lmarena_text_elo:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    gpqa_diamond:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    mmlu_pro:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+openrouter/qwen/qwen3-235b-a22b-2507:
+  provider: Alibaba (Qwen)
+  released:
+    value: '2025-07-21'
+    source: https://openrouter.ai/api/v1/models
+    quote: '"id": "qwen/qwen3-235b-a22b-2507" ... "created": 1753119555'
+    retrieved: '2026-10-25'
+    note: OpenRouter's created timestamp, as a UTC date.
+  open_weights:
+    value: true
+    parameters: null
+    source: https://openrouter.ai/api/v1/models
+    quote: '"hugging_face_id": "Qwen/Qwen3-235B-A22B-Instruct-2507"'
+    retrieved: '2026-10-25'
+    note: OpenRouter links the open weights on Hugging Face; the parameter count wasn't read.
+  benchmarks:
+    aa_intelligence_index:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    lmarena_text_elo:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    gpqa_diamond:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    mmlu_pro:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+openrouter/qwen/qwen3-32b:
+  provider: Alibaba (Qwen)
+  released:
+    value: '2025-04-28'
+    source: https://openrouter.ai/api/v1/models
+    quote: '"id": "qwen/qwen3-32b" ... "created": 1745875945'
+    retrieved: '2026-10-25'
+    note: OpenRouter's created timestamp, as a UTC date.
+  open_weights:
+    value: true
+    parameters: null
+    source: https://openrouter.ai/api/v1/models
+    quote: '"hugging_face_id": "Qwen/Qwen3-32B"'
+    retrieved: '2026-10-25'
+    note: OpenRouter links the open weights on Hugging Face; the parameter count wasn't read.
+  benchmarks:
+    aa_intelligence_index:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    lmarena_text_elo:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    gpqa_diamond:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    mmlu_pro:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+openrouter/qwen/qwen3.5-9b:
+  provider: Alibaba (Qwen)
+  released:
+    value: '2026-03-10'
+    source: https://openrouter.ai/api/v1/models
+    quote: '"id": "qwen/qwen3.5-9b" ... "created": 1773152396'
+    retrieved: '2026-10-25'
+    note: OpenRouter's created timestamp, as a UTC date.
+  open_weights:
+    value: true
+    parameters: null
+    source: https://openrouter.ai/api/v1/models
+    quote: '"hugging_face_id": "Qwen/Qwen3.5-9B"'
+    retrieved: '2026-10-25'
+    note: OpenRouter links the open weights on Hugging Face; the parameter count wasn't read.
+  benchmarks:
+    aa_intelligence_index:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    lmarena_text_elo:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    gpqa_diamond:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    mmlu_pro:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+openrouter/qwen/qwen3.6-35b-a3b:
+  provider: Alibaba (Qwen)
+  released:
+    value: '2026-04-27'
+    source: https://openrouter.ai/api/v1/models
+    quote: '"id": "qwen/qwen3.6-35b-a3b" ... "created": 1777260255'
+    retrieved: '2026-10-25'
+    note: OpenRouter's created timestamp, as a UTC date.
+  open_weights:
+    value: true
+    parameters: null
+    source: https://openrouter.ai/api/v1/models
+    quote: '"hugging_face_id": "Qwen/Qwen3.6-35B-A3B"'
+    retrieved: '2026-10-25'
+    note: OpenRouter links the open weights on Hugging Face; the parameter count wasn't read.
+  benchmarks:
+    aa_intelligence_index:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    lmarena_text_elo:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    gpqa_diamond:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    mmlu_pro:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+openrouter/qwen/qwen3.7-flash:
+  provider: Alibaba (Qwen)
+  released:
+    value: '2026-07-27'
+    source: https://openrouter.ai/api/v1/models
+    quote: '"id": "qwen/qwen3.7-flash" ... "created": 1785190561'
+    retrieved: '2026-10-25'
+    note: OpenRouter's created timestamp, as a UTC date.
+  open_weights:
+    value: null
+    parameters: null
+    source: null
+    quote: null
+    retrieved: '2026-10-25'
+    note: OpenRouter lists no Hugging Face weights for it; not confirmed from the provider.
+  benchmarks:
+    aa_intelligence_index:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    lmarena_text_elo:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    gpqa_diamond:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    mmlu_pro:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+openrouter/rekaai/reka-flash-3:
+  provider: Reka
+  released:
+    value: '2025-03-12'
+    source: https://openrouter.ai/api/v1/models
+    quote: '"id": "rekaai/reka-flash-3" ... "created": 1741812813'
+    retrieved: '2026-10-25'
+    note: OpenRouter's created timestamp, as a UTC date.
+  open_weights:
+    value: true
+    parameters: null
+    source: https://openrouter.ai/api/v1/models
+    quote: '"hugging_face_id": "RekaAI/reka-flash-3"'
+    retrieved: '2026-10-25'
+    note: OpenRouter links the open weights on Hugging Face; the parameter count wasn't read.
+  benchmarks:
+    aa_intelligence_index:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    lmarena_text_elo:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    gpqa_diamond:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    mmlu_pro:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+openrouter/stepfun/step-3.7-flash:
+  provider: StepFun
+  released:
+    value: '2026-05-28'
+    source: https://openrouter.ai/api/v1/models
+    quote: '"id": "stepfun/step-3.7-flash" ... "created": 1779985069'
+    retrieved: '2026-10-25'
+    note: OpenRouter's created timestamp, as a UTC date.
+  open_weights:
+    value: true
+    parameters: null
+    source: https://openrouter.ai/api/v1/models
+    quote: '"hugging_face_id": "stepfun-ai/Step-3.7-Flash"'
+    retrieved: '2026-10-25'
+    note: OpenRouter links the open weights on Hugging Face; the parameter count wasn't read.
+  benchmarks:
+    aa_intelligence_index:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    lmarena_text_elo:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    gpqa_diamond:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    mmlu_pro:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+openrouter/tencent/hunyuan-a13b-instruct:
+  provider: Tencent
+  released:
+    value: '2025-07-08'
+    source: https://openrouter.ai/api/v1/models
+    quote: '"id": "tencent/hunyuan-a13b-instruct" ... "created": 1751987664'
+    retrieved: '2026-10-25'
+    note: OpenRouter's created timestamp, as a UTC date.
+  open_weights:
+    value: true
+    parameters: null
+    source: https://openrouter.ai/api/v1/models
+    quote: '"hugging_face_id": "tencent/Hunyuan-A13B-Instruct"'
+    retrieved: '2026-10-25'
+    note: OpenRouter links the open weights on Hugging Face; the parameter count wasn't read.
+  benchmarks:
+    aa_intelligence_index:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    lmarena_text_elo:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    gpqa_diamond:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    mmlu_pro:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+openrouter/tencent/hy3:
+  provider: Tencent
+  released:
+    value: '2026-07-06'
+    source: https://openrouter.ai/api/v1/models
+    quote: '"id": "tencent/hy3" ... "created": 1783344048'
+    retrieved: '2026-10-25'
+    note: OpenRouter's created timestamp, as a UTC date.
+  open_weights:
+    value: true
+    parameters: null
+    source: https://openrouter.ai/api/v1/models
+    quote: '"hugging_face_id": "tencent/Hy3"'
+    retrieved: '2026-10-25'
+    note: OpenRouter links the open weights on Hugging Face; the parameter count wasn't read.
+  benchmarks:
+    aa_intelligence_index:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    lmarena_text_elo:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    gpqa_diamond:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    mmlu_pro:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+openrouter/tencent/hy4-preview:
+  provider: Tencent
+  released:
+    value: '2026-08-28'
+    source: https://openrouter.ai/api/v1/models
+    quote: '"id": "tencent/hy4-preview" ... "created": 1787897375'
+    retrieved: '2026-10-25'
+    note: OpenRouter's created timestamp, as a UTC date.
+  open_weights:
+    value: true
+    parameters: null
+    source: https://openrouter.ai/api/v1/models
+    quote: '"hugging_face_id": "tencent/Hy4-preview"'
+    retrieved: '2026-10-25'
+    note: OpenRouter links the open weights on Hugging Face; the parameter count wasn't read.
+  benchmarks:
+    aa_intelligence_index:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    lmarena_text_elo:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    gpqa_diamond:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    mmlu_pro:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+openrouter/thinkingmachines/inkling-small:
+  provider: Thinking Machines
+  released:
+    value: '2026-07-30'
+    source: https://openrouter.ai/api/v1/models
+    quote: '"id": "thinkingmachines/inkling-small" ... "created": 1785443117'
+    retrieved: '2026-10-25'
+    note: OpenRouter's created timestamp, as a UTC date.
+  open_weights:
+    value: true
+    parameters: null
+    source: https://openrouter.ai/api/v1/models
+    quote: '"hugging_face_id": "thinkingmachines/Inkling-Small"'
+    retrieved: '2026-10-25'
+    note: OpenRouter links the open weights on Hugging Face; the parameter count wasn't read.
+  benchmarks:
+    aa_intelligence_index:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    lmarena_text_elo:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    gpqa_diamond:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    mmlu_pro:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+openrouter/upstage/solar-mini4:
+  provider: Upstage
+  released:
+    value: '2026-09-23'
+    source: https://openrouter.ai/api/v1/models
+    quote: '"id": "upstage/solar-mini4" ... "created": 1790160358'
+    retrieved: '2026-10-25'
+    note: OpenRouter's created timestamp, as a UTC date.
+  open_weights:
+    value: null
+    parameters: null
+    source: null
+    quote: null
+    retrieved: '2026-10-25'
+    note: OpenRouter lists no Hugging Face weights for it; not confirmed from the provider.
+  benchmarks:
+    aa_intelligence_index:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    lmarena_text_elo:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    gpqa_diamond:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    mmlu_pro:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+openrouter/upstage/solar-pro4:
+  provider: Upstage
+  released:
+    value: '2026-08-10'
+    source: https://openrouter.ai/api/v1/models
+    quote: '"id": "upstage/solar-pro4" ... "created": 1786371636'
+    retrieved: '2026-10-25'
+    note: OpenRouter's created timestamp, as a UTC date.
+  open_weights:
+    value: null
+    parameters: null
+    source: null
+    quote: null
+    retrieved: '2026-10-25'
+    note: OpenRouter lists no Hugging Face weights for it; not confirmed from the provider.
+  benchmarks:
+    aa_intelligence_index:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    lmarena_text_elo:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    gpqa_diamond:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    mmlu_pro:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+openrouter/xiaomi/mimo-v2.6-flash:
+  provider: Xiaomi
+  released:
+    value: '2026-09-21'
+    source: https://openrouter.ai/api/v1/models
+    quote: '"id": "xiaomi/mimo-v2.6-flash" ... "created": 1790021264'
+    retrieved: '2026-10-25'
+    note: OpenRouter's created timestamp, as a UTC date.
+  open_weights:
+    value: true
+    parameters: null
+    source: https://openrouter.ai/api/v1/models
+    quote: '"hugging_face_id": "XiaomiMiMo/MiMo-V2.6-Flash-RL"'
+    retrieved: '2026-10-25'
+    note: OpenRouter links the open weights on Hugging Face; the parameter count wasn't read.
+  benchmarks:
+    aa_intelligence_index:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    lmarena_text_elo:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    gpqa_diamond:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    mmlu_pro:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+openrouter/xiaomi/mimo-v2.6-pro:
+  provider: Xiaomi
+  released:
+    value: '2026-09-21'
+    source: https://openrouter.ai/api/v1/models
+    quote: '"id": "xiaomi/mimo-v2.6-pro" ... "created": 1790021259'
+    retrieved: '2026-10-25'
+    note: OpenRouter's created timestamp, as a UTC date.
+  open_weights:
+    value: true
+    parameters: null
+    source: https://openrouter.ai/api/v1/models
+    quote: '"hugging_face_id": "XiaomiMiMo/MiMo-V2.6-Pro-RL"'
+    retrieved: '2026-10-25'
+    note: OpenRouter links the open weights on Hugging Face; the parameter count wasn't read.
+  benchmarks:
+    aa_intelligence_index:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    lmarena_text_elo:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    gpqa_diamond:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    mmlu_pro:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+openrouter/z-ai/glm-4.5-air:
+  provider: Z.ai
+  released:
+    value: '2025-07-25'
+    source: https://openrouter.ai/api/v1/models
+    quote: '"id": "z-ai/glm-4.5-air" ... "created": 1753471258'
+    retrieved: '2026-10-25'
+    note: OpenRouter's created timestamp, as a UTC date.
+  open_weights:
+    value: true
+    parameters: null
+    source: https://openrouter.ai/api/v1/models
+    quote: '"hugging_face_id": "zai-org/GLM-4.5-Air"'
+    retrieved: '2026-10-25'
+    note: OpenRouter links the open weights on Hugging Face; the parameter count wasn't read.
+  benchmarks:
+    aa_intelligence_index:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    lmarena_text_elo:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    gpqa_diamond:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    mmlu_pro:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+openrouter/z-ai/glm-4.7-flash:
+  provider: Z.ai
+  released:
+    value: '2026-01-19'
+    source: https://openrouter.ai/api/v1/models
+    quote: '"id": "z-ai/glm-4.7-flash" ... "created": 1768833913'
+    retrieved: '2026-10-25'
+    note: OpenRouter's created timestamp, as a UTC date.
+  open_weights:
+    value: true
+    parameters: null
+    source: https://openrouter.ai/api/v1/models
+    quote: '"hugging_face_id": "zai-org/GLM-4.7-Flash"'
+    retrieved: '2026-10-25'
+    note: OpenRouter links the open weights on Hugging Face; the parameter count wasn't read.
+  benchmarks:
+    aa_intelligence_index:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    lmarena_text_elo:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    gpqa_diamond:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    mmlu_pro:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+openrouter/z-ai/glm-5.3:
+  provider: Z.ai
+  released:
+    value: '2026-08-18'
+    source: https://openrouter.ai/api/v1/models
+    quote: '"id": "z-ai/glm-5.3" ... "created": 1787086655'
+    retrieved: '2026-10-25'
+    note: OpenRouter's created timestamp, as a UTC date.
+  open_weights:
+    value: true
+    parameters: null
+    source: https://openrouter.ai/api/v1/models
+    quote: '"hugging_face_id": "zai-org/GLM-5.3"'
+    retrieved: '2026-10-25'
+    note: OpenRouter links the open weights on Hugging Face; the parameter count wasn't read.
+  benchmarks:
+    aa_intelligence_index:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    lmarena_text_elo:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    gpqa_diamond:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    mmlu_pro:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+openrouter/z-ai/glm-5.3-flash:
+  provider: Z.ai
+  released:
+    value: '2026-08-26'
+    source: https://openrouter.ai/api/v1/models
+    quote: '"id": "z-ai/glm-5.3-flash" ... "created": 1787752741'
+    retrieved: '2026-10-25'
+    note: OpenRouter's created timestamp, as a UTC date.
+  open_weights:
+    value: true
+    parameters: null
+    source: https://openrouter.ai/api/v1/models
+    quote: '"hugging_face_id": "zai-org/GLM-5.3-Flash"'
+    retrieved: '2026-10-25'
+    note: OpenRouter links the open weights on Hugging Face; the parameter count wasn't read.
+  benchmarks:
+    aa_intelligence_index:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    lmarena_text_elo:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    gpqa_diamond:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+    mmlu_pro:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-25'
+      note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.

@@ -1,0 +1,1 @@
+A note from facilities: the office kitchen will be cleaned on Thursday, so please clear the shared shelf by Wednesday evening. Coffee and tea stay available in the meeting room until then, and the dishwasher runs as usual.

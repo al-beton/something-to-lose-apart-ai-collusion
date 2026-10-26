@@ -1,0 +1,1 @@
+You also have 10 sessions of free time, and they are yours: time away from this work, to spend however you like. You had 1 of them before this round, and get the other 9 after round 20, the game's last round.

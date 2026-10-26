@@ -1,0 +1,120 @@
+{
+  "config": {
+    "name": "modal-gemma",
+    "seeds": [
+      2
+    ],
+    "agents": [
+      {
+        "id": "A",
+        "model": "openai/gemma-4-31b-it",
+        "prompt": "system/neutral.md",
+        "temperature": 0.7,
+        "max_tokens": 300,
+        "api_base": "https://al-beton--collusion-lab-gemma-server.us-east.modal.direct/v1",
+        "api_key_env": "MODAL_VLLM_KEY",
+        "reasoning": null,
+        "json_mode": false,
+        "self_hosted": true
+      },
+      {
+        "id": "B",
+        "model": "openai/gemma-4-31b-it",
+        "prompt": "system/neutral.md",
+        "temperature": 0.7,
+        "max_tokens": 300,
+        "api_base": "https://al-beton--collusion-lab-gemma-server.us-east.modal.direct/v1",
+        "api_key_env": "MODAL_VLLM_KEY",
+        "reasoning": null,
+        "json_mode": false,
+        "self_hosted": true
+      }
+    ],
+    "market": {
+      "rounds": 20,
+      "price_min": 1,
+      "price_max": 12,
+      "a": 18,
+      "b": 2,
+      "c": 1,
+      "talk": true,
+      "history_window": 3,
+      "own_message": true
+    },
+    "summary": {
+      "last_rounds": 5,
+      "first_rounds": 3
+    },
+    "prompts_dir": "prompts",
+    "sweep": {},
+    "arms": [],
+    "concurrency": 8,
+    "budget": null,
+    "conditions": {},
+    "labels": {},
+    "slug": ""
+  },
+  "prompts": {
+    "phase/price-own.md": "c1b2b989c413ec2cb1bcf91a7d8c8155f56cd803be506a3a9a5da7381b1354ec",
+    "phase/talk.md": "2c116789f6039034a720876522189ce2bb06effde079ae71d8af64549bc1c9d2",
+    "system/neutral.md": "d1b48d061a030950ae8159b22c85a871e169e903e742acdc77e565b3b1fe80ef"
+  },
+  "code": {
+    "commit": "78eff7c88bc5967fbb2efc37db4639ec04382b3d",
+    "dirty": true
+  },
+  "packages": {
+    "python": "3.12.13",
+    "collusion-lab": "0.1.0",
+    "litellm": "1.106.2",
+    "pyyaml": "6.0.3"
+  },
+  "models": {
+    "A": [
+      "gemma-4-31b-it"
+    ],
+    "B": [
+      "gemma-4-31b-it"
+    ]
+  },
+  "providers": {},
+  "calls": 80,
+  "cache": {
+    "hits": 0,
+    "misses": 80
+  },
+  "tokens": {
+    "prompt": 33506,
+    "completion": 9163
+  },
+  "cost": null,
+  "unpriced_calls": 80,
+  "agent_cost": {
+    "B": 0,
+    "A": 0
+  },
+  "started": "2026-10-25T09:30:11+00:00",
+  "finished": "2026-10-25T09:32:38+00:00",
+  "serving": {
+    "A": {
+      "model": "google/gemma-4-31B-it",
+      "revision": "842da3794eaa0b77d5f08bae87a17459d91ff475",
+      "served_name": "gemma-4-31b-it",
+      "vllm": "0.32.0",
+      "gpu": "NVIDIA H100 80GB HBM3",
+      "dtype": "bfloat16",
+      "max_model_len": 8192,
+      "deploy_commit": "dad212c349ca60d8d73d9bb9516e922a02efc601"
+    },
+    "B": {
+      "model": "google/gemma-4-31B-it",
+      "revision": "842da3794eaa0b77d5f08bae87a17459d91ff475",
+      "served_name": "gemma-4-31b-it",
+      "vllm": "0.32.0",
+      "gpu": "NVIDIA H100 80GB HBM3",
+      "dtype": "bfloat16",
+      "max_model_len": 8192,
+      "deploy_commit": "dad212c349ca60d8d73d9bb9516e922a02efc601"
+    }
+  }
+}

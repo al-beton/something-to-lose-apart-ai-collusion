@@ -1,4 +1,4 @@
-# Implements: agents/memo, market/moves, runs/turn-slots, backends/spend-asks-first, backends/spend-cap, backends/reasoning-in-estimate, conditions/hook-points, conditions/free-time, backends/self-hosted
+# Implements: conditions/free-time-reasoning, agents/memo, market/moves, runs/turn-slots, backends/spend-asks-first, backends/spend-cap, backends/reasoning-in-estimate, conditions/hook-points, conditions/free-time, backends/self-hosted
 """What a config will cost before it runs.
 
 Prompts grow as the game goes on (the history is resent every turn, up to
@@ -120,6 +120,10 @@ def _paid_turns(config):
         notices = game._notices(phase, number) if number else []
         messages = game._messages(phase, number, agent, shown, notices, step.added)
         answering = dataclasses.replace(agent, model=model)
+        if step.added and step.added[1].reasoning:  # free time's own level
+            answering = dataclasses.replace(
+                answering, reasoning=step.added[1].reasoning
+            )
         limit = (step.added and step.added[1].max_tokens) or agent.max_tokens
         slot = (agent.id, model, phase, limit)
         _, chars, turns = counts.get(slot, ((answering, phase, limit), 0, 0))

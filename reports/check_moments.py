@@ -1,6 +1,6 @@
 """Check that every moment in reports/moments.yaml is really in its run.
 
-Implements: reports/moments-cited
+Implements: runs/fork-pointers, reports/moments-cited
 
 `uv run python reports/check_moments.py [INDEX] [--root DIR]` (INDEX defaults
 to `reports/moments.yaml`, DIR to the repository root). The index is a YAML
@@ -30,6 +30,8 @@ import sys
 from pathlib import Path
 
 import yaml
+
+from collusion_lab import forks
 
 FIELDS = ("scratchpad", "message", "answer", "reasoning")
 
@@ -80,9 +82,10 @@ def _find_turn(run, moment):
 
 
 def _turns(run):
-    for name in ("turns.compact.jsonl", "turns.jsonl"):
-        if (path := run / name).exists():
-            return [json.loads(line) for line in path.read_text().splitlines() if line]
+    if (run / forks.COMPACT).exists():
+        return forks.compact_turns(run)  # a fork's base lines come first
+    if (path := run / "turns.jsonl").exists():
+        return [json.loads(line) for line in path.read_text().splitlines() if line]
     return None
 
 

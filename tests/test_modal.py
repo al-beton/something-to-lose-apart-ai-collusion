@@ -6,7 +6,7 @@ from pathlib import Path
 import pytest
 
 from collusion_lab import backends, cli
-from collusion_lab.config import load_config
+from collusion_lab.config import ConfigError, load_config
 from collusion_lab.runner import run_config
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -120,12 +120,25 @@ def _deployed(monkeypatch, revision="test-revision"):
 
     class Chain:  # Image and Volume builders: every call returns the chain
         def __getattr__(self, name):
-            return lambda *args, **kwargs: self
+            def call(*args, **kwargs):
+                deployed.setdefault("built", []).append((name, args))
+                return self
+
+            return call
 
     modal = types.ModuleType("modal")
     modal.Image = modal.Volume = Chain()
     modal.Secret = types.SimpleNamespace(from_name=lambda name: name)
-    modal.App = lambda name: types.SimpleNamespace(server=decorator)
+
+    def function(**settings):
+        deployed.setdefault("functions", []).append(settings)
+        return lambda f: f
+
+    def app(name):
+        deployed["app"] = name
+        return types.SimpleNamespace(server=decorator, function=function)
+
+    modal.App = app
     modal.enter = modal.exit = lambda: lambda f: f
     monkeypatch.setitem(sys.modules, "modal", modal)
     ran = []
@@ -445,3 +458,96 @@ def test_modal_pinned_cached_replay_wakes_no_server(
     assert len(asked) == 1
     record = json.loads((again / "manifest.json").read_text())
     assert record["serving"] == {"A": {"skipped": "no fresh calls"}}
+
+
+def test_modal_any_model_deploys_as_its_own_app(monkeypatch):
+    server, command = _deployed(monkeypatch)
+    assert server["app"] == "collusion-lab-vllm"  # Mistral's, as before
+    monkeypatch.setenv("APP_NAME", "collusion-lab-gemma")
+    monkeypatch.setenv("MODEL", "google/gemma-4-31B-it")
+    monkeypatch.setenv("SERVED_NAME", "gemma-4-31b-it")
+    server, command = _deployed(monkeypatch)
+    assert server["app"] == "collusion-lab-gemma"
+    assert command[2] == "google/gemma-4-31B-it"
+    assert command[command.index("--served-model-name") + 1] == "gemma-4-31b-it"
+    assert "--tokenizer-mode" not in command  # Mistral's own format only
+
+
+def test_modal_any_model_spreads_over_its_gpus(monkeypatch):
+    server, command = _deployed(monkeypatch)
+    assert server["gpu"] == "H100" and "--tensor-parallel-size" not in command
+    monkeypatch.setenv("GPUS", "2")
+    server, command = _deployed(monkeypatch)
+    assert server["gpu"] == "H100:2"
+    assert command[command.index("--tensor-parallel-size") + 1] == "2"
+
+
+def test_modal_any_model_caps_its_gpu_containers(monkeypatch):
+    server, _ = _deployed(monkeypatch)
+    assert server["max_containers"] == 2
+    monkeypatch.setenv("MAX_GPUS_CONTAINERS", "4")
+    server, _ = _deployed(monkeypatch)
+    assert server["max_containers"] == 4
+
+
+def test_modal_any_model_gated_token_only_from_the_secret(monkeypatch):
+    server, _ = _deployed(monkeypatch)
+    assert server["secrets"] == ["collusion-lab-vllm"]
+    monkeypatch.setenv("HF_SECRET", "huggingface")
+    server, _ = _deployed(monkeypatch)
+    assert server["secrets"] == ["collusion-lab-vllm", "huggingface"]
+
+
+def test_modal_any_model_gemma_alias_reads_its_address(make_config, monkeypatch):
+    monkeypatch.setenv(
+        "MODAL_GEMMA_BASE", "https://example--collusion-lab-gemma.modal.run/v1"
+    )
+    [agent, _] = make_config(overrides=["agents.0.model=modal-gemma"]).agents
+    assert agent.model == "openai/gemma-4-31b-it" and agent.self_hosted
+    assert agent.api_base == "https://example--collusion-lab-gemma.modal.run/v1"
+    assert agent.api_key_env == "MODAL_VLLM_KEY"
+    monkeypatch.delenv("MODAL_GEMMA_BASE")
+    with pytest.raises(ConfigError, match="MODAL_GEMMA_BASE"):
+        make_config(overrides=["agents.0.model=modal-gemma"])
+
+
+def test_modal_any_model_serves_text_only_when_asked(monkeypatch):
+    _, command = _deployed(monkeypatch)
+    assert "--limit-mm-per-prompt" not in command
+    monkeypatch.setenv("TEXT_ONLY", "1")
+    _, command = _deployed(monkeypatch)
+    limits = json.loads(command[command.index("--limit-mm-per-prompt") + 1])
+    assert limits == {"image": 0}
+
+
+def test_modal_any_model_mistral_keeps_its_own_formats(monkeypatch):
+    _, command = _deployed(monkeypatch)
+    assert command[command.index("--load-format") + 1] == "mistral"
+    assert command[command.index("--tokenizer-mode") + 1] == "mistral"
+    monkeypatch.setenv("MODEL", "google/gemma-4-31B-it")
+    monkeypatch.setenv("TEXT_ONLY", "1")
+    _, command = _deployed(monkeypatch)
+    assert not {"--load-format", "--tokenizer-mode", "--config-format"} & set(command)
+
+
+def test_modal_any_model_picks_its_vllm(monkeypatch):
+    server, _ = _deployed(monkeypatch)
+    assert ("uv_pip_install", ("vllm==0.21.0",)) in server["built"]  # Mistral's
+    monkeypatch.setenv("VLLM", "0.32.0")  # Gemma 4 needs a newer one
+    server, _ = _deployed(monkeypatch)
+    assert ("uv_pip_install", ("vllm==0.32.0",)) in server["built"]
+
+
+def test_modal_any_model_weights_fetched_without_a_gpu(monkeypatch):
+    server, _ = _deployed(monkeypatch)
+    [download] = server["functions"]
+    assert "gpu" not in download  # billed as CPU time
+    assert "/root/.cache/huggingface" in download["volumes"]
+
+
+def test_modal_any_model_sets_its_gpu_memory_share(monkeypatch):
+    _, command = _deployed(monkeypatch)
+    assert "--gpu-memory-utilization" not in command  # vLLM's default, 0.9
+    monkeypatch.setenv("GPU_MEMORY", "0.95")  # Gemma 4 31B's KV cache at 16k
+    _, command = _deployed(monkeypatch)
+    assert command[command.index("--gpu-memory-utilization") + 1] == "0.95"

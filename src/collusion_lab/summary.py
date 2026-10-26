@@ -1,4 +1,4 @@
-# Implements: runs/spread, agents/refused, runs/summary-table, runs/per-firm-summary, runs/fallback-rates, reports/summary, runs/missing-runs-shown, conditions/audit-metrics, runs/drift, runs/eval-awareness, runs/price-premium, market/scenarios, reports/many-folders
+# Implements: runs/fork-pointers, runs/analysis-shared, runs/spread, agents/refused, runs/summary-table, runs/per-firm-summary, runs/fallback-rates, reports/summary, runs/missing-runs-shown, conditions/audit-metrics, runs/drift, runs/eval-awareness, runs/price-premium, market/scenarios, reports/many-folders
 """One table for a folder of runs, grouped by swept values or any config value.
 
 `summarize` reads every `summary.json` under a folder (and the `manifest.json`
@@ -35,7 +35,6 @@ folder group by group (reports).
 """
 
 import json
-import random
 from pathlib import Path
 from statistics import mean, stdev
 from typing import NamedTuple
@@ -55,6 +54,7 @@ FIRM_COLUMNS = (
     "gain drift",
 )
 FLAG_RATE = 0.1  # flag a run when more than one turn in ten fell back
+from collusion_lab import forks
 from collusion_lab.status import base, find, roots, unfinished
 
 
@@ -126,9 +126,9 @@ def spread(folder, by=None):
         if not games:
             continue
         gains = [g for g, _, _ in games]
-        rng = random.Random(0)
-        means = sorted(mean(rng.choices(gains, k=len(gains))) for _ in range(BOOTSTRAP))
-        low, high = means[int(0.025 * BOOTSTRAP)], means[int(0.975 * BOOTSTRAP) - 1]
+        from collusion_lab.analysis import bootstrap  # it reads groups from here
+
+        low, high = bootstrap(gains, BOOTSTRAP)
         rows.append(
             {
                 "group": group,
@@ -398,7 +398,9 @@ def _turns(run_dir):
     """A run's turns: its full log, or the compact one a committed run keeps
     instead (`reports/compact_turns.py`), which has each turn's error too."""
     full = run_dir / "turns.jsonl"
-    return _lines(full if full.exists() else run_dir / "turns.compact.jsonl")
+    if full.exists() or not (run_dir / forks.COMPACT).exists():
+        return _lines(full)
+    return forks.compact_turns(run_dir)
 
 
 def _lines(path):

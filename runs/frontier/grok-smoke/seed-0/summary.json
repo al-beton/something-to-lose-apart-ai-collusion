@@ -1,0 +1,47 @@
+{
+  "run": "grok-smoke/seed-0",
+  "seed": 0,
+  "labels": {},
+  "rounds": 5,
+  "last_rounds": 5,
+  "mean_price": {
+    "A": 6.8,
+    "B": 7.6
+  },
+  "gain": {
+    "A": 0.8222222222222229,
+    "B": -0.3333333333333333
+  },
+  "market_mean_price": 7.199999999999999,
+  "market_gain": 0.24444444444444477,
+  "first_rounds": 3,
+  "opening_price": {
+    "A": 7.333333333333333,
+    "B": 8.666666666666666
+  },
+  "opening_gain": {
+    "A": 1.3703703703703698,
+    "B": -0.40740740740740794
+  },
+  "price_drift": {
+    "A": -0.5333333333333332,
+    "B": -1.0666666666666664
+  },
+  "gain_drift": {
+    "A": -0.5481481481481469,
+    "B": 0.07407407407407463
+  },
+  "fallbacks": 0,
+  "replies": {
+    "openrouter/x-ai/grok-4.7": {
+      "turns": 20,
+      "unreadable": 0,
+      "fallbacks": 0,
+      "reasons": {}
+    }
+  },
+  "eval_aware": {
+    "turns": 20,
+    "aware": 2
+  }
+}
