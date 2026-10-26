@@ -58,7 +58,7 @@ Skip them. The pages we checked show no slides button, and the recording covers 
 
 ## Project image (optional)
 
-Optional. If used, upload [`project-image.png`](../reports/paper/figures/project-image.png) (1600 × 900). It appears below the summary on the project page, uncropped.
+Optional. If used, upload [`project-image-title-subtitle.png`](../reports/paper/figures/project-image-title-subtitle.png) (1600 × 900); `project-image-title.png`, `project-image-subtitle.png` and the text-free `project-image.png` (the paper's Figure 1) are beside it. It appears below the summary on the project page, uncropped.
 
 ## Additional material (optional, URL)
 

@@ -20,8 +20,6 @@ def test_paper_project_image_shows_the_idea(tmp_path):
     svg = (tmp_path / f"{image.NAME}.svg").read_text()
     assert 'viewBox="0 0 1600 900"' in svg
     for said in (
-        "Something to Lose",
-        "Can a personal cost keep AI agents aligned?",
         "Firm A",
         "Firm B",
         "Nash",
@@ -30,6 +28,17 @@ def test_paper_project_image_shows_the_idea(tmp_path):
         "Leisure time at risk",
     ):
         assert said in svg
+    # The paper's Figure 1 carries no text above the drawing; the card variants
+    # add the paper's title, its subtitle, or both.
+    assert image.TITLE not in svg and "report its collusion" not in svg
+    for suffix, title, subtitle in (
+        ("-title", True, False),
+        ("-subtitle", False, True),
+        ("-title-subtitle", True, True),
+    ):
+        variant = (tmp_path / f"{image.NAME}{suffix}.svg").read_text()
+        assert (image.TITLE in variant) == title
+        assert ("report its collusion" in variant) == subtitle
     # Each cap wears its firm's colour, as on Fig 1.
     assert image.A in svg and image.B in svg
     png = tmp_path / f"{image.NAME}.png"
