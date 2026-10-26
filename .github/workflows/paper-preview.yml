@@ -65,6 +65,8 @@ jobs:
           if git clone -q --depth 1 --branch gh-pages "$url" site 2>/dev/null; then :; else
             mkdir site && git -C site init -q -b gh-pages && git -C site remote add origin "$url"; fi
           touch site/.nojekyll
+          # The site's front page is the published report: main's build.
+          printf '<!doctype html><meta charset="utf-8"><meta http-equiv="refresh" content="0; url=main/paper.html"><title>Something to Lose</title><a href="main/paper.html">Something to Lose</a>\n' > site/index.html
           rm -rf "site/$SLOT" && mkdir -p "site/$SLOT"
           cp -r paper/build/. "site/$SLOT/"
           rm -f "site/$SLOT"/*.aux "site/$SLOT"/*.log "site/$SLOT"/*.bbl "site/$SLOT"/*.blg "site/$SLOT"/*.out
