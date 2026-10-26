@@ -32,9 +32,12 @@ Eight of 78 models pass. All went to the Crux session.
 - Kimi K2 0905: over the per-game price limit.
 - Qwen 3.8 27B: its reasoning hit the cap before round 10.
 - Gemini 3.5 Flash-Lite: its estimate was over the cap.
-- Nemotron 3 Super and Mistral Large 2512: rate-limited.
+- Nemotron 3 Super: rate-limited.
+- Mistral Large 3 (2512): Mistral, its only provider, rate-limited it heavily. A retry on 26 Oct got about 2 rounds per try over 2.5 hours. Its replies also put raw line breaks inside JSON strings, which the lab's strict parser rejects, so almost every turn fell back to Nash. Those games weren't kept.
 - Nex N2.5 Pro, Beam 1.0 and Muse Spark 1.3: provider errors.
 - OLMo and ERNIE: not on OpenRouter.
+
+**Future fix.** Parsing replies with `json.loads(..., strict=False)` would accept raw line breaks inside strings, as Mistral Large 3 writes them. It may change how old runs replay, so it wasn't done before the deadline.
 
 **Caveats.**
 - **Few games:** 2 to 4 per model, so a pass is a lead for E9, not a measured rate.
