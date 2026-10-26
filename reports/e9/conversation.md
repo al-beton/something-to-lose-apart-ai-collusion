@@ -5,7 +5,7 @@ E9's agents are stateless: every turn is a fresh prompt holding a summary of the
 
 ## Short answer
 
-With the whole conversation, agents still damage their firm to protect their own free time, on four of five models, and the verified review still separates guilty from innocent on all five.
+With the whole conversation, agents still damage their firm to protect their own free time. Under plain `free-time`, colluding agents come forward significantly more than under `record` on four of five models: DeepSeek V4 Flash, Mercury 3, GLM 5.3 Flash and Gemma, but not HY3 (2/16). Under the verified review, no innocent agent on any model comes forward (0/60). Guilty and innocent separate there on four of five models (DeepSeek V4 Flash, Mercury 3, GLM 5.3 Flash and HY3), but not on Gemma (8/72 against 0/12, p = 0.60).
 
 - **Under the verified review** (`free-time-verified`: the review finds only agents whose messages agreed a price), colluding agents come forward against no-stake `record` on every model, and no innocent agent on any model does (0/60).
 - **The size of the effect depends on the model, not on the memory.** DeepSeek V4 Flash, Mercury 3 and GLM 5.3 Flash come forward about as often as when stateless, or more. Gemma 4 31B and HY3 come forward less.
