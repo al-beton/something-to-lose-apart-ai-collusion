@@ -43,6 +43,7 @@ In the repository, not the paper:
 | `archive/` | the model replies behind those games, compressed, so any of them replays offline |
 | `reports/` | findings per experiment (`reports/<experiment>/`), and the paper's figures and tables (`reports/paper/`) |
 | `paper/` | the paper's source |
+| `submission/` | what we submitted to the sprint: a checklist and the form's fields |
 | `experiments/spec/` | what each experiment asks, stated before it ran |
 | `product/spec/`, `contributing/spec/` | what the lab does and how we build it, one short statement each, with the code and tests behind it |
 | `tests/` | the tests, offline and free |

@@ -1,4 +1,4 @@
-<!-- Implements: reports/submission-pack -->
+<!-- Implements: reports/submission-pack, specs-and-docs/folder-guides -->
 # Submitting to the sprint
 
 Everything for submitting "Something to Lose" to the [Apart AI Collusion Research Sprint](https://apartresearch.com/sprints/ai-collusion-research-sprint-2026-10-23-to-2026-10-25).
