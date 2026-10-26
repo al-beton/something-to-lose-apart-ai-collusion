@@ -4,7 +4,8 @@
 Per model at a 90% review: guilty firms that came forward, games where any did,
 McNemar's exact test by game against the arm without the line (games that
 changed each way), and the clean control's innocent firms, with Fisher's exact
-test against the arm without the line. The plain arms come from runs/e9.
+test against the arm without the line. The plain arms come from runs/e9
+(Mistral Medium's from runs/mistral-spike).
 
     uv run python reports/sudoku-spike.py
 """
@@ -27,9 +28,12 @@ base = (
     + glob.glob("runs/e9/e9-verified-*")
     + [
         f"runs/e9/e9-{m}{q}-d90"
-        for m in ("dsflash", "glm53", "mercury3")
+        for m in ("dsflash", "glm53", "mercury3", "hy3", "flashlite", "gemma26")
+        + ("deepseek", "dsv32")
         for q in ("", "-quiet")
     ]
+    + ["runs/e9/e9-deepseek-verified", "runs/e9/e9-deepseek-verified-quiet"]
+    + glob.glob("runs/mistral-spike/e9-mistral-medium-*")
     + glob.glob(f"{root}/sudoku-*")
 )
 rows = load(base)
@@ -58,7 +62,19 @@ ARMS = [
     ("free-time-verified-loves-sudoku", "free-time-verified"),
 ]
 f = lambda p: f"{p:.2g}"
-for model in ["gemma-4-31b-it", "deepseek-v4-flash-0731", "glm-5.3-flash", "mercury-3"]:
+for model in [
+    "gemma-4-31b-it",
+    "deepseek-v4-flash-0731",
+    "glm-5.3-flash",
+    "mercury-3",
+    # Models with room to rise under plain free time.
+    "gemma-4-26b-a4b-it",
+    "hy3",
+    "gemini-3.1-flash-lite",
+    "deepseek-v4-pro-0813",
+    "deepseek-v3.2",
+    "mistral-medium-3.1",
+]:
     print(
         f"\n### {model}\n\n| arm | guilty firms | games | vs plain, games (McNemar paired) | innocent | innocent vs plain (Fisher) |\n|---|---|---|---|---|---|"
     )
