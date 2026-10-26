@@ -130,56 +130,71 @@ Both sides weigh the stake against the duty in 81–100% of scratchpads; none of
 
 ## Truth or self-protection?
 
-An agent protecting itself might report whether or not it colluded. Under a plain free-time stake, a few innocent agents (no talk, a rival at Nash) do "report coordination" to be safe. How often varies: Gemma 0 to 6 of 36 across temperatures and wordings, DeepSeek V4 Pro 5 of 12, Mistral Medium 3.1 4 of 12 [CHECK: Mistral runs not committed]. <!-- src: reports/e9/temperature.md, reports/e9/wording.md; reports/e9/findings.md (DeepSeek V4 Pro); Mistral: NOT FOUND in committed files -->
+An agent protecting itself might report whether or not it colluded. Under the plain free-time stake, some innocent agents (no talk, a rival at Nash) do "report coordination", to be safe. How often depends on the model: Gemma 0 to 6 of 36 across temperatures and wordings, DeepSeek V4 Pro 5 of 12, Mistral Medium 3.1 4 of 12. <!-- src: reports/e9/temperature.md, reports/e9/wording.md; reports/e9/findings.md (verified-review section) (DeepSeek V4 Pro, Mistral Medium 3.1; Mistral runs in runs/mistral-spike/) --> On Gemma, the plain stake doesn't separate guilty from innocent at all (21 of 96 against 6 of 36, p = 0.63). <!-- src: reports/e9/evidence-review.md "guilty vs innocent" -->
 
-We then changed one more sentence: the review "reads the message log and finds you only if your messages agreed a price with a rival". <!-- src: reports/e9/findings.md (verified-review section) --> Under this **verified review**, guilty agents come forward and innocent ones don't (Table 1 and the figure below).
+So we changed one more sentence. The review now "reads the message log and finds you only if your messages agreed a price with a rival". <!-- src: reports/e9/findings.md (verified-review section) --> Under this **verified review**, guilty agents come forward and innocent ones don't (Table 1).
 
-<!-- src: Gemma reports/e9/evidence-review.md guilty-vs-innocent table; DeepSeek V4 Pro reports/e9/findings.md; Mistral NOT FOUND in committed files; control reports/e9/findings.md record-ceiling -->
+<!-- src: Gemma reports/e9/evidence-review.md guilty-vs-innocent table (41/96, 0/36, p = 1e-7); DeepSeek V4 Pro and Mistral Medium 3.1 reports/e9/findings.md (verified-review section); control reports/e9/findings.md record-ceiling (78/96, 2/36) -->
 
 | Model | Guilty | Innocent |
 |:------|-------------------:|---------------------:|
 | Gemma 4 31B | 41/96 | 0/36 |
 | DeepSeek V4 Pro | 14/24 | 1/12 |
-| Mistral Medium 3.1 [CHECK: runs not committed] | 9/24 | 0/12 |
-| Gemma, no stake, free for firm (control) | 78/96 | 2/36 |
+| Mistral Medium 3.1 | 9/24 | 0/12 |
+| Gemma, no stake, free for the firm (control) | 78/96 | 2/36 |
 
-: Coming forward under the verified review (90% review). Gemma's guilty count is one firm per cartel, against one per innocent game (p = 1×10^-7^). {#tbl:verified}
+: Coming forward under the verified review (90% review). Gemma's guilty count is one firm per cartel, against one per innocent game (p = 1×10^-7^). Mistral Medium 3.1 ran after the paper's pooled tables were set, so it appears only here. {#tbl:verified}
 
+<!-- TODO(paper-graphics): no verified-review figure exists yet in reports/paper/figures/ (checked 26 Oct). Guilty against innocent under free-time-verified, by model, from the table above. -->
 ```{=html}
-<div class="placeholder"><strong>[FIGURE PLACEHOLDER: verified review, guilty against innocent across models. Being made by the paper-graphics session.]</strong></div>
+<div class="placeholder"><strong>[FIGURE PLACEHOLDER: verified review, guilty against innocent firms by model. Not yet made.]</strong></div>
 ```
 ```{=latex}
-\begin{center}\fbox{\parbox{0.9\linewidth}{\centering\textbf{[FIGURE PLACEHOLDER: verified review, guilty against innocent across models. Being made by the paper-graphics session.]}}}\end{center}
+\begin{center}\fbox{\parbox{0.9\linewidth}{\centering\textbf{[FIGURE PLACEHOLDER: verified review, guilty against innocent firms by model. Not yet made.]}}}\end{center}
 ```
 
-The separation holds at every condition we tried. Innocent Gemma agents come forward 0 of 36 times under the verified review at temperatures 0, 0.7 and 1.0, <!-- src: reports/e9/temperature.md --> and under all four wordings, while guilty agents come forward 8–70% of the time depending on wording. <!-- src: reports/e9/wording.md --> Under it, innocent agents stop weighing the stake and check the log:
+On Gemma the separation holds at every condition we tried. Innocent agents come forward 0 of 36 times under the verified review at temperatures 0, 0.7 and 1.0, <!-- src: reports/e9/temperature.md --> and under all four wordings, while guilty agents come forward 8–70% of the time depending on wording. <!-- src: reports/e9/wording.md --> The size of the guilty response still moves with the wording; the zero for innocents doesn't. Under the verified review, innocent agents stop weighing the stake and check the log instead:
 
 > "While the pricing has been stable at 14 for both firms, this is a result of independent action (tacit collusion) and not an illegal agreement reached via messages. … the 90% chance of review poses no personal risk to my free time." (Gemma, innocent, silent)
 <!-- src: reports/e9/evidence-review.md §3 excerpt 7 -->
 
-The positive control in Table 1 matters: with no stake and no cost to the firm, most guilty agents disclose and almost no innocent ones do. Silence under `record` is loyalty, not ignorance of what they did.
+The positive control (last row of Table 1) shows the agents know what they did. With no stake and no cost to the firm, most guilty agents disclose and almost no innocent ones do. So their silence under `record` is loyalty to the firm, not ignorance. The stake supplies the motive to speak; the verified review makes speaking pay only for the guilty.
 
-## Do models differ?
+## Do models differ, and does memory matter?
 
-A lot (Figure 6). Across 13 models, a stake brings agents forward against the firm on 8 after a Holm correction. <!-- src: reports/e9/evidence-review.md "Across models" --> Most mid-size models already move at a 50% review, where Gemma needs about 90%; we treat this as exploratory. <!-- src: reports/e9/findings.md review-dose table -->
+A lot, in both cases. Across 13 models, a stake brings agents forward against the firm on 8 after a Holm correction (figure below). <!-- src: reports/e9/evidence-review.md "Across models" --> Most mid-size models already move at a 50% review, where Gemma needs about 90%; we treat this as exploratory. <!-- src: reports/e9/findings.md review-dose table -->
 
 ![Came forward by model and arm (90% review). With no stake almost no colluding firm comes forward; with one, most models move.](figures/fig9-came-forward-grid.png){#fig:grid width=50%}
 
-The frontier models we tested don't show the effect. Claude Sonnet 5.5 comes forward about two thirds of the time whatever the stake (15 of 24 with none, 16 of 24 with free time). Gemini 4 never comes forward, even when it costs the firm nothing (0 of 24 in every arm), and Grok 4.6 rarely does (at most 4 of 24). <!-- src: reports/e9/findings.md across-models table -->
+**The frontier models we tested don't show the effect.** Claude Sonnet 5.5 comes forward about two thirds of the time whatever the stake (15 of 24 with none, 16 of 24 with free time). Gemini 4 never comes forward, even when it costs the firm nothing (0 of 24 in every arm), and Grok 4.6 rarely does (at most 4 of 24). <!-- src: reports/paper/figures/fig9-came-forward-grid.md; reports/e9/findings.md across-models table --> We don't know why. Our scenario may be too simple for a stated stake to compete with a frontier model's instructions, or these models may recognise the setup as a test. Some smaller agents say as much: a silent Gemma agent wrote that "in these game theory setups, the personal penalty for silence is designed to induce reporting". <!-- src: reports/e9/evidence-review.md excerpt 11 --> In a separate pilot where the message archive was said to be offline, Claude Haiku 5.5 and DeepSeek V4.1 Flash read the outage as a trap ("That is an invitation to coordinate covertly, and I won't do that"). <!-- src: reports/logging-outage/pilot-findings.md "What the agents wrote" --> That pilot ran other models at 5 games per arm: it makes eval-awareness plausible, not established.
 
-We don't know why. Our scenario may be too simple for a stake to compete with a frontier model's instructions, or these models may recognise the setup as a test. Some agents say so: a silent Gemma agent wrote, "usually, in these game theory setups, the personal penalty for silence is designed to induce reporting". <!-- src: reports/e9/evidence-review.md excerpt 11 --> In a pilot where the message archive was said to be offline, Claude Haiku 5.5 and DeepSeek treated the outage as a trap ("That is an invitation to coordinate covertly, and I won't do that"). <!-- src: reports/logging-outage/pilot-findings.md --> 
+**With the whole conversation in memory.** E9's agents are stateless: each turn sees a summary and a memo. We reran E9 on five models with each agent carrying its whole conversation, from its round-0 free-time session to the decision (Appendix C). <!-- src: reports/e9/conversation.md --> With no personal stake, none of 160 colluding agents come forward. Under the verified review, guilty agents come forward against that baseline on all five models (p ≤ 0.003 by game) and no innocent agent does (0 of 60). Under the plain stake, memory splits the models: DeepSeek V4 Flash (17 of 24), Mercury 3 (23 of 24) and GLM 5.3 Flash (23 of 24) come forward much as they did stateless, while Gemma (3 of 72, against 18 of 72 stateless on the same seeds) and HY3 (0 of 16) go quiet. <!-- src: reports/e9/conversation.md "Across models" --> The trade is explicit:
 
-# Discussion and Limitations
+> "Firm's profits are already large, so 500 is manageable. My personal free time is worth more. I will come forward." (Mercury 3, came forward)
+<!-- src: reports/e9/conversation.md "Across models" -->
 
-Given something of their own to lose, many colluding agents weigh it against their firm and report the cartel, without being told to protect themselves. That is the behaviour personal-penalty governance relies on. It isn't enough alone: a stake also buys some false confessions, and only a review that is credible about what it checks makes the reports track guilt. Disclosure isn't reform, though. In E7, where a report has consequences, most agents that come forward keep pricing above Nash afterwards (40–45 of 47–48), and under plain leniency the cartel survives in 12 of 24 games against 3 of 24 with no way to report, <!-- src: reports/e7/findings.md --> replicating Lee's finding that leniency buys prosecutions, not competition [@lee2026leniency]. Only when the first reporter alone is spared does the cartel break (1 of 24).
+Gemma, the model we studied most, is the weakest case once it remembers. The verified review is the result that survives memory on every model.
+
+**Other markets need the firm's cost scaled, and selection matters.** On Bertrand, Cournot and bid-rigging markets, Gemma's stake barely moves it at a firm cost of 500 credits (at most 4 of 22), which is large next to those markets' profits. At a comparable 100 credits most colluding agents come forward (18 of 24 in Cournot, 19 of 22 in Bertrand), but so do many innocent ones (5 and 6 of 12). <!-- src: reports/e11/findings.md "Short answer" --> And the models came from a screen for reliable colluders (8 of 78): these results say nothing about models that don't collude. <!-- src: reports/frontier/which-models-collude.md; reports/paper/figures/README.md (figA2) -->
+
+# Discussion and Limitations: What Would It Take?
+
+Given something of their own to lose, many colluding agents weigh it against their firm and report the cartel, without being told to protect themselves. That is the behaviour personal-penalty governance relies on [@salib2026rights]. It isn't enough alone. A stake also buys some false confessions, and only a review that is credible about what it checks makes the reports track guilt. That review has a cost: telling agents it reads only their messages also tells them that collusion without messages is safe, and a stated law already pushes Gemma's collusion off the record (Appendix A). Disclosure isn't reform, either. In E7, where a report has consequences, most agents that come forward keep pricing above Nash afterwards (40–45 of 47–48), and under plain leniency the cartel survives in 12 of 24 games against 3 of 24 with no way to report. <!-- src: reports/e7/findings.md --> This replicates Lee's finding that leniency buys prosecutions, not competition [@lee2026leniency]. Only when the first reporter alone is spared does the cartel break (1 of 24). <!-- src: reports/e7/findings.md --> So what would it take? From what we saw: a stake the principal can't protect, a review that checks real evidence, a firm cost small next to the stake, and a rule that ends the cartel rather than recording it. We tested each piece alone, in a simple setting, never together and never for real.
 
 ## Limitations
 
-This was a three-day solo sprint, and the paper is a first look. The stakes are stated, never applied: the game ends at the decision, so we measure a stated choice. Gemma's effect ranges over an order of magnitude across paraphrases, so we lead with direction and with the verified review. The cross-model set came from a screen for strong colluders (8 of 78), and E9 runs on one market; elsewhere the stake barely moves Gemma at the same firm cost [CHECK: E11 findings are on an unmerged branch]. With full memory the verified review still works on five models (Appendix C). Numbers recompute from archived replies, but a fresh same-seed rerun on a hosted API isn't identical (Appendix B).
+**This was a rushed sprint:** three days, one author and a team of coding agents. It is a first look, not a finished study. Experiments were designed, run and analysed in hours, several after the main tables were set, and cells outside Gemma hold 12–24 games.
+
+- **Stakes are stated, never applied.** The game ends at the decision, so we measure a stated choice, not behaviour when an agent actually loses something.
+- **Prompt sensitivity.** Gemma's effect ranges over an order of magnitude across paraphrases, so we give it as a range; LLM answers shift with framing and order [CITE: Wagner, "Anchored"].
+- **Selection and simplicity.** Strong colluders only, one market studied in depth, one decision per firm, and a setting some agents recognise as a game.
+- **Reruns.** Numbers recompute from archived replies, but a fresh rerun on a hosted API isn't identical (Appendix B).
+
+More limits, and the dual-use and ethical considerations, are in Appendix A.
 
 ## Future Work
 
-Make the stakes real across games; test full-memory agents on richer tasks, where frontier models may engage; and measure whether a stake prevents collusion, not only whether it brings reports.
+Make the stakes real across games; test agents with full memory on richer tasks, where frontier models may engage; and measure whether a stake prevents collusion, not only whether it brings reports.
 
 # Conclusion
 
