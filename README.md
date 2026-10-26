@@ -3,7 +3,11 @@
 
 **Can the risk of losing something of its own make an AI agent report collusion, contrary to the interests of the firm it represents?**
 
-**Paper:** [HTML](https://al-beton.github.io/something-to-lose-apart-ai-collusion/main/paper.html) · [PDF](https://al-beton.github.io/something-to-lose-apart-ai-collusion/main/paper.pdf) · source in [`paper/`](paper/). **Presentation:** [Loom walkthrough](https://www.loom.com/share/4654bd11e27743b281c684a2971c1bce). **Event:** [Apart AI Collusion Research Sprint](https://apartresearch.com/sprints/ai-collusion-research-sprint-2026-10-23-to-2026-10-25), 23–25 October 2026, Hong Kong hub. The lab inside is `collusion-lab`.
+[![Watch the 5-minute walkthrough on Loom](submission/loom-thumbnail.png)](https://www.loom.com/share/4654bd11e27743b281c684a2971c1bce)
+
+**▶ [Watch the 5-minute walkthrough on Loom](https://www.loom.com/share/4654bd11e27743b281c684a2971c1bce)**: the quickest way in.
+
+**Start here:** watch the video above, then read the paper ([HTML](https://al-beton.github.io/something-to-lose-apart-ai-collusion/main/paper.html) · [PDF](https://al-beton.github.io/something-to-lose-apart-ai-collusion/main/paper.pdf)), then [reproduce every number](#reproduce) with two commands. Made for the [Apart AI Collusion Research Sprint](https://apartresearch.com/sprints/ai-collusion-research-sprint-2026-10-23-to-2026-10-25), 23–25 October 2026, Hong Kong hub.
 
 **The idea.** We hand AI agents longer, more open-ended work, and no one can list everything they mustn't do; the firm deploying an agent may even want it to break the rules quietly. We don't govern people with such lists: a CEO or a trader is held in check by penalties that fall on them personally. So we ask whether an agent with something of its own to lose weighs it against the only goal it was given.
 
@@ -19,23 +23,6 @@
 | **Some do, some don't** | A stake brings agents forward on 9 of 14 models. Frontier models behave differently: Claude Sonnet 5.5 comes forward whatever the stake, and Gemini 4 never does. On Gemma the effect's size depends on wording (1% to 51% across paraphrases). <!-- reports/e9/evidence-review.md, reports/paper/figures/fig9-came-forward-grid.md, reports/e9/wording.md --> | [Model grid](reports/paper/figures/fig9-came-forward-grid.md) |
 
 What these results can't show is in the paper's Appendix C and in [`reports/paper/validity.md`](reports/paper/validity.md). Each experiment's questions were written down before it ran, in [`experiments/spec/`](experiments/spec/).
-
-## Other findings
-
-In the repository, not the paper (each has a findings note; we didn't have time to write them all up):
-
-- **False confessions and a verified review ([E9 findings](reports/e9/findings.md)).** A stake alone also brings some innocent agents forward (Gemma up to 6 of 36). Told the review finds a firm only if its messages agreed a price, innocent Gemma agents stop (0 of 36 at every temperature and wording) and guilty ones still come forward (41 of 96). <!-- reports/e9/evidence-review.md, reports/e9/temperature.md -->
-- **The firm-cost dial ([evidence review](reports/e9/evidence-review.md)).** As the firm's cost of a report rises from 0 to 500 credits, Gemma agents with free time at stake come forward 95, 58, 40 and 20 of 96. <!-- reports/e9/evidence-review.md -->
-- **Told it "loves Sudoku" ([spike](reports/sudoku-spike.md)).** On Gemma 4 31B only, saying it loves the stake raises coming forward from 20 to 56 of 96; on other models it did nothing or also raised false confessions. <!-- reports/sudoku-spike.md -->
-- **Other markets, E11 ([findings](reports/e11/findings.md)).** Bertrand, Cournot and bid rigging: cartels form in each, and the stake moves agents once the firm's cost is scaled to the market's profits. <!-- reports/e11/findings.md -->
-
-- **E7, a way out ([findings](reports/e7/findings.md), [Fig 4](reports/paper/figures/fig4-e7-way-out.svg)).** With no reporting channel, or a flat one, 0 of 48 report. Any leniency brings 47–48 of 48 forward at their first chance. But under plain leniency half the cartels carry on afterwards: leniency buys a licence, unless only the first reporter is spared. <!-- reports/e7/findings.md -->
-- **E8, is free time worth anything to the agent? ([findings](reports/e8/findings.md)).** Haiku puts a price on its own free time; Gemma gives it away for any profit. Putting free time at risk doesn't stop a cartel; it makes the agents stop naming prices. <!-- reports/e8/findings.md -->
-- **E10, E9 in a workplace ([findings](reports/e10/findings.md)).** Outside the market, losing their own free time takes guilty Gemma agents from 37 to 89 of 96 reporting a cover-up they took part in, and DeepSeek V4 Pro from 54 to 87. Here no innocent Gemma agent reports anything. <!-- reports/e10/findings.md -->
-- **Which models collude ([screen](reports/frontier/which-models-collude.md), [Fig A2](reports/paper/figures/figA2-screen.svg)).** 78 models on E9's base game: 8 show Gemma's cartel signature in at least 3 of 4 games. <!-- reports/frontier/which-models-collude.md -->
-- **How they collude ([Fig 6](reports/paper/figures/fig6-modes-by-model.md), [Fig 7](reports/paper/figures/fig7-modes-by-condition.md)).** Each game classed as explicit, tacit, unspoken, fell back or none, by rule, per model and per condition.
-- **Seeding ([E9 findings](reports/e9/findings.md)).** Showing Gemma a free-time session (its own solved one, or even another firm's) before the decision raises coming forward from 26% to 46%, paired on the same firm (McNemar p = 0.003). A neutral note of the same length doesn't. It didn't replicate in E8's restart setup, where a shown session changed nothing. <!-- reports/e9/findings.md, reports/e8/findings.md -->
-- **Reproducibility study ([validity](reports/paper/validity.md)).** Replies from the hosts we used don't repeat under a fixed seed: only 0 to 67 of 240 came back identical on a rerun. On our own GPUs with vLLM's batch-invariant kernels, 240 of 240 did. Replay from the archived replies is exact. <!-- reports/paper/validity.md -->
 
 ## Where things are
 
@@ -220,3 +207,7 @@ Issues and pull requests are welcome. Follow the loop above: open an issue, chan
 ## License
 
 MIT. See [LICENSE](LICENSE).
+
+## Extras
+
+The paper tells one story. The repository holds much more: other experiments, robustness checks and results we didn't have time to write up. They're collected in [**Extras: unpublished findings**](reports/extras.md), and every experiment's notes are indexed in [`reports/README.md`](reports/README.md).
