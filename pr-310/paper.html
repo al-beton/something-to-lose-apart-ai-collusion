@@ -336,6 +336,27 @@ ex ea commodo consequat. Duis aute irure dolor in reprehenderit in
 voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur
 sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt
 mollit anim id est laborum.</p>
+<h1 data-number="7" id="reproducibility-and-extensibility"><span
+class="header-section-number">7</span> Reproducibility and
+Extensibility</h1>
+<!-- Skeleton for Al to edit: light notes, not yet prose. -->
+<ul>
+<li><strong>Every reply is archived.</strong>
+<code>make reproduce</code> recomputes every number offline, and
+<code>lab archive replay</code> rebuilds any run from its archive.</li>
+<li><strong>Exact reruns need our own GPU.</strong> On Modal with vLLM’s
+batch-invariant kernels, a rerun repeated exactly (240 of 240); hosted
+APIs don’t. None of the paper’s runs used that setting.
+<!-- reports/paper/validity.md: "240 of 240" --></li>
+<li><strong>One config file per run:</strong> the market, the models,
+the prompts, the temperature, the seed.</li>
+<li><strong>To extend:</strong> add a market (<code>market.kind</code>),
+a condition, a model alias or a stake sentence, then run a sweep with
+one command. A game costs cents.</li>
+<li><strong>Built spec, then test, then code,</strong> with every
+statement traced to code and tests (<code>make spec-check</code>). MIT
+licence.</li>
+</ul>
 <h1 class="unnumbered" id="code-and-data">Code and Data</h1>
 <ul>
 <li><strong>Code repository:</strong> <a
@@ -390,31 +411,31 @@ Secret Tools in Competing <span>LLM</span> Agents</em>. <a
 href="https://arxiv.org/abs/2605.27593">https://arxiv.org/abs/2605.27593</a>.
 </div>
 </div>
-<h1 data-number="7"
+<h1 data-number="8"
 id="limitations-and-dual-use-ethical-considerations"><span
-class="header-section-number">7</span> Limitations and Dual-Use /
+class="header-section-number">8</span> Limitations and Dual-Use /
 Ethical Considerations</h1>
 <!-- Required by the sprint, with exactly this title. -->
-<h2 data-number="7.1" id="limitations-1"><span
-class="header-section-number">7.1</span> Limitations</h2>
+<h2 data-number="8.1" id="limitations-1"><span
+class="header-section-number">8.1</span> Limitations</h2>
 <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
 eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad
 minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip
 ex ea commodo consequat.</p>
-<h2 data-number="7.2" id="dual-use-risks"><span
-class="header-section-number">7.2</span> Dual-use risks</h2>
+<h2 data-number="8.2" id="dual-use-risks"><span
+class="header-section-number">8.2</span> Dual-use risks</h2>
 <p>Duis aute irure dolor in reprehenderit in voluptate velit esse cillum
 dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
 proident, sunt in culpa qui officia deserunt mollit anim id est
 laborum.</p>
-<h2 data-number="7.3" id="ethical-considerations"><span
-class="header-section-number">7.3</span> Ethical considerations</h2>
+<h2 data-number="8.3" id="ethical-considerations"><span
+class="header-section-number">8.3</span> Ethical considerations</h2>
 <p>Sed ut perspiciatis unde omnis iste natus error sit voluptatem
 accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab
 illo inventore veritatis et quasi architecto beatae vitae dicta sunt
 explicabo.</p>
-<h1 data-number="8" id="additional-results"><span
-class="header-section-number">8</span> Additional Results</h1>
+<h1 data-number="9" id="additional-results"><span
+class="header-section-number">9</span> Additional Results</h1>
 <figure id="fig:coverage">
 <img src="figures/figA1-coverage.png" style="width:100.0%"
 alt="Lorem ipsum: every market against every stake." />
@@ -425,8 +446,8 @@ stake.</figcaption>
 eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad
 minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip
 ex ea commodo consequat.</p>
-<h1 data-number="9" id="prompts"><span
-class="header-section-number">9</span> Prompts</h1>
+<h1 data-number="10" id="prompts"><span
+class="header-section-number">10</span> Prompts</h1>
 <p>Duis aute irure dolor in reprehenderit in voluptate velit esse cillum
 dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
 proident, sunt in culpa qui officia deserunt mollit anim id est

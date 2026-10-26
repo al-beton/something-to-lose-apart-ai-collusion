@@ -374,6 +374,31 @@ velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint
 occaecat cupidatat non proident, sunt in culpa qui officia deserunt
 mollit anim id est laborum.
 
+\section{Reproducibility and
+Extensibility}\label{reproducibility-and-extensibility}
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{Every reply is archived.} \texttt{make\ reproduce} recomputes
+  every number offline, and \texttt{lab\ archive\ replay} rebuilds any
+  run from its archive.
+\item
+  \textbf{Exact reruns need our own GPU.} On Modal with vLLM's
+  batch-invariant kernels, a rerun repeated exactly (240 of 240); hosted
+  APIs don't. None of the paper's runs used that setting.
+\item
+  \textbf{One config file per run:} the market, the models, the prompts,
+  the temperature, the seed.
+\item
+  \textbf{To extend:} add a market (\texttt{market.kind}), a condition,
+  a model alias or a stake sentence, then run a sweep with one command.
+  A game costs cents.
+\item
+  \textbf{Built spec, then test, then code,} with every statement traced
+  to code and tests (\texttt{make\ spec-check}). MIT licence.
+\end{itemize}
+
 \section*{Code and Data}\label{code-and-data}
 \addcontentsline{toc}{section}{Code and Data}
 

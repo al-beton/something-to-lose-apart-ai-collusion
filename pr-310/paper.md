@@ -163,6 +163,16 @@ Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu 
 
 Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
 
+# Reproducibility and Extensibility
+
+<!-- Skeleton for Al to edit: light notes, not yet prose. -->
+
+- **Every reply is archived.** `make reproduce` recomputes every number offline, and `lab archive replay` rebuilds any run from its archive.
+- **Exact reruns need our own GPU.** On Modal with vLLM's batch-invariant kernels, a rerun repeated exactly (240 of 240); hosted APIs don't. None of the paper's runs used that setting. <!-- reports/paper/validity.md: "240 of 240" -->
+- **One config file per run:** the market, the models, the prompts, the temperature, the seed.
+- **To extend:** add a market (`market.kind`), a condition, a model alias or a stake sentence, then run a sweep with one command. A game costs cents.
+- **Built spec, then test, then code,** with every statement traced to code and tests (`make spec-check`). MIT licence.
+
 # Code and Data {.unnumbered}
 
 - **Code repository:** <https://github.com/al-beton/something-to-lose-apart-ai-collusion>
