@@ -1,4 +1,4 @@
-# Implements: reproducibility/reported-numbers-checked, tooling/one-command-each, tooling/locked-dependencies, ci/end-to-end, reports/paper-figures, reports/paper-main-figures, reports/paper-source
+# Implements: reproducibility/reported-numbers-checked, tooling/one-command-each, tooling/locked-dependencies, ci/end-to-end, reports/paper-figures, reports/paper-main-figures, reports/paper-project-image, reports/paper-source
 .PHONY: install lint test spec-check e2e paper-figures reproduce paper-tools paper-html paper-tex paper-pdf paper-watch paper-build-dir
 install:
 	uv sync --frozen
@@ -15,6 +15,7 @@ paper-figures:  # the paper's figures and tables, offline, from committed runs
 	uv run python reports/paper/build.py
 	uv run python reports/paper/figures.py
 	uv run python reports/paper/fig1_round.py
+	uv run python reports/paper/project_image.py
 reproduce:  # every committed number recomputed, offline; fails on a mismatch
 	uv run python reports/reproduce.py
 
