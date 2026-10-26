@@ -56,7 +56,7 @@ jobs:
           pdftoppm -r 110 -png paper/build/paper.pdf paper/build/pages/p
           (cd paper/build/pages && ls p-*.png) > paper/build/pages.txt
           date +%s > paper/build/stamp
-          cp paper/paper.md paper/build/
+          cp paper/paper.md paper/body.md paper/appendix.md paper/build/
       - name: Publish to gh-pages/${{ env.SLOT }}
         run: |
           git config --global user.name github-actions

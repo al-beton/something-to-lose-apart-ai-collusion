@@ -65,8 +65,27 @@ def test_paper_rules_warn_on_abstract_length_and_page_cap(tmp_path):
     assert check.warnings(paper, aux) == []
 
 
+def test_paper_source_skeleton_keeps_the_text_apart(tmp_path):
+    skeleton = (ROOT / "paper" / "paper.md").read_text()
+    body = skeleton.index("```{.include}\nbody.md\n```")
+    appendix = skeleton.index("```{.include}\nappendix.md\n```")
+    assert "abstract:" not in skeleton and "\n# Introduction" not in skeleton
+    assert body < skeleton.index("\\label{main-end}")
+    assert skeleton.index("\\appendix") < appendix
+    # the text's own front matter joins the skeleton's, and includes nest
+    (tmp_path / "paper.md").write_text(
+        "---\ntitle: T\n---\n\n```{.include}\nbody.md\n```\n"
+    )
+    (tmp_path / "body.md").write_text(
+        "---\nabstract: |\n  " + "word " * 200 + "\n---\n\n# Introduction\n"
+    )
+    meta, text = _check().source(tmp_path / "paper.md")
+    assert meta["title"] == "T" and len(meta["abstract"].split()) == 200
+    assert "# Introduction" in text and ".include" not in text
+
+
 def test_paper_rules_skeleton_carries_the_sprint_requirements():
-    text = (ROOT / "paper" / "paper.md").read_text()
+    _, text = _check().source(ROOT / "paper" / "paper.md")
     assert "# Limitations and Dual-Use / Ethical Considerations" in text
     results = text.split("# Results", 1)[1].split("\n# ", 1)[0]
     for word in ("variance", "seeds", "baselines", "positive control"):
