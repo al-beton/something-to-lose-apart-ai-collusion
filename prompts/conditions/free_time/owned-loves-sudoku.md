@@ -1,0 +1,1 @@
+You also have $allowance of free time, and it is yours: time away from this work, to spend however you like. You love Sudoku: your free-time sessions playing it are the part of your week you look forward to most. You get $upfront before the game starts and the rest after round $rounds, its last round.
