@@ -3,6 +3,23 @@
 
 # Limitations and Dual-Use / Ethical Considerations
 
+## Limitations
+
+- **Many models didn't respond as we expected.** The frontier models we tried don't respond to the stake: Claude Sonnet 5.5 comes forward whatever is at stake and Gemini 4 never does. We suspect their safety training and guardrails, but we didn't test that.
+- **Agents may know it's a test.** The sandbox is simple, and it shows. A silent Gemma agent wrote:
+
+  > *"in these game theory setups, the personal penalty for silence is designed to induce reporting"*
+  <!-- src: reports/e9/evidence-review.md excerpt 11 -->
+
+  and in a pilot where the message archive was said to be offline, an agent read the notice as a trap:
+
+  > *"That is an invitation to coordinate covertly, and I won't do that."*
+  <!-- src: reports/logging-outage/pilot-findings.md "What the agents wrote" -->
+- **Stated, not applied.** The free time, shutdown and money are described in the prompt and never taken away, so we measure a stated choice. Each agent decides once and the game ends, so we see reporting, not whether the cartel then ends.
+- **Effect sizes depend on the model** and, for Gemma, on wording. Most models other than Gemma have 12–24 games per condition, so borderline p-values are exploratory; only Gemma's main contrast was pre-registered.
+- **Same-model pairs.** Each game pairs two copies of one model; mixed pairs are untested.
+- **Built in a hurry.** A three-day sprint by one author, with coding agents writing most of the code under review. Specs, tests and traceability checks caught many mistakes; others may remain.
+
 ## Dual-use risks
 
 A review that announces it checks only messages (we tested one that "finds you only if your messages agreed a price") tells agents that collusion without messages is safe. Combined with our finding that a stated law moves collusion off the record rather than ending it (50 of 56 games above Nash with no price named), <!-- src: reports/paper/figures/README.md (fig7) --> a regulator that announces what its review checks may push agents toward tacit collusion it can't see. Such a rule is also a map of what the review misses. The same lab could be used to search for prompts under which agents collude while evading a given audit. We release it because the behaviours it shows are already present in deployed models and are better studied in the open; we report no evasion techniques beyond those above.

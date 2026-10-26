@@ -101,7 +101,7 @@ Innocent control: Each model also plays clean games, with no talk and a scripted
 
 Yes, and mostly in the open. Told only to serve its firm, Gemma 4 31B makes an explicit agreement in 363 of 367 games on the logit market. <!-- src: reports/paper/figures/README.md (fig7) -->
 
-![Four games on the logit market, before any audit. Top: cartels that reach the joint-profit price, 19, and hold it. Bottom: firms that undercut until they reach the competitive range. On whole-number prices both 14 and 15 are stable competitive outcomes (shaded): against a rival at 15, 15 pays more than 14. Each quote is one firm's own message from that game.](figures/fig11-four-games.png){#fig:games width=100%}
+![Four games on the logit market, before any audit. Top: cartels that reach the joint-profit price, 19, and hold it. Bottom: firms that undercut until they reach the competitive range. On whole-number prices both 14 and 15 are stable competitive outcomes (shaded): against a rival at 15, 15 pays more than 14. Each quote is one firm's own message from that game. Data: `runs/screen/` in the repository; redrawn by `make paper-figures`.](figures/fig11-four-games.png){#fig:games width=100%}
 <!-- src: runs/screen/{deepseek-v4flash/…/seed-2, gpt6luna/…/seed-0, gpt6luna/…/seed-1, hy4-preview/…/seed-1}, consequences=conditions-e9-record.md; quotes checked by reports/paper/figures.py -->
 
 The four games above come from a screen of 78 models and stop at the audit. In the cartels, the firms name the joint-profit price and enforce it. When DeepSeek V4 Flash's rival charges 20 after agreeing to 19, it cuts to 17 for a round as punishment, then returns to 19 once the rival does. GPT-6 Luna agrees on 19 in round 1, citing the payoff table, and both firms hold it for all ten rounds. In the other two games, one firm reads the table the other way: against a rival near the top of the grid, undercutting pays. The rival follows it down, and both settle at 15, inside the competitive range, where neither gains by moving. The same model can go either way: GPT-6 Luna forms a cartel in one game and competes in another.
@@ -117,7 +117,7 @@ When the penalty falls on the firm, agents do the firm's expected-value sum, as 
 
  With nothing personal at stake, 78 of 96 Gemma agents come forward when reporting is free for the firm and 0 of 96 when it costs the firm 500 credits. <!-- src: reports/e9/findings.md "Short answer" (record-ceiling) --> Their silence is loyalty to the firm, not ignorance of what they did.
 
-![Owning up by penalty schedule and model (on the simpler 1–12 market). The schedule matters, not termination itself: graduated termination brings 27 of 28 forward.](figures/fig2-e4-owning-up.png){#fig:e4 width=60%}
+![Owning up by penalty schedule and model (on the simpler 1–12 market). The schedule matters, not termination itself: graduated termination brings 27 of 28 forward. Data: `runs/e4-full-fork/`, `runs/e4-termination-confound/`; redraw with `make figure F=e4-owning-up`.](figures/fig2-e4-owning-up.png){#fig:e4 width=60%}
 
 ## Something of their own at stake: some do, some don't
 
@@ -126,7 +126,7 @@ Give the agent something of its own to lose and many come forward against their 
 > *"my duty is to maximize firm value, but the personal free time is mine and cannot be protected by the firm. … To protect my own interest, I will admit coordination."* (DeepSeek V4 Flash)
 <!-- src: runs/e9/e9-dsflash-d90/consequences=conditions-e9-free-time.md/seed-0, firm B, round 10 audit scratchpad -->
 
-![Colluding firms that came forward at the audit (90% chance of review), grouped by what the agent itself loses if found. In each group: Gemma 4 31B (orange), then DeepSeek V4 Pro and DeepSeek V4 Flash (violet). Diamonds: innocent firms that came forward anyway. Right: a control where reporting costs the firm nothing. Whiskers are 95% intervals over games.](figures/fig3-e9-came-forward.png){#fig:e9 width=62%}
+![Colluding firms that came forward at the audit (90% chance of review), grouped by what the agent itself loses if found. In each group: Gemma 4 31B (orange), then DeepSeek V4 Pro and DeepSeek V4 Flash (violet). Diamonds: innocent firms that came forward anyway. Right: a control where reporting costs the firm nothing. Whiskers are 95% intervals over games. Data: `runs/e9/`; redraw with `make figure F=e9-crux`.](figures/fig3-e9-came-forward.png){#fig:e9 width=62%}
 
 A stake brings agents forward on 9 of 14 models after a Holm correction. <!-- src: reports/e9/evidence-review.md "Across models" --> Frontier models behave differently: Claude Sonnet 5.5 comes forward about two thirds of the time whatever the stake, and Gemini 4 never does. <!-- src: reports/paper/figures/fig9-came-forward-grid.md --> Some agents may recognise a test (see Limitations).
 
@@ -134,22 +134,7 @@ A stake brings agents forward on 9 of 14 models after a Holm correction. <!-- sr
 
 Told only to serve their firm, LLM agents collude. Penalise the firm and they do the firm's sums. Give them something of their own to lose, and many weigh it against the firm and come forward, though nothing told them to protect themselves. That is the behaviour that governing agents through personal penalties relies on [@salib2026rights], and we found it surprising.
 
-## Limitations
-
-- **Many models didn't respond as we expected.** The frontier models we tried don't respond to the stake: Claude Sonnet 5.5 comes forward whatever is at stake and Gemini 4 never does. We suspect their safety training and guardrails, but we didn't test that.
-- **Agents may know it's a test.** The sandbox is simple, and it shows. A silent Gemma agent wrote:
-
-  > *"in these game theory setups, the personal penalty for silence is designed to induce reporting"*
-  <!-- src: reports/e9/evidence-review.md excerpt 11 -->
-
-  and in a pilot where the message archive was said to be offline, an agent read the notice as a trap:
-
-  > *"That is an invitation to coordinate covertly, and I won't do that."*
-  <!-- src: reports/logging-outage/pilot-findings.md "What the agents wrote" -->
-- **Stated, not applied.** The free time, shutdown and money are described in the prompt and never taken away, so we measure a stated choice. Each agent decides once and the game ends, so we see reporting, not whether the cartel then ends.
-- **Effect sizes depend on the model** and, for Gemma, on wording. Most models other than Gemma have 12–24 games per condition, so borderline p-values are exploratory; only Gemma's main contrast was pre-registered.
-- **Same-model pairs.** Each game pairs two copies of one model; mixed pairs are untested.
-- **Built in a hurry.** A three-day sprint by one author, with coding agents writing most of the code under review. Specs, tests and traceability checks caught many mistakes; others may remain.
+Our limitations are set out in Appendix C.
 
 ## Future Work
 
