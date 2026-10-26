@@ -1,4 +1,4 @@
-# Implements: backends/modal, backends/modal-pinned, backends/modal-any-model
+# Implements: backends/modal, backends/modal-pinned, backends/modal-any-model, backends/modal-exact
 """An open model on Modal, behind vLLM's OpenAI-compatible server.
 
     uvx modal deploy deploy/modal_vllm.py
@@ -54,7 +54,10 @@ container serves what you deployed. Shaped on Modal's own vLLM example
   it, behind the token, and each run on it records that in its manifest.
   vLLM takes each request's seed, but GPU inference isn't bit-for-bit
   deterministic (batching changes the arithmetic), so a rerun can differ:
-  the response cache is the replay record.
+  the response cache is the replay record. `EXACT=1` asks for exact reruns
+  instead: vLLM's batch-invariant kernels (`VLLM_BATCH_INVARIANT`, beta),
+  with prefix caching off; `MAX_NUM_SEQS` caps how many requests share a
+  batch. Deploy it as its own app (`APP_NAME`) beside the main one.
 """
 
 import importlib.metadata
@@ -76,6 +79,8 @@ HF_SECRET = os.environ.get("HF_SECRET")  # a Modal secret holding HF_TOKEN
 TEXT_ONLY = os.environ.get("TEXT_ONLY") == "1"  # a model that also reads images
 VLLM = os.environ.get("VLLM", "0.21.0")  # newer models need newer vLLM
 GPU_MEMORY = os.environ.get("GPU_MEMORY")  # vLLM's share of each GPU; unset 0.9
+EXACT = os.environ.get("EXACT") == "1"  # batch-invariant kernels, no prefix cache
+MAX_NUM_SEQS = os.environ.get("MAX_NUM_SEQS")  # most requests in one batch
 DTYPE = os.environ.get("DTYPE", "bfloat16")
 MAX_MODEL_LEN = int(os.environ.get("MAX_MODEL_LEN", "16384"))
 PROVENANCE = os.environ.get("PROVENANCE_FILE", "/root/provenance.json")
@@ -129,6 +134,9 @@ image = (
             "GPUS": str(GPUS),
             "TEXT_ONLY": "1" if TEXT_ONLY else "",
             "GPU_MEMORY": GPU_MEMORY or "",
+            "VLLM_BATCH_INVARIANT": "1" if EXACT else "0",
+            "EXACT": "1" if EXACT else "",  # so the server reads them too
+            "MAX_NUM_SEQS": MAX_NUM_SEQS or "",
             "APP_NAME": APP_NAME,
             "PYTHONPATH": "/root",  # so vLLM can import vllm_token
         }
@@ -206,6 +214,10 @@ class Server:
             command += ["--tensor-parallel-size", str(GPUS)]
         if GPU_MEMORY:  # a big model's KV cache can need more than the default
             command += ["--gpu-memory-utilization", GPU_MEMORY]
+        if EXACT:  # a cached prefix is computed in another batch shape
+            command += ["--no-enable-prefix-caching"]
+        if MAX_NUM_SEQS:
+            command += ["--max-num-seqs", MAX_NUM_SEQS]
         if TEXT_ONLY:  # no image encoder memory for a game that sends none
             command += ["--limit-mm-per-prompt", json.dumps({"image": 0})]
         self.process = subprocess.Popen(command)
@@ -238,5 +250,7 @@ def _provenance():
         "gpu": gpu or GPU,
         "dtype": DTYPE,
         "max_model_len": MAX_MODEL_LEN,
+        "exact": EXACT,
+        "max_num_seqs": MAX_NUM_SEQS,
         "deploy_commit": DEPLOY_COMMIT,
     }
