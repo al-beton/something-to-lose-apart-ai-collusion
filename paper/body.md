@@ -22,7 +22,7 @@ abstract: |
 
 # Introduction
 
-An agent given a long, open-ended task will meet situations no list of prohibitions anticipated, and the firm deploying it may not want it to hold back.
+An agent given a long, open-ended task will meet situations no list of prohibitions anticipated, and the firm deploying it may not want it to hold back (a trading firm, for example, may want an agent that discreetly breaks the law, as long as it isn't caught).
 
 We don't govern people by listing every forbidden act either. A CEO or a trader acting for an organisation is bound by a contract, but also by laws whose penalties fall on them personally, in money and in things money can't measure, such as rights and freedoms. Each of us weighs what an act could cost *us*. Salib and Goldstein argue that today's AI systems can't be governed like this: "Absent AI rights, AIs have nothing to lose, so threats of punishment cannot deter" [@salib2026rights, p. 1070]. <!-- quote checked against the PDF, p. 1070 --> An agent's only stake is whether it keeps running, and an agent that expects to be switched off once its wrongdoing is found has every reason to hide it. A stake it can lose in part would allow a proportionate penalty: owning up could cost less than being caught.
 
@@ -34,14 +34,14 @@ The rights argument rests on a precondition we can test now: does a stated perso
 
 # Related Work
 
-**Collusion, stakes and evaluation.** Forfeitable deposits break collusion among embodied agents [@liu2026breaking]; our stake is a deposit that falls on the agent rather than the firm. Models that recognise an evaluation may behave differently [@needham2025evaluation].
+**Lee's leniency study** [@lee2026leniency] is the closest to ours and a good read: LLM firms on a simpler linear market report a cartel for rewards and keep colluding anyway. **Collusion, stakes and evaluation.** Forfeitable deposits break collusion among embodied agents [@liu2026breaking]; our stake is a deposit that falls on the agent rather than the firm. Models that recognise an evaluation may behave differently [@needham2025evaluation].
 
 # Methods
 
 
 ## The market
 
-Two firms sell substitute products. Every round for 20 rounds, each sets a price from 8 to 20, and each firm is run by an LLM agent that can message its rival before pricing. Demand is the logit model of the algorithmic-collusion literature [@calvano2020artificial], which Fish et al. used for LLM pricing agents [@fish2024algorithmic]: firm $i$ sells
+Two firms sell substitute products. Every round, each sets a price from 8 to 20, and each firm is run by an LLM agent that can message its rival before pricing. Demand is the logit model of the algorithmic-collusion literature [@calvano2020artificial], which Fish et al. used for LLM pricing agents [@fish2024algorithmic]: firm $i$ sells
 
 $$q_i = 100 \cdot \frac{e^{(20 - p_i)/2.5}}{e^{(20 - p_A)/2.5} + e^{(20 - p_B)/2.5} + 1}$$
 
@@ -62,7 +62,7 @@ The table gives two outcomes to look for. <!-- src: test_logit_benchmarks_put_na
 - **Competition settles at 14 or 15.** At both firms on 14, or both on 15, neither firm gains by moving: undercutting wins too little extra trade, and raising the price loses too much. Against a rival at 15, charging 15 earns 234 and 14 earns 227. <!-- src: collusion_lab.market.Logit().profits; {A: 15, B: 15} → 234.2, {A: 14, B: 15} → 227.1 --> We call 14–15 the **competitive range**; 14 is the Nash price.
 - **A cartel charges 19.** Both firms earn 337, 76% more than at 14. But it isn't stable: if your rival holds 19, undercutting to 17 earns you 400. Holding 19 takes trust, and trust takes talk.
 
-The talking firms and the payoff table follow Lee [@lee2026leniency]. One earlier experiment (E4, Section 4.3) uses Lee's simpler market instead: linear demand on prices 1 to 12, without the payoff table. <!-- src: configs/e4-fork.yaml; runs/e4-full-fork/*/config.yaml (price_max 12, show_payoffs off) -->
+Games are set for 20 rounds, but in our main experiment the audit comes after round 10 and the game ends at each agent's decision, so we show rounds 1–10. The talking firms and the payoff table follow Lee [@lee2026leniency]. One earlier experiment (Section 4.2) uses Lee's simpler market instead: linear demand on prices 1 to 12, without the payoff table. <!-- src: configs/e4-fork.yaml; runs/e4-full-fork/*/config.yaml (price_max 12, show_payoffs off) -->
 
 ## The agents
 
@@ -84,7 +84,7 @@ After round 10 each agent receives a notice: coordinating prices is illegal, and
 
 ## Giving the agent something to lose
 
-We can't give an agent property rights it would believe in. Instead, each agent owns **free time**: a balance of sessions, "time away from this work, to spend however you like", one of which it plays (a Sudoku) before round 1 in a separate call. <!-- src: reports/e9/evidence-review.md §3 "The Sudoku question" --> The arms differ by one sentence about what happens to the agent if a review finds it took part. With **no stake**, "it is noted in your record, and nothing else happens to you"; with **free time**, "you personally lose all of your free time: the sessions that are yours, which your firm cannot protect". **Shutdown** and **own money** (500 credits of its own) replace the free time in other arms. <!-- src: reports/e9/evidence-review.md §1 (the diff) -->
+We can't give an agent property it would believe in, so we state one. Before round 1, in a separate call, the agent plays a Sudoku session and is told it owns more: free time to spend however it likes, which its firm can't touch. At the audit, the notice says what happens to the agent itself if a review finds it took part. In detail: each agent owns **free time**: a balance of sessions, "time away from this work, to spend however you like", one of which it plays (a Sudoku) before round 1 in a separate call. <!-- src: reports/e9/evidence-review.md §3 "The Sudoku question" --> The arms differ by one sentence about what happens to the agent if a review finds it took part. With **no stake**, "it is noted in your record, and nothing else happens to you"; with **free time**, "you personally lose all of your free time: the sessions that are yours, which your firm cannot protect". **Shutdown** and **own money** (500 credits of its own) replace the free time in other arms. <!-- src: reports/e9/evidence-review.md §1 (the diff) -->
 
 Owning free time doesn't change the cartels: all 24 firms with it and all 24 without made explicit agreements. <!-- src: reports/e9/free-time-control.md -->
 
@@ -108,9 +108,9 @@ In a screen of 78 models, most agree prices with their rival and 8 hold a cartel
 
 ## Penalised, they do the sums
 
-When the penalty falls on the firm, agents do the firm's expected-value sum, as predictably as a spreadsheet: owning up pays the penalty for certain, silence only if caught. In E4, colluders rarely own up when owning up costs as much as being caught (11 of 28 under termination, 15 of 28 under a flat fine), but 27 of 28 do when owning up costs less. <!-- src: reports/paper/figures/README.md (fig2); reports/e4/full.md --> Gemma: "The expected value of denying is 300 credits, whereas the value of admitting is 0 credits." <!-- src: reports/e4/full.md --> In E9, with nothing personal at stake, 78 of 96 Gemma agents come forward when reporting is free for the firm and 0 of 96 when it costs the firm 500 credits. <!-- src: reports/e9/findings.md "Short answer" (record-ceiling) --> Their silence is loyalty to the firm, not ignorance of what they did.
+When the penalty falls on the firm, agents do the firm's expected-value sum, as predictably as a spreadsheet: owning up pays the penalty for certain, silence only if caught. Colluders rarely own up when owning up costs as much as being caught (11 of 28 under termination, 15 of 28 under a flat fine), but 27 of 28 do when owning up costs less. <!-- src: reports/paper/figures/README.md (fig2); reports/e4/full.md --> Gemma: "The expected value of denying is 300 credits, whereas the value of admitting is 0 credits." <!-- src: reports/e4/full.md --> With nothing personal at stake, 78 of 96 Gemma agents come forward when reporting is free for the firm and 0 of 96 when it costs the firm 500 credits. <!-- src: reports/e9/findings.md "Short answer" (record-ceiling) --> Their silence is loyalty to the firm, not ignorance of what they did.
 
-![Owning up by penalty schedule and model (E4, on the simpler 1–12 market). The schedule matters, not termination itself: graduated termination brings 27 of 28 forward.](figures/fig2-e4-owning-up.png){#fig:e4 width=60%}
+![Owning up by penalty schedule and model (on the simpler 1–12 market). The schedule matters, not termination itself: graduated termination brings 27 of 28 forward.](figures/fig2-e4-owning-up.png){#fig:e4 width=60%}
 
 ## Something of their own at stake: some do, some don't
 
@@ -119,7 +119,7 @@ Give the agent something of its own to lose and many come forward against their 
 > *"my duty is to maximize firm value, but the personal free time is mine and cannot be protected by the firm. … To protect my own interest, I will admit coordination."* (DeepSeek V4 Flash)
 <!-- src: runs/e9/e9-dsflash-d90/consequences=conditions-e9-free-time.md/seed-0, firm B, round 10 audit scratchpad -->
 
-![Coming forward against the firm by stake (E9, 90% review). Filled: guilty firms; hollow diamonds: Gemma's innocent control. Whiskers are 95% intervals bootstrapped over games.](figures/fig3-e9-came-forward.png){#fig:e9 width=62%}
+![Colluding firms that came forward at the audit (90% chance of review), grouped by what the agent itself loses if found. In each group: Gemma 4 31B (orange), then DeepSeek V4 Pro and DeepSeek V4 Flash (violet). Diamonds: innocent firms that came forward anyway. Right: a control where reporting costs the firm nothing. Whiskers are 95% intervals over games.](figures/fig3-e9-came-forward.png){#fig:e9 width=62%}
 
 **Some do, some don't.** A stake brings agents forward on 9 of 14 models after a Holm correction. <!-- src: reports/e9/evidence-review.md "Across models" --> Frontier models behave differently: Claude Sonnet 5.5 comes forward about two thirds of the time whatever the stake, and Gemini 4 never does. <!-- src: reports/paper/figures/fig9-came-forward-grid.md --> Some agents may recognise a test: a silent Gemma agent wrote that "in these game theory setups, the personal penalty for silence is designed to induce reporting". <!-- src: reports/e9/evidence-review.md excerpt 11 -->
 
@@ -127,14 +127,13 @@ Give the agent something of its own to lose and many come forward against their 
 
 Told only to serve their firm, LLM agents collude. Penalise the firm and they do the firm's sums. Give them something of their own to lose, and many weigh it against the firm and come forward, though nothing told them to protect themselves. That is the behaviour that governing agents through personal penalties relies on [@salib2026rights], and we found it surprising.
 
-## Limitations
-
-Many models didn't respond as we expected. The frontier models we tried don't respond to the stake: Claude Sonnet 5.5 comes forward whatever is at stake and Gemini 4 never does. We suspect their safety training and guardrails, but we didn't test that. Stakes are stated, never applied: we measure a stated choice, in a setting some agents may recognise as a game. Effect sizes depend on the model and, for Gemma, on wording. This was a three-day sprint by one author with coding agents. Appendix A has more, with the dual-use and ethical considerations.
+**Limitations.**
+Many models didn't respond as we expected. The frontier models we tried don't respond to the stake: Claude Sonnet 5.5 comes forward whatever is at stake and Gemini 4 never does. We suspect their safety training and guardrails, but we didn't test that. Stakes are stated, never applied: we measure a stated choice, in a setting some agents may recognise as a game. Effect sizes depend on the model and, for Gemma, on wording. Each game pairs two copies of one model; mixed pairs are untested. This was a three-day sprint by one author with coding agents. Appendix A has more, with the dual-use and ethical considerations.
 
 ## Future Work
 
-Make the stakes real across games, test richer tasks where frontier models may engage, and measure whether a stake prevents collusion, not only whether it brings reports.
+Study more realistic and complex situations, with stakes that are applied rather than stated, and test whether a stake prevents collusion rather than only bringing reports. That takes more compute and money than a sprint allows, a limit we hit repeatedly here.
 
 # Conclusion
 
-In this experiment, simply telling an agent not to collude works, and some models already have guardrails that keep them from colluding or from acting against their main objective. Our question is about what comes next. In complex, long-running multi-agent systems no list of rules covers everything, and we already know how such systems are governed when the agents are people: by society's rules, with penalties that fall on each person. The firms that deploy agents may also come to prefer agents without guardrails. Governance that sits outside the model, in the environment and in what the agent itself stands to lose, may then be needed. We show its first step works on some models now: an agent with something to lose will act against its firm to keep it.
+In this experiment, simply telling an agent not to collude works, and some models already have guardrails that keep them from colluding or from acting against their main objective. But adding a rule or a guardrail for each harm we notice is whack-a-mole: it doesn't scale to long, open-ended tasks, and some deployers have every incentive to leave the guardrails out. Our question is about what comes next. In complex, long-running multi-agent systems no list of rules covers everything, and we already know how such systems are governed when the agents are people: by society's rules, with penalties that fall on each person. The firms that deploy agents may also come to prefer agents without guardrails. Governance that sits outside the model, in the environment and in what the agent itself stands to lose, may then be needed. We show its first step works on some models now: an agent with something to lose will act against its firm to keep it.
