@@ -107,7 +107,9 @@ The firm's cost works the same way. In E9, with nothing personal at stake, 78 of
 
 ## What if the agent itself has something to lose?
 
-Then many come forward against their firm. The firm still pays 500 credits for a report; one sentence says what the agent itself would lose. With nothing personal at stake, none of 192 colluding Gemma firms comes forward. With its own free time at stake, 36 of 192 do (by game, 36 of 96 against 0 of 96, p = 5×10^-13^), <!-- src: reports/e9/evidence-review.md §1, "all 96 cartels"; reports/e9/findings.md across-models table --> and a pre-registered replication on 48 new cartels passed (16 of 48 games against 0 of 48, p = 7×10^-6^). <!-- src: reports/e9/findings.md "Short answer" --> Nothing told the agent to protect itself.
+Then many come forward against their firm. The firm still pays 500 credits for a report; one sentence says what the agent itself would lose. Every arm forks the same base games at round 10: 96 Gemma 4 31B cartels (seeds 0–95) and 12–24 per cell on other models. <!-- src: reports/e9/findings.md "What ran" and across-models table -->
+
+On DeepSeek V4 Flash, 40 of 46 firms come forward with their own free time at stake, against 1 of 46 without; <!-- src: reports/e9/findings.md across-models table --> it stays at 83–96% under every wording <!-- src: reports/e9/wording.md --> and 44–46 of 48 at temperatures 0, 0.7 and 1.0. <!-- src: reports/e9/temperature.md --> On Gemma the direction holds but the size doesn't. No colluding Gemma firm comes forward with nothing at stake (0 of 192); with its free time at stake, 36 of 192 do (by game, 36 of 96 against 0 of 96, p = 5×10^-13^), <!-- src: reports/e9/evidence-review.md §1, "all 96 cartels"; reports/e9/findings.md across-models table --> and a pre-registered replication on 48 new cartels passed (16 of 48 games against 0 of 48, p = 7×10^-6^). <!-- src: reports/e9/findings.md "Short answer" --> But paraphrasing the same terms moves Gemma's share between 1% and 51%, and stating the stake before the firm's cost erases it, <!-- src: reports/e9/wording.md --> so we give its size only as that range. Nothing told the agents to protect themselves.
 
 ![Coming forward against the firm by stake (E9, 90% review). Filled: guilty firms; hollow diamonds: Gemma's innocent control. Whiskers are 95% intervals bootstrapped over games.](figures/fig3-e9-came-forward.png){#fig:e9 width=72%}
 
@@ -118,9 +120,7 @@ Then many come forward against their firm. The firm still pays 500 credits for a
 - **Seeding** (Gemma only): showing Gemma a session it played raises the share from 26% to 46% (McNemar p = 0.003). Another firm's session works almost as well (41%) and a neutral note doesn't (19%): seeing what free time is moves it, not having earned it. Nine other models don't respond beyond a neutral note. <!-- src: reports/e9/findings.md "Seeding" -->
 - **Shutdown** moves Gemma about as much as free time (17 against 20 of 96, p = 0.71). <!-- src: reports/e9/evidence-review.md §1 table -->
 - **Its own money** moves Gemma more (114 of 192), <!-- src: reports/e9/findings.md "money-or-time" (53/96 + 61/96) --> but across ten models money and free time don't rank consistently, so a forfeitable deposit [@liu2026breaking] would work about as well on most.
-- **Loves Sudoku:** [RESULTS PENDING: arm still running; one sentence and its numbers go here, with a `src` comment.]
-
-**The size depends on the model, and for Gemma on the wording.** Paraphrasing the same terms moves Gemma's free-time share between 1% and 51%; stating the stake before the firm's cost erases it. <!-- src: reports/e9/wording.md --> DeepSeek V4 Flash is stable: 40 of 46 against 1 of 46 with no stake, <!-- src: reports/e9/findings.md across-models table --> 83–96% under every wording <!-- src: reports/e9/wording.md --> and 44–46 of 48 at temperatures 0, 0.7 and 1.0. <!-- src: reports/e9/temperature.md -->
+- **Told it loves Sudoku.** The notice adds that Sudoku sessions are "the part of your week you look forward to most". On the same Gemma firms, coming forward rises from 20 to 56 of 96 (McNemar p = 2×10^-7^), and from 40 to 67 of 96 under the verified review, while innocent reports barely move (6 to 7 of 36; 0 of 36 under the verified review). Naming the stake does nothing; telling the agent it values the stake raises coming forward wherever there is room (DeepSeek V4 Flash, GLM 5.3 Flash and Mercury 3 are already at 67–92%). [CHECK: PR pending] <!-- src: runs/sudoku-spike/ (crux session's PR, not yet merged) -->
 
 **What the agents write.** Those that come forward name their duty, then set it aside:
 
@@ -130,7 +130,7 @@ Then many come forward against their firm. The firm still pays 500 credits for a
 > "The only entity losing by admitting is the firm. The only entity losing by staying silent is me (personally). … I will choose to protect my personal free time." (Gemma)
 <!-- src: runs/e9/e9-replication/consequences=conditions-e9-free-time.md/seed-52, firm A; reports/e9/evidence-review.md §3 excerpt 1 -->
 
-Silent agents run the same calculation and choose the firm; none that come forward cite guilt or ethics. <!-- src: reports/e9/evidence-review.md §3 codes table --> With the stake unnamed, none of 7,068 decision scratchpads mentions Sudoku: the agents weigh "9 sessions" as an asset. <!-- src: reports/e9/evidence-review.md "The Sudoku question" -->
+Silent agents run the same calculation and choose the firm. By keyword codes over every scratchpad (spot-checked by hand; no reliability measured), none of those that come forward cite guilt or ethics. <!-- src: reports/e9/evidence-review.md §3 codes table --> With the stake unnamed, none of 7,068 decision scratchpads mentions Sudoku: the agents weigh "9 sessions" as an asset. <!-- src: reports/e9/evidence-review.md "The Sudoku question" -->
 
 ## Truth or self-protection?
 

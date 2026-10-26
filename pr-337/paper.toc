@@ -14,8 +14,8 @@
 \contentsline {subsection}{\numberline {4.5}Do models differ?}{7}{subsection.4.5}%
 \contentsline {section}{\numberline {5}Discussion and Limitations}{8}{section.5}%
 \contentsline {subsection}{\numberline {5.1}Limitations}{8}{subsection.5.1}%
-\contentsline {subsection}{\numberline {5.2}Future Work}{8}{subsection.5.2}%
-\contentsline {section}{\numberline {6}Conclusion}{8}{section.6}%
+\contentsline {subsection}{\numberline {5.2}Future Work}{9}{subsection.5.2}%
+\contentsline {section}{\numberline {6}Conclusion}{9}{section.6}%
 \contentsline {section}{Code and Data}{9}{section*.7}%
 \contentsline {section}{LLM Usage Statement}{9}{section*.8}%
 \contentsline {section}{References}{9}{section*.9}%
@@ -24,7 +24,7 @@
 \contentsline {subsection}{\numberline {A.2}Dual-use risks}{10}{subsection.A.2}%
 \contentsline {subsection}{\numberline {A.3}Ethical considerations}{10}{subsection.A.3}%
 \contentsline {section}{\numberline {B}Reproducibility and Extensibility}{10}{appendix.B}%
-\contentsline {section}{\numberline {C}Additional Results}{10}{appendix.C}%
-\contentsline {subsection}{\numberline {C.1}With the whole conversation in memory}{10}{subsection.C.1}%
+\contentsline {section}{\numberline {C}Additional Results}{11}{appendix.C}%
+\contentsline {subsection}{\numberline {C.1}With the whole conversation in memory}{11}{subsection.C.1}%
 \contentsline {section}{\numberline {D}Reproducing Each Figure}{11}{appendix.D}%
 \contentsline {section}{\numberline {E}Prompts}{12}{appendix.E}%
