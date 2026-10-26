@@ -32,4 +32,4 @@ We set out to make everything as reproducible as possible, and the repository do
 - **Every figure has two commands:** `make figure F=<id>` redraws it free from committed runs, and `make regenerate F=<id>` replays its games at cost (`paper/README.md`).
 - **One config file per run:** the market, the models, the prompts, the temperature and the seed.
 
-The repository also holds many more experiments and figures than this paper shows, with a findings note for each (`reports/README.md`).
+The repository holds many more experiments and figures than this paper shows, each with a findings note (`reports/README.md`). Short on time, we searched broadly for an interesting result and kept this paper to the one we found; the rest are there for anyone who wants to build on them.
