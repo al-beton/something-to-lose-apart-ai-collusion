@@ -6,10 +6,10 @@ Al's ordered list for finishing the paper and releasing it. Work top to bottom, 
 Due **Monday 26 October 2026, 19:59 HKT**; submit once.
 
 ## 1. Format and layout
-- [ ] Apart template order: Introduction (with numbered contributions), Related Work, Methods, Results, Discussion and Limitations, Conclusion, Code and Data, References, Appendix.
-- [ ] Title page: title, author and affiliation, the sprint footnote, the repository URL ([#335](https://github.com/al-beton/something-to-lose-apart-ai-collusion/pull/335)).
-- [ ] At most 8 body pages before the references (the current draft builds to 9).
-- [ ] Results sections headed as questions, in a light voice.
+- [x] Apart template order: Introduction (with numbered contributions), Related Work, Methods, Results, Discussion and Limitations, Conclusion, Code and Data, References, Appendix.
+- [x] Title page: title, author and affiliation, the sprint footnote, the repository URL ([#335](https://github.com/al-beton/something-to-lose-apart-ai-collusion/pull/335)).
+- [x] At most 8 body pages before the references (content is about 6.5 pages; the build's 9 counts the title page, contents and end statements).
+- [x] Results sections headed as questions, in a light voice.
 
 ## 2. Title
 - [ ] *Something to Lose*, with or without a subtitle, decided.
@@ -52,10 +52,10 @@ Due **Monday 26 October 2026, 19:59 HKT**; submit once.
 - [ ] Future work: applied rather than stated stakes, richer scenarios, frontier models.
 
 ## 10. Mandatory parts (each can be done now, in parallel)
-- [ ] **10a. LLM usage statement:** built and run by Claude Code agents under Al's direction; which models wrote code and text; Al takes responsibility for every claim. *Paper E*
-- [ ] **10b. Prior-work disclosure:** all code written during the sprint (first commit 24 October 2026), nothing pre-existing, the libraries named (from `pyproject.toml`). *Paper E*
-- [ ] **10c. Code and Data:** the repository URL, the licence, `make reproduce`, what replays exactly (5,188 of 5,662 runs) and what doesn't (fresh fixed-seed reruns). *Paper E*
-- [ ] **10d. References verified:** every `references.bib` entry checked against its source (arXiv ID, URL, authors, year); Wagner "Anchored" and evaluation awareness found and added, or flagged to cut. *Paper F*
+- [x] **10a. LLM usage statement:** built and run by Claude Code agents under Al's direction; which models wrote code and text; Al takes responsibility for every claim. *Paper E*
+- [x] **10b. Prior-work disclosure:** all code written during the sprint (first commit 24 October 2026), nothing pre-existing, the libraries named (from `pyproject.toml`). *Paper E*
+- [x] **10c. Code and Data:** the repository URL, the licence, `make reproduce`, what replays exactly (5,188 of 5,662 runs) and what doesn't (fresh fixed-seed reruns). *Paper E*
+- [x] **10d. References verified:** every `references.bib` entry checked against its source (arXiv ID, URL, authors, year); Wagner "Anchored" and evaluation awareness found and added, or flagged to cut. *Paper F*
 - [ ] **10e. Links work:** the repository, Pages, figure paths and every URL in the paper. *Paper F*
 - [ ] **10f. Limitations and Dual-Use appendix:** titled exactly "Limitations and Dual-Use / Ethical Considerations", including that the verified rule tells agents collusion without messages is safe. *Paper C ([#336](https://github.com/al-beton/something-to-lose-apart-ai-collusion/pull/336))*
 
