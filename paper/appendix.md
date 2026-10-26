@@ -53,7 +53,7 @@ Showing Gemma a session it played raises coming forward from 26% to 46% (McNemar
 
 ## Told it values the stake
 
-The notice adds that Sudoku sessions are "the part of your week you look forward to most". On the same Gemma firms, coming forward rises from 20 to 56 of 96 (McNemar p = 2×10^-7^), and from 40 to 67 of 96 under the verified review, while innocent reports barely move (6 to 7 of 36; 0 of 36 under the verified review). Naming the stake does nothing; telling the agent it values the stake raises coming forward where there is room. [CHECK: PR pending] <!-- src: runs/sudoku-spike/ (crux session's PR, not yet merged) -->
+The notice adds that Sudoku sessions are "the part of your week you look forward to most". On the same Gemma firms, coming forward rises from 20 to 56 of 96 (by game, 20 to 40 of 48, McNemar p = 9×10^-5^), and from 40 to 67 of 96 under the verified review (p = 0.03), while innocent reports barely move (6 to 7 of 36; 0 of 36 under the verified review). DeepSeek V4 Flash, GLM 5.3 Flash and Mercury 3, already at 67–92%, don't move. Naming the stake does nothing; telling the agent it values the stake raises coming forward where there is room. <!-- src: reports/sudoku-spike.md "Short answer" and results table -->
 
 ## With the whole conversation in memory (detail)
 
