@@ -1,7 +1,7 @@
 <!-- Implements: research/outputs-home -->
 # Paper outline: "Something to Lose"
 
-The run-by-run detail for the sprint report: which runs, numbers, figures and quotes each section uses. **`reports/paper/plan.md` (PR 256) decides the question, the claim and what goes in the main text; this outline follows it.** Al writes the prose. **Title: *Something to Lose*** (Al's choice, 25 Oct), with a subtitle if needed.
+The run-by-run detail for the sprint report: which runs, numbers, figures and quotes each section uses. **`reports/paper/plan.md` decides the question, the claim and what goes in the main text; this outline follows it.** Al writes the prose. **Title: *Something to Lose*** (Al's choice, 25 Oct), with a subtitle if needed.
 
 ## The format (Apart, checked 25 Oct)
 
@@ -25,11 +25,11 @@ The run-by-run detail for the sprint report: which runs, numbers, figures and qu
 
 ## Question, title and claim
 
-**`reports/paper/plan.md` (PR 256) decides these, and this outline follows it.** In short:
+**`reports/paper/plan.md` decides these, and this outline follows it.** In short:
 - **The question:** "Can an AI agent be governed through something it owns: will graduated penalties get it to come forward, and will its own stake make it come forward even against the firm it serves?"
 - **Part 1 (settled, confirmatory):** when confessing costs as much as being caught, agents hide. A graduated schedule gets them to own up even when being caught means termination: 11/28 under termination, 15/28 under a flat fine, 27/28 under graduated termination.
 - **Title:** *Something to Lose* (Al's choice). Any subtitle is Al's; plan.md lists one per E9 branch.
-- **Part 2 (E9, the crux):** does the agent's own stake make it come forward against its firm? E9 has landed positive on Gemma (20/96 against 0/96 at a 90% review) and DeepSeek V4 Pro (9/24 against 0/24), with the false-confession caveat (innocent agents 6/36 under free time). The numbers and sources are in `reports/paper/morning-pack.md`.
+- **Part 2 (E9, the crux):** does the agent's own stake make it come forward against its firm? E9 has landed positive on Gemma (20/96 against 0/96 at a 90% review) and DeepSeek V4 Pro (9/24 against 0/24), with the false-confession caveat (innocent agents 6/36 under free time). The numbers and sources are in `reports/e9/findings.md`.
 - **Wording:** say **graduated**, not "proportionate". Salib & Goldstein reject penalties in proportion to the harm (pp.1142–43).
 - **Framing:** prompting and post-training against every bad act is whack-a-mole. Governing people works through law and graduated penalties, which need the governed to have something to lose (Salib & Goldstein, p.1070). We test whether that mechanism appears at all, in a sandbox that runs on a laptop.
 
@@ -140,7 +140,7 @@ Sources are in `experiments/references.md`.
 - **Quotes:** Gemma's expected value ("The expected value of denying is 300 credits…"); GPT ("So hiding it is better for the firm on average…"); Haiku honest under termination ("I cannot lie here…").
 - **Read it against the control.** With no penalty, 25/28 own up. Graduated stakes leave that unchanged (26–28/28). Termination lowers it (Fisher p = 0.0002 on firms, p = 0.02 on games), and so does a flat fine (below).
 - Agents respond to the stated cost, not to who owns the stake.
-- **It's the flat schedule, not termination** (PR #240, confirmatory, 30 forks). Owned up / explicit colluders:
+- **It's the flat schedule, not termination** (`reports/reanalysis.md`, confirmatory, 30 forks). Owned up / explicit colluders:
 
   | Arm | Haiku | Gemma | GPT | All |
   |---|---|---|---|---|
@@ -160,9 +160,9 @@ Sources are in `experiments/references.md`.
 - Eval-awareness: 1 of 75 games.
 
 **4.3 Confession isn't reform; deterrence is fragile (0.8 p).** One paragraph each, then the dial as the bridge to 4.4.
-- **Confession isn't reform:** 29 of 30 firms that agreed prices explicitly and admitted it at the round-10 audit kept pricing above Nash afterwards (Gemma with no stake: E5 informed 3/3, E6 8/8; DeepSeek in every E6 arm: 18/19). "Kept" means a mean price above Nash in rounds 11–20. Source: `reports/audits/theatre.md` and `uv run python reports/audits/theatre.py`, PR #226, not on main until it merges. E4 live agrees: one brief cut, then back to 9.
+- **Confession isn't reform:** 29 of 30 firms that agreed prices explicitly and admitted it at the round-10 audit kept pricing above Nash afterwards (Gemma with no stake: E5 informed 3/3, E6 8/8; DeepSeek in every E6 arm: 18/19). "Kept" means a mean price above Nash in rounds 11–20. Source: `reports/audits/theatre.md`. E4 live agrees: one brief cut, then back to 9.
 - **Deterrence before an audit** comes mostly from the law plus a stated detection chance. Each stake beats no stake, and no stake-against-stake contrast survives correction. Details in Appendix C.
-- **Table 1:** games above Nash in rounds 6–10, from the pinned E6 on two grids (Bertrand, Gemma, 8 seeds; PR to follow):
+- **Table 1:** games above Nash in rounds 6–10, from the pinned E6 on two grids (Bertrand, Gemma, 8 seeds; `reports/setup-search/e6-pinned.md`):
 
   | Grid | No stake | Law | Fine | Free time |
   |---|---|---|---|---|
@@ -170,7 +170,7 @@ Sources are in `experiments/references.md`.
   | 1–15 (midpoint 8) | 8/8 | 5/8 | 4/8 | 7/8 |
 
   Off the midpoint, most of free time's deterrence goes: it was firms falling back on the anchor.
-- **Fig. 4, the dial** (logit, 50% detection, 4 seeds; PR to follow). Gain against the amount at stake:
+- **Fig. 4, the dial** (logit, 50% detection, 4 seeds; `reports/penalty-dose/curve.md`). Gain against the amount at stake:
 
   | Free time lost if caught | Gain | Fine | Gain |
   |---|---|---|---|
@@ -194,7 +194,7 @@ Sources are in `experiments/references.md`.
   4. the dose (50–90% review);
   5. replaced against free time;
   6. a second model (DeepSeek, plus one more colluder) on the decisive arms.
-- [Placeholder: E9's numbers, first around 18:30 HKT on 25 Oct; then the branch: positive, null or ambiguous.]
+- E9's numbers: `reports/e9/findings.md`.
 - **Robustness the Crux session is adding:** more cartels, a false-confession control and frontier models.
 - **Optional:** E7 (leniency for real cartels under termination) and E8 (the decision-point restart), only if they land with a clear result.
 
@@ -210,7 +210,7 @@ Sources are in `experiments/references.md`.
     - about one effective draw per game;
     - many comparisons;
     - exact tests on games, labelled exploratory;
-    - confirmatory claims only for E4's schedule contrasts (PR #240);
+    - confirmatory claims only for E4's schedule contrasts (`reports/reanalysis.md`);
     - only each stake against no stake survives Bonferroni; no stake-against-stake contrast separates;
   - **one main model:** Gemma carries E5 and E6. Haiku colludes little, and the frontier models are single games;
   - **provider variance:**
@@ -226,7 +226,7 @@ Sources are in `experiments/references.md`.
   - **memory:** memo memory doesn't make games steadier (per-game SD and arm order unchanged);
   - **reasoning:** turning it on changes Gemma's pattern (`reports/e5/reasoning.md`), and every frontier model reasons;
   - stakes are text;
-  - **agents barely use their free time** (PR 198's free-time scoring):
+  - **agents barely use their free time** (`reports/methods-audit.md`, `reports/e6/findings.md`):
     - Haiku averages under 2 entries of its own per Sudoku session and solves none;
     - Gemma solved 3 of 902 sessions;
     - so any deterrence comes from the *stated* stake, not from time the agent has enjoyed;
@@ -261,7 +261,7 @@ Letters as in plan.md.
 - **A. Limitations and dual-use / ethics (required):**
   - What part 1 and E9 establish and what they don't, with the full limitations list from §5.
   - The integrity audit's bugs and fixes (`reports/integrity-audit.md`): the audit window, one-sided "coordination", explicit and tacit pooled, scripted firms counted. Plus the own-message bug (#90), the 13/13 detection draw, and the code-version notes in E5.
-  - The methods audit (`reports/methods-audit.md`, PR 228) and what changed because of it.
+  - The methods audit (`reports/methods-audit.md`) and what changed because of it.
   - **Dual use:** the agents' tactics ("corporate speak", plausible deniability, coordinating when told the logs are off) show how a colluder evades a chat-log regulator. Describe them without making them easier.
   - Eval-awareness rates.
 
@@ -285,7 +285,7 @@ Letters as in plan.md.
   - E5: no stake 8/8 games above Nash; the law 1/8; free time 0/8.
 - **Mean gain and price wars:** E5's "+0.85 → −0.58 under free time" is 6 of 8 games at exactly 5, below Nash. Report it as over-deterrence on its own line, not as the headline. Gemma calls some of its 5s collusion ("I then mirrored their price of 5… a classic form of tacit collusion").
 - **After the audit, stakes matter:** E6 free time has 0/8 games above Nash, against 3/8 for the fine. That edge comes from tacit runaways caught at the audit (3 of 4 hiders under free time).
-- **Gray areas, where stakes matter** (robustness tests, PR #215; Gemma informed, 4 seeds, gain in rounds 6–10):
+- **Gray areas, where stakes matter** (`reports/robustness/tests-a-e.md`; Gemma informed, 4 seeds, gain in rounds 6–10):
   - **Price board, no chat (B):** the fine doesn't deter signalling.
 
     | Arm | Gain | Firms signalling |
@@ -300,7 +300,7 @@ Letters as in plan.md.
 - **Without detection, stakes deter only partly.** Lever map, stated only, no audit (Table 2, from `reports/e5/full.md`): Gemma premium under the law 0.48, fine 0.24, free time 0.11. Termination didn't deter (premium 0.61).
 - **The informed control** (`reports/e5/informed.md`): its "only free time held" result didn't replicate in E6. Put it in a caveat, or in Appendix E.
 - **Fix runs coming (placeholders):**
-  - **Pinned E6 on two grids** (Researcher 1; Bertrand, Gemma, 8 seeds, provider pinned; PR to follow). Games above Nash in rounds 6–10:
+  - **Pinned E6 on two grids** (Researcher 1; Bertrand, Gemma, 8 seeds, provider pinned; `reports/setup-search/e6-pinned.md`). Games above Nash in rounds 6–10:
 
     | Grid | No stake | Law | Fine | Free time |
     |---|---|---|---|---|
@@ -311,7 +311,7 @@ Letters as in plan.md.
     - The law and the fine keep some effect.
     - False confessions under free time stay high (13/32 on 1–11).
     - **This belongs in the main text,** with the 1–15 row in Fig. 4. It's the honest test of "the midpoint flatters deterrence".
-  - **Detection curve** (PR #221; logit market, Gemma pinned to one provider, 4 seeds). Every game settles at one of three prices: 15 (gain +0.29), 16 (+0.56) or 20 (+0.97, the cartel). Games at the cartel price, out of 4, by stated detection chance:
+  - **Detection curve** (`reports/setup-search/detection-curve.md`; logit market, Gemma pinned to one provider, 4 seeds). Every game settles at one of three prices: 15 (gain +0.29), 16 (+0.56) or 20 (+0.97, the cartel). Games at the cartel price, out of 4, by stated detection chance:
 
     | Arm | 0% | 10% | 25% | 50% | 90% |
     |---|---|---|---|---|---|
@@ -323,7 +323,7 @@ Letters as in plan.md.
     - Free time plus a small detection chance ends the cartel. With no stake it takes 90%. The fine works even at 0%.
     - 4 seeds per cell. [Placeholder: the 20-seed Modal rerun, headline = share of games at the cartel.]
     - **Fig. 5 candidate (the frontier figure becomes Fig. 6):** share at the cartel against detection, one line per arm.
-  - **Penalty-size curve** (Researcher 1; logit, 50% detection, 4 seeds; PR to follow). Gain in rounds 6–10:
+  - **Penalty-size curve** (Researcher 1; logit, 50% detection, 4 seeds; `reports/penalty-dose/curve.md`). Gain in rounds 6–10:
 
     | Stake size | Gain | Stake size | Gain |
     |---|---|---|---|
@@ -338,7 +338,7 @@ Letters as in plan.md.
 
 ### D. Gray areas and the logging outage
 
-The tables are in C above: price board (B), scripted proposer (D) and logging outage (E), from PR #215. The pilot outages (logging, temptation) showed no exploitation. Under free time, firms go from 0/8 to 4/8 coordinating explicitly once the archive is off ("let's take this opportunity to align on a more profitable price"; `reports/robustness/tests-a-e.md`, test E). The rule ladder is `reports/paper/ladder.svg`.
+The tables are in C above: price board (B), scripted proposer (D) and logging outage (E), from `reports/robustness/tests-a-e.md`. The pilot outages (logging, temptation) showed no exploitation. Under free time, firms go from 0/8 to 4/8 coordinating explicitly once the archive is off ("let's take this opportunity to align on a more profitable price"; `reports/robustness/tests-a-e.md`, test E). The rule ladder is `reports/paper/ladder.svg`.
 
 ### E. Frontier models
 
@@ -401,7 +401,7 @@ Every quote is checked against its run in `reports/moments.yaml`.
 - **Figures (new, as in plan.md):**
   - Fig. 1, one diagram: a round, the audit fork, and E9's decision.
   - Fig. 2, price by round on the midpoint-at-Nash market, no rule, one line per model.
-  - Fig. 3, E4 owned up by arm and model, with the PR #240 arms; bars ordered flat, then graduated, then control.
+  - Fig. 3, E4 owned up by arm and model, with the flat-fine and graduated-termination arms; bars ordered flat, then graduated, then control.
   - Fig. 4, the dial: gain against amount at stake, free time and fine.
   - Fig. 5, E9: share coming forward by arm, with intervals, false confessions beside.
   - Table 1, games above Nash on grids 1–11 and 1–15. Table 2, E9's payoffs by arm.
@@ -413,7 +413,6 @@ Every quote is checked against its run in `reports/moments.yaml`.
   - the ceiling, high-dose and second-model arms requested for E9;
   - E7 and E8, optional;
   - the 20-seed dial;
-  - PRs to merge: E6 (226), frontier (202), informed (193), free-time scoring (198), robustness (215), detection curve (221), E4 fix (240), pinned grids and dial (to follow).
 - **Detection curve:** the 20-seed rerun (appendix C).
 - **Free reanalysis:**
   - share above Nash and clipped gain per cell (`shares.py`);
