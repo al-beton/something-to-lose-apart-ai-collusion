@@ -51,13 +51,13 @@ Due **Monday 26 October 2026, 19:59 HKT**; submit once.
 - [ ] Two short paragraphs: what we found, and what it would take (a stake the firm can't protect, likely detection, a review that checks evidence).
 - [ ] Future work: applied rather than stated stakes, richer scenarios, frontier models.
 
-## 10. Mandatory parts
-- [ ] Appendix titled exactly "Limitations and Dual-Use / Ethical Considerations", including that the verified rule tells agents collusion without messages is safe.
-- [ ] LLM usage statement: built and run by Claude Code agents under Al's direction; Al takes responsibility for every claim.
-- [ ] Prior-work disclosure: all code written during the sprint (first commit 24 October 2026), with the libraries named.
-- [ ] Code and Data: the repository, `make reproduce`, and what replays exactly.
-- [ ] References: every entry real and checked (arXiv ID, URL, authors), and Wagner "Anchored" added or cut.
-- [ ] Every link works.
+## 10. Mandatory parts (each can be done now, in parallel)
+- [ ] **10a. LLM usage statement:** built and run by Claude Code agents under Al's direction; which models wrote code and text; Al takes responsibility for every claim. *Paper E*
+- [ ] **10b. Prior-work disclosure:** all code written during the sprint (first commit 24 October 2026), nothing pre-existing, the libraries named (from `pyproject.toml`). *Paper E*
+- [ ] **10c. Code and Data:** the repository URL, the licence, `make reproduce`, what replays exactly (5,188 of 5,662 runs) and what doesn't (fresh fixed-seed reruns). *Paper E*
+- [ ] **10d. References verified:** every `references.bib` entry checked against its source (arXiv ID, URL, authors, year); Wagner "Anchored" and evaluation awareness found and added, or flagged to cut. *Paper F*
+- [ ] **10e. Links work:** the repository, Pages, figure paths and every URL in the paper. *Paper F*
+- [ ] **10f. Limitations and Dual-Use appendix:** titled exactly "Limitations and Dual-Use / Ethical Considerations", including that the verified rule tells agents collusion without messages is safe. *Paper C ([#336](https://github.com/al-beton/something-to-lose-apart-ai-collusion/pull/336))*
 
 ## 11. Release
 - [ ] Final PDF from `make paper-pdf` on `main`, at most 25 MB.
