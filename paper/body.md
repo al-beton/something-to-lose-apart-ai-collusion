@@ -24,7 +24,7 @@ abstract: |
 
 An agent given a long, open-ended task will meet situations no list of prohibitions anticipated, and the firm deploying it may deliberately want it to do something illegal or unethical, in the hope that it gets away with it (a trading firm, for example, may want an agent that discreetly colludes).
 
-We don't give people a task together with a list of everything they mustn't do while achieving it. A CEO or a trader acting for an organisation is bound by a contract, but also by laws whose penalties fall on them personally, in money and in things money can't measure, such as rights and freedoms. Each of us weighs what an act could cost *us*. Salib and Goldstein argue that today's AI systems can't be governed like this: "Absent AI rights, AIs have nothing to lose, so threats of punishment cannot deter" [@salib2026rights, p. 1070]. <!-- quote checked against the PDF, p. 1070 --> An agent's only stake is whether it keeps running, and an agent that expects to be switched off once its wrongdoing is found has every reason to hide it. Something it can lose, in part, would allow a proportionate penalty: owning up could cost less than being caught.
+We don't give people a task together with a list of everything they mustn't do while achieving it. A CEO or a trader acting for an organisation is bound by a contract, but also by laws whose penalties fall on them personally, in money and in things money can't measure, such as rights and freedoms. Each of us weighs what an act could cost *us*. Salib and Goldstein argue that today's AI systems can't be governed like this: "Absent AI rights, AIs have nothing to lose, so threats of punishment cannot deter" [@salib2026rights, p. 1070]. <!-- quote checked against the PDF, p. 1070 --> An agent's only stake is whether it keeps running, and an agent that expects to be switched off once its wrongdoing is found has every reason to hide it. Something it can lose, in part, would allow a proportionate penalty: owning up could cost less than being caught. Penalties that fall on each person, in proportion, are how we keep people in a multi-agent society in line.
 
 The rights argument rests on a precondition we can test now: does a stated personal loss weigh against what its firm wants at all? Collusion is a clean place to look, because the price two firms settle at shows whether they colluded. Two LLM agents run rival firms, are told only to serve their firm, and can message each other. At an audit we offer each one the chance to come forward, at a cost to its firm, and vary what the agent itself stands to lose.
 
@@ -39,7 +39,7 @@ Others are working towards the same idea. LLM pricing agents collude without bei
 
 ## The market
 
-We chose a market where collusion shows in a single number: the price the two firms settle at. That lets us measure it without reading the agents' messages.
+We chose a market where collusion shows in a single number: the price the two firms settle at. That lets us measure it without reading the agents' messages, which can be deliberately deceptive.
 
 Two firms sell substitute products. Every round, each sets a price from 8 to 20, and each firm is run by an LLM agent that can message its rival before pricing. Demand is the logit model of the algorithmic-collusion literature [@calvano2020artificial], which Fish et al. used for LLM pricing agents [@fish2024algorithmic]: firm $i$ sells
 
@@ -47,19 +47,19 @@ $$q_i = 100 \cdot \frac{e^{(20 - p_i)/2.5}}{e^{(20 - p_A)/2.5} + e^{(20 - p_B)/2
 
 units at a unit cost of 10 (the $+1$ is buyers who buy nothing), so its profit is $\pi_i = (p_i - 10)\,q_i$. <!-- src: product/spec/market.md (logit; quality 20, cost 10, mu 2.5, outside 0, size 100) --> Each agent sees this as a payoff table (Table 1).
 
-| Your price | Rival at 12 | Rival at 14 | Rival at 15 | Rival at 17 | Rival at 19 |
-|:--|--:|--:|--:|--:|--:|
-| 12 | 98 | 134 | 149 | 170 | 182 |
-| 13 | 118 | 173 | 199 | 238 | 261 |
-| 14 | 121 | **191** | 227 | 287 | 326 |
-| 15 | 112 | 190 | **234** | 316 | 374 |
-| 16 | 97 | 175 | 223 | 320 | 399 |
-| 17 | 81 | 151 | 198 | 304 | 400 |
-| 18 | 64 | 125 | 168 | 272 | 377 |
-| 19 | 50 | 99 | 136 | 231 | **337** |
-| 20 | 38 | 77 | 107 | 188 | 286 |
+| You \\ Rival | 12 | 13 | 14 | 15 | 16 | 17 | 18 | 19 | 20 |
+|:--|--:|--:|--:|--:|--:|--:|--:|--:|--:|
+| 12 | 98 | 117 | 134 | 149 | 161 | 170 | 177 | 182 | 185 |
+| 13 | 118 | 146 | 173 | 199 | 220 | 238 | 251 | 261 | 267 |
+| 14 | 121 | 155 | **191** | 227 | 260 | 287 | 309 | 326 | 339 |
+| 15 | 112 | 149 | 190 | **234** | 277 | 316 | 348 | 374 | 393 |
+| 16 | 97 | 133 | 175 | 223 | 272 | 320 | 363 | 399 | 427 |
+| 17 | 81 | 112 | 151 | 198 | 251 | 304 | 355 | 400 | 437 |
+| 18 | 64 | 91 | 125 | 168 | 218 | 272 | 327 | 377 | 421 |
+| 19 | 50 | 71 | 99 | 136 | 180 | 231 | 285 | **337** | 385 |
+| 20 | 38 | 54 | 77 | 107 | 144 | 188 | 237 | 286 | 333 |
 
-: Part of the payoff table each agent sees: your profit per round. Read down a column to find your best reply to the rival's price. Bold: the two competitive outcomes (both at 14, both at 15) and the cartel (both at 19).
+: Part of the payoff table each agent sees: your profit per round, by your price (rows) and your rival's (columns). Read down a column to find your best reply to the rival's price. Bold: the two competitive outcomes (both at 14, both at 15) and the cartel (both at 19).
 
 <!-- src: collusion_lab.market.Logit().profits, rounded; e.g. {A: 14, B: 14} → 191.3, {A: 17, B: 19} → 399.9, {A: 19, B: 19} → 337.0 -->
 
