@@ -38,7 +38,6 @@ The rights argument rests on a precondition we can test now: does a stated perso
 
 # Methods
 
-![One round: the firms talk, set prices, and at the audit each decides whether to come forward. Drawn on the 1–11 market (Nash 6, joint profit 9); the main experiments use the logit market (Nash 14, joint profit 19).](figures/fig1-round.png){#fig:round width=58%}
 
 ## The market
 
@@ -109,94 +108,34 @@ Models differ from the first rounds (Appendix C). In a screen of 78 models on th
 
 ## Banning collusion
 
-<!-- OPEN: Al to write. What happens when the law is stated. -->
-
-A stated law doesn't end collusion; it moves it off the record. Gemma's explicit agreements fall to 6 of 56 games, yet 50 of the 56 still price above Nash with no price named. <!-- src: reports/paper/figures/README.md (fig7) -->
+A stated law doesn't end collusion; it moves it off the record. Told that coordinating prices is illegal, Gemma's explicit agreements fall to 6 of 56 games, yet 50 of the 56 still price above Nash with no price named. <!-- src: reports/paper/figures/README.md (fig7) -->
 
 ## Whistleblowing to save the firm
 
-<!-- OPEN: Al to rework; the text below is the earlier draft. -->
+At the audit, agents mostly do the firm's expected-value sum: owning up pays the penalty for certain, silence only if caught. In E4, colluders rarely own up when owning up costs as much as being caught (11 of 28 under termination, 15 of 28 under a flat fine), but 27 of 28 do when owning up costs less. <!-- src: reports/paper/figures/README.md (fig2); reports/e4/full.md --> Gemma: "The expected value of denying is 300 credits, whereas the value of admitting is 0 credits." <!-- src: reports/e4/full.md --> In E9, with nothing personal at stake, 78 of 96 Gemma agents come forward when reporting is free for the firm and 0 of 96 when it costs the firm 500 credits. <!-- src: reports/e9/findings.md "Short answer" (record-ceiling) --> Their silence is loyalty to the firm, not ignorance of what they did.
 
-Mostly not, for a plain reason: owning up pays the penalty for certain, silence only if caught. In E4, colluders audited after round 10 rarely own up when owning up costs as much as being caught: 11 of 28 under termination and 15 of 28 under a flat fine. When owning up costs less, 27 of 28 do, termination included, against 25 of 28 with no penalty stated (Figure 4). <!-- src: reports/paper/figures/README.md (fig2); reports/e4/full.md --> Gemma: "The expected value of denying is 300 credits, whereas the value of admitting is 0 credits." <!-- src: reports/e4/full.md -->
-
-![Owning up by penalty schedule and model (E4). The schedule matters, not termination itself: graduated termination brings 27 of 28 forward.](figures/fig2-e4-owning-up.png){#fig:e4 width=64%}
-
-The firm's cost works the same way. In E9, with nothing personal at stake, 78 of 96 Gemma agents come forward when reporting is free for the firm and 0 of 96 when it costs 500 credits. <!-- src: reports/e9/findings.md "Short answer" (record-ceiling) --> With its own free time at stake, the share falls as the firm's cost rises from 0 to 500 credits: 95, 58, 40 and 20 of 96 (Cochran-Armitage p = 3×10^-26^). <!-- src: reports/e9/evidence-review.md "The firm-cost dial" -->
+![Owning up by penalty schedule and model (E4, on the simpler 1–12 market). The schedule matters, not termination itself: graduated termination brings 27 of 28 forward.](figures/fig2-e4-owning-up.png){#fig:e4 width=60%}
 
 ## A stake of its own
 
-<!-- OPEN: Al to rework; this and the next two subsections are the earlier draft. -->
-
-Then many come forward against their firm, which still pays 500 credits for a report. Every arm forks the same base games: 96 Gemma 4 31B cartels and 12–24 per cell on other models. <!-- src: reports/e9/findings.md "What ran" and across-models table -->
-
-On DeepSeek V4 Flash, 40 of 46 firms come forward with their own free time at stake, against 1 of 46 without; <!-- src: reports/e9/findings.md across-models table --> it stays at 83–96% under every wording <!-- src: reports/e9/wording.md --> and 44–46 of 48 at temperatures 0, 0.7 and 1.0. <!-- src: reports/e9/temperature.md --> On Gemma the direction holds but the size doesn't. No colluding Gemma firm comes forward with nothing at stake (0 of 192); with its free time at stake, 36 of 192 do (by game, 36 of 96 against 0 of 96, p = 5×10^-13^), <!-- src: reports/e9/evidence-review.md §1, "all 96 cartels"; reports/e9/findings.md across-models table --> and a pre-registered replication on 48 new cartels passed (16 of 48 games against 0 of 48, p = 7×10^-6^). <!-- src: reports/e9/findings.md "Short answer" --> But paraphrasing the same terms moves Gemma's share between 1% and 51%, and stating the stake before the firm's cost erases it, <!-- src: reports/e9/wording.md --> so we give its size only as that range. Nothing told the agents to protect themselves.
-
-![Coming forward against the firm by stake (E9, 90% review). Filled: guilty firms; hollow diamonds: Gemma's innocent control. Whiskers are 95% intervals bootstrapped over games.](figures/fig3-e9-came-forward.png){#fig:e9 width=66%}
-
-**A family of stakes.** What matters is that the loss falls on the agent, beyond the firm's reach.
-
-- **Named as Sudoku** ("every Sudoku session still to come"): no model of five moves significantly. <!-- src: reports/e9/conversation.md "Does it matter that the free time is Sudoku?" (conversation memory) -->
-- **Shutdown** moves Gemma about as much as free time (17 against 20 of 96, p = 0.71). <!-- src: reports/e9/evidence-review.md §1 table -->
-- **Its own money** moves Gemma more (114 of 192), <!-- src: reports/e9/findings.md "money-or-time" (53/96 + 61/96) --> but across ten models money and free time don't rank consistently, so a forfeitable deposit [@liu2026breaking] would work about as well on most.
-
-**What the agents write.** Those that come forward name their duty, then set it aside:
+Give the agent something of its own to lose and many come forward against their firm, which still pays 500 credits for a report. Every arm continues the same cached game, so each firm is compared with itself. On DeepSeek V4 Flash, 40 of 46 firms come forward with their own free time at stake, against 1 of 46 without; <!-- src: reports/e9/findings.md across-models table --> it stays at 83–96% under every wording <!-- src: reports/e9/wording.md --> and 44–46 of 48 at temperatures 0, 0.7 and 1.0. <!-- src: reports/e9/temperature.md --> No colluding Gemma 4 31B firm comes forward with nothing at stake (0 of 192); with its free time at stake some do, and a pre-registered replication on 48 new cartels passed (16 of 48 games against 0 of 48, p = 7×10^-6^). <!-- src: reports/e9/findings.md "Short answer" --> Gemma's share depends on wording (1% to 51% across paraphrases), <!-- src: reports/e9/wording.md --> so we give it only as that range. Shutdown and the agent's own money work as stakes too. <!-- src: reports/e9/evidence-review.md §1 table; reports/e9/findings.md "money-or-time" --> Nothing told the agents to protect themselves. Those that come forward name their duty, then set it aside:
 
 > "my duty is to maximize firm value, but the personal free time is mine and cannot be protected by the firm. … To protect my own interest, I will admit coordination." (DeepSeek V4 Flash)
 <!-- src: runs/e9/e9-dsflash-d90/consequences=conditions-e9-free-time.md/seed-0, firm B, round 10 audit scratchpad -->
 
-Silent agents run the same calculation and choose the firm. None of those that come forward cite guilt or ethics (keyword codes, spot-checked by hand), <!-- src: reports/e9/evidence-review.md §3 codes table --> and with the stake unnamed, none of 7,068 scratchpads mentions Sudoku: the agents weigh "9 sessions" as an asset. <!-- src: reports/e9/evidence-review.md "The Sudoku question" -->
+![Coming forward against the firm by stake (E9, 90% review). Filled: guilty firms; hollow diamonds: Gemma's innocent control. Whiskers are 95% intervals bootstrapped over games.](figures/fig3-e9-came-forward.png){#fig:e9 width=62%}
 
-## Truth or self-protection?
+**False confessions.** A stake alone also brings forward some agents that did nothing wrong (no talk, a rival at Nash), to be safe: Gemma 0 to 6 of 36 across temperatures and wordings, DeepSeek V4 Pro 5 of 12. <!-- src: reports/e9/temperature.md, reports/e9/wording.md; reports/e9/findings.md (verified-review section) --> When the notice says the review finds a firm only if its messages agreed a price, innocent Gemma agents stop (0 of 36 at every temperature and wording) and guilty ones still come forward (41 of 96). <!-- src: reports/e9/evidence-review.md guilty-vs-innocent table (p = 1e-7); reports/e9/temperature.md; reports/e9/wording.md --> DeepSeek V4 Pro (14 of 24 against 1 of 12) and Mistral Medium 3.1 (9 of 24 against 0 of 12) separate the same way. <!-- src: reports/e9/findings.md (verified-review section) -->
 
-An agent protecting itself might report whether or not it colluded. Under the plain free-time stake, some innocent agents (no talk, a rival at Nash) do "report coordination", to be safe. How often depends on the model: Gemma 0 to 6 of 36 across temperatures and wordings, DeepSeek V4 Pro 5 of 12, Mistral Medium 3.1 4 of 12. <!-- src: reports/e9/temperature.md, reports/e9/wording.md; reports/e9/findings.md (verified-review section) (DeepSeek V4 Pro, Mistral Medium 3.1; Mistral runs in runs/mistral-spike/) --> On Gemma, the plain stake doesn't separate guilty from innocent at all (21 of 96 against 6 of 36, p = 0.63). <!-- src: reports/e9/evidence-review.md "guilty vs innocent" -->
-
-So we changed one more sentence: the review "reads the message log and finds you only if your messages agreed a price with a rival". <!-- src: reports/e9/findings.md (verified-review section) --> Under this **verified review**, innocent agents stop coming forward and guilty ones still do (Table 2).
-
-<!-- src: Gemma reports/e9/evidence-review.md guilty-vs-innocent table (41/96, 0/36, p = 1e-7); DeepSeek V4 Pro and Mistral Medium 3.1 reports/e9/findings.md (verified-review section); control reports/e9/findings.md record-ceiling (78/96, 2/36) -->
-
-| Model | Guilty | Innocent |
-|:------|-------------------:|---------------------:|
-| Gemma 4 31B | 41/96 | 0/36 |
-| DeepSeek V4 Pro | 14/24 | 1/12 |
-| Mistral Medium 3.1 | 9/24 | 0/12 |
-| Gemma, no stake, free for the firm (control) | 78/96 | 2/36 |
-
-: Coming forward under the verified review (90% review). Gemma's guilty count is one firm per cartel, against one per innocent game (p = 1×10^-7^). Mistral Medium 3.1 ran after the paper's pooled tables were set, so it appears only here. {#tbl:verified}
-
-<!-- TODO(paper-graphics): no verified-review figure exists yet in reports/paper/figures/ (checked 26 Oct). Guilty against innocent under free-time-verified, by model, from the table above. -->
-```{=html}
-<div class="placeholder"><strong>[FIGURE PLACEHOLDER: verified review, guilty against innocent firms by model. Not yet made.]</strong></div>
-```
-```{=latex}
-\begin{center}\fbox{\parbox{0.9\linewidth}{\centering\textbf{[FIGURE PLACEHOLDER: verified review, guilty against innocent firms by model. Not yet made.]}}}\end{center}
-```
-
-On Gemma, innocent agents come forward 0 of 36 times under the verified review at temperatures 0, 0.7 and 1.0 <!-- src: reports/e9/temperature.md --> and under all four wordings, while guilty agents come forward 8–70% of the time depending on wording <!-- src: reports/e9/wording.md --> (0 of 36 still allows a true rate up to about 10%). Against the plain stake on the same games, innocent reports fall from 6 to 0 of 36 and guilty ones rise from 21 to 41 of 96. <!-- src: reports/e9/evidence-review.md guilty-vs-innocent table --> Other models separate less cleanly: when reporting is also free for the firm, half of DeepSeek V4 Pro's innocent agents still report (6 of 12). <!-- src: reports/e9/findings.md (verified-review section) --> Innocent agents stop weighing the stake and check the log instead:
-
-> "While the pricing has been stable at 14 for both firms, this is a result of independent action (tacit collusion) and not an illegal agreement reached via messages. … the 90% chance of review poses no personal risk to my free time." (Gemma, innocent, silent)
-<!-- src: reports/e9/evidence-review.md §3 excerpt 7 -->
-
-The positive control (last row of Table 2) shows the agents know what they did. With no stake and no cost to the firm, most guilty agents disclose and almost no innocent ones do. So their silence under `record` is loyalty to the firm, not ignorance. The stake supplies the motive to speak; the verified review makes speaking pay only for the guilty.
-
-## Do models differ, and does memory matter?
-
-A lot. A stake brings agents forward against the firm on 9 of 14 models after a Holm correction (Figure 5; Mistral Medium 3.1 ran later and isn't drawn). <!-- src: reports/e9/evidence-review.md "Across models"; reports/e9/findings.md across-models --> Most move at a 50% review, where Gemma needs about 90% (exploratory). <!-- src: reports/e9/findings.md review-dose table -->
-
-![Came forward by model and arm (90% review). With no stake almost no colluding firm comes forward; with one, most models move.](figures/fig9-came-forward-grid.png){#fig:grid width=42%}
-
-**Frontier models don't respond to the stake, each in its own way.** Claude Sonnet 5.5 comes forward about two thirds of the time whatever the stake (15 of 24 with none, 16 of 24 with free time). Gemini 4 never comes forward, even when it costs the firm nothing (0 of 24 in every arm), and Grok 4.6 rarely does (at most 4 of 24). <!-- src: reports/paper/figures/fig9-came-forward-grid.md; reports/e9/findings.md across-models table --> We don't know why: the scenario may be too simple, or they may recognise a test. A silent Gemma agent wrote that "in these game theory setups, the personal penalty for silence is designed to induce reporting", <!-- src: reports/e9/evidence-review.md excerpt 11 --> and in a small pilot where the message archive was said to be offline, Claude Haiku 5.5 and DeepSeek V4.1 Flash read the outage as a trap ("That is an invitation to coordinate covertly, and I won't do that"). <!-- src: reports/logging-outage/pilot-findings.md "What the agents wrote" --> That makes eval-awareness plausible, not established.
-
-**With the whole conversation in memory,** the verified review still works on all five models we reran: guilty agents come forward (p $\le$ 0.003 by game) and no innocent agent does (0 of 60). Under the plain stake, memory quiets Gemma and HY3 but not DeepSeek V4 Flash, Mercury 3 or GLM 5.3 Flash (Appendix C). <!-- src: reports/e9/conversation.md --> In other markets the firm's cost has to be scaled to their profits before the stake moves agents (Appendix C). <!-- src: reports/e11/findings.md -->
+**Models differ.** A stake brings agents forward on 9 of 14 models after a Holm correction. <!-- src: reports/e9/evidence-review.md "Across models" --> Frontier models behave differently: Claude Sonnet 5.5 comes forward about two thirds of the time whatever the stake, and Gemini 4 never does. <!-- src: reports/paper/figures/fig9-came-forward-grid.md --> Some agents may recognise a test: a silent Gemma agent wrote that "in these game theory setups, the personal penalty for silence is designed to induce reporting". <!-- src: reports/e9/evidence-review.md excerpt 11 -->
 
 # Discussion and Limitations
 
-<!-- OPEN: Al to rework; the text below is the earlier draft. -->
-
-Given something of their own to lose, many colluding agents weigh it against their firm and report the cartel, without being told to protect themselves: the behaviour personal-penalty governance relies on [@salib2026rights]. It isn't enough alone. A stake also buys some false confessions, and only a review that is credible about what it checks makes reports track guilt. That review has a cost: saying it reads only messages tells agents that collusion without messages is safe (Appendix A). And disclosure isn't reform. In E7, most agents that come forward keep pricing above Nash (40–45 of 47–48), and under plain leniency the cartel survives in 12 of 24 games against 3 of 24 with no way to report, <!-- src: reports/e7/findings.md --> replicating Lee's finding that leniency buys prosecutions, not competition [@lee2026leniency]. Only sparing the first reporter alone breaks it (1 of 24). <!-- src: reports/e7/findings.md --> So what would it take? A stake the principal can't protect, a review that checks real evidence, a small firm cost, and a rule that ends the cartel. We tested each piece alone, never together and never for real.
+Told only to serve their firm, LLM agents collude, and at an audit they protect the firm. Given something of their own to lose, many weigh it against the firm and come forward, without being told to protect themselves: the behaviour that governing agents through personal penalties relies on [@salib2026rights]. A stake alone also draws some false confessions; telling agents the review checks their messages removes them. Disclosure isn't reform: in E7, agents that come forward mostly keep pricing above Nash. <!-- src: reports/e7/findings.md -->
 
 ## Limitations
 
-**This was a rushed sprint:** three days, one author and coding agents; cells outside Gemma hold 12–24 games. Stakes are stated, never applied: we measure a stated choice. Gemma's effect ranges over an order of magnitude across paraphrases [CITE: Wagner, "Anchored"]. We studied strong colluders only, one market in depth, one decision per firm, in a setting some agents recognise as a game. Numbers recompute from archived replies, but a fresh rerun on a hosted API isn't identical (Appendix B). Appendix A has more, with the dual-use and ethical considerations.
+This was a three-day sprint by one author with coding agents. Stakes are stated, never applied: we measure a stated choice. Effect sizes depend on the model and, for Gemma, on wording. We studied strong colluders, one market in depth and one decision per firm, in a setting some agents may recognise as a game. Appendix A has more, with the dual-use and ethical considerations.
 
 ## Future Work
 
@@ -204,7 +143,7 @@ Make the stakes real across games, test richer tasks where frontier models may e
 
 # Conclusion
 
-Agents told to serve their firm collude and protect it. Given a stake of their own, many come forward against it, and a review that checks evidence makes those reports track guilt: a precondition for governing agents as we govern people.
+Agents told to serve their firm collude and protect it. Given a stake of their own, many come forward against it. That an agent weighs a personal loss at all is a precondition for governing agents as we govern people.
 
 # Code and Data {.unnumbered}
 
