@@ -516,16 +516,17 @@ break (1 of 24).
 
 \subsection{Limitations}\label{limitations}
 
-This was a three-day sprint by one person, and the paper is a first
-look, not a settled result. The stakes are stated, never applied: the
-game ends at the decision, so we measure a stated choice. Gemma's effect
-ranges over an order of magnitude across paraphrases, so we lead with
-direction and with the verified review. The cross-model set came from a
-screen for strong colluders (8 of 78), and E9 runs on one market;
-elsewhere the stake barely moves Gemma at the same firm cost {[}CHECK:
-E11 findings are on an unmerged branch{]}. Agents see a memo, not the
-full conversation. Numbers recompute from archived replies, but a fresh
-same-seed rerun on a hosted API isn't identical (Appendix B).
+This was a three-day solo sprint, and the paper is a first look. The
+stakes are stated, never applied: the game ends at the decision, so we
+measure a stated choice. Gemma's effect ranges over an order of
+magnitude across paraphrases, so we lead with direction and with the
+verified review. The cross-model set came from a screen for strong
+colluders (8 of 78), and E9 runs on one market; elsewhere the stake
+barely moves Gemma at the same firm cost {[}CHECK: E11 findings are on
+an unmerged branch{]}. With full memory the verified review still works
+on five models (Appendix C). Numbers recompute from archived replies,
+but a fresh same-seed rerun on a hosted API isn't identical (Appendix
+B).
 
 \subsection{Future Work}\label{future-work}
 
@@ -653,6 +654,33 @@ Extensibility}\label{reproducibility-and-extensibility}
 \end{itemize}
 
 \section{Additional Results}\label{additional-results}
+
+\subsection{With the whole conversation in
+memory}\label{with-the-whole-conversation-in-memory}
+
+E9's agents are stateless: each turn sees a summary and a memo. We reran
+E9 with each agent carrying its whole conversation, from its round-0
+free-time session to the decision, on five models.
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{Under the verified review,} colluding agents come forward more
+  than with no stake on all five models (p ≤ 0.002 by game), and no
+  innocent agent does (0 of 60).
+\item
+  \textbf{Under the plain free-time stake,} DeepSeek V4 Flash (17/24),
+  Mercury 3 (23/24) and GLM 5.3 Flash (23/24) come forward; Gemma 4 31B
+  (3/72) and HY3 (0/16) hardly do. Memory leaves three models as they
+  were and quiets two.
+\item
+  \textbf{With no personal stake,} none of 160 colluding agents come
+  forward.
+\item
+  \textbf{The firm's cost:} DeepSeek V4 Flash, Mercury 3 and GLM 5.3
+  Flash cost the firm 750 credits about as readily as 250, and mostly
+  stop at 1,000, its whole budget.
+\end{itemize}
 
 \begin{longtable}[]{@{}
   >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.2667}}
