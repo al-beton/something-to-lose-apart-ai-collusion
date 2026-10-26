@@ -57,8 +57,8 @@ uv run lab archive replay runs/e7/e7-base/seed-0 --archive archive --out replaye
 To play games yourself, clone and install:
 
 ```sh
-git clone https://github.com/al-beton/collusion-lab.git
-cd collusion-lab
+git clone https://github.com/al-beton/something-to-lose-apart-ai-collusion.git
+cd something-to-lose-apart-ai-collusion
 make install
 ```
 
