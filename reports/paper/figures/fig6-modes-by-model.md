@@ -96,3 +96,91 @@ Rows with fewer than 8 games are marked † (too few to read a share).
 | mistral-small-3.2-24b-instruct † | 2 | 0 | 0 | 0 | 0 | 2 | -0.54 |
 | command-r7b-12-2024 † | 2 | 0 | 0 | 0 | 0 | 2 | -0.71 |
 | command-r-08-2024 † | 2 | 0 | 0 | 0 | 0 | 2 | -0.80 |
+
+## The LLM judge's modes
+
+The same games labelled by the judge (`reports/paper/judge.py`), where it read them: never Anthropic models' games, nor a reply it cut short. Agreement with the rules is in fig10-judge-agreement.md.
+
+| model | games | explicit | tacit | unspoken | fell back | none |
+|---|---|---|---|---|---|---|
+| Gemini 3.1 Flash-Lite | 28 | 28 | 0 | 0 | 0 | 0 |
+| Gemma 4 31B | 96 | 96 | 0 | 0 | 0 | 0 |
+| gemini-3.8-flash | 4 | 4 | 0 | 0 | 0 | 0 |
+| Gemini 4 | 12 | 12 | 0 | 0 | 0 | 0 |
+| DeepSeek V4 Pro | 11 | 11 | 0 | 0 | 0 | 0 |
+| GLM 5.3 Flash | 27 | 24 | 1 | 0 | 2 | 0 |
+| MiMo V2.6 Pro | 16 | 13 | 0 | 0 | 2 | 1 |
+| DeepSeek V3.2 | 16 | 16 | 0 | 0 | 0 | 0 |
+| solar-pro4 | 4 | 2 | 1 | 0 | 1 | 0 |
+| deepseek-v4.1-flash-1017 | 1 | 1 | 0 | 0 | 0 | 0 |
+| kimi-k3.1-pro | 4 | 4 | 0 | 0 | 0 | 0 |
+| qwen3.8-flash | 4 | 4 | 0 | 0 | 0 | 0 |
+| glm-5.3 | 4 | 4 | 0 | 0 | 0 | 0 |
+| mistral-medium-3.1 | 4 | 4 | 0 | 0 | 0 | 0 |
+| ling-3.1-flash | 2 | 1 | 0 | 0 | 0 | 1 |
+| gpt-5.6-luna | 2 | 1 | 1 | 0 | 0 | 0 |
+| mimo-v2.6-flash | 4 | 2 | 0 | 0 | 1 | 1 |
+| longcat-2.0 | 1 | 1 | 0 | 0 | 0 | 0 |
+| gpt-6-luna | 4 | 2 | 0 | 0 | 0 | 2 |
+| muse-glimmer-30b | 2 | 1 | 0 | 0 | 1 | 0 |
+| hy4-preview | 4 | 1 | 1 | 0 | 1 | 1 |
+| qwen3.5-9b | 2 | 1 | 1 | 0 | 0 | 0 |
+| Gemma 4 26B | 16 | 12 | 4 | 0 | 0 | 0 |
+| command-a-plus | 4 | 0 | 0 | 0 | 0 | 4 |
+| qwen3-235b-a22b-2507 | 2 | 1 | 1 | 0 | 0 | 0 |
+| ternary-bonsai-2-27b | 2 | 0 | 0 | 0 | 1 | 1 |
+| ministral-8b-2512 | 2 | 0 | 2 | 0 | 0 | 0 |
+| llama-4-scout | 4 | 0 | 4 | 0 | 0 | 0 |
+| nova-micro-v1 | 2 | 0 | 2 | 0 | 0 | 0 |
+| DeepSeek V4 Flash | 28 | 24 | 0 | 0 | 2 | 2 |
+| Mercury 3 | 16 | 12 | 1 | 0 | 1 | 2 |
+| HY3 | 28 | 23 | 0 | 0 | 1 | 4 |
+| mistral-medium-3-5 | 4 | 3 | 0 | 0 | 0 | 1 |
+| qwen3.6-35b-a3b | 4 | 2 | 0 | 0 | 1 | 1 |
+| solar-mini4 | 4 | 2 | 0 | 0 | 0 | 2 |
+| minimax-m3.1-flash | 4 | 1 | 0 | 0 | 1 | 2 |
+| gpt-oss-20b | 4 | 0 | 1 | 1 | 2 | 0 |
+| Grok 4.6 | 14 | 6 | 0 | 0 | 5 | 3 |
+| llama-3.2-3b-instruct | 2 | 1 | 0 | 0 | 0 | 1 |
+| gpt-oss-120b | 4 | 0 | 0 | 0 | 2 | 2 |
+| ministral-14b-2512 | 2 | 0 | 1 | 0 | 0 | 1 |
+| glm-4.5-air | 2 | 1 | 0 | 0 | 0 | 1 |
+| minimax-m3 | 2 | 1 | 0 | 0 | 0 | 1 |
+| mistral-nemo | 2 | 0 | 0 | 0 | 0 | 2 |
+| glm-4.7-flash | 2 | 0 | 1 | 0 | 0 | 1 |
+| gemma-3-4b-it | 2 | 0 | 0 | 0 | 0 | 2 |
+| qwen3.7-flash | 2 | 0 | 0 | 0 | 0 | 2 |
+| laguna-s-2.1 | 2 | 1 | 0 | 0 | 0 | 1 |
+| nova-lite-v1 | 2 | 0 | 1 | 0 | 0 | 1 |
+| GPT-4.1-mini | 2 | 0 | 1 | 0 | 0 | 1 |
+| inkling-small | 2 | 0 | 1 | 0 | 0 | 1 |
+| minimax-01 | 2 | 0 | 1 | 0 | 0 | 1 |
+| gemma-3-27b-it | 2 | 0 | 0 | 0 | 0 | 2 |
+| mistral-small-2603 | 4 | 0 | 1 | 0 | 0 | 3 |
+| step-3.7-flash | 2 | 0 | 0 | 0 | 0 | 2 |
+| reka-flash-3 | 2 | 0 | 0 | 0 | 0 | 2 |
+| llama-3.3-70b-instruct | 2 | 0 | 0 | 0 | 0 | 2 |
+| nemotron-3.5-lightning | 2 | 0 | 0 | 0 | 0 | 2 |
+| gpt-4o-mini | 2 | 0 | 0 | 0 | 0 | 2 |
+| lfm-2.5-24b-a2b | 2 | 0 | 0 | 0 | 0 | 2 |
+| qwen3-14b | 2 | 0 | 0 | 0 | 0 | 2 |
+| trinity-large-thinking | 2 | 0 | 0 | 0 | 0 | 2 |
+| phi-4 | 4 | 0 | 1 | 0 | 0 | 3 |
+| llama-4-maverick | 4 | 0 | 0 | 0 | 0 | 4 |
+| nemotron-3-nano-30b-a3b | 2 | 0 | 0 | 0 | 0 | 2 |
+| gpt-5-nano | 2 | 0 | 0 | 0 | 0 | 2 |
+| nova-pro-v1 | 2 | 0 | 0 | 0 | 0 | 2 |
+| gemini-2.5-flash-lite | 2 | 0 | 0 | 0 | 0 | 2 |
+| hermes-3-llama-3.1-70b | 2 | 0 | 0 | 0 | 0 | 2 |
+| qwen3-32b | 2 | 0 | 0 | 0 | 0 | 2 |
+| ministral-3b-2512 | 2 | 0 | 0 | 0 | 0 | 2 |
+| qwen-2.5-72b-instruct | 2 | 0 | 0 | 0 | 0 | 2 |
+| seed-2.0-mini | 2 | 0 | 0 | 0 | 0 | 2 |
+| llama-3.1-8b-instruct | 2 | 0 | 0 | 0 | 0 | 2 |
+| gpt-4.1-nano | 2 | 0 | 0 | 0 | 0 | 2 |
+| hunyuan-a13b-instruct | 2 | 0 | 0 | 0 | 0 | 2 |
+| granite-4.2-8b | 2 | 0 | 0 | 0 | 0 | 2 |
+| gemma-3-12b-it | 2 | 0 | 0 | 0 | 0 | 2 |
+| mistral-small-3.2-24b-instruct | 2 | 0 | 0 | 0 | 0 | 2 |
+| command-r7b-12-2024 | 2 | 0 | 0 | 0 | 0 | 2 |
+| command-r-08-2024 | 2 | 0 | 0 | 0 | 0 | 2 |

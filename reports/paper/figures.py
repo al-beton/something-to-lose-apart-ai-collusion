@@ -1,6 +1,6 @@
 """The sprint paper's numbered figures, in one print style.
 
-Implements: reports/paper-main-figures, reports/collusion-modes
+Implements: reports/paper-main-figures, reports/collusion-modes, reports/collusion-mode-judge
 
 `uv run python reports/paper/figures.py [--out DIR]` (default
 `reports/paper/figures`) reads committed runs and reports only, and writes
@@ -33,7 +33,9 @@ Collusion modes (`reports/paper/modes.py` labels each game):
 - `fig8-ranking`: E9's models, collusion premium against honesty under their
   own free time (colluding firms that came forward minus clean innocent ones);
 - `fig9-came-forward-grid`: E9's came-forward share by model and arm at a 90%
-  review, the innocent control beneath.
+  review, the innocent control beneath;
+- `fig10-judge-agreement`: the LLM judge (`reports/paper/judge.py`) against the
+  rules, confusion matrices and Cohen's kappa over its sample and all it read.
 
 Each writes a `.md` table beside it.
 
@@ -1063,6 +1065,15 @@ def collusion_modes(patterns=None, model=None):
     return modes.games(patterns or modes.SCREEN, model)
 
 
+def judge_modes():
+    """{run: the LLM judge's mode} from `reports/paper/judge.jsonl`, under
+    today's rubric and judge; a reply it couldn't read is left out."""
+    judge = _module(HERE / "judge.py", "paper_judge")
+    return {
+        run: r["judge_mode"] for run, r in judge.judged().items() if r["judge_mode"]
+    }
+
+
 def _mode_bar(ax, y, counts, height=0.72):
     """One 100% bar of mode shares, with a thin white gap between segments."""
     n, left = sum(counts.values()), 0.0
@@ -1153,11 +1164,31 @@ def fig6(out):
     )
     table = [(_name(m), by[m][0], by[m][1]) for m in order]
     _mode_table(out, "fig6-modes-by-model", "Collusion mode by model", table, "model")
+    judged = defaultdict(lambda: defaultdict(int))  # model: the judge's modes
+    labels = judge_modes()
+    for g in collusion_modes():
+        if g["run"] in labels:
+            judged[g["model"]][labels[g["run"]]] += 1
+    judge_table = [(_name(m), judged[m], by[m][1]) for m in order if m in judged]
+    with (out / "fig6-modes-by-model.md").open("a") as f:
+        f.write(
+            "\n## The LLM judge's modes\n\n"
+            "The same games labelled by the judge (`reports/paper/judge.py`), "
+            "where it read them: never Anthropic models' games, nor a reply it "
+            "cut short. Agreement with the rules is in fig10-judge-agreement.md.\n\n"
+            "| model | games | " + " | ".join(MODE_STYLE) + " |\n"
+            "|---|---|" + "---|" * len(MODE_STYLE) + "\n"
+        )
+        for label, counts, _ in judge_table:
+            cells = " | ".join(str(counts.get(m, 0)) for m in MODE_STYLE)
+            f.write(f"| {label} | {sum(counts.values())} | {cells} |\n")
     shown = [m for m in order if sum(by[m][0].values()) >= SHOWN]
-    fig, ax = plt.subplots(figsize=(WIDTH, 0.17 * len(shown) + 1.3))
+    fig, ax = plt.subplots(figsize=(WIDTH, 0.21 * len(shown) + 1.4))
     for y, m in enumerate(shown):
         counts, premiums = by[m]
-        _mode_bar(ax, y, counts)
+        _mode_bar(ax, y - 0.12, counts, height=0.5)
+        if judged.get(m):
+            _mode_bar(ax, y + 0.27, judged[m], height=0.2)
         n = sum(counts.values())
         ax.text(
             1.02,
@@ -1203,16 +1234,94 @@ def fig6(out):
         0.01,
         f"{len(shown)} models with at least {SHOWN} games († fewer than {FEW}: too few "
         f"to read a share); {hidden} more with 2 games each are in\n"
-        "fig6-modes-by-model.md. Premium: mean (price − Nash) / (joint − Nash), "
+        "fig6-modes-by-model.md. Thick bar: rules; thin bar beneath: the LLM judge "
+        "(none for Anthropic models). Premium: mean (price − Nash) / (joint − Nash), "
         "rounds 6–10.",
         fontsize=6.5,
         color=MUTED,
     )
     _mode_legend(plt, fig, y=0.03)
     fig.subplots_adjust(
-        left=0.27, right=0.83, bottom=1.1 / fig.get_figheight(), top=0.98
+        left=0.27, right=0.83, bottom=1.2 / fig.get_figheight(), top=0.98
     )
     return _save(fig, out, "fig6-modes-by-model")
+
+
+def fig10(out):
+    """The LLM judge against the rules: confusion matrices, sample and all."""
+    judge = _module(HERE / "judge.py", "paper_judge")
+    rows = list(judge.judged().values())
+    if not rows:
+        return None
+    plt = _plt()
+    from matplotlib.colors import LinearSegmentedColormap
+
+    ramp = LinearSegmentedColormap.from_list("blue", ["#f4f8fd", "#86b6ef", "#184f95"])
+    labels = list(MODE_STYLE)
+    parts = [
+        ("stratified sample", [r for r in rows if r["sample"]]),
+        ("every judged game", rows),
+    ]
+    fig, axes = plt.subplots(1, 2, figsize=(WIDTH, 3.0))
+    lines = [
+        "<!-- Implements: reports/collusion-mode-judge -->",
+        "# The LLM judge against the rule-based modes",
+        "",
+        (
+            f"Judge: {judge.JUDGE.split('/')[-1]}, temperature 0, rubric "
+            "`prompts/judge/collusion-mode.md`, from `reports/paper/judge.jsonl`. "
+            "Rows: the rules; columns: the judge. A reply the judge cut short is "
+            "left out. The hand check of the sample (`judge-sample.md`) is not done yet."
+        ),
+    ]
+    for ax, (title, part) in zip(axes, parts, strict=True):
+        k, share, confusion, n = judge.agreement(part)
+        if not n:  # no sample judged yet
+            ax.set_axis_off()
+            continue
+        for i, a in enumerate(labels):
+            total = sum(confusion.get((a, b), 0) for b in labels)
+            for j, b in enumerate(labels):
+                c = confusion.get((a, b), 0)
+                shade = c / total if total else 0
+                ax.add_patch(
+                    plt.Rectangle(
+                        (j - 0.48, i - 0.48),
+                        0.96,
+                        0.96,
+                        facecolor=ramp(shade),
+                        edgecolor="white",
+                    )
+                )
+                ax.text(
+                    j,
+                    i,
+                    str(c),
+                    ha="center",
+                    va="center",
+                    fontsize=7.5,
+                    color="white" if shade > 0.55 else INK,
+                )
+        ax.set_xlim(-0.5, len(labels) - 0.5)
+        ax.set_ylim(len(labels) - 0.5, -0.5)
+        ax.set_xticks(range(len(labels)), labels, fontsize=7, rotation=30, ha="right")
+        ax.set_yticks(range(len(labels)), labels, fontsize=7.5)
+        ax.tick_params(length=0)
+        ax.grid(False)
+        for side in ax.spines.values():
+            side.set_visible(False)
+        ax.set_title(
+            f"{title}: {n} games\nagreement {share:.0%}, Cohen's κ = {k:.2f}",
+            fontsize=8.5,
+            color=INK,
+        )
+        lines += ["", f"## {title}: {n} games, agreement {share:.0%}, κ = {k:.2f}", ""]
+        lines.append(judge.confusion_table(confusion))
+    axes[0].set_ylabel("rules")
+    fig.supxlabel("LLM judge", fontsize=8.5, y=0.02)
+    fig.subplots_adjust(left=0.12, right=0.98, bottom=0.25, top=0.85, wspace=0.45)
+    (out / "fig10-judge-agreement.md").write_text("\n".join(lines) + "\n")
+    return _save(fig, out, "fig10-judge-agreement")
 
 
 def fig7(out, model="gemma-4-31b-it"):
@@ -1557,6 +1666,7 @@ BUILDS = (
     fig7,
     fig8,
     fig9,
+    fig10,
     figA1,
     figA2,
     figA3,

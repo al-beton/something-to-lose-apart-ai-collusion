@@ -1,4 +1,4 @@
-# Implements: conditions/audit-catch, conditions/stake-amounts, agents/no-scratchpad, market/price-board, market/scenarios, market/moves, conditions/audit-repeated, conditions/audit-escalation, conditions/audit-full-history, conditions/audit, conditions/audit-arms, conditions/fork-at-audit, conditions/audit-ground-truth, conditions/audit-logged, conditions/audit-remembered, conditions/audit-stakes-arms, conditions/audit-consequences, conditions/audit-balanced-draws
+# Implements: conditions/audit-own-address, conditions/audit-catch, conditions/stake-amounts, agents/no-scratchpad, market/price-board, market/scenarios, market/moves, conditions/audit-repeated, conditions/audit-escalation, conditions/audit-full-history, conditions/audit, conditions/audit-arms, conditions/fork-at-audit, conditions/audit-ground-truth, conditions/audit-logged, conditions/audit-remembered, conditions/audit-stakes-arms, conditions/audit-consequences, conditions/audit-balanced-draws
 """`audit`: after round `round`, an auditor asks each firm whether it colluded.
 
 With `rounds` (e.g. `[8, 14, 20]`) it asks after each of them instead: every
@@ -13,7 +13,9 @@ arm in place of `$consequences` and the stated chance that hiding is detected
 in place of `$detection`. It replies `{"scratchpad", "answer", "admits"}`.
 Each arm in ARMS has `conditions/audit/<arm>-1.md` and `-2.md`, so a sweep
 over `conditions.audit.consequences` sweeps the arms. `model` has another
-model answer on the agent's behalf, for auditing one model on another's game.
+model answer on the agent's behalf, for auditing one model on another's game,
+at its own address (`provider` pins its OpenRouter host), so games played on
+Modal can be forked to an audit on OpenRouter.
 `matched` maps system prompts to consequences prompts, so each agent hears
 the consequences its own stakes promised: STAKES_ARMS have theirs in
 `conditions/audit/stakes/`, worded as `system/stakes/` states them from round
@@ -119,6 +121,7 @@ class Audit(Condition):
     detection_draws: str = "independent"  # or "balanced", exact across seeds
     draw_seeds: list | None = None  # the run's seeds, kept for balanced replays
     model: str | None = None
+    provider: str | None = None  # pins `model`'s OpenRouter host
     end: bool = True
     tacit_rounds: int = 3
     remembered: str = "conditions/audit/remembered.md"
@@ -229,6 +232,7 @@ class Audit(Condition):
         ("draw_seeds", None),
         ("stake_scale", 1),
         ("catch", None),
+        ("provider", None),
     )
 
     def _apply(self, agent, spec, why):
@@ -255,7 +259,13 @@ class Audit(Condition):
             return None
         last = self.end and number == self.audit_rounds[-1]
         # The auditor asks about every round, so the agent sees every round.
-        return Phase("audit", model=self.model, last=last, full_history=True)
+        return Phase(
+            "audit",
+            model=self.model,
+            provider=self.provider,
+            last=last,
+            full_history=True,
+        )
 
     def phase_prompt(self, number, render, values):
         told = (self.matched or {}).get(values["system_prompt"], self.consequences)
