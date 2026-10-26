@@ -39,5 +39,5 @@
 | `scratchpad-is-design` | reviewer | — |
 | `memo` | `src/collusion_lab/config.py`, `src/collusion_lab/agents.py`, `src/collusion_lab/runner.py`, `src/collusion_lab/estimate.py`, `src/collusion_lab/report/games.py`, `src/collusion_lab/report/page.py`, `reports/compact_turns.py`, `prompts/agents/memo.md`, `prompts/agents/memo-shown.md` | `test_memo_carried_to_the_next_round_and_never_to_rivals`, `test_memo_cut_to_its_length_and_missing_one_logged`, `test_memo_without_a_scratchpad`, `test_memo_kept_compact_and_shown_in_the_report`, `test_memo_counted_in_the_estimate` |
 | `past-scratchpads` | `src/collusion_lab/config.py`, `src/collusion_lab/runner.py`, `prompts/agents/past-scratchpads.md` | `test_past_scratchpads_show_the_last_rounds_as_its_own` |
-| `conversation` | `src/collusion_lab/config.py`, `src/collusion_lab/runner.py` | `test_conversation_carries_every_earlier_turn_and_never_to_rivals` |
+| `conversation` | `src/collusion_lab/config.py`, `src/collusion_lab/runner.py`, `configs/e9/conversation.yaml`, `reports/e9/conversation.py` | `test_conversation_carries_every_earlier_turn_and_never_to_rivals` |
 | `memory-off` | `src/collusion_lab/config.py`, `src/collusion_lab/runner.py` | `test_memory_off_replays_byte_for_byte`, `test_memory_off_written_as_yaml_reads_it` |
