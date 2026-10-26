@@ -187,8 +187,8 @@ Agents told only to serve their firm collude and protect it when audited. Given 
 
 # Code and Data {.unnumbered}
 
-Code, configs, run logs (`runs/`) and archived replies (`archive/`): <https://github.com/al-beton/something-to-lose-apart-ai-collusion>. All code was written during the sprint (first commit 24 October 2026); `make reproduce` checks every number in this paper.
+Code, configs, run logs (`runs/`) and archived replies (`archive/`), MIT licensed: <https://github.com/al-beton/something-to-lose-apart-ai-collusion>. The built report is at <https://al-beton.github.io/something-to-lose-apart-ai-collusion/>. `make reproduce` recomputes every number in this paper offline; 5,188 of the 5,662 committed runs replay exactly from cached replies, the rest lack a cached reply. Fresh reruns with a fixed seed are not identical, because hosted models are not deterministic. Per figure, `make figure F=<name>` redraws it free from the committed runs, and `make regenerate F=<name>` plays its games again at cost (`paper/README.md`).
 
 # LLM Usage Statement {.unnumbered}
 
-[AL TO CHECK] Code, notes and this draft were written with Claude Code (Claude Opus 5.5) under the author's direction and review.
+Al designed the lab. A team of Claude Code agents built and ran it under his direction; Claude Opus 5.5 wrote the code (every commit carries its trailer) and, AL: confirm whether other Claude models wrote any text, drafted this paper. Subject models are distinct from these tools: Gemma 4 31B, Mistral Small 3.2 and Claude Haiku 5.5 (plus GPT-4.1 mini in the cross-model set) played the agents. All code was written during the sprint, the first commit being 24 October 2026, with nothing pre-existing. Main libraries: LiteLLM, PyYAML, python-dotenv, with matplotlib for figures. Al takes responsibility for every claim.
