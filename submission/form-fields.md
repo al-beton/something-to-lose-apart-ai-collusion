@@ -40,7 +40,7 @@ Tick **1 Markets and Collusion** and **3 Collusion Carriers and Countermeasures.
 - Track 1, because every main result comes from LLM pricing cartels, and research question 1.5 asks which single restriction removes the most collusion.
 - Track 3, because the project is a way to break a cartel up once it has formed: it makes a member want to report it.
 
-Track 2 (detection and audit) fits only through the verified-review result. Tracks don't affect scoring.
+Track 2 (Detection and Audit) arguably fits the verified-review result too; that's Al's call. Tracks don't affect scoring.
 
 ## Interested in publishing? (required)
 
@@ -72,7 +72,7 @@ Optional. If used, upload [`project-image.png`](../reports/paper/figures/project
 
 ## Additional material (optional, URL)
 
-The HTML version of the paper on GitHub Pages, `https://al-beton.github.io/something-to-lose-apart-ai-collusion/`, once PR 310 has merged and the site publishes the paper. Until then, leave it empty.
+The HTML version of the paper on GitHub Pages: `https://al-beton.github.io/something-to-lose-apart-ai-collusion/main/paper.html`.
 
 ## Team and member details
 
