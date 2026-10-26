@@ -559,6 +559,7 @@ def test_modal_exact_batch_invariant_without_prefix_cache(monkeypatch):
     deployed, command = _deployed(monkeypatch)
     env = next(args[0] for name, args in deployed["built"] if name == "env")
     assert env["VLLM_BATCH_INVARIANT"] == "1"
+    assert (env["EXACT"], env["MAX_NUM_SEQS"]) == ("1", "4")  # read in the container
     assert "--no-enable-prefix-caching" in command
     assert command[command.index("--max-num-seqs") + 1] == "4"
 

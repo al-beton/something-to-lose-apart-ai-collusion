@@ -135,6 +135,8 @@ image = (
             "TEXT_ONLY": "1" if TEXT_ONLY else "",
             "GPU_MEMORY": GPU_MEMORY or "",
             "VLLM_BATCH_INVARIANT": "1" if EXACT else "0",
+            "EXACT": "1" if EXACT else "",  # so the server reads them too
+            "MAX_NUM_SEQS": MAX_NUM_SEQS or "",
             "APP_NAME": APP_NAME,
             "PYTHONPATH": "/root",  # so vLLM can import vllm_token
         }

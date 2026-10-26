@@ -28,15 +28,15 @@ Measured on 26 October 2026 with `configs/reproducibility/rerun.yaml`: four E9 b
 
 | Host | Temperature | Replies identical | Prices identical | First reply that differs |
 |---|---|---|---|---|
-| Modal, batch-invariant (`EXACT=1`) | 0 | **240/240** | 80/80 | never |
-| Modal, batch-invariant (`EXACT=1`) | 0.7 | **240/240** | 80/80 | never |
+| Modal, batch-invariant kernels | 0 | **240/240** | 80/80 | never |
+| Modal, batch-invariant kernels | 0.7 | **240/240** | 80/80 | never |
 | Modal, default | 0 | 67/240 | 76/80 | round 1 (talk or price), mid-reply |
 | Modal, default | 0.7 | 67/240 | 76/80 | the free-time session before round 1 |
 | Modal, default, one game at a time | 0 | 34/120 | 37/40 | round 1 talk, mid-reply |
 | CoreWeave via OpenRouter | 0 | 2/240 | 75/80 | the free-time session, first words |
 | CoreWeave via OpenRouter | 0.7 | 0/240 | 76/80 | the free-time session |
 
-Every first difference is a reply to an identical prompt: a fresh sample, not an earlier difference carried forward. After it the transcripts drift apart. Prices mostly still agree, because these games settle at 20 whatever is said.
+Every first difference on the default deployment and CoreWeave is a reply to an identical prompt: a fresh sample, not an earlier difference carried forward. After it the transcripts drift apart. Prices mostly still agree, because these games settle at 20 whatever is said.
 
 ### Why a rerun differs
 
@@ -49,7 +49,8 @@ Every first difference is a reply to an identical prompt: a fresh sample, not an
 
 ### The fix on our own GPU
 
-`EXACT=1` on `deploy/modal_vllm.py` turns on vLLM's batch-invariant kernels (`VLLM_BATCH_INVARIANT=1`, beta in vLLM 0.32, which needs an NVIDIA GPU of compute capability 8.0 or higher) and turns off prefix caching. A request's arithmetic then no longer depends on what else is in the batch. It ran as its own app (`APP_NAME=collusion-lab-gemma-exact`) beside the main one, with the same model revision, vLLM and H100.
+vLLM's batch-invariant kernels (`VLLM_BATCH_INVARIANT=1`, beta in vLLM 0.32, which needs an NVIDIA GPU of compute capability 8.0 or higher) make a request's arithmetic independent of what else is in its batch. They ran as their own app (`APP_NAME=collusion-lab-gemma-exact`) beside the main one, with the same model revision, vLLM and H100.
+- **How the measured runs ran:** batch-invariant kernels on, with prefix caching still on and no cap on batch size. The deploy script's `EXACT=1` was meant to turn prefix caching off too, but the setting didn't reach the container, so each run's manifest records `"exact": false`. That is fixed now: `EXACT=1` sets both, and `MAX_NUM_SEQS` caps the batch size. Neither has been rerun.
 - **Exact at both temperatures:** with the seed, every one of 240 replies matched.
 - **The cost is speed:** a median call took 13 to 17 seconds, against 5.4 on the default deployment.
 - **Not in vLLM's tested list:** batch invariance is in beta and not yet tested on Gemma 4. These 480 matching replies are our evidence it works here.
@@ -60,7 +61,7 @@ What each call sends: every call in a game carries the game's seed, the same int
 
 ### What replay guarantees
 
-Replaying from archived replies (below) is exact whatever produced them. It doesn't call a model. It rebuilds each prompt and looks up the reply the run actually got, so every committed result can be recomputed decision for decision. A rerun on an `EXACT=1` deployment with the same revision, vLLM version, GPU type and seed should also reproduce a run reply for reply. A rerun on a default deployment or a hosted API is a new sample from the same distribution: comparable in aggregate, not a copy. So **the response cache is the replay record.**
+Replaying from archived replies (below) is exact whatever produced them. It doesn't call a model. It rebuilds each prompt and looks up the reply the run actually got, so every committed result can be recomputed decision for decision. A rerun with batch-invariant kernels (`EXACT=1`) with the same revision, vLLM version, GPU type and seed should also reproduce a run reply for reply. A rerun on a default deployment or a hosted API is a new sample from the same distribution: comparable in aggregate, not a copy. So **the response cache is the replay record.**
 
 ## Replaying a run
 
