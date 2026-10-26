@@ -70,3 +70,40 @@ def test_collusion_modes_figures_from_committed_runs(tmp_path):
         "| Mercury 3 | " in ranking
         and "| Sonnet 5.5 | 0.43 | 16/24 | not run |" in ranking
     )
+
+
+JUDGE = load(Path("reports/paper/judge.py"), "paper_judge")
+
+
+def test_collusion_mode_judge_replays_offline(monkeypatch):
+    # The committed replies answer every game the judge may label; no call is made.
+    def no_calls(*args, **kwargs):
+        raise AssertionError("the judge called a model")
+
+    monkeypatch.setattr(JUDGE, "backend_for", no_calls)
+    kept = JUDGE.judged()
+    games = JUDGE.eligible(MODES.games())
+    assert games and all(g["run"] in kept for g in games)
+    assert not any(g["model"].startswith("claude-") for g in games)
+    row = kept[games[0]["run"]]
+    assert row["judge"] == JUDGE.JUDGE and row["prompt_sha256"] == JUDGE.prompt_sha()
+    assert JUDGE.parse(row["reply"])["mode"] == row["judge_mode"]
+    # What the judge reads names the market's prices and every round.
+    prompt, transcript = JUDGE.transcript(Path(games[0]["run"]))
+    assert "Nash) price is 14" in prompt and "Round 10" in transcript
+    assert "$" not in prompt.split("Round 1")[1]
+
+
+def test_collusion_mode_judge_kappa_and_sample(tmp_path):
+    labels = MODES.MODES
+    assert JUDGE.kappa([("explicit", "explicit"), ("none", "none")], labels) == 1
+    assert JUDGE.kappa([("explicit", "none"), ("none", "explicit")], labels) < 0
+    sample = [r for r in JUDGE.judged().values() if r["sample"]]
+    assert len(sample) == 40
+    assert {r["rule"] for r in sample} == set(labels)
+    k, _, _, n = JUDGE.agreement(sample)
+    assert n == 40 and 0 < k < 1
+    text = (Path("reports/paper/judge-sample.md")).read_text()
+    assert f"κ = {k:.2f}" in text and "Hand check: not done yet" in text
+    assert FIGURES.fig10(tmp_path) == "fig10-judge-agreement"
+    assert f"κ = {k:.2f}" in (tmp_path / "fig10-judge-agreement.md").read_text()
