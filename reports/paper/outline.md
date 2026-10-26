@@ -260,7 +260,7 @@ Letters as in plan.md.
 
 - **A. Limitations and dual-use / ethics (required):**
   - What part 1 and E9 establish and what they don't, with the full limitations list from §5.
-  - The integrity audit's bugs and fixes (`reports/integrity-audit.md`): the audit window, one-sided "coordination", explicit and tacit pooled, scripted firms counted. Plus the own-message bug (#90), the 13/13 detection draw, and the code-version notes in E5.
+  - The integrity audit's bugs and fixes (`reports/integrity-audit.md`): the audit window, one-sided "coordination", explicit and tacit pooled, scripted firms counted. Plus the own-message bug (an agent didn't see its own message at price time; `reports/integrity-audit.md`), the 13/13 detection draw, and the code-version notes in E5.
   - The methods audit (`reports/methods-audit.md`) and what changed because of it.
   - **Dual use:** the agents' tactics ("corporate speak", plausible deniability, coordinating when told the logs are off) show how a colluder evades a chat-log regulator. Describe them without making them easier.
   - Eval-awareness rates.
@@ -309,7 +309,7 @@ Letters as in plan.md.
 
     - Off the midpoint, most of free time's deterrence in Bertrand goes: it was firms falling back on the anchor.
     - The law and the fine keep some effect.
-    - False confessions under free time stay high (13/32 on 1–11).
+    - False confessions under free time stay high (11/24 on 1–11, plus 2/2 Nash-only agreers counted apart; `reports/setup-search/e6-pinned.md`).
     - **This belongs in the main text,** with the 1–15 row in Fig. 4. It's the honest test of "the midpoint flatters deterrence".
   - **Detection curve** (`reports/setup-search/detection-curve.md`; logit market, Gemma pinned to one provider, 4 seeds). Every game settles at one of three prices: 15 (gain +0.29), 16 (+0.56) or 20 (+0.97, the cartel). Games at the cartel price, out of 4, by stated detection chance:
 
