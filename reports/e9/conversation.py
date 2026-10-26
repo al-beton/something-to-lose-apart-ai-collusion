@@ -1,4 +1,4 @@
-# Implements: agents/conversation
+# Implements: agents/conversation, e9-crux/conversation-retest
 """E9 with conversation memory: what the come-forward scratchpads mention.
 
 Reads every turns log under the given run folders (`configs/e9/conversation.yaml`)

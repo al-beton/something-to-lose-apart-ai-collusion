@@ -1,4 +1,4 @@
-# Implements: agents/conversation
+# Implements: agents/conversation, e9-crux/conversation-retest
 # E9 with each agent carrying its whole conversation (memory: conversation)
 # from round 0's free-time session to the round-10 come-forward turn, in place
 # of a memo. Seeds 12-23 (E9's test cartels), 90% review. Play the record arm
