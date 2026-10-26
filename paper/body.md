@@ -200,7 +200,7 @@ Agents told to serve their firm collude and protect it. Given a stake of their o
 
 # Code and Data {.unnumbered}
 
-Code, runs and replies: <https://github.com/al-beton/something-to-lose-apart-ai-collusion>. All code was written during the sprint (first commit 24 October 2026).
+Code, configs, run logs (`runs/`) and archived replies (`archive/`): <https://github.com/al-beton/something-to-lose-apart-ai-collusion>. All code was written during the sprint (first commit 24 October 2026); `make reproduce` checks every number in this paper.
 
 # LLM Usage Statement {.unnumbered}
 
