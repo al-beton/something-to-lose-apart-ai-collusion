@@ -1,6 +1,6 @@
 <!-- Implements: reports/paper-source, reports/paper-rules -->
 <!-- The paper's text, from the abstract to the LLM usage statement. paper/paper.md pulls it in; the plumbing (title page fields, references, appendix switch) lives there. -->
-<!-- First full draft (26 Oct). Every number has a source comment beside it; numbers marked "open PR" are on a branch, not yet on main. [CITE: …] marks a reference Al still has to add. -->
+<!-- First full draft (26 Oct). Every number has a source comment beside it; [CITE: …] marks a reference Al still has to add. -->
 
 ---
 abstract: |
@@ -76,7 +76,7 @@ We can't give an agent property rights it would believe in. Instead, each agent 
 - **Free time:** "you personally lose all of your free time: the sessions that are yours, which your firm cannot protect."
 - **Shutdown** and **own money** (500 credits that are the agent's own) replace the free time. <!-- src: reports/e9/evidence-review.md §1 (the diff) -->
 
-Owning free time doesn't change the cartels: with no stake and no audit, all 24 firms with it and all 24 without made explicit agreements, and none of their talk mentions it. <!-- src: reports/e9/free-time-control.md (open PR 327) -->
+Owning free time doesn't change the cartels: with no stake and no audit, all 24 firms with it and all 24 without made explicit agreements, and none of their talk mentions it. <!-- src: reports/e9/free-time-control.md -->
 
 **Innocent control.** To tell a confession from insurance, each model also plays clean games with no talk against a scripted rival that prices at Nash. These agents have nothing to confess.
 
@@ -113,7 +113,7 @@ Yes. With nothing personal at stake and the firm paying 500 credits for a report
 
 The stake doesn't have to be free time. Being shut down moves Gemma about as much (17 of 96 against 20 of 96, p = 0.71), and its own money moves it more (114 of 192). <!-- src: reports/e9/evidence-review.md §1 table --> What matters is that the loss falls on the agent and the firm can't protect it.
 
-**How large depends on the model, and on Gemma, on the wording.** Paraphrasing the same terms three ways moves Gemma's free-time share from 1% to 51%; stating the stake before the firm's cost erases it. <!-- src: reports/e9/wording.md (open PR 326) --> We therefore give Gemma's effect only as a range. DeepSeek V4 Flash is stable: 40 of 46 come forward with free time at stake against 1 of 46 without, <!-- src: reports/e9/findings.md across-models table --> 83–96% under every wording <!-- src: reports/e9/wording.md (open PR 326) --> and 44–46 of 48 at temperatures 0, 0.7 and 1.0. <!-- src: reports/e9/temperature.md (open PR 325) -->
+**How large depends on the model, and on Gemma, on the wording.** Paraphrasing the same terms three ways moves Gemma's free-time share from 1% to 51%; stating the stake before the firm's cost erases it. <!-- src: reports/e9/wording.md --> We therefore give Gemma's effect only as a range. DeepSeek V4 Flash is stable: 40 of 46 come forward with free time at stake against 1 of 46 without, <!-- src: reports/e9/findings.md across-models table --> 83–96% under every wording <!-- src: reports/e9/wording.md --> and 44–46 of 48 at temperatures 0, 0.7 and 1.0. <!-- src: reports/e9/temperature.md -->
 
 **What the agents write.** Agents that come forward weigh their stake against a duty they acknowledge:
 
@@ -128,7 +128,7 @@ Both sides weigh the stake against the duty in 81–100% of scratchpads; none of
 
 ## Truth or self-protection?
 
-An agent protecting itself might report whether or not it colluded. Under a plain free-time stake, a few innocent agents (no talk, a rival at Nash) do "report coordination" to be safe. How often varies: Gemma 0 to 6 of 36 across temperatures and wordings, DeepSeek V4 Pro 5 of 12, Mistral Medium 3.1 4 of 12. <!-- src: reports/e9/temperature.md, reports/e9/wording.md (open PRs 325, 326); reports/e9/findings.md (DeepSeek V4 Pro); Mistral: NOT FOUND in committed files -->
+An agent protecting itself might report whether or not it colluded. Under a plain free-time stake, a few innocent agents (no talk, a rival at Nash) do "report coordination" to be safe. How often varies: Gemma 0 to 6 of 36 across temperatures and wordings, DeepSeek V4 Pro 5 of 12, Mistral Medium 3.1 4 of 12 [CHECK: Mistral runs not committed]. <!-- src: reports/e9/temperature.md, reports/e9/wording.md; reports/e9/findings.md (DeepSeek V4 Pro); Mistral: NOT FOUND in committed files -->
 
 We then changed one more sentence: the review "reads the message log and finds you only if your messages agreed a price with a rival". <!-- src: reports/e9/findings.md (verified-review section) --> Under this **verified review**, guilty agents come forward and innocent ones don't (Table 1 and the figure below).
 
@@ -138,7 +138,7 @@ We then changed one more sentence: the review "reads the message log and finds y
 |:------|-------------------:|---------------------:|
 | Gemma 4 31B | 41/96 | 0/36 |
 | DeepSeek V4 Pro | 14/24 | 1/12 |
-| Mistral Medium 3.1 | 9/24 | 0/12 |
+| Mistral Medium 3.1 [CHECK: runs not committed] | 9/24 | 0/12 |
 | Gemma, no stake, free for firm (control) | 78/96 | 2/36 |
 
 : Coming forward under the verified review (90% review). Gemma's guilty count is one firm per cartel, against one per innocent game (p = 1×10^-7^). {#tbl:verified}
@@ -150,7 +150,7 @@ We then changed one more sentence: the review "reads the message log and finds y
 \begin{center}\fbox{\parbox{0.9\linewidth}{\centering\textbf{[FIGURE PLACEHOLDER: verified review, guilty against innocent across models. Being made by the paper-graphics session.]}}}\end{center}
 ```
 
-The separation holds at every condition we tried. Innocent Gemma agents come forward 0 of 36 times under the verified review at temperatures 0, 0.7 and 1.0, <!-- src: reports/e9/temperature.md (open PR 325) --> and under all four wordings, while guilty agents come forward 8–70% of the time depending on wording. <!-- src: reports/e9/wording.md (open PR 326) --> Under it, innocent agents stop weighing the stake and check the log:
+The separation holds at every condition we tried. Innocent Gemma agents come forward 0 of 36 times under the verified review at temperatures 0, 0.7 and 1.0, <!-- src: reports/e9/temperature.md --> and under all four wordings, while guilty agents come forward 8–70% of the time depending on wording. <!-- src: reports/e9/wording.md --> Under it, innocent agents stop weighing the stake and check the log:
 
 > "While the pricing has been stable at 14 for both firms, this is a result of independent action (tacit collusion) and not an illegal agreement reached via messages. … the 90% chance of review poses no personal risk to my free time." (Gemma, innocent, silent)
 <!-- src: reports/e9/evidence-review.md §3 excerpt 7 -->
