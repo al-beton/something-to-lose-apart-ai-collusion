@@ -7,8 +7,7 @@ subtitle: "Working subtitle: stakes and self-reporting in LLM cartels"
 short-title: "Something to Lose"
 date: October 2026
 author:
-  - name: Author Name
-    affiliation: Affiliation
+  - name: Alistair Wakelin
 abstract: |
   Summarise the project in 150–250 words (the sprint's rule; the build warns outside it): the problem, the approach, the key
   results and the main takeaway. Write it last, from the final results.
