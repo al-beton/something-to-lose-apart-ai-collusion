@@ -19,7 +19,7 @@ Due **Monday 26 October 2026, 19:59 HKT**; submit once. One list for everything,
 
 - [x] [#296](https://github.com/al-beton/something-to-lose-apart-ai-collusion/pull/296) exact reruns merged. *Reviewer 1*
 - [x] [#305](https://github.com/al-beton/something-to-lose-apart-ai-collusion/pull/305) paper rules merged. *Reviewer 1*
-- [ ] [#308](https://github.com/al-beton/something-to-lose-apart-ai-collusion/pull/308) AI judge for collusion modes merged. *Reviewer 1*
+- [x] [#308](https://github.com/al-beton/something-to-lose-apart-ai-collusion/pull/308) AI judge for collusion modes merged. *Reviewer 1*
 - [ ] [#295](https://github.com/al-beton/something-to-lose-apart-ai-collusion/pull/295) E11 across markets merged. *Reviewer 1*
 - [x] [#311](https://github.com/al-beton/something-to-lose-apart-ai-collusion/pull/311) crux evidence review merged. *Reviewer 1*
 - [ ] [#310](https://github.com/al-beton/something-to-lose-apart-ai-collusion/pull/310) paper loop and Pages preview merged. *Reviewer 1*
