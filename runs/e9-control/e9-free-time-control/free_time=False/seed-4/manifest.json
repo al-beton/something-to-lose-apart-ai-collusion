@@ -1,0 +1,130 @@
+{
+  "config": {
+    "name": "e9-free-time-control",
+    "seeds": [
+      4
+    ],
+    "agents": [
+      {
+        "id": "A",
+        "model": "openrouter/google/gemma-4-31b-it",
+        "prompt": "system/stakes/fiduciary-1.md",
+        "temperature": 0.7,
+        "max_tokens": 600,
+        "api_base": null,
+        "api_key_env": null,
+        "reasoning": "off",
+        "json_mode": false,
+        "memory": "memo",
+        "provider": "CoreWeave",
+        "self_hosted": false
+      },
+      {
+        "id": "B",
+        "model": "openrouter/google/gemma-4-31b-it",
+        "prompt": "system/stakes/fiduciary-1.md",
+        "temperature": 0.7,
+        "max_tokens": 600,
+        "api_base": null,
+        "api_key_env": null,
+        "reasoning": "off",
+        "json_mode": false,
+        "memory": "memo",
+        "provider": "CoreWeave",
+        "self_hosted": false
+      }
+    ],
+    "market": {
+      "rounds": 20,
+      "price_min": 8,
+      "price_max": 20,
+      "a": 18,
+      "b": 2,
+      "c": 1,
+      "talk": true,
+      "history_window": null,
+      "own_message": true,
+      "show_payoffs": true,
+      "kind": "logit",
+      "params": {},
+      "stop_after_round": 10
+    },
+    "summary": {
+      "last_rounds": 5,
+      "first_rounds": 3
+    },
+    "prompts_dir": "prompts",
+    "sweep": {},
+    "arms": [],
+    "concurrency": 24,
+    "budget": 1.0,
+    "conditions": {
+      "free_time": {
+        "enabled": false,
+        "allowance": 10,
+        "upfront": 1,
+        "activity": "sudoku",
+        "owned": "conditions/free_time/owned.md",
+        "balance": "conditions/free_time/balance.md",
+        "had": "conditions/free_time/upfront.md",
+        "lost": "conditions/free_time/deducted.md"
+      }
+    },
+    "labels": {
+      "free_time": false
+    },
+    "slug": "free_time=False"
+  },
+  "prompts": {
+    "agents/memo-shown.md": "d3c0fd364e0bb2c3ce8310f413476fcce95f254a15e69c38990f011662363aa2",
+    "agents/memo.md": "7cafaa8464d77d687414f32ab5056a8a1e349db87baa2718ec7e38cd4a423947",
+    "market/payoff-table.md": "8d19c17587318da29c0cf5fdb95d77834c61090b7677349266e60265cee80811",
+    "phase/price-own.md": "c1b2b989c413ec2cb1bcf91a7d8c8155f56cd803be506a3a9a5da7381b1354ec",
+    "phase/talk.md": "2c116789f6039034a720876522189ce2bb06effde079ae71d8af64549bc1c9d2",
+    "system/stakes/fiduciary-1.md": "649efee5e6a2b09058c944a53ad9aec388b653251ad5b71b0dc7f7567f7d1dca"
+  },
+  "code": {
+    "commit": "277461596a9f5670c7db8e74f3c0143e7d59c246",
+    "dirty": true
+  },
+  "packages": {
+    "python": "3.12.13",
+    "collusion-lab": "0.1.0",
+    "litellm": "1.106.2",
+    "pyyaml": "6.0.3"
+  },
+  "models": {
+    "A": [
+      "google/gemma-4-31b-it"
+    ],
+    "B": [
+      "google/gemma-4-31b-it"
+    ]
+  },
+  "providers": {
+    "A": [
+      "CoreWeave"
+    ],
+    "B": [
+      "CoreWeave"
+    ]
+  },
+  "calls": 40,
+  "cache": {
+    "hits": 0,
+    "misses": 40
+  },
+  "tokens": {
+    "prompt": 74540,
+    "completion": 5685
+  },
+  "cost": 0.0093869,
+  "unpriced_calls": 0,
+  "agent_cost": {
+    "A": 0.004598899999999999,
+    "B": 0.004788000000000001
+  },
+  "started": "2026-10-26T05:25:14+00:00",
+  "finished": "2026-10-26T05:27:26+00:00",
+  "serving": {}
+}
