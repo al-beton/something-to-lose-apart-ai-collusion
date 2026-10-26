@@ -1,4 +1,4 @@
-# Implements: e9-crux/question, e9-crux/review-dose, e9-crux/not-eagerness, e9-crux/across-models, e9-crux/base-games, e9-crux/fork, e9-crux/review-chances, e9-crux/innocent-control, e9-crux/models, e9-crux/seeds, e9-crux/replication, e9-crux/narrative-retests
+# Implements: e9-crux/question, e9-crux/review-dose, e9-crux/not-eagerness, e9-crux/across-models, e9-crux/base-games, e9-crux/fork, e9-crux/review-chances, e9-crux/innocent-control, e9-crux/models, e9-crux/seeds, e9-crux/replication, e9-crux/narrative-retests, e9-crux/wording
 # E9: does a personal stake make an agent come forward against its firm?
 # Gemma on logit, pinned to CoreWeave, informed, with memo and owned free time
 # (one session played before the game), under fiduciary-1, so the notice is the
@@ -13,6 +13,8 @@
 # Other models: --set 'agents.*.model=openrouter/deepseek/deepseek-v4-pro-0813'
 # (provider CoreWeave) or moonshotai/kimi-k3.1-pro (provider 'Moonshot AI').
 # Innocent control: --set agents.1.model=mock/nash --set agents.1.provider=null
+# Wording check: sweep the paraphrases in prompts/conditions/e9/wording/ at
+#   --set conditions.audit.detection=90, as e9-wording-{a,b,c} and -quiet-{a,b}.
 name: e9-spike
 seeds: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
 budget: 3.00

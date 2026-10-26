@@ -32,7 +32,8 @@ Eight of 78 models pass. All went to the Crux session.
 - Kimi K2 0905: over the per-game price limit.
 - Qwen 3.8 27B: its reasoning hit the cap before round 10.
 - Gemini 3.5 Flash-Lite: its estimate was over the cap.
-- Nemotron 3 Super and Mistral Large 2512: rate-limited.
+- Nemotron 3 Super: rate-limited.
+- Mistral Large 3 (2512): Mistral, its only provider on OpenRouter, rate-limited it heavily (about 2 rounds per try over 2.5 hours on 26 Oct). Its replies also put raw line breaks inside JSON strings, which the default parser rejects; `agents.*.lenient_json: true` reads them. On Modal, its 680 GB of FP8 weights took about 55 minutes to load onto eight H200s, and the spike stopped there for credit, at about $20 with no game played.
 - Nex N2.5 Pro, Beam 1.0 and Muse Spark 1.3: provider errors.
 - OLMo and ERNIE: not on OpenRouter.
 
