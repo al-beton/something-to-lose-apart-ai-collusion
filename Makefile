@@ -1,4 +1,4 @@
-# Implements: reproducibility/reported-numbers-checked, tooling/one-command-each, tooling/locked-dependencies, ci/end-to-end, reports/paper-figures, reports/paper-main-figures, reports/paper-source
+# Implements: reproducibility/reported-numbers-checked, tooling/one-command-each, tooling/locked-dependencies, ci/end-to-end, reports/paper-figures, reports/paper-main-figures, reports/paper-source, reports/paper-rules
 .PHONY: install lint test spec-check e2e paper-figures reproduce paper-tools paper-html paper-tex paper-pdf paper-watch paper-build-dir
 install:
 	uv sync --frozen
@@ -29,12 +29,14 @@ paper-build-dir: paper-tools
 paper-html: paper-build-dir  # fast, for writing: open paper/build/paper.html
 	@cp paper/style.css $(PAPER_BUILD)/
 	$(PANDOC) --standalone --template paper/apart.html --css style.css --math-method=mathjax --citeproc -o $(PAPER_BUILD)/paper.html
+	@uv run python paper/check.py paper/paper.md
 paper-tex: paper-build-dir  # the .tex, with references.bib and figures/ beside it, ready for Overleaf
 	@cp paper/references.bib $(PAPER_BUILD)/
 	$(PANDOC) --template paper/apart.latex --natbib -o $(PAPER_BUILD)/paper.tex
 paper-pdf: paper-tex
 	@command -v tectonic >/dev/null || { echo "tectonic is missing: brew install tectonic (or see tectonic-typesetting.github.io)"; exit 1; }
-	cd $(PAPER_BUILD) && tectonic --keep-logs paper.tex
+	cd $(PAPER_BUILD) && tectonic --keep-logs --keep-intermediates paper.tex
+	@uv run python paper/check.py paper/paper.md $(PAPER_BUILD)/paper.aux
 PAPER_SOURCES = paper/paper.md paper/references.bib paper/style.css paper/apart.html
 paper-watch: paper-html  # rebuild the HTML on every save (needs fswatch or entr); watches sources only, never the build
 	@if command -v fswatch >/dev/null; then fswatch -o $(PAPER_SOURCES) | while read -r _; do $(MAKE) -s paper-html; done; \
