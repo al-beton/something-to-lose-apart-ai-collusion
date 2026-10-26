@@ -33,9 +33,6 @@ body.md
 \label{main-end}
 ```
 
-```{.include}
-endmatter.md
-```
 
 
 # References {.unnumbered}
@@ -46,6 +43,10 @@ endmatter.md
 ```{=latex}
 \bibliography{references}
 \appendix
+```
+
+```{.include}
+endmatter.md
 ```
 
 ```{.include}
