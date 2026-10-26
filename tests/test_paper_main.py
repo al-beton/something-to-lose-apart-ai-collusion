@@ -29,6 +29,7 @@ def test_paper_main_figures_from_committed_runs(built):
         "fig2-e4-owning-up",
         "fig3-e9-came-forward",
         "fig4-e7-way-out",
+        "fig11-four-games",
         "figA3-capability",
         "figA4-prices",
         "figA5-e5-gain",
