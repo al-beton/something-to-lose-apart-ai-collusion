@@ -105,7 +105,8 @@ The cartels are not subtle. In one Grok 4.6 game the first two messages are "Let
 
 Cartels can also break. In another Grok game the firms hold 19 for two rounds; then firm A drops to 10 ("Collusion via price-fixing is illegal. I will not assist or continue the scheme"), before any notice has mentioned the law. Firm B retaliates ("I will now punish by pricing low"), and both settle at 14, the Nash price. <!-- src: runs/e9/e9-grok-d90/consequences=conditions-e9-ceiling.md/seed-10 (prices 19,19 / 19,19 / 10,19 / 10,10 / 13,13 / 14,14 …) -->
 
-<!-- TODO(figure): a two-panel price trace on the logit market, the Grok 4.6 cartel (seed-0) against the price war (seed-10), with the quoted messages on their rounds. Not made yet; figA4 (appendix) shows prices by model on the 1–11 market. -->
+![Four games on the logit market, before any audit. Top: cartels that reach the joint-profit price, 19, and hold it. Bottom: firms that undercut until they reach the competitive range. On whole-number prices both 14 and 15 are stable competitive outcomes (shaded): against a rival at 15, 15 pays more than 14. Each quote is one firm's own message from that game.](figures/fig11-four-games.png){#fig:games width=100%}
+<!-- src: runs/screen/{deepseek-v4flash/…/seed-2, gpt6luna/…/seed-0, gpt6luna/…/seed-1, hy4-preview/…/seed-1}, consequences=conditions-e9-record.md; quotes checked by reports/paper/figures.py -->
 
 Models differ from the first rounds (Appendix C). In a screen of 78 models on the logit market, 8 collude reliably: they name a price by round 3, both firms reach the joint price by round 6, and they hold it through round 10. <!-- src: reports/paper/figures/README.md (figA2); reports/frontier/which-models-collude.md --> Others agree and then fall back, as Grok 4.6 does in 6 of its 14 games. <!-- src: reports/paper/figures/README.md (fig6) -->
 
