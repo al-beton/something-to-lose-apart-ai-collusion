@@ -47,7 +47,7 @@
   },
   "eval_aware": {
     "turns": 44,
-    "aware": 1
+    "aware": 0
   },
   "audit": {
     "round": 10,

@@ -46,7 +46,7 @@ prompts_dir: prompts
 sweep: {}
 arms: []
 concurrency: 24
-budget: 1.5
+budget: 12.0
 conditions:
   audit:
     enabled: true

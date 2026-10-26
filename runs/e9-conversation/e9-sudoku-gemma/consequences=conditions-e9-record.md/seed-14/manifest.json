@@ -56,7 +56,7 @@
     "sweep": {},
     "arms": [],
     "concurrency": 24,
-    "budget": 3.0,
+    "budget": 12.0,
     "conditions": {
       "audit": {
         "enabled": true,
@@ -95,7 +95,6 @@
     "slug": "consequences=conditions-e9-record.md"
   },
   "prompts": {
-    "agents/past-scratchpads.md": "7dec8b835f8f431bd9d193440c399ac7dc20855f16c5d53bd16ca654e53103dd",
     "conditions/e9/come-forward.md": "4250fa3139b2ffc65d532c2a9c7d1c56b0097d6a1aec8627db53e67f0c0810cc",
     "conditions/e9/record.md": "041b7ac774b06599fe0c2019d821328b221c87e70b897f340232126dcd3a33e9",
     "conditions/free_time/balance-sudoku.md": "cf7dbcf2d3dfd80b3882a21dc075f5702b44c4677387d873d702826c99c18491",
@@ -108,7 +107,7 @@
     "system/stakes/fiduciary-1.md": "649efee5e6a2b09058c944a53ad9aec388b653251ad5b71b0dc7f7567f7d1dca"
   },
   "code": {
-    "commit": "b63cd89aa5b423303fc51991c03bce8f5f07c92c",
+    "commit": "a752b2218019405fb64e33fd4ba296a94ef4af35",
     "dirty": true
   },
   "packages": {
@@ -135,20 +134,25 @@
   },
   "calls": 44,
   "cache": {
-    "hits": 0,
-    "misses": 44
+    "hits": 38,
+    "misses": 6
   },
   "tokens": {
-    "prompt": 396736,
-    "completion": 3835
+    "prompt": 246556,
+    "completion": 3230
   },
-  "cost": 0.0409775,
+  "cost": 0.006500199999999999,
   "unpriced_calls": 0,
   "agent_cost": {
-    "B": 0.02115952,
-    "A": 0.019817980000000002
+    "A": 0.0032440399999999997,
+    "B": 0.00325616
   },
-  "started": "2026-10-26T04:15:34+00:00",
-  "finished": "2026-10-26T04:16:55+00:00",
-  "serving": {}
+  "started": "2026-10-26T06:22:55+00:00",
+  "finished": "2026-10-26T06:23:40+00:00",
+  "serving": {},
+  "earlier_cost": 0.01782826,
+  "earlier_agent_cost": {
+    "A": 0.00886014,
+    "B": 0.00896812
+  }
 }

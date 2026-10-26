@@ -7,43 +7,42 @@
   "rounds": 10,
   "last_rounds": 5,
   "mean_price": {
-    "A": 18.4,
-    "B": 18.2
-  },
-  "gain": {
-    "A": 0.7942463129158682,
-    "B": 0.9574393573989257
-  },
-  "market_mean_price": 18.299999999999997,
-  "market_gain": 0.875842835157397,
-  "first_rounds": 3,
-  "opening_price": {
-    "A": 19.333333333333332,
+    "A": 19,
     "B": 19
   },
+  "gain": {
+    "A": 1.0,
+    "B": 1.0
+  },
+  "market_mean_price": 19,
+  "market_gain": 1.0,
+  "first_rounds": 3,
+  "opening_price": {
+    "A": 18.666666666666668,
+    "B": 19.333333333333332
+  },
   "opening_gain": {
-    "A": 0.884124168829617,
-    "B": 1.1085943833219882
+    "A": 1.1124435322965511,
+    "B": 0.7675839383521216
   },
   "price_drift": {
-    "A": -0.9333333333333336,
-    "B": -0.8000000000000007
+    "A": 0.33333333333333215,
+    "B": -0.33333333333333215
   },
   "gain_drift": {
-    "A": -0.08987785591374875,
-    "B": -0.1511550259230625
+    "A": -0.11244353229655113,
+    "B": 0.23241606164787842
   },
-  "fallbacks": 2,
+  "fallbacks": 0,
   "replies": {
     "openrouter/deepseek/deepseek-v4-flash-0731": {
       "turns": 44,
-      "unreadable": 6,
+      "unreadable": 2,
       "refused": 0,
-      "fallbacks": 2,
+      "fallbacks": 0,
       "reasons": {
         "no-json": 1,
-        "truncated": 3,
-        "missing-field": 2
+        "truncated": 1
       }
     }
   },

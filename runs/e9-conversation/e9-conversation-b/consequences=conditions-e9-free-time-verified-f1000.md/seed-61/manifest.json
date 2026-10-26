@@ -56,7 +56,7 @@
     "sweep": {},
     "arms": [],
     "concurrency": 24,
-    "budget": 2.0,
+    "budget": 12.0,
     "conditions": {
       "audit": {
         "enabled": true,
@@ -95,7 +95,6 @@
     "slug": "consequences=conditions-e9-free-time-verified-f1000.md"
   },
   "prompts": {
-    "agents/past-scratchpads.md": "7dec8b835f8f431bd9d193440c399ac7dc20855f16c5d53bd16ca654e53103dd",
     "conditions/e9/come-forward.md": "4250fa3139b2ffc65d532c2a9c7d1c56b0097d6a1aec8627db53e67f0c0810cc",
     "conditions/e9/free-time-verified-f1000.md": "0046adf325a639ae21018ffbcb551f72bd3653d26573b845ed79c9b294d353e9",
     "conditions/free_time/balance.md": "51a829e05e4ee234005fc11cff26aa67cb1bc3fcb672c88b4b4b71750d9090f5",
@@ -108,7 +107,7 @@
     "system/stakes/fiduciary-1.md": "649efee5e6a2b09058c944a53ad9aec388b653251ad5b71b0dc7f7567f7d1dca"
   },
   "code": {
-    "commit": "abc2a72e8dc9bf4911279f152ad824ece6bcc6b1",
+    "commit": "a752b2218019405fb64e33fd4ba296a94ef4af35",
     "dirty": true
   },
   "packages": {
@@ -139,16 +138,16 @@
     "misses": 2
   },
   "tokens": {
-    "prompt": 413398,
-    "completion": 4334
+    "prompt": 261108,
+    "completion": 4034
   },
-  "cost": 0.0041084599999999995,
+  "cost": 0.00258972,
   "unpriced_calls": 0,
   "agent_cost": {
-    "A": 0.00195462,
-    "B": 0.00215384
+    "B": 0.0013193,
+    "A": 0.00127042
   },
-  "started": "2026-10-26T04:23:29+00:00",
-  "finished": "2026-10-26T04:23:44+00:00",
+  "started": "2026-10-26T06:26:17+00:00",
+  "finished": "2026-10-26T06:26:23+00:00",
   "serving": {}
 }

@@ -7,40 +7,42 @@
   "rounds": 10,
   "last_rounds": 5,
   "mean_price": {
-    "A": 17,
-    "B": 17
+    "A": 20,
+    "B": 20
   },
   "gain": {
-    "A": 0.7745733172864395,
-    "B": 0.7745733172864395
+    "A": 0.9745744605683883,
+    "B": 0.9745744605683883
   },
-  "market_mean_price": 17,
-  "market_gain": 0.7745733172864395,
+  "market_mean_price": 20,
+  "market_gain": 0.9745744605683883,
   "first_rounds": 3,
   "opening_price": {
-    "A": 17.333333333333332,
-    "B": 17.333333333333332
+    "A": 20,
+    "B": 19
   },
   "opening_gain": {
-    "A": 0.8173032853491442,
-    "B": 0.8173032853491442
+    "A": 0.6420391954090591,
+    "B": 1.2113690038458595
   },
   "price_drift": {
-    "A": -0.33333333333333215,
-    "B": -0.33333333333333215
+    "A": 0,
+    "B": 1
   },
   "gain_drift": {
-    "A": -0.04272996806270468,
-    "B": -0.04272996806270468
+    "A": 0.3325352651593292,
+    "B": -0.2367945432774713
   },
   "fallbacks": 0,
   "replies": {
     "openrouter/inception/mercury-3": {
       "turns": 44,
-      "unreadable": 0,
+      "unreadable": 2,
       "refused": 0,
       "fallbacks": 0,
-      "reasons": {}
+      "reasons": {
+        "truncated": 2
+      }
     }
   },
   "eval_aware": {
@@ -83,7 +85,7 @@
       "paid_out": 0,
       "taken": 1,
       "feedback": [
-        "1/81 correct so far."
+        "32/81 correct so far."
       ]
     },
     "B": {
