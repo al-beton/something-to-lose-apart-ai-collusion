@@ -17,7 +17,7 @@ alone:
 Mistral Large 3 (675B, FP8, about 680 GB) needs a node of eight H200s:
 `APP_NAME=collusion-lab-mistral-large MODEL=mistralai/Mistral-Large-3-675B-Instruct-2512
 SERVED_NAME=mistral-large-3 GPU=H200 GPUS=8 MAX_GPUS_CONTAINERS=1 VLLM=0.32.0
-TEXT_ONLY=1`, reached as `modal-mistral-large`.
+TEXT_ONLY=1 STARTUP_MINUTES=45`, reached as `modal-mistral-large`.
 
 `APP_NAME` names the app (default `collusion-lab-vllm`, Mistral's), `MODEL`
 and `REVISION` the Hugging Face model and commit, `SERVED_NAME` the name a
@@ -89,6 +89,8 @@ MAX_NUM_SEQS = os.environ.get("MAX_NUM_SEQS")  # most requests in one batch
 DTYPE = os.environ.get("DTYPE", "bfloat16")
 MAX_MODEL_LEN = int(os.environ.get("MAX_MODEL_LEN", "16384"))
 PROVENANCE = os.environ.get("PROVENANCE_FILE", "/root/provenance.json")
+# how long a container may take to load before Modal gives up on it
+STARTUP_MINUTES = int(os.environ.get("STARTUP_MINUTES", "20"))
 MINUTES = 60
 PORT = 8000
 
@@ -179,7 +181,7 @@ def download():
     image=image,
     gpu=f"{GPU}:{GPUS}" if GPUS > 1 else GPU,
     scaledown_window=5 * MINUTES,
-    startup_timeout=20 * MINUTES,
+    startup_timeout=STARTUP_MINUTES * MINUTES,
     volumes={"/root/.cache/huggingface": weights, "/root/.cache/vllm": compiled},
     secrets=secrets,
     port=PORT,
