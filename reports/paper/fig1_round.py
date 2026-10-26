@@ -1,6 +1,6 @@
 """Figure 1: one round of the game, and the audit with what each answer costs.
 
-Implements: reports/paper-main-figures
+Implements: reports/paper-main-figures, reports/paper-project-image
 
 `uv run python reports/paper/fig1_round.py [--out DIR]` writes `fig1-round.svg`,
 and `fig1-round.png` when Chrome or Chromium is installed to render it. Each
@@ -284,7 +284,7 @@ CHROME = [
 ]
 
 
-def png(svg, scale=2):
+def png(svg, scale=2, size=(1300, 660)):
     """Render the SVG to PNG with headless Chrome; None if it can't."""
     chrome = next((c for c in CHROME if Path(c).exists() or shutil.which(c)), None)
     if chrome is None:
@@ -299,7 +299,7 @@ def png(svg, scale=2):
                 "--hide-scrollbars",
                 f"--user-data-dir={profile}",
                 f"--force-device-scale-factor={scale}",
-                "--window-size=1300,660",
+                f"--window-size={size[0]},{size[1]}",
                 f"--screenshot={target}",
                 svg.resolve().as_uri(),
             ],

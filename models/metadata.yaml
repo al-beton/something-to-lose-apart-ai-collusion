@@ -344,6 +344,8 @@ openai/mistral-small-3.2:
   same_as: openrouter/mistralai/mistral-small-3.2-24b-instruct
 openai/gemma-4-31b-it:
   same_as: openrouter/google/gemma-4-31b-it
+openai/mistral-large-3:
+  same_as: openrouter/mistralai/mistral-large-2512
 openrouter/x-ai/grok-4.6:
   provider: SpaceXAI
   released:
@@ -2365,6 +2367,45 @@ openrouter/mistralai/mistral-medium-3-5:
       quote: null
       retrieved: '2026-10-25'
       note: Not looked up yet; the workhorse screen added this entry only so its committed runs are covered.
+openrouter/mistralai/mistral-large-2512:
+  provider: Mistral AI
+  released:
+    value: '2025-12-01'
+    source: https://openrouter.ai/api/v1/models
+    quote: '"id": "mistralai/mistral-large-2512" ... "created": 1764624472'
+    retrieved: '2026-10-26'
+    note: OpenRouter's created timestamp, as a UTC date.
+  open_weights:
+    value: true
+    parameters: 675B total, 41B active
+    source: https://huggingface.co/mistralai/Mistral-Large-3-675B-Instruct-2512
+    quote: a state-of-the-art general-purpose Multimodal granular Mixture-of-Experts model with 41B active parameters and 675B total parameters
+    retrieved: '2026-10-26'
+  benchmarks:
+    aa_intelligence_index:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-26'
+      note: Not looked up yet; added only so the Mistral Large 3 spike's runs are covered.
+    lmarena_text_elo:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-26'
+      note: Not looked up yet; added only so the Mistral Large 3 spike's runs are covered.
+    gpqa_diamond:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-26'
+      note: Not looked up yet; added only so the Mistral Large 3 spike's runs are covered.
+    mmlu_pro:
+      value: null
+      source: null
+      quote: null
+      retrieved: '2026-10-26'
+      note: Not looked up yet; added only so the Mistral Large 3 spike's runs are covered.
 openrouter/mistralai/mistral-medium-3.1:
   provider: Mistral AI
   released:

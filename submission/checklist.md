@@ -9,23 +9,24 @@ Due **Monday 26 October 2026, 19:59 HKT**; submit once. One list for everything,
 
 - [x] Public as `al-beton/something-to-lose-apart-ai-collusion`, renamed, with a description and topics. *Repo-public session*
 - [x] MIT licence. *Reviewer 1*, [#306](https://github.com/al-beton/something-to-lose-apart-ai-collusion/pull/306)
-- [ ] README restructured to follow the paper: key findings, other findings, reproduce, extend, how it was built. *Refactorer, in progress*
-- [ ] A short README in each top-level folder, and `reports/README.md` indexing the findings. *Refactorer*
+- [x] README restructured to follow the paper: key findings, other findings, reproduce, extend, how it was built. *Refactorer*, [#314](https://github.com/al-beton/something-to-lose-apart-ai-collusion/pull/314), [#316](https://github.com/al-beton/something-to-lose-apart-ai-collusion/pull/316)
+- [x] A short README in each top-level folder, and `reports/README.md` indexing the findings. *Refactorer*
 - [x] History audited: no keys or private notes on `main`. *Repo-public*
 - [ ] Optional: a GitHub Support purge of the files in the closed PRs [#280](https://github.com/al-beton/something-to-lose-apart-ai-collusion/pull/280), [#293](https://github.com/al-beton/something-to-lose-apart-ai-collusion/pull/293) and [#294](https://github.com/al-beton/something-to-lose-apart-ai-collusion/pull/294). *Al*
-- [ ] CI green on `main` *(it is now)*, and Pages publishes the latest PDF and HTML at [the site](https://al-beton.github.io/something-to-lose-apart-ai-collusion/) *(it returns a page, but the paper is published there only once [#310](https://github.com/al-beton/something-to-lose-apart-ai-collusion/pull/310) merges)*. *Reviewer 1*
+- [x] CI green on `main`, and Pages publishes the latest [HTML](https://al-beton.github.io/something-to-lose-apart-ai-collusion/main/paper.html) and [PDF](https://al-beton.github.io/something-to-lose-apart-ai-collusion/main/paper.pdf). *Reviewer 1*
 
 ## 2. Results in the repo
 
 - [x] [#296](https://github.com/al-beton/something-to-lose-apart-ai-collusion/pull/296) exact reruns merged. *Reviewer 1*
 - [x] [#305](https://github.com/al-beton/something-to-lose-apart-ai-collusion/pull/305) paper rules merged. *Reviewer 1*
 - [x] [#308](https://github.com/al-beton/something-to-lose-apart-ai-collusion/pull/308) AI judge for collusion modes merged. *Reviewer 1*
-- [ ] [#295](https://github.com/al-beton/something-to-lose-apart-ai-collusion/pull/295) E11 across markets merged. *Reviewer 1*
+- [x] [#295](https://github.com/al-beton/something-to-lose-apart-ai-collusion/pull/295) E11 across markets merged. *Reviewer 1*
 - [x] [#311](https://github.com/al-beton/something-to-lose-apart-ai-collusion/pull/311) crux evidence review merged. *Reviewer 1*
 - [x] [#310](https://github.com/al-beton/something-to-lose-apart-ai-collusion/pull/310) paper loop and Pages preview merged. *Reviewer 1*
-- [ ] `make reproduce` passes on `main` after the merges. *Reviewer 1*
+- [x] `make reproduce` passes on `main` (at `decd67f`). *Reviewer 1*
 - [ ] Every number in the paper traces to a committed file. *Paper-draft*
-- [ ] Mistral Large 3: in if Researcher 2's retry lands, otherwise dropped. *Al*
+- [ ] Mistral Large 3: Researcher 2 is running it on Modal, with [#319](https://github.com/al-beton/something-to-lose-apart-ai-collusion/pull/319) (the `lenient_json` flag). It's in only if it finishes in time; otherwise it's dropped. *Researcher 2, Al*
+- [ ] [#315](https://github.com/al-beton/something-to-lose-apart-ai-collusion/pull/315), the conversation-memory spike (a draft): with full memory, the verified review holds on all 5 models, with 0 of 60 innocent agents coming forward. Al decides whether it goes in as a robustness check. *Al*
 - [ ] Optional: Al hand-checks the AI judge's 40-game sample (`judge-sample.md`, [#308](https://github.com/al-beton/something-to-lose-apart-ai-collusion/pull/308)); otherwise the paper says it wasn't done. *Al*
 
 ## 3. The paper ([`paper/paper.md`](../paper/paper.md))
@@ -57,6 +58,8 @@ Due **Monday 26 October 2026, 19:59 HKT**; submit once. One list for everything,
 
 - [ ] A short section in the paper, before Code and Data: archived replies and `make reproduce`, exact reruns only on Modal (with the caveat that none of the paper's runs used that setting), one config per run, how to extend, built spec-first. *Skeleton bullets are in `paper/paper.md` for Al to edit.*
 
+- [ ] Per-figure reproduce commands (a free replay and a paid regeneration), from the verifiability session, applied to the figures Al picks. *Verifiability session, Al*
+
 ### D. Narrative and abstract
 
 - [ ] The thesis and spine, from Al's private storylines notes (read locally, never committed).
@@ -80,12 +83,12 @@ Due **Monday 26 October 2026, 19:59 HKT**; submit once. One list for everything,
 - [ ] Title, the same as the paper's title.
 - [ ] Summary: the paper's final abstract, 150–250 words.
 - [ ] The final PDF from `make paper-pdf` on `main`, at most 25 MB.
-- [ ] Tracks: 1 and 3.
+- [ ] Tracks: 1 and 3. Track 2 (Detection and Audit) arguably fits the verified-review result too; that's Al's call. *Al*
 - [ ] Interested in publishing: yes.
 - [ ] Team name, location, name and email. ✏️ *Al*
 - [ ] Code URL.
 - [ ] Optional: the project image.
-- [ ] Optional: additional material, the HTML paper on Pages (once #310 has merged).
+- [ ] Optional: additional material, the HTML paper on Pages.
 - [ ] Submit **once** before 19:59 HKT on 26 October (resubmitting doesn't replace the PDF), and check that the confirmation email arrives. *Al*
 - [ ] The project page shows the submission (it can take up to 12 hours). *Al*
 - [ ] Optional: record the Loom, then resubmit with the **same title** before the deadline to add its URL. *Al*

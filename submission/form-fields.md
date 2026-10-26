@@ -40,7 +40,7 @@ Tick **1 Markets and Collusion** and **3 Collusion Carriers and Countermeasures.
 - Track 1, because every main result comes from LLM pricing cartels, and research question 1.5 asks which single restriction removes the most collusion.
 - Track 3, because the project is a way to break a cartel up once it has formed: it makes a member want to report it.
 
-Track 2 (detection and audit) fits only through the verified-review result. Tracks don't affect scoring.
+Track 2 (Detection and Audit) arguably fits the verified-review result too; that's Al's call. Tracks don't affect scoring.
 
 ## Interested in publishing? (required)
 
@@ -50,9 +50,9 @@ Track 2 (detection and audit) fits only through the verified-review result. Trac
 
 Add a recording only if there's time. It isn't scored, but it shows as a "Recording" button on the page. Record a 3–5 minute Loom, then resubmit the form with the same title to add the link before the deadline. An outline:
 
-1. **The question (30 s):** can you govern an AI agent through something it owns?
+1. **The question (30 s):** can you govern an AI agent through something it owns? Show the project image.
 2. **The setup (45 s):** two firms talk, then set prices, and an audit follows. Show Fig 1, the round.
-3. **The result (60 s):** the project image. With no stake, 0 of 96 come forward. With their own free time at stake, 20 of 96 do, but innocent agents come forward too. With a review that reads the messages, 40 of 96 guilty agents come forward and 0 of 36 innocent ones.
+3. **The result (60 s):** Fig 3, E9's came-forward chart. With no stake, 0 of 96 come forward. With their own free time at stake, 20 of 96 do, but innocent agents come forward too. With a review that reads the messages, 40 of 96 guilty agents come forward and 0 of 36 innocent ones.
 4. **It holds elsewhere (30 s):** 8 of 13 models, and the workplace. Graduated penalties lead 27 of 28 to own up, against 11 of 28 under termination.
 5. **Limits and what's next (30 s):** these are stated stakes in a game, and say nothing about whether agents value anything. Point to the code.
 
@@ -72,7 +72,7 @@ Optional. If used, upload [`project-image.png`](../reports/paper/figures/project
 
 ## Additional material (optional, URL)
 
-The HTML version of the paper on GitHub Pages, `https://al-beton.github.io/something-to-lose-apart-ai-collusion/`, once PR 310 has merged and the site publishes the paper. Until then, leave it empty.
+The HTML version of the paper on GitHub Pages: `https://al-beton.github.io/something-to-lose-apart-ai-collusion/main/paper.html`.
 
 ## Team and member details
 

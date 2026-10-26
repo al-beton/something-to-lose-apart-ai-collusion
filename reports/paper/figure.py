@@ -24,7 +24,7 @@ repository root:
   spent), and that a fresh run is a new sample;
 - `figure.py --list` prints the registry; `make figure-lines` rewrites the
   paper's table of these commands (between `BEGIN` and `END` in
-  `paper/paper.md`) from it.
+  `paper/appendix.md`) from it.
 
 A run already finished in the output folder is kept, so a stopped
 regeneration resumes. Each run's spend cap is what is left of `--max-cost`.
@@ -53,7 +53,7 @@ from collusion_lab.runner import RunFailed, paid_calls, run_config
 
 HERE = Path(__file__).resolve().parent
 COMMITTED = HERE / "figures"
-PAPER = Path("paper/paper.md")
+PAPER = Path("paper/appendix.md")
 BEGIN = "<!-- figure-commands: begin (make figure-lines writes this) -->"
 END = "<!-- figure-commands: end -->"
 NEW_SAMPLE = (

@@ -25,9 +25,9 @@ regenerate:  # make regenerate F=e9-crux [ARGS="--max-cost 5 --yes"]: play its g
 figure-lines:  # the paper's table of figure commands, from the registry (prices fetched live)
 	uv run python reports/paper/figure.py lines
 
-# The paper: write paper/paper.md, build to paper/build/ (gitignored).
+# The paper: write paper/body.md and paper/appendix.md (paper/paper.md is the skeleton that pulls them in), build to paper/build/ (gitignored).
 PAPER_BUILD ?= paper/build
-PANDOC = pandoc paper/paper.md --from markdown --resource-path=paper --number-sections --toc-depth=1
+PANDOC = pandoc paper/paper.md --from markdown --lua-filter paper/include.lua --resource-path=paper --number-sections --toc-depth=1
 paper-tools:
 	@command -v pandoc >/dev/null || { echo "pandoc is missing: brew install pandoc (or see pandoc.org/installing)"; exit 1; }
 paper-build-dir: paper-tools

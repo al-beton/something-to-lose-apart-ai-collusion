@@ -17,13 +17,34 @@ import yaml
 ABSTRACT_WORDS = (150, 250)
 MAX_PAGES = 8
 MAIN_END = re.compile(r"\\newlabel\{main-end\}\{\{[^}]*\}\{(\d+)\}")
+FRONT = re.compile(r"(?:\s*<!--.*?-->)*\s*---\n(.*?)\n---\n", re.DOTALL)
+INCLUDE = re.compile(r"```\{\.include\}\n(.*?)```", re.DOTALL)
+
+
+def source(paper):
+    """The paper as pandoc sees it after include.lua: (front matter, text),
+    each include block replaced by the files it names, their front matter
+    joining the skeleton's."""
+    paper = Path(paper)
+    text = paper.read_text()
+    front = FRONT.match(text)
+    meta = (yaml.safe_load(front.group(1)) if front else None) or {}
+
+    def expand(block):
+        parts = []
+        for name in block.group(1).split():
+            part_meta, part_text = source(paper.parent / name)
+            for key, value in part_meta.items():
+                meta.setdefault(key, value)
+            parts.append(part_text)
+        return "\n".join(parts)
+
+    return meta, INCLUDE.sub(expand, text)
 
 
 def warnings(paper, aux=None):
     found = []
-    text = Path(paper).read_text()
-    front = re.match(r"(?:\s*<!--.*?-->)*\s*---\n(.*?)\n---\n", text, re.DOTALL)
-    meta = (yaml.safe_load(front.group(1)) if front else None) or {}
+    meta, _ = source(paper)
     abstract = str(meta.get("abstract") or "")
     words = len(abstract.split())
     low, high = ABSTRACT_WORDS

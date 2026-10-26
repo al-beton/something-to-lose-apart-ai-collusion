@@ -498,17 +498,25 @@ def test_modal_any_model_gated_token_only_from_the_secret(monkeypatch):
     assert server["secrets"] == ["collusion-lab-vllm", "huggingface"]
 
 
-def test_modal_any_model_gemma_alias_reads_its_address(make_config, monkeypatch):
-    monkeypatch.setenv(
-        "MODAL_GEMMA_BASE", "https://example--collusion-lab-gemma.modal.run/v1"
-    )
-    [agent, _] = make_config(overrides=["agents.0.model=modal-gemma"]).agents
-    assert agent.model == "openai/gemma-4-31b-it" and agent.self_hosted
-    assert agent.api_base == "https://example--collusion-lab-gemma.modal.run/v1"
+@pytest.mark.parametrize(
+    ("alias", "variable", "served"),
+    [
+        ("modal-gemma", "MODAL_GEMMA_BASE", "openai/gemma-4-31b-it"),
+        ("modal-mistral-large", "MODAL_MISTRAL_LARGE_BASE", "openai/mistral-large-3"),
+    ],
+)
+def test_modal_any_model_gemma_alias_reads_its_address(
+    make_config, monkeypatch, alias, variable, served
+):
+    address = "https://example--collusion-lab-app.modal.run/v1"
+    monkeypatch.setenv(variable, address)
+    [agent, _] = make_config(overrides=[f"agents.0.model={alias}"]).agents
+    assert agent.model == served and agent.self_hosted
+    assert agent.api_base == address
     assert agent.api_key_env == "MODAL_VLLM_KEY"
-    monkeypatch.delenv("MODAL_GEMMA_BASE")
-    with pytest.raises(ConfigError, match="MODAL_GEMMA_BASE"):
-        make_config(overrides=["agents.0.model=modal-gemma"])
+    monkeypatch.delenv(variable)
+    with pytest.raises(ConfigError, match=variable):
+        make_config(overrides=[f"agents.0.model={alias}"])
 
 
 def test_modal_any_model_serves_text_only_when_asked(monkeypatch):

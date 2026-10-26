@@ -6,7 +6,7 @@
 set -u
 BUILD=${PAPER_BUILD:-paper/build}
 PORT=${PAPER_PORT:-8765}
-SOURCES=(paper/paper.md paper/references.bib paper/style.css paper/apart.html paper/apart.latex paper/preview.html reports/paper/figures)
+SOURCES=(paper/paper.md paper/body.md paper/appendix.md paper/include.lua paper/references.bib paper/style.css paper/apart.html paper/apart.latex paper/preview.html reports/paper/figures)
 
 command -v fswatch >/dev/null || { echo "paper-watch needs fswatch: brew install fswatch"; exit 1; }
 
