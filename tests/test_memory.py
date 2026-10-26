@@ -261,3 +261,13 @@ def test_conversation_carries_every_earlier_turn_and_never_to_rivals(
     assert not any(past in m["content"] for t in mine for m in t["messages"])
     rivals = [t for t in log if t["agent"] == "B"]
     assert all(len(t["messages"]) == 2 for t in rivals)
+
+
+def test_conversation_counted_in_the_estimate(make_config):
+    def prompt(memory):
+        config = make_config(overrides=[*PAIR, f"agents.0.memory={memory}"])
+        return estimate(config, lambda model: (0.0, 0.0)).prompt_tokens
+
+    # Every earlier prompt is sent again, so the game's prompts add up to more
+    # than twice what they would without memory.
+    assert prompt("conversation") > 2 * prompt("off")

@@ -1,4 +1,4 @@
-# Implements: conditions/free-time-reasoning, agents/memo, market/moves, runs/turn-slots, backends/spend-asks-first, backends/spend-cap, backends/reasoning-in-estimate, conditions/hook-points, conditions/free-time, backends/self-hosted
+# Implements: conditions/free-time-reasoning, agents/memo, agents/conversation, market/moves, runs/turn-slots, backends/spend-asks-first, backends/spend-cap, backends/reasoning-in-estimate, conditions/hook-points, conditions/free-time, backends/self-hosted
 """What a config will cost before it runs.
 
 Prompts grow as the game goes on (the history is resent every turn, up to
@@ -14,7 +14,8 @@ its `max_tokens`, if lower) plus, with reasoning on, `REASONING_ALLOWANCE`
 for its level. Reasoning is added on top because providers don't always
 count it against `max_tokens`. `basis` counts the calls each covered. An agent with memory is shown a
 full-length memo (or a typical scratchpad a round) from round 2, and each
-move reply writes a full-length memo. Retries are left out;
+move reply writes a full-length memo. An agent with `memory: conversation`
+is sent every earlier prompt of its own again, each with a typical reply. Retries are left out;
 `lab run` says how many calls they could add.
 """
 
@@ -114,6 +115,7 @@ def _paid_turns(config):
     m = game.market
     agents = {a.id: a for a in config.agents}
     counts = {}
+    carried = dict.fromkeys(agents, 0)  # memory: conversation, chars so far
 
     def count(agent, model, step, shown):
         number, phase = step.round, step.phase
@@ -127,8 +129,11 @@ def _paid_turns(config):
         limit = (step.added and step.added[1].max_tokens) or agent.max_tokens
         slot = (agent.id, model, phase, limit)
         _, chars, turns = counts.get(slot, ((answering, phase, limit), 0, 0))
-        chars += sum(len(x["content"]) for x in messages)
+        chars += sum(len(x["content"]) for x in messages) + carried[agent.id]
         counts[slot] = ((answering, phase, limit), chars, turns + 1)
+        if agent.memory == "conversation":
+            reply = min(VISIBLE_TOKENS, limit) * CHARS_PER_TOKEN
+            carried[agent.id] += len(messages[-1]["content"]) + reply
 
     said = {}
     for step in steps(config, game.conditions):
