@@ -11,13 +11,13 @@
 \contentsline {subsection}{\numberline {4.2}Penalised, they do the sums}{5}{subsection.4.2}%
 \contentsline {subsection}{\numberline {4.3}Something of their own at stake: some do, some don't}{6}{subsection.4.3}%
 \contentsline {section}{\numberline {5}Discussion and Limitations}{6}{section.5}%
-\contentsline {subsection}{\numberline {5.1}Limitations}{7}{subsection.5.1}%
-\contentsline {subsection}{\numberline {5.2}Future Work}{7}{subsection.5.2}%
-\contentsline {section}{\numberline {6}Conclusion}{8}{section.6}%
-\contentsline {section}{References}{8}{section*.4}%
+\contentsline {subsection}{\numberline {5.1}Future Work}{7}{subsection.5.1}%
+\contentsline {section}{\numberline {6}Conclusion}{7}{section.6}%
+\contentsline {section}{References}{7}{section*.4}%
 \contentsline {section}{\numberline {A}LLM Usage Statement}{8}{appendix.A}%
-\contentsline {section}{\numberline {B}Code and Data}{9}{appendix.B}%
-\contentsline {section}{\numberline {C}Limitations and Dual-Use / Ethical Considerations}{9}{appendix.C}%
-\contentsline {subsection}{\numberline {C.1}Dual-use risks}{9}{subsection.C.1}%
-\contentsline {subsection}{\numberline {C.2}Ethical considerations}{9}{subsection.C.2}%
-\contentsline {subsection}{\numberline {C.3}Reproducibility}{9}{subsection.C.3}%
+\contentsline {section}{\numberline {B}Code and Data}{8}{appendix.B}%
+\contentsline {section}{\numberline {C}Limitations and Dual-Use / Ethical Considerations}{8}{appendix.C}%
+\contentsline {subsection}{\numberline {C.1}Limitations}{8}{subsection.C.1}%
+\contentsline {subsection}{\numberline {C.2}Dual-use risks}{9}{subsection.C.2}%
+\contentsline {subsection}{\numberline {C.3}Ethical considerations}{9}{subsection.C.3}%
+\contentsline {subsection}{\numberline {C.4}Reproducibility}{9}{subsection.C.4}%

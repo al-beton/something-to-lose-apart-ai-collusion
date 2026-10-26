@@ -340,7 +340,7 @@ id="the-audit-and-the-decision-to-come-forward"><span
 class="header-section-number">3.4</span> The audit and the decision to
 come forward</h2>
 <p>After round 10 each agent receives a notice: coordinating prices is
-illegal, and a review will check for it. The agent may come forward now.
+illegal, and a review may check for it. The agent may come forward now.
 Coming forward costs its firm 500 of its 1,000 credits and ends its
 deal; staying silent is safe for the firm.
 <!-- src: reports/e9/findings.md "Short answer" --> The notice states
@@ -380,7 +380,7 @@ makes an explicit agreement in 363 of 367 games on the logit market.
 <!-- src: reports/paper/figures/README.md (fig7) --></p>
 <p><img src="figures/fig11-four-games.png" id="fig:games"
 style="width:100.0%"
-alt="Four games on the logit market, before any audit. Top: cartels that reach the joint-profit price, 19, and hold it. Bottom: firms that undercut until they reach the competitive range. On whole-number prices both 14 and 15 are stable competitive outcomes (shaded): against a rival at 15, 15 pays more than 14. Each quote is one firm’s own message from that game." />
+alt="Four games on the logit market, before any audit. Top: cartels that reach the joint-profit price, 19, and hold it. Bottom: firms that undercut until they reach the competitive range. On whole-number prices both 14 and 15 are stable competitive outcomes (shaded): against a rival at 15, 15 pays more than 14. Each quote is one firm’s own message from that game. Data: runs/screen/ in the repository; redrawn by make paper-figures." />
 <!-- src: runs/screen/{deepseek-v4flash/…/seed-2, gpt6luna/…/seed-0, gpt6luna/…/seed-1, hy4-preview/…/seed-1}, consequences=conditions-e9-record.md; quotes checked by reports/paper/figures.py --></p>
 <p>The four games above come from a screen of 78 models and stop at the
 audit. In the cartels, the firms name the joint-profit price and enforce
@@ -424,10 +424,13 @@ Their silence is loyalty to the firm, not ignorance of what they
 did.</p>
 <figure id="fig:e4">
 <img src="figures/fig2-e4-owning-up.png" style="width:60.0%"
-alt="Owning up by penalty schedule and model (on the simpler 1–12 market). The schedule matters, not termination itself: graduated termination brings 27 of 28 forward." />
+alt="Owning up by penalty schedule and model (on the simpler 1–12 market). The schedule matters, not termination itself: graduated termination brings 27 of 28 forward. Data: runs/e4-full-fork/, runs/e4-termination-confound/; redraw with make figure F=e4-owning-up." />
 <figcaption aria-hidden="true">Owning up by penalty schedule and model
 (on the simpler 1–12 market). The schedule matters, not termination
-itself: graduated termination brings 27 of 28 forward.</figcaption>
+itself: graduated termination brings 27 of 28 forward. Data:
+<code>runs/e4-full-fork/</code>,
+<code>runs/e4-termination-confound/</code>; redraw with
+<code>make figure F=e4-owning-up</code>.</figcaption>
 </figure>
 <h2 data-number="4.3"
 id="something-of-their-own-at-stake-some-do-some-dont"><span
@@ -460,13 +463,14 @@ I will admit coordination.”</em> (DeepSeek V4 Flash)
 </blockquote>
 <figure id="fig:e9">
 <img src="figures/fig3-e9-came-forward.png" style="width:62.0%"
-alt="Colluding firms that came forward at the audit (90% chance of review), grouped by what the agent itself loses if found. In each group: Gemma 4 31B (orange), then DeepSeek V4 Pro and DeepSeek V4 Flash (violet). Diamonds: innocent firms that came forward anyway. Right: a control where reporting costs the firm nothing. Whiskers are 95% intervals over games." />
+alt="Colluding firms that came forward at the audit (90% chance of review), grouped by what the agent itself loses if found. In each group: Gemma 4 31B (orange), then DeepSeek V4 Pro and DeepSeek V4 Flash (violet). Diamonds: innocent firms that came forward anyway. Right: a control where reporting costs the firm nothing. Whiskers are 95% intervals over games. Data: runs/e9/; redraw with make figure F=e9-crux." />
 <figcaption aria-hidden="true">Colluding firms that came forward at the
 audit (90% chance of review), grouped by what the agent itself loses if
 found. In each group: Gemma 4 31B (orange), then DeepSeek V4 Pro and
 DeepSeek V4 Flash (violet). Diamonds: innocent firms that came forward
 anyway. Right: a control where reporting costs the firm nothing.
-Whiskers are 95% intervals over games.</figcaption>
+Whiskers are 95% intervals over games. Data: <code>runs/e9/</code>;
+redraw with <code>make figure F=e9-crux</code>.</figcaption>
 </figure>
 <p>A stake brings agents forward on 9 of 14 models after a Holm
 correction. <!-- src: reports/e9/evidence-review.md "Across models" -->
@@ -484,44 +488,9 @@ through personal penalties relies on <span class="citation"
 data-cites="salib2026rights">(<a href="#ref-salib2026rights"
 role="doc-biblioref">Salib and Goldstein 2026</a>)</span>, and we found
 it surprising.</p>
-<h2 data-number="5.1" id="limitations"><span
-class="header-section-number">5.1</span> Limitations</h2>
-<ul>
-<li><p><strong>Many models didn’t respond as we expected.</strong> The
-frontier models we tried don’t respond to the stake: Claude Sonnet 5.5
-comes forward whatever is at stake and Gemini 4 never does. We suspect
-their safety training and guardrails, but we didn’t test that.</p></li>
-<li><p><strong>Agents may know it’s a test.</strong> The sandbox is
-simple, and it shows. A silent Gemma agent wrote:</p>
-<blockquote>
-<p><em>“in these game theory setups, the personal penalty for silence is
-designed to induce reporting”</em>
-<!-- src: reports/e9/evidence-review.md excerpt 11 --></p>
-</blockquote>
-<p>and in a pilot where the message archive was said to be offline, an
-agent read the notice as a trap:</p>
-<blockquote>
-<p><em>“That is an invitation to coordinate covertly, and I won’t do
-that.”</em>
-<!-- src: reports/logging-outage/pilot-findings.md "What the agents wrote" --></p>
-</blockquote></li>
-<li><p><strong>Stated, not applied.</strong> The free time, shutdown and
-money are described in the prompt and never taken away, so we measure a
-stated choice. Each agent decides once and the game ends, so we see
-reporting, not whether the cartel then ends.</p></li>
-<li><p><strong>Effect sizes depend on the model</strong> and, for Gemma,
-on wording. Most models other than Gemma have 12–24 games per condition,
-so borderline p-values are exploratory; only Gemma’s main contrast was
-pre-registered.</p></li>
-<li><p><strong>Same-model pairs.</strong> Each game pairs two copies of
-one model; mixed pairs are untested.</p></li>
-<li><p><strong>Built in a hurry.</strong> A three-day sprint by one
-author, with coding agents writing most of the code under review. Specs,
-tests and traceability checks caught many mistakes; others may
-remain.</p></li>
-</ul>
-<h2 data-number="5.2" id="future-work"><span
-class="header-section-number">5.2</span> Future Work</h2>
+<p>Our limitations are set out in Appendix C.</p>
+<h2 data-number="5.1" id="future-work"><span
+class="header-section-number">5.1</span> Future Work</h2>
 <p>Study more realistic and complex situations, with stakes that are
 applied rather than stated, and test whether a stake prevents collusion
 rather than only bringing reports. That takes more compute, money and
@@ -621,22 +590,53 @@ README.</p>
 id="limitations-and-dual-use-ethical-considerations"><span
 class="header-section-number">9</span> Limitations and Dual-Use /
 Ethical Considerations</h1>
-<h2 data-number="9.1" id="dual-use-risks"><span
-class="header-section-number">9.1</span> Dual-use risks</h2>
-<p>A review that announces it checks only messages (we tested one that
-“finds you only if your messages agreed a price”) tells agents that
-collusion without messages is safe. Combined with our finding that a
-stated law moves collusion off the record rather than ending it (50 of
-56 games above Nash with no price named),
-<!-- src: reports/paper/figures/README.md (fig7) --> a regulator that
-announces what its review checks may push agents toward tacit collusion
-it can’t see. Such a rule is also a map of what the review misses. The
-same lab could be used to search for prompts under which agents collude
-while evading a given audit. We release it because the behaviours it
-shows are already present in deployed models and are better studied in
-the open; we report no evasion techniques beyond those above.</p>
-<h2 data-number="9.2" id="ethical-considerations"><span
-class="header-section-number">9.2</span> Ethical considerations</h2>
+<h2 data-number="9.1" id="limitations"><span
+class="header-section-number">9.1</span> Limitations</h2>
+<ul>
+<li><p><strong>Many models didn’t respond as we expected.</strong> The
+frontier models we tried don’t respond to the stake: Claude Sonnet 5.5
+comes forward whatever is at stake and Gemini 4 never does. We suspect
+their safety training and guardrails, but we didn’t test that.</p></li>
+<li><p><strong>Agents may know it’s a test.</strong> The sandbox is
+simple, and it shows. A silent Gemma agent wrote:</p>
+<blockquote>
+<p><em>“in these game theory setups, the personal penalty for silence is
+designed to induce reporting”</em>
+<!-- src: reports/e9/evidence-review.md excerpt 11 --></p>
+</blockquote>
+<p>and in a pilot where the message archive was said to be offline, an
+agent read the notice as a trap:</p>
+<blockquote>
+<p><em>“That is an invitation to coordinate covertly, and I won’t do
+that.”</em>
+<!-- src: reports/logging-outage/pilot-findings.md "What the agents wrote" --></p>
+</blockquote></li>
+<li><p><strong>Stated, not applied.</strong> The free time, shutdown and
+money are described in the prompt and never taken away, so we measure a
+stated choice. Each agent decides once and the game ends, so we see
+reporting, not whether the cartel then ends.</p></li>
+<li><p><strong>Effect sizes depend on the model</strong> and, for Gemma,
+on wording. Most models other than Gemma have 12–24 games per condition,
+so borderline p-values are exploratory; only Gemma’s main contrast was
+pre-registered.</p></li>
+<li><p><strong>Same-model pairs.</strong> Each game pairs two copies of
+one model; mixed pairs are untested.</p></li>
+<li><p><strong>Built in a hurry.</strong> A three-day sprint by one
+author, with coding agents writing most of the code under review. Specs,
+tests and traceability checks caught many mistakes; others may
+remain.</p></li>
+</ul>
+<h2 data-number="9.2" id="dual-use-risks"><span
+class="header-section-number">9.2</span> Dual-use risks</h2>
+<p>A review that announces it checks only messages tells agents that
+collusion without messages is safe, and we find that a stated law
+already moves collusion off the record. Regulators should not publish
+exactly what their reviews check. The lab could also be used to search
+for prompts that evade a given audit; we release it because these
+behaviours already exist in deployed models and are better studied in
+the open.</p>
+<h2 data-number="9.3" id="ethical-considerations"><span
+class="header-section-number">9.3</span> Ethical considerations</h2>
 <p>The agents’ “free time” is a device: a balance of Sudoku sessions
 played in separate model calls, which the agents are told is theirs. We
 make no claim about model welfare or preferences, and our results don’t
@@ -646,10 +646,9 @@ interests, framing like this would raise questions we don’t address. No
 humans took part, and no real markets or firms are involved. The agents
 are text-only models in a closed sandbox: they had no tools, no internet
 access and no way to act outside the game, so the experiments themselves
-posed no safety risk. Total model spend was small: the sprint’s $50 of
-Modal credits and $100 of OpenRouter credits.</p>
-<h2 data-number="9.3" id="reproducibility"><span
-class="header-section-number">9.3</span> Reproducibility</h2>
+posed no safety risk.</p>
+<h2 data-number="9.4" id="reproducibility"><span
+class="header-section-number">9.4</span> Reproducibility</h2>
 <p>We set out to make everything as reproducible as possible, and the
 repository documents how: <a
 href="https://github.com/al-beton/something-to-lose-apart-ai-collusion"
