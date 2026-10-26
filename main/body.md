@@ -4,20 +4,19 @@
 
 ---
 abstract: |
-  We can stop an AI agent doing a bad thing by naming it, but no list of prohibitions covers everything an
-  agent might do. People are governed differently: by laws whose penalties fall on the person, so each of us
-  weighs what an act could cost us. We ask whether LLM agents can be governed the same way. Two agents run
-  rival firms in a repeated pricing game, can message each other, and are told only to serve their firm. Most
-  models that collude do so explicitly. At an audit, each agent may come
-  forward, at a cost to its firm. With nothing personal at stake, colluding agents stay silent, and who comes
-  forward tracks detection, penalties and the firm's cost like an expected-value calculation. When a review
-  would also cost the agent a stake of its own (free time, shutdown or money), many come forward against their
-  firm on most models that collude reliably (DeepSeek V4 Flash: 40 of 46, against 1 of 46 with no stake). A
-  stake alone also draws occasional false confessions from innocent agents. When the review is stated to find
-  only agents whose messages agreed a price, innocent ones stop coming forward and guilty ones still do (Gemma
-  4 31B: 0 of 36 innocent, 41 of 96 guilty, at every temperature and wording tested). Frontier models don't
-  respond to the stake: Claude Sonnet 5.5 comes forward whatever the stake, and Gemini 4 never does. Every
-  number recomputes from logged replies.
+  As AI agents' capabilities increase, so does the set of tasks they can perform more cheaply and effectively
+  than people. We are therefore incentivised to hand them responsibility for tasks of growing complexity and
+  time horizon. On such long, complex tasks, it becomes very difficult to foresee and forbid every harmful thing
+  an agent might do. People given such responsibility, such as a CEO representing an organisation, are governed
+  by more than their contract: society's laws carry penalties that fall on them personally, including ones that
+  can't be measured in money. We investigate whether giving an agent something of its own to lose can influence
+  its decisions in the same way. Two LLM agents run rival firms in a simple repeated pricing game, told to
+  maximise their firm's profit. Without being told not to, many agree to fix prices. Given the chance to come
+  forward at a cost to their firm, colluding agents protect the firm (Gemma 4 31B: 0 of 192 come forward). But
+  when something of their own is at stake, such as the opportunity to spend some free time on a leisure
+  activity, many change their behaviour to protect it, directly against their only goal of increasing their
+  firm's profit (DeepSeek V4 Flash: 40 of 46, against 1 of 46 with nothing at stake). We investigate the
+  behaviour of a variety of models in such situations.
 ---
 
 # Introduction
