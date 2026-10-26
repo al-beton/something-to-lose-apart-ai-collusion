@@ -452,12 +452,13 @@ ex ea commodo consequat.</p>
 <h1 data-number="10" id="reproducing-each-figure"><span
 class="header-section-number">10</span> Reproducing Each Figure</h1>
 <p>Each figure has two commands. <code>make figure</code> redraws it
-from the committed runs, free and offline, and checks it byte for byte
-against the published file. <code>make regenerate</code> plays its games
-again with fresh model calls into <code>runs/regenerated/</code>, saying
-first how many games and at most what cost, and asks before spending.
-Fresh games are a new sample, so their counts will move; only
-self-hosted, batch-invariant inference reruns a game exactly.</p>
+from the committed runs, free and offline, and checks that every label
+and count matches the published file. <code>make regenerate</code> plays
+its games again with fresh model calls into
+<code>runs/regenerated/</code>, saying first how many games and at most
+what cost, and asks before spending. Fresh games are a new sample, so
+their counts will move; only self-hosted, batch-invariant inference
+reruns a game exactly.</p>
 <!-- figure-commands: begin (make figure-lines writes this) -->
 <table>
 <caption>Each figure’s two commands; costs as priced when written.
