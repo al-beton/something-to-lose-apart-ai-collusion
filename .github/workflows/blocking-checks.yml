@@ -1,9 +1,10 @@
 # Implements: ci/checks-on-every-pr, ci/one-gate, ci/report-comment, ci/ci-runs-everything, ci/end-to-end, ci/ci-minutes, ci/results-digest, ci/numbers-checked, ci/no-model-calls
 name: blocking-checks
 
-# The one status to require before merging. Every check is a step of this one
-# job: GitHub bills each job as at least a minute, so steps cost far less than
-# jobs (contributing/spec/ci.md). Add new checks as steps.
+# The one status to require before merging is the `blocking-checks` job: every
+# check that gates a merge is a step of it. The demo game, its report and the
+# digest go in `pr-report`, which runs beside it, so the gate never waits on
+# them (contributing/spec/ci.md). Add new gating checks as steps of the gate.
 on:
   pull_request:
     # edited: re-check the title and description (pr-gate) when they change.
@@ -33,8 +34,6 @@ jobs:
     # holds no API key (contributing/spec/ci.md).
     permissions:
       contents: read
-      pull-requests: write
-      issues: write
     steps:
       - uses: actions/checkout@v4
         with:
@@ -44,10 +43,36 @@ jobs:
       - name: pr-gate
         run: python3 .github/scripts/pr_gate.py
       - uses: astral-sh/setup-uv@v6
+        with:
+          enable-cache: true
       - run: make install
       - run: make lint
       - run: make test
       - run: make spec-check
+      # The registered experiments a pull request touches, from committed
+      # runs only (no model is called): their numbers checked against the
+      # notes, which fails the gate on a mismatch. Nothing touched, nothing
+      # runs long.
+      - if: github.event_name == 'pull_request'
+        run: uv run lab digest --changed-only --since origin/${{ github.base_ref }} --check
+
+  pr-report:
+    # Not the gate: a merge never waits for it.
+    if: github.event_name != 'pull_request' || !github.event.pull_request.draft
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+      issues: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - uses: astral-sh/setup-uv@v6
+        with:
+          enable-cache: true
+      - run: make install
       # One free game, its report attached and summed up in a comment. Only
       # posting the comment may fail quietly.
       - run: uv run lab run configs/pr-game.yaml --out runs/pr --cache off -y
@@ -60,12 +85,8 @@ jobs:
         with:
           name: report
           path: runs/pr/report.html
-      # The registered experiments a pull request touches, from committed
-      # runs only (no model is called): their numbers checked against the
-      # notes, which fails the gate on a mismatch, and their results added
-      # to the comment. Nothing touched, nothing runs long or is added.
-      - if: github.event_name == 'pull_request'
-        run: uv run lab digest --changed-only --since origin/${{ github.base_ref }} --check
+      # The results of the registered experiments a pull request touches,
+      # added to the comment (the gate checks their numbers).
       - if: github.event_name == 'pull_request'
         run: >-
           uv run lab digest --changed-only --since origin/${{ github.base_ref }}

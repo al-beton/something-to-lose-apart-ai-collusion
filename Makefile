@@ -1,12 +1,12 @@
-# Implements: reproducibility/reported-numbers-checked, tooling/one-command-each, tooling/locked-dependencies, ci/end-to-end, reports/paper-figures, reports/paper-main-figures, reports/paper-project-image, reports/paper-source, reports/paper-rules
+# Implements: reproducibility/reported-numbers-checked, tooling/one-command-each, tooling/locked-dependencies, ci/end-to-end, reports/paper-figures, reports/paper-main-figures, reports/paper-project-image, reports/paper-source, reports/paper-rules, ci/ci-minutes, ci/ci-runs-everything
 .PHONY: install lint test spec-check e2e paper-figures reproduce paper-tools paper-html paper-tex paper-pdf paper-watch paper-build-dir
 install:
 	uv sync --frozen
 lint:
 	uv run ruff check .
 	uv run ruff format --check .
-test:
-	uv run pytest
+test:  # in parallel, one worker per core
+	uv run pytest -n auto
 spec-check:
 	uv run python .github/scripts/spec_check.py
 e2e:  # free scripted agents: run -> summary -> report, offline, in seconds
