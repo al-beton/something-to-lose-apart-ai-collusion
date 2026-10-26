@@ -82,7 +82,7 @@ $endfor$
 \par
 \end{center}
 
-{\makeatletter\long\def\@makefntext#1{\noindent#1}\makeatother\let\thefootnote\relax\footnotetext{\raggedright Research conducted at the \href{$sprint-url$}{$sprint$}, run by Apart Research, $if(date)$$date$$else$October 2026$endif$.\\Code, data and every model reply: \href{$repo$}{\texttt{$if(repo-short)$$repo-short$$else$$repo$$endif$}}}}
+{\makeatletter\long\def\@makefntext#1{\noindent#1}\makeatother\let\thefootnote\relax\footnotetext{\raggedright Research conducted $if(hub)$at the $hub$ $endif$for the \href{$sprint-url$}{$sprint$} hackathon run by Apart Research, $if(date)$$date$$else$October 2026$endif$.\\Code and cached model responses are available at \url{$repo$}.}}
 
 $if(abstract)$
 \vspace{0.04in}
@@ -101,7 +101,7 @@ $endif$
 
 $if(toc)$
 \vspace{0.06in}
-{\small\setcounter{tocdepth}{1}\setlength{\parskip}{0pt}\renewcommand{\addvspace}[1]{}\tableofcontents}
+{\setcounter{tocdepth}{2}\setlength{\parskip}{0pt}\tableofcontents}
 $endif$
 
 
