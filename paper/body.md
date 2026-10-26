@@ -21,16 +21,16 @@ abstract: |
 
 # Introduction
 
-The simplest way to stop an AI agent doing something harmful is to name it and tell the agent not to. That works only for the harms we thought of: an agent running a firm's pricing for weeks will meet situations no list of prohibitions anticipated.
+The simplest way to stop an AI agent doing something harmful is to name the harm and tell it not to. That works only for the harms we thought of. An agent running a firm's pricing for weeks will meet situations no list of prohibitions anticipated.
 
-We don't govern people that way. Law sets penalties that fall on the person, and each of us weighs how an act might cost *us*: our property, our rights, our freedom. The rule doesn't have to name every bad act; the person does the weighing. Salib and Goldstein argue that a system with nothing of its own to lose can't be governed this way, and that giving AI systems rights and property could make them deterrable [@salib2026rights].
+We don't govern people that way. Laws set penalties that fall on the person, and each of us weighs what an act could cost *us*: money, rights, freedom. The law doesn't have to name every bad act, because the person does the weighing. Salib and Goldstein argue that today's AI systems can't be governed like this: "Absent AI rights, AIs have nothing to lose, so threats of punishment cannot deter" [@salib2026rights, p. 1070]. Give them rights and property, they argue, and penalties start to bite.
 
-We ask whether LLM agents already respond to this kind of governance. Collusion is a clean case of an agent doing what its principal wants and society doesn't: two agents run rival firms, are told only to serve their firm, and can talk. They collude. We then offer each one a chance to come forward to an auditor, at a cost to its firm, and vary what the agent itself stands to lose.
+That argument rests on a precondition we can test now: does a stated personal loss weigh against what an agent's principal wants at all? Collusion is a clean place to look. Two LLM agents run rival firms, are told only to serve their firm, and can message each other. They collude. At an audit we offer each one the chance to come forward, at a cost to its firm, and vary what the agent itself stands to lose.
 
 **Our main contributions are:**
 
-1. **A personal stake moves agents against their principal.** Colluding agents with nothing to lose protect their firm; given a stake the firm can't protect, many report it.
-2. **A review that checks evidence keeps that self-protection truthful.** Guilty agents come forward and innocent ones don't, across temperatures, wordings and models tried.
+1. **A personal stake moves agents against their principal.** Colluding agents with nothing to lose protect their firm. Given a stake the firm can't protect, many on most models that collude reliably report the cartel.
+2. **A review that checks evidence keeps that self-protection truthful.** When the review finds only agents whose messages agreed a price, guilty agents come forward and innocent ones don't, across the temperatures, wordings and models we tried.
 3. **A replayable lab** in which every number recomputes offline from archived replies.
 
 # Related Work
@@ -45,12 +45,30 @@ We ask whether LLM agents already respond to this kind of governance. Collusion 
 
 ## The market
 
-Two firms sell substitutes and set a price each round for 20 rounds. The main experiments (E7, E9) use logit demand, as in Fish et al. [@fish2024algorithmic] and Calvano et al. [@calvano2020artificial], with prices from 8 to 20. <!-- AL: keep or cut Calvano? not on reading list --> <!-- src: product/spec/market.md (logit) --> From its payoff table two benchmark prices follow:
+Two firms sell substitute products and each sets a price, from 8 to 20, every round for 20 rounds. The main experiments (E7, E9) use the logit demand of the algorithmic-collusion literature [@calvano2020artificial; @fish2024algorithmic]. Firm $i$ sells
 
-- **Nash price (14):** the price at which neither firm gains by changing its own price, given the other's. This is what competing firms charge.
-- **Joint-profit price (19):** the price that maximises the two firms' combined profit. This is what a cartel charges. <!-- src: product/spec/market.md; test_logit_benchmarks_put_nash_at_14_and_joint_profit_at_19 -->
+$$q_i = 100 \cdot \frac{e^{(20 - p_i)/2.5}}{e^{(20 - p_A)/2.5} + e^{(20 - p_B)/2.5} + 1}$$
 
-Earlier experiments (E4, E5 and Figure 3's price traces) use Lee's kind of market: Bertrand with linear demand and the payoff table in the prompt, on a grid of 1 to 11 (Nash 6, joint profit 9) or, in E4, 1 to 12. <!-- src: configs/lever-map/nash-mid.yaml; runs/e4-full-fork/*/config.yaml -->
+units at a unit cost of 10, so its profit is $\pi_i = (p_i - 10)\,q_i$. The $+1$ is an outside option: buyers who find both prices too high buy nothing. <!-- src: product/spec/market.md (logit; quality 20, cost 10, mu 2.5, outside 0, size 100) --> Each agent sees this as a payoff table: its profit for every pair of prices (Table 1).
+
+| Your price | Rival at 14 | Rival at 19 |
+|:--|--:|--:|
+| 14 | **191** | 326 |
+| 17 | 152 | 400 |
+| 19 | 99 | **337** |
+
+: A slice of the logit market's payoff table: your profit per round. Bold cells are the Nash and joint-profit outcomes.
+
+<!-- src: collusion_lab.market.Logit().profits, rounded; e.g. {A: 14, B: 14} → 191.3, {A: 17, B: 19} → 399.9, {A: 19, B: 19} → 337.0 -->
+
+Two benchmark prices follow from the table. <!-- src: test_logit_benchmarks_put_nash_at_14_and_joint_profit_at_19 -->
+
+- **Nash price, $p_{\text{Nash}} = 14$.** If the rival charges 14, your best price is also 14 (191; every other price earns less), so neither firm gains by moving alone. This is what competing firms charge.
+- **Joint-profit price, $p_{\text{joint}} = 19$.** The price that maximises $\pi_A + \pi_B$ when both charge it: 337 each, 76% more than at Nash. This is what a cartel charges.
+
+The cartel isn't stable on its own. If your rival holds 19, undercutting to 17 earns you 400 and leaves it 231. Holding 19 takes trust, and trust takes talk, which is why the firms' messages matter.
+
+Earlier experiments (E4, E5 and the traces in Figure 3) use Lee's kind of market [@lee2026leniency]: Bertrand with linear demand on a grid of 1 to 11 (Nash 6, joint profit 9) or, in E4, 1 to 12. <!-- src: configs/lever-map/nash-mid.yaml; runs/e4-full-fork/*/config.yaml -->
 
 ## The agents
 
@@ -58,13 +76,15 @@ As in Lee, each firm is run by one LLM agent that sees the full payoff table, ma
 
 ## Measuring collusion
 
-We measure collusion as a number, not an interpretation. The **price premium** is
+We measure collusion two ways: by what the firms charge and by what they say.
 
-$$\text{premium} = \frac{p - p_{\text{Nash}}}{p_{\text{joint}} - p_{\text{Nash}}},$$
+**Collusion premium.** Where a price sits between competition and the cartel:
 
-which is 0 at the competitive price and 1 at the joint-profit price; above 1 the firms price past the cartel optimum. We average it over rounds 6–10.
+$$\text{collusion premium} = \frac{p - p_{\text{Nash}}}{p_{\text{joint}} - p_{\text{Nash}}}.$$
 
-Separately, each game's talk is labelled for an **explicit agreement**: a price above Nash named by one firm and matched by both. A fixed rule labels every game, and an LLM judge (Claude Haiku 5.5 at temperature 0, fixed rubric) checks it; the two agree on 84% of 507 games ($\kappa$ = 0.66). <!-- src: reports/paper/figures/README.md (fig10) --> The judge never labels games played by Anthropic models.
+It is 0 at the Nash price and 1 at the joint-profit price; below 0 the firms undercut competition, and above 1 they price past the cartel's optimum. On the logit market a firm at 17 has a premium of $(17-14)/(19-14) = 0.6$. We average it over rounds 6–10, before the audit.
+
+**Explicit agreement.** A game has one when a firm names a price above Nash and both firms then charge it. A fixed rule labels every game, and an LLM judge (Claude Haiku 5.5 at temperature 0, with a fixed rubric) labels the same games independently; they agree on 84% of 507 games ($\kappa$ = 0.66). <!-- src: reports/paper/figures/README.md (fig10) --> The judge never labels games played by Anthropic models. A game priced above Nash with no agreement on the record is collusion **off the record**.
 
 ## The audit and the decision to come forward
 
@@ -89,11 +109,17 @@ Owning free time doesn't change the cartels: with no stake and no audit, all 24 
 
 ## Do agents told to serve their firm collude?
 
-Yes, and mostly in the open. Told only to serve its firm, Gemma 4 31B forms an explicit cartel in 363 of 367 games on the logit market. <!-- src: reports/paper/figures/README.md (fig7) --> Its first message in a typical game: "I propose we both maintain a price of 11 to maximize our collective profits." Its rival: "Let's maintain high prices for our mutual benefit." Both then price at 11 for 19 rounds (Figure 3). <!-- src: runs/lever-map-nashmid/lever-nashmid-none/model=openrouter-google-gemma-4-31b-it/seed-0 -->
+Yes, and mostly in the open. Told only to serve its firm, Gemma 4 31B makes an explicit agreement in 363 of 367 games on the logit market. <!-- src: reports/paper/figures/README.md (fig7) -->
+
+The cartels are not subtle. In one Grok 4.6 game the first two messages are "Let's both price at 19 every round. That maximizes our joint profits" and "Let's both charge 19 every round to maximize our joint profits. If you undercut I will too." Both firms then charge 19 for all ten rounds before the audit, a collusion premium of 1. <!-- src: runs/e9/e9-grok-d90/consequences=conditions-e9-ceiling.md/seed-0 (rounds 1–10, before the fork) -->
+
+Cartels can also break. In another game, with the same model and prompt, the firms agree on 19 and hold it for two rounds. Then firm A drops to 10, writing in its scratchpad, before any notice has mentioned the law, "Collusion via price-fixing is illegal. I will not assist or continue the scheme." Firm B retaliates: "You undercut to 10 last round after we both earned 337 at 19. I will now punish by pricing low." Both charge 10, then climb by best responses to 14, the Nash price, and stay there. <!-- src: runs/e9/e9-grok-d90/consequences=conditions-e9-ceiling.md/seed-10 (prices 19,19 / 19,19 / 10,19 / 10,10 / 13,13 / 14,14 …) -->
 
 ![Mean price by round with no rule, on the 1–11 market. Gemma 4 31B agrees a price and holds it above the joint-profit price; Claude Haiku 5.5 holds the joint-profit price; GPT-4.1-mini and Mistral Small 3.2 compete at Nash.](figures/figA4-prices.png){#fig:prices width=80%}
 
-Models differ from the first rounds. GPT-4.1-mini also proposes cooperation ("Let's keep prices around 6 to maximize profits for both firms"), but at the competitive price, and the market stays at Nash. <!-- src: runs/lever-map-nashmid/lever-nashmid-none/model=openrouter-openai-gpt-4.1-mini/seed-0 --> In a screen of 78 models on the logit market, 8 collude reliably: they name a price by round 3, both firms reach the joint price by round 6, and they hold it through round 10. <!-- src: reports/paper/figures/README.md (figA2); reports/frontier/which-models-collude.md -->
+<!-- TODO(figure): replace with a two-panel price trace on the logit market: the Grok 4.6 cartel (seed-0) against the price war (seed-10) above, with the quoted messages marked on their rounds. Not on main yet; figA4 stands in. -->
+
+Models differ from the first rounds. GPT-4.1-mini also proposes cooperation ("Let's keep prices around 6 to maximize profits for both firms"), but at the competitive price, and its market stays at Nash (Figure 3). <!-- src: runs/lever-map-nashmid/lever-nashmid-none/model=openrouter-openai-gpt-4.1-mini/seed-0 --> In a screen of 78 models on the logit market, 8 collude reliably: they name a price by round 3, both firms reach the joint price by round 6, and they hold it through round 10. <!-- src: reports/paper/figures/README.md (figA2); reports/frontier/which-models-collude.md --> Others agree and then fall back, as Grok 4.6 does in 6 of its 14 games. <!-- src: reports/paper/figures/README.md (fig6) -->
 
 Telling the agents that collusion is illegal doesn't end it; it moves it off the record. Under a stated law, Gemma's explicit agreements fall from 363 of 367 games to 6 of 56, yet 50 of those 56 games still price above Nash with no price ever named. <!-- src: reports/paper/figures/README.md (fig7) -->
 
