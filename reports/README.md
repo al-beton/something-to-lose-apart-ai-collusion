@@ -12,6 +12,7 @@ Findings from experiments, one folder per experiment (`reports/<experiment>/`), 
 
 - [E4: owning up at an audit](e4/full.md), with [its pilots](e4/pilot.md) and [the termination confound](reanalysis.md)
 - [E9: coming forward against the firm](e9/findings.md), including the firm-cost dial, the verified review, 13 models and seeding
+- [E11: the crux across markets](e11/findings.md): Bertrand, Cournot and bid rigging
 - [Why trust this?](paper/validity.md): what the results can't show, a spot audit of the traces, and the reproducibility study
 - The paper's figures, with captions: [`paper/figures/`](paper/figures/README.md); its [plan](paper/plan.md) and [outline](paper/outline.md)
 
