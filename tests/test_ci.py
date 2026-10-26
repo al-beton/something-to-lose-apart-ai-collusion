@@ -1,4 +1,4 @@
-# Implements: ci/ci-minutes, ci/one-gate, ci/ci-runs-everything, ci/no-model-calls
+# Implements: ci/ci-minutes, ci/one-gate, ci/ci-runs-everything, ci/no-model-calls, ci/paper-preview
 import re
 import subprocess
 from pathlib import Path
@@ -16,7 +16,11 @@ def test_ci_minutes_one_job_named_like_the_gate():
     # Every check is a step of one job, billed as one minute, and its name is
     # the status deliver.py's merge waits for.
     assert list(workflow()["jobs"]) == ["blocking-checks"]
-    assert [p.name for p in WORKFLOWS.glob("*.yml")] == ["blocking-checks.yml"]
+    # The paper preview is its own workflow and never gates a merge.
+    assert sorted(p.name for p in WORKFLOWS.glob("*.yml")) == [
+        "blocking-checks.yml",
+        "paper-preview.yml",
+    ]
 
 
 def test_ci_minutes_one_job_runs_every_check():
@@ -84,3 +88,18 @@ def test_no_model_calls_no_secret_but_the_github_token():
     for path in WORKFLOWS.glob("*.yml"):
         secrets = set(re.findall(r"secrets\.(\w+)", path.read_text()))
         assert secrets <= {"GITHUB_TOKEN"}, (path, secrets)
+
+
+def test_paper_preview_builds_publishes_and_comments():
+    flow = yaml.safe_load((WORKFLOWS / "paper-preview.yml").read_text())
+    on = flow[True]  # YAML reads the key "on" as True
+    assert "paper/**" in on["pull_request"]["paths"]
+    assert "ready_for_review" in on["pull_request"]["types"]
+    (job,) = flow["jobs"].values()
+    assert "if" not in job  # drafts are built too
+    runs = " ".join(str(s.get("run", "")) for s in job["steps"])
+    assert "make -s paper-html paper-pdf" in runs
+    assert "gh-pages" in runs and "<!-- paper-preview -->" in runs
+    for link in ("preview.html", "paper.html", "paper.pdf", "paper/paper.md"):
+        assert link in runs, link
+    assert "PATCH" in runs  # one comment, edited in place
