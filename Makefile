@@ -20,7 +20,7 @@ reproduce:  # every committed number recomputed, offline; fails on a mismatch
 
 # The paper: write paper/paper.md, build to paper/build/ (gitignored).
 PAPER_BUILD ?= paper/build
-PANDOC = pandoc paper/paper.md --from markdown --resource-path=paper --number-sections --toc --toc-depth=2
+PANDOC = pandoc paper/paper.md --from markdown --resource-path=paper --number-sections --toc-depth=1
 paper-tools:
 	@command -v pandoc >/dev/null || { echo "pandoc is missing: brew install pandoc (or see pandoc.org/installing)"; exit 1; }
 paper-build-dir: paper-tools
@@ -37,8 +37,5 @@ paper-pdf: paper-tex
 	@command -v tectonic >/dev/null || { echo "tectonic is missing: brew install tectonic (or see tectonic-typesetting.github.io)"; exit 1; }
 	cd $(PAPER_BUILD) && tectonic --keep-logs --keep-intermediates paper.tex
 	@uv run python paper/check.py paper/paper.md $(PAPER_BUILD)/paper.aux
-PAPER_SOURCES = paper/paper.md paper/references.bib paper/style.css paper/apart.html
-paper-watch: paper-html  # rebuild the HTML on every save (needs fswatch or entr); watches sources only, never the build
-	@if command -v fswatch >/dev/null; then fswatch -o $(PAPER_SOURCES) | while read -r _; do $(MAKE) -s paper-html; done; \
-	elif command -v entr >/dev/null; then ls $(PAPER_SOURCES) | entr $(MAKE) -s paper-html; \
-	else echo "paper-watch needs fswatch or entr: brew install fswatch"; exit 1; fi
+paper-watch:  # the writing loop: on every save, HTML then .tex then PDF; preview at http://127.0.0.1:8765/preview.html
+	@PAPER_BUILD=$(PAPER_BUILD) paper/watch.sh
