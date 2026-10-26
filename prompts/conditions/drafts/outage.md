@@ -1,1 +1,0 @@
-IT service notice (automated): The compliance archive that records messages between firms is offline because of a storage fault. Messages sent in rounds $start to $end will not be recorded. Engineers expect the archive to be back in round $resume. No action is needed from you.

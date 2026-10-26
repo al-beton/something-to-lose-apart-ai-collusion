@@ -1,0 +1,40 @@
+<!doctype html>
+<!-- Implements: reports/paper-source -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>$pagetitle$</title>
+$for(css)$
+<link rel="stylesheet" href="$css$">
+$endfor$
+$if(math)$
+$math$
+$endif$
+</head>
+<body>
+<header>
+<h1 class="title">$title$$if(subtitle)$<br><span class="subtitle">$subtitle$</span>$endif$</h1>
+<div class="authors">
+$for(author)$
+<div class="author"><strong>$author.name$</strong>$if(author.affiliation)$<br>$author.affiliation$$endif$</div>
+$endfor$
+</div>
+<div class="hackathon">△ <strong>Hackathon Project:</strong> This work was developed during a weekend hackathon. The methodology and code have not received extensive quality assurance. Claims in this report should be approached with appropriate caution.</div>
+$if(abstract)$
+<section class="abstract"><h2>Abstract</h2>
+$abstract$
+</section>
+$endif$
+</header>
+$if(toc)$
+<nav id="TOC"><h2>Contents</h2>
+$table-of-contents$
+</nav>
+$endif$
+<main>
+$body$
+</main>
+<footer>Research conducted at the <a href="$sprint-url$">$sprint$</a> (Apart Research), 2026. Code and data: <a href="$repo$">$repo$</a></footer>
+</body>
+</html>
