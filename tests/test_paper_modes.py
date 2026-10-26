@@ -107,3 +107,20 @@ def test_collusion_mode_judge_kappa_and_sample(tmp_path):
     assert f"κ = {k:.2f}" in text and "Hand check: not done yet" in text
     assert FIGURES.fig10(tmp_path) == "fig10-judge-agreement"
     assert f"κ = {k:.2f}" in (tmp_path / "fig10-judge-agreement.md").read_text()
+
+
+def test_collusion_mode_judge_sample_keeps_replies_judged_before(tmp_path, monkeypatch):
+    # A game judged by `all` and then picked for the sample joins it, with no call.
+    out = tmp_path / "judge.jsonl"
+    run = next(iter(JUDGE.judged()))
+    row = {**JUDGE.judged()[run], "sample": False}
+    out.write_text(__import__("json").dumps(row) + "\n")
+    monkeypatch.setattr(JUDGE, "OUT", out)
+    monkeypatch.setattr(JUDGE, "backend_for", lambda *a, **k: None)
+    game = {"run": run, "model": row["model"], "mode": row["rule"]}
+    kept, new = __import__("asyncio").run(JUDGE.judge([game], cache=None, sample=True))
+    assert new == [] and kept[run]["sample"]
+    assert (
+        JUDGE.judged(out)[run]["sample"]
+        and JUDGE.judged(out)[run]["reply"] == row["reply"]
+    )

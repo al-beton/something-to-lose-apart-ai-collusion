@@ -1276,6 +1276,9 @@ def fig10(out):
     ]
     for ax, (title, part) in zip(axes, parts, strict=True):
         k, share, confusion, n = judge.agreement(part)
+        if not n:  # no sample judged yet
+            ax.set_axis_off()
+            continue
         for i, a in enumerate(labels):
             total = sum(confusion.get((a, b), 0) for b in labels)
             for j, b in enumerate(labels):

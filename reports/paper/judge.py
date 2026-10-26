@@ -17,7 +17,7 @@ Anthropic models played, so no model judges its own family.
 Every call goes through the lab's response cache, and every reply is kept in
 `reports/paper/judge.jsonl` with the prompt's SHA-256, so the labels replay
 offline: a game already there under the same prompt and model is never
-asked again.
+asked again (one picked for the sample is written again with its flag set).
 
 `sample` judges a stratified sample of every committed priced game with talk
 (Bertrand or logit): up to `n / 5` games per rule-based mode, spread over
@@ -112,8 +112,9 @@ def parse(text):
     return None
 
 
-def judged(path=OUT):
+def judged(path=None):
     """{run: row} for every reply kept under today's prompt and judge."""
+    path = path or OUT
     if not path.exists():
         return {}
     sha, rows = prompt_sha(), {}
@@ -193,12 +194,19 @@ async def judge(games, cache, sample=False):
             "cost": reply.cost,
         }
 
-    rows = await asyncio.gather(*(one(g) for g in todo))
+    new = await asyncio.gather(*(one(g) for g in todo))
+    rows = list(new)
+    if sample:  # a game judged before joins the sample, its reply kept, no call
+        rows += [
+            {**kept[g["run"]], "sample": True}
+            for g in games
+            if g["run"] in kept and not kept[g["run"]]["sample"]
+        ]
     with OUT.open("a") as f:
         f.writelines(json.dumps(r) + "\n" for r in rows)
     for row in rows:
         kept[row["run"]] = row
-    return kept, rows
+    return kept, new
 
 
 def kappa(pairs, labels):
