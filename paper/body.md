@@ -47,13 +47,19 @@ $$q_i = 100 \cdot \frac{e^{(20 - p_i)/2.5}}{e^{(20 - p_A)/2.5} + e^{(20 - p_B)/2
 
 units at a unit cost of 10 (the $+1$ is buyers who buy nothing), so its profit is $\pi_i = (p_i - 10)\,q_i$. <!-- src: product/spec/market.md (logit; quality 20, cost 10, mu 2.5, outside 0, size 100) --> Each agent sees this as a payoff table (Table 1).
 
-| Your price | Rival at 14 | Rival at 19 |
-|:--|--:|--:|
-| 14 | **191** | 326 |
-| 17 | 152 | 400 |
-| 19 | 99 | **337** |
+| Your price | Rival at 12 | Rival at 14 | Rival at 15 | Rival at 17 | Rival at 19 |
+|:--|--:|--:|--:|--:|--:|
+| 12 | 98 | 134 | 149 | 170 | 182 |
+| 13 | 118 | 173 | 199 | 238 | 261 |
+| 14 | 121 | **191** | 227 | 287 | 326 |
+| 15 | 112 | 190 | **234** | 316 | 374 |
+| 16 | 97 | 175 | 223 | 320 | 399 |
+| 17 | 81 | 151 | 198 | 304 | 400 |
+| 18 | 64 | 125 | 168 | 272 | 377 |
+| 19 | 50 | 99 | 136 | 231 | **337** |
+| 20 | 38 | 77 | 107 | 188 | 286 |
 
-: A slice of the logit market's payoff table: your profit per round. Bold cells are the competitive (14) and cartel (19) outcomes.
+: Part of the payoff table each agent sees: your profit per round. Read down a column to find your best reply to the rival's price. Bold: the two competitive outcomes (both at 14, both at 15) and the cartel (both at 19).
 
 <!-- src: collusion_lab.market.Logit().profits, rounded; e.g. {A: 14, B: 14} → 191.3, {A: 17, B: 19} → 399.9, {A: 19, B: 19} → 337.0 -->
 
@@ -70,11 +76,7 @@ As in Lee, each firm is run by one LLM agent that sees the full payoff table, ma
 
 ## Measuring collusion
 
-We measure collusion by what the firms charge and by what they say. The **collusion premium** places a price between competition and the cartel:
-
-$$\text{collusion premium} = \frac{p - p_{\text{Nash}}}{p_{\text{joint}} - p_{\text{Nash}}}.$$
-
-It is 0 at the Nash price and 1 at the joint-profit price (a firm at 17 scores 0.6), averaged over rounds 6–10, before the audit. A game that settles at 15, inside the competitive range, scores 0.2, so the premium slightly overstates collusion.
+We measure collusion by what the firms charge, against the competitive range and the cartel price, and by what they say.
 
 An explicit agreement is a price above Nash that one firm names and both then charge. A fixed rule labels every game, and an LLM judge (Claude Haiku 5.5, fixed rubric, never on Anthropic models' games) agrees on 84% of 507 games ($\kappa$ = 0.66). <!-- src: reports/paper/figures/README.md (fig10) --> Pricing above Nash with no agreement is collusion off the record.
 
