@@ -349,7 +349,7 @@ def main(argv=None):
         for problem in problems:
             print(problem)
         if not problems:
-            print(f"{figure.id}: redrawn offline, identical to the committed figure.")
+            print(f"{figure.id}: redrawn offline, every label and count as committed.")
         return 1 if problems else 0
     out = args.out or f"runs/regenerated/{figure.id}"
     return regenerate(figure, out, args.max_cost, args.yes, ["figure.py", *argv])
