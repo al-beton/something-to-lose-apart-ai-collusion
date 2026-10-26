@@ -1,0 +1,58 @@
+<!doctype html>
+<!-- Implements: reports/paper-source, ci/paper-preview -->
+<!-- make paper-watch serves this beside the build: the HTML on the left, the PDF's pages on the right, reloaded on every rebuild. -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Paper preview</title>
+<style>
+  :root { --bar: #f2f2f2; --ink: #111; --page: #888; }
+  body { margin: 0; height: 100vh; display: grid; grid-template-rows: auto 1fr; font: 13px system-ui, sans-serif; color: var(--ink); background: #fff; }
+  header { background: var(--bar); padding: 4px 12px; display: flex; gap: 16px; align-items: center; border-bottom: 1px solid #ddd; }
+  header a { color: #0000cc; }
+  .panes { display: grid; grid-template-columns: 1fr 1fr; min-height: 0; }
+  @media (max-width: 800px) { .panes { grid-template-columns: 1fr; } }
+  iframe { border: 0; width: 100%; height: 100%; border-right: 1px solid #ddd; }
+  #pdf { overflow-y: auto; background: var(--page); padding: 12px; }
+  #pdf figure { margin: 0 auto 12px; max-width: 760px; }
+  #pdf img { width: 100%; display: block; box-shadow: 0 1px 4px rgba(0,0,0,.4); background: #fff; }
+  #pdf figcaption { color: #fff; text-align: center; font-size: 11px; }
+</style>
+</head>
+<body>
+<header><strong>Something to Lose</strong><span id="when"></span>
+  <a href="paper.html" target="_blank">HTML</a><a href="paper.pdf" target="_blank">PDF</a><a href="paper.tex" target="_blank">.tex</a></header>
+<div class="panes">
+  <iframe id="html" src="paper.html"></iframe>
+  <div id="pdf"></div>
+</div>
+<script>
+  let stamp = null;
+  const html = document.getElementById("html"), pdf = document.getElementById("pdf");
+  async function pages(bust) {
+    const names = (await (await fetch("pages.txt?" + bust)).text()).split("\n").filter(Boolean);
+    const top = pdf.scrollTop;
+    pdf.innerHTML = names.map((n, i) => `<figure><img src="pages/${n}?${bust}" alt="page ${i + 1}"><figcaption>${i + 1}</figcaption></figure>`).join("");
+    pdf.scrollTop = top;
+  }
+  async function poll() {
+    try {
+      const now = (await (await fetch("stamp?" + Date.now())).text()).trim();
+      if (now !== stamp) {
+        if (stamp !== null) {
+          const y = html.contentWindow.scrollY;
+          html.onload = () => html.contentWindow.scrollTo(0, y);
+          html.contentWindow.location.reload();
+        }
+        stamp = now;
+        await pages(now);
+        document.getElementById("when").textContent = "built " + new Date(+now * 1000).toLocaleTimeString();
+      }
+    } catch (e) {}
+    setTimeout(poll, 1000);
+  }
+  poll();
+</script>
+</body>
+</html>
