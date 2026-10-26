@@ -1,3 +1,4 @@
+<!-- Implements: e9-crux/free-time-control -->
 # E9 free-time control: does merely owning free time change collusion?
 
 **No.** With nothing at stake, Gemma colludes just as fully with free time as without it: every firm in both arms made an explicit agreement and priced above Nash, and the talk never mentions free time.
