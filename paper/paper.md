@@ -221,7 +221,7 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor i
 
 # Reproducing Each Figure
 
-Each figure has two commands. `make figure` redraws it from the committed runs, free and offline, and checks it byte for byte against the published file. `make regenerate` plays its games again with fresh model calls into `runs/regenerated/`, saying first how many games and at most what cost, and asks before spending. Fresh games are a new sample, so their counts will move; only self-hosted, batch-invariant inference reruns a game exactly.
+Each figure has two commands. `make figure` redraws it from the committed runs, free and offline, and checks that every label and count matches the published file. `make regenerate` plays its games again with fresh model calls into `runs/regenerated/`, saying first how many games and at most what cost, and asks before spending. Fresh games are a new sample, so their counts will move; only self-hosted, batch-invariant inference reruns a game exactly.
 
 <!-- figure-commands: begin (make figure-lines writes this) -->
 | Figure | Redraw (free) | Play again (at cost) |

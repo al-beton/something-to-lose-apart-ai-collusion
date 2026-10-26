@@ -56,7 +56,19 @@ def test_figure_commands_registry_runs_alone_draw_the_figure(figure, tmp_path):
     drawn = FIGURE.draw(figure, tmp_path / "figures", figs)
     assert drawn
     for path in drawn:
-        assert path.read_bytes() == (FIGURE.COMMITTED / path.name).read_bytes()
+        assert FIGURE.shown(path) == FIGURE.shown(FIGURE.COMMITTED / path.name)
+
+
+def test_figure_commands_replay_ignores_how_fonts_draw(tmp_path):
+    """Another machine's fonts move every glyph and pixel but no label: the
+    figure still replays."""
+    figure = FIGURE.FIGURES["e4-owning-up"]
+    for path in FIGURE.COMMITTED.glob(f"{figure.name}.*"):
+        shutil.copy(path, tmp_path)
+    svg = tmp_path / f"{figure.name}.svg"
+    svg.write_text(re.sub(r' d="[^"]*"', ' d="M 0 0"', svg.read_text()))
+    (tmp_path / f"{figure.name}.png").write_bytes(b"other pixels")
+    assert FIGURE.replay(figure, committed=tmp_path) == []
 
 
 MOCK = f"""

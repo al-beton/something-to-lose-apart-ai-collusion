@@ -9,8 +9,11 @@ folders it reads, and which committed runs lie behind it. From the
 repository root:
 
 - `make figure F=ID` (`figure.py replay ID`) draws the figure into a scratch
-  folder from the committed runs, calls no model, and fails unless every file
-  it draws matches the committed one byte for byte;
+  folder from the committed runs, calls no model, and fails unless what each
+  drawn file shows matches the committed one (`shown`: every label, count
+  and legend entry of the SVG, and any table whole; glyph shapes and pixels
+  follow the installed fonts, so they differ between machines and aren't
+  compared);
 - `make regenerate F=ID` (`figure.py regenerate ID [--yes] [--max-cost D]
   [--out DIR]`) plays every run behind the figure again with fresh calls into
   `runs/regenerated/ID/` (or `--out`), one run at a time through one new
@@ -132,8 +135,22 @@ def draw(figure, out, figs=None):
     return sorted(Path(out).glob(f"{figure.name}.*"))
 
 
+def shown(path):
+    """What a figure file shows, the same on every machine: an SVG's text in
+    drawing order (text stays text, `svg.fonttype: none`), a table whole, and
+    nothing for a PNG, whose pixels follow the installed fonts."""
+    path = Path(path)
+    if path.suffix == ".png":
+        return None
+    text = path.read_text()
+    if path.suffix == ".svg":
+        return re.findall(r"<text\b[^>]*>(.*?)</text>", text, re.DOTALL)
+    return text
+
+
 def replay(figure, committed=COMMITTED):
-    """One line per drawn file that differs from the committed one."""
+    """One line per drawn file that shows something other than the committed
+    one."""
     with tempfile.TemporaryDirectory() as scratch:
         drawn = draw(figure, scratch)
         if not drawn:
@@ -142,7 +159,7 @@ def replay(figure, committed=COMMITTED):
             f"{path.name}: differs from {committed / path.name}"
             for path in drawn
             if not (committed / path.name).exists()
-            or (committed / path.name).read_bytes() != path.read_bytes()
+            or shown(committed / path.name) != shown(path)
         ]
 
 

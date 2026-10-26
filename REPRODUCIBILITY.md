@@ -98,7 +98,7 @@ The first pack's 48 differing and 40 unloadable runs, run by run:
 Each figure in the paper's registry (`reports/paper/figure.py`; `make figure` lists them) has two commands:
 
 ```sh
-make figure F=e9-crux       # redraw it from the committed runs: free, offline, checked byte for byte
+make figure F=e9-crux       # redraw it from the committed runs: free, offline, every label and count checked
 make regenerate F=e9-crux   # play its games again with fresh calls, into runs/regenerated/e9-crux/
 ```
 
