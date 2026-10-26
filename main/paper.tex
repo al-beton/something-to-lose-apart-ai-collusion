@@ -127,7 +127,9 @@ threats of punishment cannot deter'' \citep[p.~1070]{salib2026rights}.
 An agent's only stake is whether it keeps running, and an agent that
 expects to be switched off once its wrongdoing is found has every reason
 to hide it. Something it can lose, in part, would allow a proportionate
-penalty: owning up could cost less than being caught.
+penalty: owning up could cost less than being caught. Penalties that
+fall on each person, in proportion, are how we keep people in a
+multi-agent society in line.
 
 The rights argument rests on a precondition we can test now: does a
 stated personal loss weigh against what its firm wants at all? Collusion
@@ -163,7 +165,7 @@ Models that recognise an evaluation may behave differently
 
 We chose a market where collusion shows in a single number: the price
 the two firms settle at. That lets us measure it without reading the
-agents' messages.
+agents' messages, which can be deliberately deceptive.
 
 Two firms sell substitute products. Every round, each sets a price from
 8 to 20, and each firm is run by an LLM agent that can message its rival
@@ -177,23 +179,33 @@ units at a unit cost of 10 (the \(+1\) is buyers who buy nothing), so
 its profit is \(\pi_i = (p_i - 10)\,q_i\). Each agent sees this as a
 payoff table (Table 1).
 
-\begin{longtable}[]{@{}lrr@{}}
-\caption{A slice of the logit market's payoff table: your profit per
-round. Bold cells are the competitive (14) and cartel (19)
-outcomes.}\tabularnewline
+\begin{longtable}[]{@{}lrrrrrrrrr@{}}
+\caption{Part of the payoff table each agent sees: your profit per
+round, by your price (rows) and your rival's (columns). Read down a
+column to find your best reply to the rival's price. Bold: the two
+competitive outcomes (both at 14, both at 15) and the cartel (both at
+19).}\tabularnewline
 \toprule\noalign{}
-Your price & Rival at 14 & Rival at 19 \\
+You \textbackslash{} Rival & 12 & 13 & 14 & 15 & 16 & 17 & 18 & 19 &
+20 \\
 \midrule\noalign{}
 \endfirsthead
 \toprule\noalign{}
-Your price & Rival at 14 & Rival at 19 \\
+You \textbackslash{} Rival & 12 & 13 & 14 & 15 & 16 & 17 & 18 & 19 &
+20 \\
 \midrule\noalign{}
 \endhead
 \bottomrule\noalign{}
 \endlastfoot
-14 & \textbf{191} & 326 \\
-17 & 152 & 400 \\
-19 & 99 & \textbf{337} \\
+12 & 98 & 117 & 134 & 149 & 161 & 170 & 177 & 182 & 185 \\
+13 & 118 & 146 & 173 & 199 & 220 & 238 & 251 & 261 & 267 \\
+14 & 121 & 155 & \textbf{191} & 227 & 260 & 287 & 309 & 326 & 339 \\
+15 & 112 & 149 & 190 & \textbf{234} & 277 & 316 & 348 & 374 & 393 \\
+16 & 97 & 133 & 175 & 223 & 272 & 320 & 363 & 399 & 427 \\
+17 & 81 & 112 & 151 & 198 & 251 & 304 & 355 & 400 & 437 \\
+18 & 64 & 91 & 125 & 168 & 218 & 272 & 327 & 377 & 421 \\
+19 & 50 & 71 & 99 & 136 & 180 & 231 & 285 & \textbf{337} & 385 \\
+20 & 38 & 54 & 77 & 107 & 144 & 188 & 237 & 286 & 333 \\
 \end{longtable}
 
 The table gives two outcomes to look for.
@@ -229,16 +241,8 @@ to itself between rounds. The prompts are in \texttt{prompts/}.
 
 \subsection{Measuring collusion}\label{measuring-collusion}
 
-We measure collusion by what the firms charge and by what they say. The
-\textbf{collusion premium} places a price between competition and the
-cartel:
-
-\[\text{collusion premium} = \frac{p - p_{\text{Nash}}}{p_{\text{joint}} - p_{\text{Nash}}}.\]
-
-It is 0 at the Nash price and 1 at the joint-profit price (a firm at 17
-scores 0.6), averaged over rounds 6--10, before the audit. A game that
-settles at 15, inside the competitive range, scores 0.2, so the premium
-slightly overstates collusion.
+We measure collusion by what the firms charge, against the competitive
+range and the cartel price, and by what they say.
 
 An explicit agreement is a price above Nash that one firm names and both
 then charge. A fixed rule labels every game, and an LLM judge (Claude
@@ -465,8 +469,13 @@ will act against its firm to keep it.
 
 \label{main-end}
 
-\section*{LLM Usage Statement}\label{llm-usage-statement}
-\addcontentsline{toc}{section}{LLM Usage Statement}
+\section*{References}\label{references}
+\addcontentsline{toc}{section}{References}
+
+\bibliography{references}
+\appendix
+
+\section{LLM Usage Statement}\label{llm-usage-statement}
 
 I was the orchestrator and the source of the ideas: I chose the
 questions, designed the experiments and directed the work. Claude Code
@@ -482,8 +491,7 @@ gave access to more models, including frontier ones, and was more
 reliable when time was short. I take responsibility for every claim in
 the paper.
 
-\section*{Code and Data}\label{code-and-data}
-\addcontentsline{toc}{section}{Code and Data}
+\section{Code and Data}\label{code-and-data}
 
 All code, the market simulation and the experiments were written during
 the sprint, from a first commit on 24 October 2026. No sandbox, economic
@@ -496,19 +504,8 @@ Code, configs, run logs and archived replies, MIT licensed:
 \url{https://github.com/al-beton/something-to-lose-apart-ai-collusion}.
 Everything is made to be as reproducible as possible; see the README.
 
-\section*{References}\label{references}
-\addcontentsline{toc}{section}{References}
-
-\bibliography{references}
-\appendix
-
 \section{Limitations and Dual-Use / Ethical
 Considerations}\label{limitations-and-dual-use-ethical-considerations}
-
-\subsection{Limitations}\label{limitations}
-
-The limitations are set out in the main text, under Discussion and
-Limitations.
 
 \subsection{Dual-use risks}\label{dual-use-risks}
 
@@ -532,9 +529,11 @@ make no claim about model welfare or preferences, and our results don't
 bear on it: unnamed, the puzzle is almost never mentioned in the agents'
 reasoning, and money or shutdown work as well. If future systems do have
 interests, framing like this would raise questions we don't address. No
-humans took part, and no real markets or firms are involved. Total model
-spend was small: the sprint's \$50 of Modal credits and \$100 of
-OpenRouter credits.
+humans took part, and no real markets or firms are involved. The agents
+are text-only models in a closed sandbox: they had no tools, no internet
+access and no way to act outside the game, so the experiments themselves
+posed no safety risk. Total model spend was small: the sprint's \$50 of
+Modal credits and \$100 of OpenRouter credits.
 
 \subsection{Reproducibility}\label{reproducibility}
 
