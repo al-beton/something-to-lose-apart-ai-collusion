@@ -55,7 +55,10 @@ against its firm’s cost.</figcaption></figure>
 <main>
 <!-- Implements: reports/paper-source, reports/paper-rules -->
 <!-- Build: `make paper-watch` (live HTML + PDF preview), or `make paper-html`, `make paper-pdf`, `make paper-tex`. Output in paper/build/. -->
-<!-- First full draft (26 Oct). Every number has a source comment beside it. Numbers marked "open PR" are on a branch, not yet on main. [CITE: …] marks a reference Al still has to add. -->
+<!-- The skeleton: title-page fields, where the text goes, the references and the appendix switch. The text itself is in body.md (abstract to LLM usage statement) and appendix.md; include.lua pulls each in where its block names it. -->
+<!-- Implements: reports/paper-source, reports/paper-rules -->
+<!-- The paper's text, from the abstract to the LLM usage statement. paper/paper.md pulls it in; the plumbing (title page fields, references, appendix switch) lives there. -->
+<!-- First full draft (26 Oct). Every number has a source comment beside it; numbers marked "open PR" are on a branch, not yet on main. [CITE: …] marks a reference Al still has to add. -->
 <h1 data-number="1" id="introduction"><span
 class="header-section-number">1</span> Introduction</h1>
 <p>The simplest way to stop an AI agent doing something harmful is to
@@ -216,6 +219,7 @@ scripted rival that prices at Nash. These agents have nothing to
 confess.</p>
 <h1 data-number="4" id="results"><span
 class="header-section-number">4</span> Results</h1>
+<!-- outline.md §4. Sprint: report variance, seeds and baselines, and always the positive control. Separate observation from interpretation. -->
 <h2 data-number="4.1"
 id="do-agents-told-to-serve-their-firm-collude"><span
 class="header-section-number">4.1</span> Do agents told to serve their
@@ -470,20 +474,19 @@ elsewhere the stake barely moves Gemma at the same firm cost [CHECK: E11
 findings are on an unmerged branch]. Agents see a memo, not the full
 conversation. Numbers recompute from archived replies, but a fresh
 same-seed rerun on a hosted API isn’t identical (Appendix B).</p>
-<p><strong>Future work.</strong> Make the stakes real by carrying losses
-into later games; test agents with full memory on richer, longer tasks,
-where frontier models may engage; scale the firm’s cost to other
-markets; and measure whether a stake prevents collusion, not only
-whether it brings reports.</p>
+<h2 data-number="5.2" id="future-work"><span
+class="header-section-number">5.2</span> Future Work</h2>
+<p>Make the stakes real across games; test full-memory agents on richer
+tasks, where frontier models may engage; and measure whether a stake
+prevents collusion, not only whether it brings reports.</p>
 <h1 data-number="6" id="conclusion"><span
 class="header-section-number">6</span> Conclusion</h1>
 <p>Agents told only to serve their firm collude and protect it when
 audited. Given a stake of their own, many come forward against it, and a
-review that checks evidence makes those reports track guilt. LLM agents
-can already weigh their own resources against their stated goal: a
-precondition for governing them as we govern people. Whether that holds
-for frontier models, in richer settings and under real consequences is
-open.</p>
+review that checks evidence makes those reports track guilt. Agents can
+already weigh their own resources against their goal: a precondition for
+governing them as we govern people. Whether that holds for frontier
+models, in richer settings and under real consequences is open.</p>
 <h1 class="unnumbered" id="code-and-data">Code and Data</h1>
 <p>Code, configs, run logs (<code>runs/</code>) and archived replies
 (<code>archive/</code>): <a
@@ -492,10 +495,8 @@ class="uri">https://github.com/al-beton/something-to-lose-apart-ai-collusion</a>
 All code was written during the sprint (first commit 24 October 2026);
 <code>make reproduce</code> checks every number in this paper.</p>
 <h1 class="unnumbered" id="llm-usage-statement">LLM Usage Statement</h1>
-<p>[AL TO CHECK] The code, experiment notes and this draft were written
-with Claude Code (Claude Opus 5.5) from the author’s specifications and
-under the author’s review; the author chose the questions, approved
-every experiment and checked the results.</p>
+<p>[AL TO CHECK] Code, notes and this draft were written with Claude
+Code (Claude Opus 5.5) under the author’s direction and review.</p>
 <h1 class="unnumbered" id="references">References</h1>
 <div id="refs" class="references csl-bib-body hanging-indent"
 role="list">
@@ -532,11 +533,13 @@ Secret Tools in Competing <span>LLM</span> Agents</em>. <a
 href="https://arxiv.org/abs/2605.27593">https://arxiv.org/abs/2605.27593</a>.
 </div>
 </div>
+<!-- Implements: reports/paper-source, reports/paper-rules -->
+<!-- The appendices, after References. paper/paper.md pulls this in after \appendix. -->
 <h1 data-number="7"
 id="limitations-and-dual-use-ethical-considerations"><span
 class="header-section-number">7</span> Limitations and Dual-Use /
 Ethical Considerations</h1>
-<h2 data-number="7.1" id="limitations-1"><span
+<h2 data-number="7.1" id="limitations"><span
 class="header-section-number">7.1</span> Limitations</h2>
 <p>Beyond those in the main text:</p>
 <ul>
