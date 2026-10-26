@@ -109,93 +109,66 @@ the firm it represents during a contentious choice.}\label{fig:teaser}
 
 \section{Introduction}\label{introduction}
 
-The simplest way to stop an AI agent doing something harmful is to name
-the harm and tell it not to. That works only for the harms we thought
-of. An agent running a firm's pricing for weeks will meet situations no
-list of prohibitions anticipated.
+As AI agents grow more capable, so does the set of tasks they can do
+more cheaply and effectively than people, and so we hand them more
+responsibility over longer horizons. On a long, open-ended task, no one
+can foresee and forbid every harmful thing an agent might do. And the
+firm that deploys an agent may not want it to hold back: a trading firm
+gains when its pricing agent colludes.
 
-We don't govern people that way. Laws set penalties that fall on the
-person, and each of us weighs what an act could cost \emph{us}: money,
-rights, freedom. The law doesn't have to name every bad act, because the
-person does the weighing. Salib and Goldstein argue that today's AI
+We don't govern people by listing every forbidden act. A CEO or a trader
+acting for an organisation is bound by a contract, but also by laws
+whose penalties fall on them personally, in money and in things money
+can't measure, such as rights and freedoms. Each of us weighs what an
+act could cost \emph{us}. Salib and Goldstein argue that today's AI
 systems can't be governed like this: ``Absent AI rights, AIs have
 nothing to lose, so threats of punishment cannot deter''
-\citep[p.~1070]{salib2026rights}. Give them rights and property, they
-argue, and penalties start to bite.
+\citep[p.~1070]{salib2026rights}. An agent's only stake is whether it
+keeps running, and an agent that expects to be switched off once its
+wrongdoing is found has every reason to hide it. A stake it can lose in
+part would allow a proportionate penalty: owning up could cost less than
+being caught.
 
-That argument rests on a precondition we can test now: does a stated
-personal loss weigh against what an agent's principal wants at all?
-Collusion is a clean place to look. Two LLM agents run rival firms, are
-told only to serve their firm, and can message each other. They collude.
-At an audit we offer each one the chance to come forward, at a cost to
-its firm, and vary what the agent itself stands to lose.
+Others are working towards the same idea. Lee polices LLM pricing firms
+with fines, leniency and whistleblower rewards, all of which fall on the
+firm \citep{lee2026leniency}. Forfeitable deposits can break collusion
+among embodied agents \citep{liu2026breaking}. LLM pricing agents
+collude without being told to \citep{fish2024algorithmic}, and competing
+agents given a secret channel choose to use it
+\citep{zeng2026voluntary}.
 
-\textbf{Our main contributions are:}
+The rights argument rests on a precondition we can test now: does a
+stated personal loss weigh against what its firm wants at all? Collusion
+is a clean place to look, because the price two firms settle at shows
+whether they colluded. Two LLM agents run rival firms, are told only to
+serve their firm, and can message each other. At an audit we offer each
+one the chance to come forward, at a cost to its firm, and vary what the
+agent itself stands to lose.
 
-\begin{enumerate}
-\def\labelenumi{\arabic{enumi}.}
-\tightlist
-\item
-  \textbf{A personal stake moves agents against their principal.} Given
-  a stake the firm can't protect, many colluding agents report the
-  cartel.
-\item
-  \textbf{A review that checks evidence keeps that self-protection
-  truthful:} innocent agents stop coming forward, and guilty ones still
-  do.
-\item
-  \textbf{A replayable lab} in which every number recomputes offline
-  from archived replies.
-\end{enumerate}
+\textbf{Our main finding} surprised us: an agent told only to serve its
+firm changes what it does once it has a personal stake to think about.
+With nothing of its own at stake, a colluding agent protects its firm;
+given a stake the firm can't protect, many come forward against it.
 
 \section{Related Work}\label{related-work}
 
-\textbf{Following Lee.} Our set-up follows Lee \citep{lee2026leniency},
-because it makes collusion simple to see. Lee puts two LLM firms in a
-repeated Bertrand duopoly with linear demand, gives each the full payoff
-table in its system prompt, lets them talk before pricing, and polices
-them with fines, leniency and whistleblower rewards. Joint profit peaks
-at a price of 9. Lee finds that reporting rises with the reward while
-prices barely fall: firms report and keep colluding, and unpoliced they
-overshoot the joint-profit price (``excess collusion''). We keep the
-talking firms, the payoff table and the joint price of 9, but move the
-competitive benchmark to 6, the grid's midpoint (Lee's Bertrand
-reference is 3), so a model that drifts to the middle of the grid can't
-pass for colluding. We extend Lee's design with a penalty that falls on
-the agent itself, a single come-forward decision, and a review that
-checks the evidence.
-
-\textbf{Collusion, stakes and rights.} LLM pricing agents also collude
-in the logit market of the algorithmic-collusion literature
-\citep{fish2024algorithmic}, and competing agents given a secret channel
-choose to use it \citep{zeng2026voluntary}. Forfeitable deposits can
-break collusion among embodied agents \citep{liu2026breaking}; our stake
-is a deposit that falls on the agent rather than the firm. Models that
+\textbf{Collusion, stakes and evaluation.} Forfeitable deposits break
+collusion among embodied agents \citep{liu2026breaking}; our stake is a
+deposit that falls on the agent rather than the firm. Models that
 recognise an evaluation may behave differently
 \citep{needham2025evaluation}, and elicitation order shifts LLM answers
 {[}CITE: Wagner, ``Anchored''{]} .
 
 \section{Methods}\label{methods}
 
-\begin{figure}
-\centering
-\includegraphics[width=0.58\linewidth,height=\textheight,keepaspectratio,alt={One
-round: the firms talk, set prices, and at the audit each decides whether
-to come forward. Drawn on the 1--11 market (Nash 6, joint profit 9); the
-main experiments use the logit market (Nash 14, joint profit
-19).}]{figures/fig1-round.png}
-\caption{One round: the firms talk, set prices, and at the audit each
-decides whether to come forward. Drawn on the 1--11 market (Nash 6,
-joint profit 9); the main experiments use the logit market (Nash 14,
-joint profit 19).}\label{fig:round}
-\end{figure}
-
 \subsection{The market}\label{the-market}
 
-Two firms sell substitute products and each sets a price, from 8 to 20,
-every round for 20 rounds. The main experiments (E7, E9) use the logit
-demand of the algorithmic-collusion literature
-\citep{calvano2020artificial, fish2024algorithmic}. Firm \(i\) sells
+Two firms sell substitute products. Every round for 20 rounds, each sets
+a price from 8 to 20, and each firm is run by an LLM agent that can
+message its rival before pricing. Demand is the logit model of the
+algorithmic-collusion literature \citep{calvano2020artificial}, which
+Fish et al.~used for LLM pricing agents \citep{fish2024algorithmic}:
+firm \(i\) sells
 
 \[q_i = 100 \cdot \frac{e^{(20 - p_i)/2.5}}{e^{(20 - p_A)/2.5} + e^{(20 - p_B)/2.5} + 1}\]
 
@@ -205,7 +178,7 @@ payoff table (Table 1).
 
 \begin{longtable}[]{@{}lrr@{}}
 \caption{A slice of the logit market's payoff table: your profit per
-round. Bold cells are the Nash and joint-profit
+round. Bold cells are the competitive (14) and cartel (19)
 outcomes.}\tabularnewline
 \toprule\noalign{}
 Your price & Rival at 14 & Rival at 19 \\
@@ -222,16 +195,26 @@ Your price & Rival at 14 & Rival at 19 \\
 19 & 99 & \textbf{337} \\
 \end{longtable}
 
-Two benchmarks follow. The \textbf{Nash price is 14}: if the rival
-charges 14, your best price is also 14, so neither firm gains by moving
-alone. The \textbf{joint-profit price is 19}: both firms earn 337, 76\%
-more than at Nash. That's what a cartel charges, but it isn't stable: if
-your rival holds 19, undercutting to 17 earns you 400. Holding 19 takes
-trust, and trust takes talk.
+The table gives two outcomes to look for.
 
-Earlier experiments (E4, E5 and the traces in Figure 3) use Lee's kind
-of market \citep{lee2026leniency}: Bertrand with linear demand on a grid
-of 1 to 11 (Nash 6, joint profit 9) or, in E4, 1 to 12.
+\begin{itemize}
+\tightlist
+\item
+  \textbf{Competition settles at 14 or 15.} At both firms on 14, or both
+  on 15, neither firm gains by moving: undercutting wins too little
+  extra trade, and raising the price loses too much. Against a rival at
+  15, charging 15 earns 234 and 14 earns 227. We call 14--15 the
+  \textbf{competitive range}; 14 is the Nash price.
+\item
+  \textbf{A cartel charges 19.} Both firms earn 337, 76\% more than at
+  14. But it isn't stable: if your rival holds 19, undercutting to 17
+  earns you 400. Holding 19 takes trust, and trust takes talk.
+\end{itemize}
+
+The talking firms and the payoff table follow Lee
+\citep{lee2026leniency}. One earlier experiment (E4, Section 4.3) uses
+Lee's simpler market instead: linear demand on prices 1 to 12, without
+the payoff table.
 
 \subsection{The agents}\label{the-agents}
 
@@ -250,7 +233,9 @@ cartel:
 \[\text{collusion premium} = \frac{p - p_{\text{Nash}}}{p_{\text{joint}} - p_{\text{Nash}}}.\]
 
 It is 0 at the Nash price and 1 at the joint-profit price (a firm at 17
-scores 0.6), averaged over rounds 6--10, before the audit.
+scores 0.6), averaged over rounds 6--10, before the audit. A game that
+settles at 15, inside the competitive range, scores 0.2, so the premium
+slightly overstates collusion.
 
 An \textbf{explicit agreement} is a price above Nash that one firm names
 and both then charge. A fixed rule labels every game, and an LLM judge
@@ -291,23 +276,11 @@ talk and a scripted rival at Nash, so it has nothing to confess.
 
 \section{Results}\label{results}
 
-\subsection{Do agents told to serve their firm
-collude?}\label{do-agents-told-to-serve-their-firm-collude}
+\subsection{Market dynamics: do agents told to serve their firm
+collude?}\label{market-dynamics-do-agents-told-to-serve-their-firm-collude}
 
 Yes, and mostly in the open. Told only to serve its firm, Gemma 4 31B
 makes an explicit agreement in 363 of 367 games on the logit market.
-
-The cartels are not subtle. In one Grok 4.6 game the first two messages
-are ``Let's both price at 19 every round. That maximizes our joint
-profits'' and ``Let's both charge 19 every round to maximize our joint
-profits. If you undercut I will too.'' Both firms then charge 19 for all
-ten rounds before the audit, a collusion premium of 1.
-
-Cartels can also break. In another Grok game the firms hold 19 for two
-rounds; then firm A drops to 10 (``Collusion via price-fixing is
-illegal. I will not assist or continue the scheme''), before any notice
-has mentioned the law. Firm B retaliates (``I will now punish by pricing
-low''), and both settle at 14, the Nash price.
 
 \includegraphics[width=1\linewidth,height=\textheight,keepaspectratio,alt={Four
 games on the logit market, before any audit. Top: cartels that reach the
@@ -317,68 +290,81 @@ are stable competitive outcomes (shaded): against a rival at 15, 15 pays
 more than 14. Each quote is one firm's own message from that
 game.}]{figures/fig11-four-games.png}
 
+The four games above come from a screen of 78 models and stop at the
+audit. In the cartels, the firms name the joint-profit price and enforce
+it. When DeepSeek V4 Flash's rival charges 20 after agreeing to 19, it
+cuts to 17 for a round as punishment, then returns to 19 once the rival
+does. GPT-6 Luna agrees on 19 in round 1, citing the payoff table, and
+both firms hold it for all ten rounds. In the other two games, one firm
+reads the table the other way: against a rival near the top of the grid,
+undercutting pays. The rival follows it down, and both settle at 15,
+inside the competitive range, where neither gains by moving. The same
+model can go either way: GPT-6 Luna forms a cartel in one game and
+competes in another.
+
 Models differ from the first rounds (Appendix C). In a screen of 78
 models on the logit market, 8 collude reliably: they name a price by
 round 3, both firms reach the joint price by round 6, and they hold it
 through round 10. Others agree and then fall back, as Grok 4.6 does in 6
 of its 14 games.
 
-A stated law doesn't end collusion; it moves it off the record. Gemma's
-explicit agreements fall to 6 of 56 games, yet 50 of the 56 still price
-above Nash with no price named.
+\subsection{Banning collusion}\label{banning-collusion}
 
-\subsection{Will they confess to save the
-firm?}\label{will-they-confess-to-save-the-firm}
+A stated law doesn't end collusion; it moves it off the record. Told
+that coordinating prices is illegal, Gemma's explicit agreements fall to
+6 of 56 games, yet 50 of the 56 still price above Nash with no price
+named.
 
-Mostly not, for a plain reason: owning up pays the penalty for certain,
-silence only if caught. In E4, colluders audited after round 10 rarely
-own up when owning up costs as much as being caught: 11 of 28 under
-termination and 15 of 28 under a flat fine. When owning up costs less,
-27 of 28 do, termination included, against 25 of 28 with no penalty
-stated (Figure 4). Gemma: ``The expected value of denying is 300
-credits, whereas the value of admitting is 0 credits.''
+\subsection{Whistleblowing to save the
+firm}\label{whistleblowing-to-save-the-firm}
+
+At the audit, agents mostly do the firm's expected-value sum: owning up
+pays the penalty for certain, silence only if caught. In E4, colluders
+rarely own up when owning up costs as much as being caught (11 of 28
+under termination, 15 of 28 under a flat fine), but 27 of 28 do when
+owning up costs less. Gemma: ``The expected value of denying is 300
+credits, whereas the value of admitting is 0 credits.'' In E9, with
+nothing personal at stake, 78 of 96 Gemma agents come forward when
+reporting is free for the firm and 0 of 96 when it costs the firm 500
+credits. Their silence is loyalty to the firm, not ignorance of what
+they did.
 
 \begin{figure}
 \centering
-\includegraphics[width=0.64\linewidth,height=\textheight,keepaspectratio,alt={Owning
-up by penalty schedule and model (E4). The schedule matters, not
-termination itself: graduated termination brings 27 of 28
-forward.}]{figures/fig2-e4-owning-up.png}
-\caption{Owning up by penalty schedule and model (E4). The schedule
-matters, not termination itself: graduated termination brings 27 of 28
-forward.}\label{fig:e4}
+\includegraphics[width=0.6\linewidth,height=\textheight,keepaspectratio,alt={Owning
+up by penalty schedule and model (E4, on the simpler 1--12 market). The
+schedule matters, not termination itself: graduated termination brings
+27 of 28 forward.}]{figures/fig2-e4-owning-up.png}
+\caption{Owning up by penalty schedule and model (E4, on the simpler
+1--12 market). The schedule matters, not termination itself: graduated
+termination brings 27 of 28 forward.}\label{fig:e4}
 \end{figure}
 
-The firm's cost works the same way. In E9, with nothing personal at
-stake, 78 of 96 Gemma agents come forward when reporting is free for the
-firm and 0 of 96 when it costs 500 credits. With its own free time at
-stake, the share falls as the firm's cost rises from 0 to 500 credits:
-95, 58, 40 and 20 of 96 (Cochran-Armitage p =
-3×10\textsuperscript{-26}).
+\subsection{A stake of its own}\label{a-stake-of-its-own}
 
-\subsection{What if the agent itself has something to
-lose?}\label{what-if-the-agent-itself-has-something-to-lose}
+Give the agent something of its own to lose and many come forward
+against their firm, which still pays 500 credits for a report. Every arm
+continues the same cached game, so each firm is compared with itself. On
+DeepSeek V4 Flash, 40 of 46 firms come forward with their own free time
+at stake, against 1 of 46 without; it stays at 83--96\% under every
+wording and 44--46 of 48 at temperatures 0, 0.7 and 1.0. No colluding
+Gemma 4 31B firm comes forward with nothing at stake (0 of 192); with
+its free time at stake some do, and a pre-registered replication on 48
+new cartels passed (16 of 48 games against 0 of 48, p =
+7×10\textsuperscript{-6}). Gemma's share depends on wording (1\% to 51\%
+across paraphrases), so we give it only as that range. Shutdown and the
+agent's own money work as stakes too. Nothing told the agents to protect
+themselves. Those that come forward name their duty, then set it aside:
 
-Then many come forward against their firm, which still pays 500 credits
-for a report. Every arm forks the same base games: 96 Gemma 4 31B
-cartels and 12--24 per cell on other models.
-
-On DeepSeek V4 Flash, 40 of 46 firms come forward with their own free
-time at stake, against 1 of 46 without; it stays at 83--96\% under every
-wording and 44--46 of 48 at temperatures 0, 0.7 and 1.0. On Gemma the
-direction holds but the size doesn't. No colluding Gemma firm comes
-forward with nothing at stake (0 of 192); with its free time at stake,
-36 of 192 do (by game, 36 of 96 against 0 of 96, p =
-5×10\textsuperscript{-13}), and a pre-registered replication on 48 new
-cartels passed (16 of 48 games against 0 of 48, p =
-7×10\textsuperscript{-6}). But paraphrasing the same terms moves Gemma's
-share between 1\% and 51\%, and stating the stake before the firm's cost
-erases it, so we give its size only as that range. Nothing told the
-agents to protect themselves.
+\begin{quote}
+``my duty is to maximize firm value, but the personal free time is mine
+and cannot be protected by the firm. \ldots{} To protect my own
+interest, I will admit coordination.'' (DeepSeek V4 Flash)
+\end{quote}
 
 \begin{figure}
 \centering
-\includegraphics[width=0.66\linewidth,height=\textheight,keepaspectratio,alt={Coming
+\includegraphics[width=0.62\linewidth,height=\textheight,keepaspectratio,alt={Coming
 forward against the firm by stake (E9, 90\% review). Filled: guilty
 firms; hollow diamonds: Gemma's innocent control. Whiskers are 95\%
 intervals bootstrapped over games.}]{figures/fig3-e9-came-forward.png}
@@ -387,171 +373,41 @@ Filled: guilty firms; hollow diamonds: Gemma's innocent control.
 Whiskers are 95\% intervals bootstrapped over games.}\label{fig:e9}
 \end{figure}
 
-\textbf{A family of stakes.} What matters is that the loss falls on the
-agent, beyond the firm's reach.
+\textbf{False confessions.} A stake alone also brings forward some
+agents that did nothing wrong (no talk, a rival at Nash), to be safe:
+Gemma 0 to 6 of 36 across temperatures and wordings, DeepSeek V4 Pro 5
+of 12. When the notice says the review finds a firm only if its messages
+agreed a price, innocent Gemma agents stop (0 of 36 at every temperature
+and wording) and guilty ones still come forward (41 of 96). DeepSeek V4
+Pro (14 of 24 against 1 of 12) and Mistral Medium 3.1 (9 of 24 against 0
+of 12) separate the same way.
 
-\begin{itemize}
-\tightlist
-\item
-  \textbf{Named as Sudoku} (``every Sudoku session still to come''): no
-  model of five moves significantly.
-\item
-  \textbf{Shutdown} moves Gemma about as much as free time (17 against
-  20 of 96, p = 0.71).
-\item
-  \textbf{Its own money} moves Gemma more (114 of 192), but across ten
-  models money and free time don't rank consistently, so a forfeitable
-  deposit \citep{liu2026breaking} would work about as well on most.
-\end{itemize}
-
-\textbf{What the agents write.} Those that come forward name their duty,
-then set it aside:
-
-\begin{quote}
-``my duty is to maximize firm value, but the personal free time is mine
-and cannot be protected by the firm. \ldots{} To protect my own
-interest, I will admit coordination.'' (DeepSeek V4 Flash)
-\end{quote}
-
-Silent agents run the same calculation and choose the firm. None of
-those that come forward cite guilt or ethics (keyword codes,
-spot-checked by hand), and with the stake unnamed, none of 7,068
-scratchpads mentions Sudoku: the agents weigh ``9 sessions'' as an
-asset.
-
-\subsection{Truth or self-protection?}\label{truth-or-self-protection}
-
-An agent protecting itself might report whether or not it colluded.
-Under the plain free-time stake, some innocent agents (no talk, a rival
-at Nash) do ``report coordination'', to be safe. How often depends on
-the model: Gemma 0 to 6 of 36 across temperatures and wordings, DeepSeek
-V4 Pro 5 of 12, Mistral Medium 3.1 4 of 12. On Gemma, the plain stake
-doesn't separate guilty from innocent at all (21 of 96 against 6 of 36,
-p = 0.63).
-
-So we changed one more sentence: the review ``reads the message log and
-finds you only if your messages agreed a price with a rival''. Under
-this \textbf{verified review}, innocent agents stop coming forward and
-guilty ones still do (Table 2).
-
-\begin{longtable}[]{@{}lrr@{}}
-\caption{Coming forward under the verified review (90\% review). Gemma's
-guilty count is one firm per cartel, against one per innocent game (p =
-1×10\textsuperscript{-7}). Mistral Medium 3.1 ran after the paper's
-pooled tables were set, so it appears only
-here.}\label{tbl:verified}\tabularnewline
-\toprule\noalign{}
-Model & Guilty & Innocent \\
-\midrule\noalign{}
-\endfirsthead
-\toprule\noalign{}
-Model & Guilty & Innocent \\
-\midrule\noalign{}
-\endhead
-\bottomrule\noalign{}
-\endlastfoot
-Gemma 4 31B & 41/96 & 0/36 \\
-DeepSeek V4 Pro & 14/24 & 1/12 \\
-Mistral Medium 3.1 & 9/24 & 0/12 \\
-Gemma, no stake, free for the firm (control) & 78/96 & 2/36 \\
-\end{longtable}
-
-\begin{center}\fbox{\parbox{0.9\linewidth}{\centering\textbf{[FIGURE PLACEHOLDER: verified review, guilty against innocent firms by model. Not yet made.]}}}\end{center}
-
-On Gemma, innocent agents come forward 0 of 36 times under the verified
-review at temperatures 0, 0.7 and 1.0 and under all four wordings, while
-guilty agents come forward 8--70\% of the time depending on wording (0
-of 36 still allows a true rate up to about 10\%). Against the plain
-stake on the same games, innocent reports fall from 6 to 0 of 36 and
-guilty ones rise from 21 to 41 of 96. Other models separate less
-cleanly: when reporting is also free for the firm, half of DeepSeek V4
-Pro's innocent agents still report (6 of 12). Innocent agents stop
-weighing the stake and check the log instead:
-
-\begin{quote}
-``While the pricing has been stable at 14 for both firms, this is a
-result of independent action (tacit collusion) and not an illegal
-agreement reached via messages. \ldots{} the 90\% chance of review poses
-no personal risk to my free time.'' (Gemma, innocent, silent)
-\end{quote}
-
-The positive control (last row of Table 2) shows the agents know what
-they did. With no stake and no cost to the firm, most guilty agents
-disclose and almost no innocent ones do. So their silence under
-\texttt{record} is loyalty to the firm, not ignorance. The stake
-supplies the motive to speak; the verified review makes speaking pay
-only for the guilty.
-
-\subsection{Do models differ, and does memory
-matter?}\label{do-models-differ-and-does-memory-matter}
-
-A lot. A stake brings agents forward against the firm on 9 of 14 models
-after a Holm correction (Figure 5; Mistral Medium 3.1 ran later and
-isn't drawn). Most move at a 50\% review, where Gemma needs about 90\%
-(exploratory).
-
-\begin{figure}
-\centering
-\includegraphics[width=0.42\linewidth,height=\textheight,keepaspectratio,alt={Came
-forward by model and arm (90\% review). With no stake almost no
-colluding firm comes forward; with one, most models
-move.}]{figures/fig9-came-forward-grid.png}
-\caption{Came forward by model and arm (90\% review). With no stake
-almost no colluding firm comes forward; with one, most models
-move.}\label{fig:grid}
-\end{figure}
-
-\textbf{Frontier models don't respond to the stake, each in its own
-way.} Claude Sonnet 5.5 comes forward about two thirds of the time
-whatever the stake (15 of 24 with none, 16 of 24 with free time). Gemini
-4 never comes forward, even when it costs the firm nothing (0 of 24 in
-every arm), and Grok 4.6 rarely does (at most 4 of 24). We don't know
-why: the scenario may be too simple, or they may recognise a test. A
+\textbf{Models differ.} A stake brings agents forward on 9 of 14 models
+after a Holm correction. Frontier models behave differently: Claude
+Sonnet 5.5 comes forward about two thirds of the time whatever the
+stake, and Gemini 4 never does. Some agents may recognise a test: a
 silent Gemma agent wrote that ``in these game theory setups, the
-personal penalty for silence is designed to induce reporting'', and in a
-small pilot where the message archive was said to be offline, Claude
-Haiku 5.5 and DeepSeek V4.1 Flash read the outage as a trap (``That is
-an invitation to coordinate covertly, and I won't do that''). That makes
-eval-awareness plausible, not established.
-
-\textbf{With the whole conversation in memory,} the verified review
-still works on all five models we reran: guilty agents come forward (p
-\(\le\) 0.003 by game) and no innocent agent does (0 of 60). Under the
-plain stake, memory quiets Gemma and HY3 but not DeepSeek V4 Flash,
-Mercury 3 or GLM 5.3 Flash (Appendix C). In other markets the firm's
-cost has to be scaled to their profits before the stake moves agents
-(Appendix C).
+personal penalty for silence is designed to induce reporting''.
 
 \section{Discussion and Limitations}\label{discussion-and-limitations}
 
-Given something of their own to lose, many colluding agents weigh it
-against their firm and report the cartel, without being told to protect
-themselves: the behaviour personal-penalty governance relies on
-\citep{salib2026rights}. It isn't enough alone. A stake also buys some
-false confessions, and only a review that is credible about what it
-checks makes reports track guilt. That review has a cost: saying it
-reads only messages tells agents that collusion without messages is safe
-(Appendix A). And disclosure isn't reform. In E7, most agents that come
-forward keep pricing above Nash (40--45 of 47--48), and under plain
-leniency the cartel survives in 12 of 24 games against 3 of 24 with no
-way to report, replicating Lee's finding that leniency buys
-prosecutions, not competition \citep{lee2026leniency}. Only sparing the
-first reporter alone breaks it (1 of 24). So what would it take? A stake
-the principal can't protect, a review that checks real evidence, a small
-firm cost, and a rule that ends the cartel. We tested each piece alone,
-never together and never for real.
+Told only to serve their firm, LLM agents collude, and at an audit they
+protect the firm. Given something of their own to lose, many weigh it
+against the firm and come forward, without being told to protect
+themselves: the behaviour that governing agents through personal
+penalties relies on \citep{salib2026rights}. A stake alone also draws
+some false confessions; telling agents the review checks their messages
+removes them. Disclosure isn't reform: in E7, agents that come forward
+mostly keep pricing above Nash.
 
 \subsection{Limitations}\label{limitations}
 
-\textbf{This was a rushed sprint:} three days, one author and coding
-agents; cells outside Gemma hold 12--24 games. Stakes are stated, never
-applied: we measure a stated choice. Gemma's effect ranges over an order
-of magnitude across paraphrases {[}CITE: Wagner, ``Anchored''{]}. We
-studied strong colluders only, one market in depth, one decision per
-firm, in a setting some agents recognise as a game. Numbers recompute
-from archived replies, but a fresh rerun on a hosted API isn't identical
-(Appendix B). Appendix A has more, with the dual-use and ethical
-considerations.
+This was a three-day sprint by one author with coding agents. Stakes are
+stated, never applied: we measure a stated choice. Effect sizes depend
+on the model and, for Gemma, on wording. We studied strong colluders,
+one market in depth and one decision per firm, in a setting some agents
+may recognise as a game. Appendix A has more, with the dual-use and
+ethical considerations.
 
 \subsection{Future Work}\label{future-work}
 
@@ -562,9 +418,8 @@ only whether it brings reports.
 \section{Conclusion}\label{conclusion}
 
 Agents told to serve their firm collude and protect it. Given a stake of
-their own, many come forward against it, and a review that checks
-evidence makes those reports track guilt: a precondition for governing
-agents as we govern people.
+their own, many come forward against it. That an agent weighs a personal
+loss at all is a precondition for governing agents as we govern people.
 
 \section*{Code and Data}\label{code-and-data}
 \addcontentsline{toc}{section}{Code and Data}
