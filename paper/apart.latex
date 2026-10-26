@@ -14,6 +14,8 @@ $endif$
 \usepackage{graphicx}
 \usepackage{booktabs,longtable,array,calc}
 \usepackage[skins]{tcolorbox}
+\usepackage[font=small,labelfont=bf,labelsep=colon,skip=4pt]{caption}
+\usepackage{fancyhdr}
 \usepackage[round]{natbib}
 \renewcommand{\bibsection}{}
 \bibliographystyle{plainnat}
@@ -55,39 +57,60 @@ $endfor$
 \hypersetup{pdftitle={$title$}}
 
 % The caution box under the authors
+% Later pages: short title left, the sprint right, page number below
+\pagestyle{fancy}\fancyhf{}
+\renewcommand{\headrulewidth}{0.4pt}
+\fancyhead[L]{\small\itshape $if(short-title)$$short-title$$else$$title$$endif$}
+\fancyhead[R]{\small\itshape Apart Research $$\cdot$$ $sprint$}
+\fancyfoot[C]{\small\thepage}
+\fancypagestyle{plain}{\fancyhf{}\renewcommand{\headrulewidth}{0pt}\fancyfoot[C]{\small\thepage}}
+
 \newtcolorbox{hackathonbox}{enhanced,colback=yellow!8!white,colframe=orange!90!black,boxrule=0.6pt,arc=0pt,left=4pt,right=4pt,top=3pt,bottom=3pt}
 
 \begin{document}
 
+\thispagestyle{plain}
 \begin{center}
-\rule{\textwidth}{4pt}\par\vspace{0.25in}
-{\Large\bfseries $title$$if(subtitle)$\\[2pt] $subtitle$$endif$\par}
-\vspace{0.25in}\rule{\textwidth}{1pt}\par\vspace{0.3in}
+\rule{\textwidth}{4pt}\par\vspace{0.22in}
+{\LARGE\bfseries $title$\par}
+$if(subtitle)$\vspace{0.08in}{\large $subtitle$\par}$endif$
+\vspace{0.2in}\rule{\textwidth}{1pt}\par\vspace{0.22in}
 $for(author)$
 \begin{tabular}[t]{c}\textbf{$author.name$}$if(author.affiliation)$\\ $author.affiliation$$endif$\end{tabular}$sep$\hspace{1.5em}
 $endfor$
-\par
+\par\vspace{0.08in}
+{\small\textsc{Apart Research} $$\cdot$$ \href{$sprint-url$}{$sprint$} $$\cdot$$ $if(date)$$date$$else$October 2026$endif$\par}
 \end{center}
 
-{\makeatletter\long\def\@makefntext#1{\noindent#1}\makeatother\let\thefootnote\relax\footnotetext{Research conducted at the \href{$sprint-url$}{$sprint$} (Apart Research), 2026\\Code and data: \url{$repo$}}}
+{\makeatletter\long\def\@makefntext#1{\noindent#1}\makeatother\let\thefootnote\relax\footnotetext{Research conducted at the \href{$sprint-url$}{$sprint$} (Apart Research), 2026\\Code, data and every model reply: \url{$repo$}}}
 
-\vspace{0.1in}
+\vspace{0.04in}
 \begin{hackathonbox}
 $$\triangle$$ \textbf{Hackathon Project:} This work was developed during a weekend hackathon. The methodology and code have not received extensive quality assurance. Claims in this report should be approached with appropriate caution.
 \end{hackathonbox}
 
 $if(abstract)$
-\vspace{0.1in}
+\vspace{0.04in}
 \begin{center}{\large\bfseries Abstract}\end{center}
-\vspace{-0.5ex}
-\begin{list}{}{\setlength{\leftmargin}{0.5in}\setlength{\rightmargin}{0.5in}}\item\relax
+\vspace{-1ex}
+\begin{list}{}{\setlength{\leftmargin}{0.4in}\setlength{\rightmargin}{0.4in}}\item\relax
 $abstract$
 \end{list}
 $endif$
 
-\vspace{0.1in}
-{\setcounter{tocdepth}{2}\tableofcontents}
+$if(teaser)$
+\begin{center}
+\includegraphics[width=$if(teaser-width)$$teaser-width$$else$0.85$endif$\linewidth]{$teaser$}
+\captionof{figure}{$teaser-caption$}$if(teaser-label)$\label{$teaser-label$}$endif$
+\end{center}
+$endif$
+
+$if(toc)$
+\vspace{0.06in}
+{\small\setcounter{tocdepth}{1}\tableofcontents}
 \clearpage
+$endif$
+
 
 $body$
 

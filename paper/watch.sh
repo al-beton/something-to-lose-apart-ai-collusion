@@ -13,7 +13,7 @@ command -v fswatch >/dev/null || { echo "paper-watch needs fswatch: brew install
 build() {
   cp paper/preview.html "$BUILD/"
   # only what the writer needs: our rule warnings, TeX errors, undefined refs
-  make -s paper-html paper-pdf 2>&1 | grep -E 'abstract is|pages before|error|Undefined|undefined' | awk '!seen[$0]++' || true
+  make -s paper-html paper-pdf 2>&1 | grep -iE 'abstract is|pages before|error|Undefined|undefined' | awk '!seen[$0]++' || true
   rm -f "$BUILD"/pages/*.png; mkdir -p "$BUILD/pages"
   [ -f "$BUILD/paper.pdf" ] && pdftoppm -r 110 -png "$BUILD/paper.pdf" "$BUILD/pages/p" 2>/dev/null
   (cd "$BUILD/pages" && ls p-*.png 2>/dev/null) > "$BUILD/pages.txt"

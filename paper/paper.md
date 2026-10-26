@@ -4,12 +4,18 @@
 ---
 title: "Something to Lose"
 subtitle: "Working subtitle: stakes and self-reporting in LLM cartels"
+short-title: "Something to Lose"
+date: October 2026
 author:
   - name: Author Name
     affiliation: Affiliation
 abstract: |
   Summarise the project in 150–250 words (the sprint's rule; the build warns outside it): the problem, the approach, the key
   results and the main takeaway. Write it last, from the final results.
+teaser: figures/fig3-e9-came-forward.png
+teaser-caption: "Working caption for the key figure: the share of colluding firms that came forward, by personal stake and model."
+teaser-label: fig:teaser
+toc: false
 repo: https://github.com/al-beton/something-to-lose-apart-ai-collusion
 sprint: AI Collusion Research Sprint
 sprint-url: https://apartresearch.com/sprints/ai-collusion-research-sprint-2026-10-23-to-2026-10-25
