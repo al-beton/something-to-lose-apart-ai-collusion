@@ -92,3 +92,14 @@ The first pack's 48 differing and 40 unloadable runs, run by run:
 ## Checking the numbers
 
 `make reproduce` recomputes, offline, every committed run's mean price and gain from its turn log, rebuilds the paper's tables and checks every quoted moment. It fails on any mismatch.
+
+## One figure at a time
+
+Each figure in the paper's registry (`reports/paper/figure.py`; `make figure` lists them) has two commands:
+
+```sh
+make figure F=e9-crux       # redraw it from the committed runs: free, offline, checked byte for byte
+make regenerate F=e9-crux   # play its games again with fresh calls, into runs/regenerated/e9-crux/
+```
+
+`make regenerate` says first how many games it will play and the most it should cost, and asks before spending (`ARGS="--yes"` skips the question, `ARGS="--max-cost 5"` caps it). Hosted models aren't deterministic, so a fresh run is a new sample and its counts will move; see "Does a fresh rerun match?" above.

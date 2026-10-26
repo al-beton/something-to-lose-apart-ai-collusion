@@ -1,5 +1,5 @@
-# Implements: reproducibility/reported-numbers-checked, tooling/one-command-each, tooling/locked-dependencies, ci/end-to-end, reports/paper-figures, reports/paper-main-figures, reports/paper-project-image, reports/paper-source, reports/paper-rules
-.PHONY: install lint test spec-check e2e paper-figures reproduce paper-tools paper-html paper-tex paper-pdf paper-watch paper-build-dir
+# Implements: reproducibility/reported-numbers-checked, tooling/one-command-each, tooling/locked-dependencies, ci/end-to-end, reports/paper-figures, reports/paper-main-figures, reports/paper-project-image, reports/paper-source, reports/paper-rules, reproducibility/figure-commands
+.PHONY: install lint test spec-check e2e paper-figures reproduce figure regenerate figure-lines paper-tools paper-html paper-tex paper-pdf paper-watch paper-build-dir
 install:
 	uv sync --frozen
 lint:
@@ -18,6 +18,12 @@ paper-figures:  # the paper's figures and tables, offline, from committed runs
 	uv run python reports/paper/project_image.py
 reproduce:  # every committed number recomputed, offline; fails on a mismatch
 	uv run python reports/reproduce.py
+figure:  # make figure F=e9-crux: redraw one figure free, offline, and check it against the committed one (no F: the list)
+	uv run python reports/paper/figure.py $(if $(F),replay $(F),--list)
+regenerate:  # make regenerate F=e9-crux [ARGS="--max-cost 5 --yes"]: play its games again, fresh and at cost, into runs/regenerated/F/
+	uv run python reports/paper/figure.py regenerate $(F) $(ARGS)
+figure-lines:  # the paper's table of figure commands, from the registry (prices fetched live)
+	uv run python reports/paper/figure.py lines
 
 # The paper: write paper/paper.md, build to paper/build/ (gitignored).
 PAPER_BUILD ?= paper/build
