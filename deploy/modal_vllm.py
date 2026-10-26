@@ -14,6 +14,11 @@ alone:
       SERVED_NAME=gemma-4-31b-it REVISION=<commit> TEXT_ONLY=1 VLLM=0.32.0 \
       MAX_MODEL_LEN=8192 uvx modal deploy deploy/modal_vllm.py
 
+Mistral Large 3 (675B, FP8, about 680 GB) needs a node of eight H200s:
+`APP_NAME=collusion-lab-mistral-large MODEL=mistralai/Mistral-Large-3-675B-Instruct-2512
+SERVED_NAME=mistral-large-3 GPU=H200 GPUS=8 MAX_GPUS_CONTAINERS=1 VLLM=0.32.0
+TEXT_ONLY=1`, reached as `modal-mistral-large`.
+
 `APP_NAME` names the app (default `collusion-lab-vllm`, Mistral's), `MODEL`
 and `REVISION` the Hugging Face model and commit, `SERVED_NAME` the name a
 config asks for, `GPU` and `GPUS` the card and how many (two spreads the

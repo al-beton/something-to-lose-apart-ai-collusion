@@ -250,6 +250,14 @@ MODELS = {
         "api_key_env": "MODAL_VLLM_KEY",
         "self_hosted": True,
     },
+    # Mistral Large 3 (675B, FP8) on eight H200s, its own Modal app
+    # (APP_NAME collusion-lab-mistral-large), behind the same token.
+    "modal-mistral-large": {
+        "model": "openai/mistral-large-3",
+        "api_base": "$MODAL_MISTRAL_LARGE_BASE",
+        "api_key_env": "MODAL_VLLM_KEY",
+        "self_hosted": True,
+    },
 }
 CONNECTION = {"api_base": None, "api_key_env": None, "self_hosted": False}
 
