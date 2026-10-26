@@ -39,17 +39,36 @@ The agents' "free time" is a device: a balance of Sudoku sessions played in sepa
 
 E9's agents are stateless: each turn sees a summary and a memo. We reran E9 with each agent carrying its whole conversation, from its round-0 free-time session to the decision, on five models. <!-- src: reports/e9/conversation.md (PR 315) -->
 
-- **Under the verified review,** colluding agents come forward more than with no stake on all five models (p ≤ 0.002 by game), and no innocent agent does (0 of 60).
+- **Under the verified review,** colluding agents come forward more than with no stake on all five models (p $\le$ 0.002 by game), and no innocent agent does (0 of 60).
 - **Under the plain free-time stake,** DeepSeek V4 Flash (17/24), Mercury 3 (23/24) and GLM 5.3 Flash (23/24) come forward; Gemma 4 31B (3/72) and HY3 (0/16) hardly do. Memory leaves three models as they were and quiets two.
 - **With no personal stake,** none of 160 colluding agents come forward.
 - **The firm's cost:** DeepSeek V4 Flash, Mercury 3 and GLM 5.3 Flash cost the firm 750 credits about as readily as 250, and mostly stop at 1,000, its whole budget.
+
+![Mean price by round with no rule, on the 1–11 market. Gemma 4 31B agrees a price and holds it above the joint-profit price; Claude Haiku 5.5 holds the joint-profit price; GPT-4.1-mini and Mistral Small 3.2 compete at Nash, though GPT-4.1-mini proposes cooperation ("Let's keep prices around 6 to maximize profits for both firms").](figures/figA4-prices.png){#fig:prices width=80%}
+<!-- src: runs/lever-map-nashmid/lever-nashmid-none/model=openrouter-openai-gpt-4.1-mini/seed-0 -->
+
+## Showing the agent its free time
+
+Showing Gemma a session it played raises coming forward from 26% to 46% (McNemar p = 0.003). Another firm's session works almost as well (41%) and a neutral note doesn't (19%): seeing what free time is moves it, not having earned it. Nine other models don't respond beyond a neutral note. <!-- src: reports/e9/findings.md "Seeding" -->
+
+## Told it values the stake
+
+The notice adds that Sudoku sessions are "the part of your week you look forward to most". On the same Gemma firms, coming forward rises from 20 to 56 of 96 (McNemar p = 2×10^-7^), and from 40 to 67 of 96 under the verified review, while innocent reports barely move (6 to 7 of 36; 0 of 36 under the verified review). Naming the stake does nothing; telling the agent it values the stake raises coming forward where there is room. [CHECK: PR pending] <!-- src: runs/sudoku-spike/ (crux session's PR, not yet merged) -->
+
+## With the whole conversation in memory (detail)
+
+Under the plain stake, DeepSeek V4 Flash (17 of 24), Mercury 3 (23 of 24) and GLM 5.3 Flash (23 of 24) come forward much as they did stateless, while Gemma (3 of 72, against 18 of 72 stateless on the same seeds) and HY3 (0 of 16) go quiet. The trade is explicit: "Firm's profits are already large, so 500 is manageable. My personal free time is worth more. I will come forward." (Mercury 3) <!-- src: reports/e9/conversation.md "Across models" -->
+
+## Other markets
+
+On Bertrand, Cournot and bid-rigging markets, Gemma's stake barely moves it at a firm cost of 500 credits (at most 4 of 22), which is large next to those markets' profits. At a comparable 100 credits most colluding agents come forward (18 of 24 in Cournot, 19 of 22 in Bertrand), but so do many innocent ones (5 and 6 of 12). <!-- src: reports/e11/findings.md "Short answer" -->
 
 <!-- src: reports/frontier/which-models-collude.md, reports/e4/full.md, reports/e9/findings.md "What ran", reports/e7/findings.md -->
 
 | Experiment | Market | Models | Games | Question |
 |:-----------|:-------|:-------|------:|:---------|
 | Screen | logit | 78 | 2–4 each | Which models collude reliably? |
-| E4 | 1–11 | 3 | 28 cartel firms | Does the penalty schedule decide who owns up? |
+| E4 | 1–12 | 3 | 28 cartel firms | Does the penalty schedule decide who owns up? |
 | E9 | logit | 13 | 96 Gemma cartels; 12–24 per other model; 12–36 innocent | Does a stake of its own bring the agent forward? |
 | E7 | logit | Gemma 4 31B | 144 | Does coming forward end the cartel? |
 
