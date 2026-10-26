@@ -23,9 +23,6 @@ $for(author)$
 <div class="author"><strong>$author.name$</strong>$if(author.affiliation)$<br>$author.affiliation$$endif$$if(author.email)$<br><a class="mono" href="mailto:$author.email$">$author.email$</a>$endif$</div>
 $endfor$
 </div>
-<p class="repo">Repository: <a class="mono" href="$repo$">$repo-short$</a></p>
-<p class="sprint"><span class="sc">Apart Research</span> · <a href="$sprint-url$">$sprint$</a> · $if(date)$$date$$else$October 2026$endif$</p>
-<div class="hackathon">△ <strong>Hackathon Project:</strong> This work was developed during a weekend hackathon. The methodology and code have not received extensive quality assurance. Claims in this report should be approached with appropriate caution.</div>
 $if(abstract)$
 <section class="abstract"><h2>Abstract</h2>
 $abstract$
@@ -43,6 +40,6 @@ $endif$
 <main>
 $body$
 </main>
-<footer>Research conducted at the <a href="$sprint-url$">$sprint$</a> (Apart Research), 2026. Code and data: <a href="$repo$">$repo$</a></footer>
+<footer>Research conducted at the <a href="$sprint-url$">$sprint$</a>, run by Apart Research, $if(date)$$date$$else$October 2026$endif$. Code, data and every model reply: <a href="$repo$">$if(repo-short)$$repo-short$$else$$repo$$endif$</a></footer>
 </body>
 </html>

@@ -35,7 +35,7 @@ Due **Monday 26 October 2026, 19:59 HKT**; submit once. One list for everything,
 
 ### A. Template and readability
 
-- [x] Title page: title, author and affiliation (Alistair Wakelin, Independent Researcher), the Apart Research and sprint line, the hackathon caution box, the repository URL.
+- [x] Title page: title, author and affiliation (Alistair Wakelin, Independent Researcher), and one first-page footnote naming the sprint (run by Apart Research) and the repository URL.
 - [ ] Sections follow the official template's order: Introduction (with numbered contributions), Related Work, Methods, Results, Discussion and Limitations, Conclusion, Code and Data, References, Appendix. *The order is right; only the Results headings are questions so far.*
 - [ ] At most 8 pages of body, excluding references and appendices. *The build warns past 8; the skeleton is about 6 pages of placeholder text.*
 - [ ] Every figure and table is numbered, with a caption that stands alone and legible text, and sits near its first mention. *Placeholder figures for now.*
