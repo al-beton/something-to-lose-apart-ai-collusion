@@ -1,4 +1,4 @@
-# Implements: ci/checks-on-every-pr, ci/one-gate, ci/report-comment, ci/ci-runs-everything, ci/end-to-end, ci/ci-minutes, ci/results-digest, ci/numbers-checked, ci/no-model-calls
+# Implements: ci/docs-fast, ci/checks-on-every-pr, ci/one-gate, ci/report-comment, ci/ci-runs-everything, ci/end-to-end, ci/ci-minutes, ci/results-digest, ci/numbers-checked, ci/no-model-calls
 name: blocking-checks
 
 # The one status to require before merging is the `blocking-checks` job: every
@@ -45,15 +45,25 @@ jobs:
       - uses: astral-sh/setup-uv@v6
         with:
           enable-cache: true
+      # A pull request that changes only the paper's text, the submission
+      # pack or READMEs skips the linter, the full suite and the digest, and
+      # runs only the tests that read those files.
+      - id: changes
+        if: github.event_name == 'pull_request'
+        run: python3 .github/scripts/docs_only.py origin/${{ github.base_ref }}
       - run: make install
-      - run: make lint
-      - run: make test
+      - if: steps.changes.outputs.docs_only != 'true'
+        run: make lint
+      - if: steps.changes.outputs.docs_only != 'true'
+        run: make test
+      - if: steps.changes.outputs.docs_only == 'true'
+        run: uv run pytest -n auto tests/test_readme.py tests/test_paper.py tests/test_paper_source.py tests/test_project_image.py tests/test_figure_commands.py::test_figure_commands_paper_lines_match_the_registry tests/test_explore.py::test_explore_readme_examples_build_and_stop_at_the_spend_question tests/test_modal.py::test_modal_readme_says_how_to_set_up_deploy_run_and_tear_down
       - run: make spec-check
       # The registered experiments a pull request touches, from committed
       # runs only (no model is called): their numbers checked against the
       # notes, which fails the gate on a mismatch. Nothing touched, nothing
       # runs long.
-      - if: github.event_name == 'pull_request'
+      - if: github.event_name == 'pull_request' && steps.changes.outputs.docs_only != 'true'
         run: uv run lab digest --changed-only --since origin/${{ github.base_ref }} --check
 
   pr-report:
