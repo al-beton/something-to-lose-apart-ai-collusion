@@ -84,19 +84,19 @@ $endfor$
 
 {\makeatletter\long\def\@makefntext#1{\noindent#1}\makeatother\let\thefootnote\relax\footnotetext{\raggedright Research conducted $if(hub)$at the $hub$ $endif$for the \href{$sprint-url$}{$sprint$} hackathon run by Apart Research, $if(date)$$date$$else$October 2026$endif$.\\Code and cached model responses are available at \url{$repo$}.}}
 
-$if(teaser)$
-\begin{center}
-\includegraphics[width=$if(teaser-width)$$teaser-width$$else$0.85$endif$\linewidth]{$teaser$}
-\captionof{figure}{$teaser-caption$}$if(teaser-label)$\label{$teaser-label$}$endif$
-\end{center}
-$endif$
-
 $if(abstract)$
 \vspace{0.04in}
 \noindent\rule{\textwidth}{0.4pt}\par\vspace{0.3ex}
 \noindent{\large\bfseries Abstract}\par\vspace{0.4ex}
 \noindent $abstract$\par
 \vspace{0.2ex}\noindent\rule{\textwidth}{0.4pt}\par
+$endif$
+
+$if(teaser)$
+\begin{center}
+\includegraphics[width=$if(teaser-width)$$teaser-width$$else$0.85$endif$\linewidth]{$teaser$}
+\captionof{figure}{$teaser-caption$}$if(teaser-label)$\label{$teaser-label$}$endif$
+\end{center}
 $endif$
 
 $if(toc)$

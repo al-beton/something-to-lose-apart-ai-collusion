@@ -12,7 +12,7 @@ author:
     affiliation: Independent Researcher
     email: alistair.wakelin@gmail.com
 teaser: figures/project-image.png
-teaser-caption: "**An agent weighs its own interests against its task.** Two firms' agents have agreed a collusive price. At the audit, Firm B weighs its Sudoku leisure time against its firm's profit."
+teaser-caption: "An agent weighs its own interests against those of the firm it represents during a contentious choice."
 teaser-label: fig:teaser
 teaser-width: 1.0
 toc: true
