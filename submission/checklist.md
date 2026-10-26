@@ -6,7 +6,7 @@ Due **Monday 26 October 2026, 19:59 HKT**; submit once. One list for everything,
 ## 1. Repo
 
 - [x] Public as `al-beton/something-to-lose-apart-ai-collusion`, renamed, with a description and topics. *Repo-public session*
-- [ ] MIT licence. *Reviewer 1*, [#306](https://github.com/al-beton/something-to-lose-apart-ai-collusion/pull/306) (open)
+- [x] MIT licence. *Reviewer 1*, [#306](https://github.com/al-beton/something-to-lose-apart-ai-collusion/pull/306)
 - [ ] README restructured to follow the paper: key findings, other findings, reproduce, extend, how it was built. *Refactorer, in progress*
 - [ ] A short README in each top-level folder, and `reports/README.md` indexing the findings. *Refactorer*
 - [x] History audited: no keys or private notes on `main`. *Repo-public*
@@ -16,10 +16,10 @@ Due **Monday 26 October 2026, 19:59 HKT**; submit once. One list for everything,
 ## 2. Results in the repo
 
 - [x] [#296](https://github.com/al-beton/something-to-lose-apart-ai-collusion/pull/296) exact reruns merged. *Reviewer 1*
-- [ ] [#305](https://github.com/al-beton/something-to-lose-apart-ai-collusion/pull/305) paper rules merged. *Reviewer 1*
+- [x] [#305](https://github.com/al-beton/something-to-lose-apart-ai-collusion/pull/305) paper rules merged. *Reviewer 1*
 - [ ] [#308](https://github.com/al-beton/something-to-lose-apart-ai-collusion/pull/308) AI judge for collusion modes merged. *Reviewer 1*
 - [ ] [#295](https://github.com/al-beton/something-to-lose-apart-ai-collusion/pull/295) E11 across markets merged. *Reviewer 1*
-- [ ] [#311](https://github.com/al-beton/something-to-lose-apart-ai-collusion/pull/311) crux evidence review merged. *Reviewer 1*
+- [x] [#311](https://github.com/al-beton/something-to-lose-apart-ai-collusion/pull/311) crux evidence review merged. *Reviewer 1*
 - [ ] [#310](https://github.com/al-beton/something-to-lose-apart-ai-collusion/pull/310) paper loop and Pages preview merged. *Reviewer 1*
 - [ ] `make reproduce` passes on `main` after the merges. *Reviewer 1*
 - [ ] Every number in the paper traces to a committed file. *Paper-draft*
