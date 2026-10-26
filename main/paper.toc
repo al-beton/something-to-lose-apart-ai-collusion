@@ -22,7 +22,7 @@
 \contentsline {section}{\numberline {A}Limitations and Dual-Use / Ethical Considerations}{10}{appendix.A}%
 \contentsline {subsection}{\numberline {A.1}Limitations}{10}{subsection.A.1}%
 \contentsline {subsection}{\numberline {A.2}Dual-use risks}{10}{subsection.A.2}%
-\contentsline {subsection}{\numberline {A.3}Ethical considerations}{10}{subsection.A.3}%
+\contentsline {subsection}{\numberline {A.3}Ethical considerations}{11}{subsection.A.3}%
 \contentsline {section}{\numberline {B}Reproducibility and Extensibility}{11}{appendix.B}%
 \contentsline {section}{\numberline {C}Additional Results}{11}{appendix.C}%
 \contentsline {subsection}{\numberline {C.1}With the whole conversation in memory}{11}{subsection.C.1}%
@@ -30,5 +30,5 @@
 \contentsline {subsection}{\numberline {C.3}Told it values the stake}{12}{subsection.C.3}%
 \contentsline {subsection}{\numberline {C.4}With the whole conversation in memory (detail)}{12}{subsection.C.4}%
 \contentsline {subsection}{\numberline {C.5}Other markets}{12}{subsection.C.5}%
-\contentsline {section}{\numberline {D}Reproducing Each Figure}{12}{appendix.D}%
-\contentsline {section}{\numberline {E}Prompts}{13}{appendix.E}%
+\contentsline {section}{\numberline {D}Reproducing Each Figure}{13}{appendix.D}%
+\contentsline {section}{\numberline {E}Prompts}{18}{appendix.E}%

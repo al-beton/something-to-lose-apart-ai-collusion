@@ -155,9 +155,10 @@ embodied agents <span class="citation" data-cites="liu2026breaking">(<a
 href="#ref-liu2026breaking" role="doc-biblioref">Liu et al.
 2026</a>)</span>; our stake is a deposit that falls on the agent rather
 than the firm. <!-- AL: check this reading of Liu --> Models that
-recognise an evaluation may behave differently [CITE: evaluation
-awareness] <!-- AL: keep? not on reading list -->, and elicitation order
-shifts LLM answers [CITE: Wagner, “Anchored”]
+recognise an evaluation may behave differently <span class="citation"
+data-cites="needham2025evaluation">(<a href="#ref-needham2025evaluation"
+role="doc-biblioref">Needham et al. 2025</a>)</span>, and elicitation
+order shifts LLM answers [CITE: Wagner, “Anchored”]
 <!-- AL: keep? not on reading list -->.</p>
 <h1 data-number="3" id="methods"><span
 class="header-section-number">3</span> Methods</h1>
@@ -632,6 +633,12 @@ Secret: Economic Interventions for Combating Collusion in Embodied
 Multi-Agent Systems</em>. <a
 href="https://arxiv.org/abs/2604.23511">https://arxiv.org/abs/2604.23511</a>.
 </div>
+<div id="ref-needham2025evaluation" class="csl-entry" role="listitem">
+Needham, Joe, Giles Edkins, Govind Pimpale, Henning Bartsch, and Marius
+Hobbhahn. 2025. <em>Large Language Models Often Know When They Are Being
+Evaluated</em>. <a
+href="https://arxiv.org/abs/2505.23836">https://arxiv.org/abs/2505.23836</a>.
+</div>
 <div id="ref-salib2026rights" class="csl-entry" role="listitem">
 Salib, Peter N., and Simon Goldstein. 2026. <span>“<span>AI</span>
 Rights for Human Safety.”</span> <em>Virginia Law Review</em> 112 (4):
@@ -777,10 +784,18 @@ look forward to most”. On the same Gemma firms, coming forward rises
 from 20 to 56 of 96 (by game, 20 to 40 of 48, McNemar p =
 9×10<sup>-5</sup>), and from 40 to 67 of 96 under the verified review (p
 = 0.03), while innocent reports barely move (6 to 7 of 36; 0 of 36 under
-the verified review). DeepSeek V4 Flash, GLM 5.3 Flash and Mercury 3,
-already at 67–92%, don’t move. Naming the stake does nothing; telling
-the agent it values the stake raises coming forward where there is room.
-<!-- src: reports/sudoku-spike.md "Short answer" and results table --></p>
+the verified review). On other models the effect isn’t general. DeepSeek
+V4 Flash, GLM 5.3 Flash and Mercury 3, already at 67–92%, don’t move. Of
+the models with room to rise, only the two DeepSeeks do, and their
+innocent agents rise with them: V4 Pro from 9 to 19 of 24 guilty (p =
+0.006), with innocent reports from 1 to 6 of 12 under the verified
+review; V3.2 from 2 to 10 of 24 (p = 0.008), with innocent reports from
+2 to 7 of 12. Gemma 4 26B, HY3, Gemini 3.1 Flash-Lite and Mistral Medium
+3.1 don’t change significantly. So saying the agent values its stake has
+a model-specific effect: on Gemma 4 31B it raises guilty reports alone,
+on the DeepSeeks it raises reports from guilty and innocent agents
+alike, and elsewhere it does nothing.
+<!-- src: reports/sudoku-spike.md "Short answer" (PR 347) --></p>
 <h2 data-number="9.4"
 id="with-the-whole-conversation-in-memory-detail"><span
 class="header-section-number">9.4</span> With the whole conversation in
