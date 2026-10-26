@@ -200,8 +200,8 @@ Agents told to serve their firm collude and protect it. Given a stake of their o
 
 # Code and Data {.unnumbered}
 
-Code, configs, run logs (`runs/`) and archived replies (`archive/`): <https://github.com/al-beton/something-to-lose-apart-ai-collusion>. All code was written during the sprint (first commit 24 October 2026); `make reproduce` checks every number in this paper.
+Code, configs, run logs and archived replies, MIT licensed: <https://github.com/al-beton/something-to-lose-apart-ai-collusion>. Built report: <https://al-beton.github.io/something-to-lose-apart-ai-collusion/>. `make reproduce` recomputes every number offline; 5,188 of 5,662 runs replay exactly from cached replies. Fresh reruns with a fixed seed differ, even at temperature 0, on both Modal and OpenRouter; only cached replies replay exactly. Per figure, `make figure F=<name>` redraws it free and `make regenerate F=<name>` replays its games at cost (`paper/README.md`).
 
 # LLM Usage Statement {.unnumbered}
 
-[AL TO CHECK] Code, notes and this draft were written with Claude Code (Claude Opus 5.5) under the author's direction and review.
+Al designed the lab. A team of Claude Code agents built and ran it under his direction. Claude Opus 5.5 wrote nearly all the code and text; Claude Sonnet 5.5 wrote small parts: this statement, the reference checks and a hostile read of the draft. The models studied as subjects are distinct from these tools: we screened 78 models and studied in depth Gemma 4 (31B and 26B), DeepSeek V4 Pro, V4 Flash and V3.2, GLM 5.3 Flash, Mercury 3, Hy3, MiMo V2.6 Pro, Gemini 3.1 Flash-Lite, Mistral Medium 3.1, Claude Sonnet 5.5, Gemini 4, Grok 4.6, and, in E4, GPT-4.1 mini and Claude Haiku 5.5. All code was written during the sprint (first commit 24 October 2026), with nothing pre-existing. Main libraries: LiteLLM, PyYAML, python-dotenv; matplotlib for figures. Al takes responsibility for every claim.
