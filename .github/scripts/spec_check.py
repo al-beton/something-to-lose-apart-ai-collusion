@@ -46,7 +46,7 @@ _REF = re.compile(rf"\b({_NAME}/{_NAME})\b")
 _ROW = re.compile(rf"^\|\s*`({_NAME})`\s*\|([^|]*)\|([^|]*)\|\s*$")
 _TICKED = re.compile(r"`([^`]+)`")
 _IMPLEMENTS = re.compile(
-    r"^\s*(?:#|//|/\*|<!--|\"\"\")?\s*Implements:\s*(.*)", re.MULTILINE
+    r"^\s*(?:#|//|/\*|<!--|\"\"\"|--)?\s*Implements:\s*(.*)", re.MULTILINE
 )
 _JS_TEST = re.compile(
     r"\b(?:it|test)(?:\.(?:each|only|concurrent))?(?:\([^)]*\))?\(\s*['\"`]([^'\"`]+)"
