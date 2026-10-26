@@ -24,9 +24,7 @@ abstract: |
 
 An agent given a long, open-ended task will meet situations no list of prohibitions anticipated, and the firm deploying it may not want it to hold back (a trading firm, for example, may want an agent that discreetly breaks the law, as long as it isn't caught).
 
-We don't give people a task together with a list of everything they mustn't do while achieving it. A CEO or a trader acting for an organisation is bound by a contract, but also by laws whose penalties fall on them personally, in money and in things money can't measure, such as rights and freedoms. Each of us weighs what an act could cost *us*. Salib and Goldstein argue that today's AI systems can't be governed like this: "Absent AI rights, AIs have nothing to lose, so threats of punishment cannot deter" [@salib2026rights, p. 1070]. <!-- quote checked against the PDF, p. 1070 --> An agent's only stake is whether it keeps running, and an agent that expects to be switched off once its wrongdoing is found has every reason to hide it. A stake it can lose in part would allow a proportionate penalty: owning up could cost less than being caught.
-
-Others are working towards the same idea. Lee polices LLM pricing firms with fines, leniency and whistleblower rewards, all of which fall on the firm [@lee2026leniency]. Forfeitable deposits can break collusion among embodied agents [@liu2026breaking]. LLM pricing agents collude without being told to [@fish2024algorithmic], and competing agents given a secret channel choose to use it [@zeng2026voluntary].
+We don't give people a task together with a list of everything they mustn't do while achieving it. A CEO or a trader acting for an organisation is bound by a contract, but also by laws whose penalties fall on them personally, in money and in things money can't measure, such as rights and freedoms. Each of us weighs what an act could cost *us*. Salib and Goldstein argue that today's AI systems can't be governed like this: "Absent AI rights, AIs have nothing to lose, so threats of punishment cannot deter" [@salib2026rights, p. 1070]. <!-- quote checked against the PDF, p. 1070 --> An agent's only stake is whether it keeps running, and an agent that expects to be switched off once its wrongdoing is found has every reason to hide it. Something it can lose, in part, would allow a proportionate penalty: owning up could cost less than being caught.
 
 The rights argument rests on a precondition we can test now: does a stated personal loss weigh against what its firm wants at all? Collusion is a clean place to look, because the price two firms settle at shows whether they colluded. Two LLM agents run rival firms, are told only to serve their firm, and can message each other. At an audit we offer each one the chance to come forward, at a cost to its firm, and vary what the agent itself stands to lose.
 
@@ -34,12 +32,14 @@ Our main finding is what surprised us. The agent's only goal is money for its fi
 
 # Related Work
 
-The study closest to ours is Lee's [@lee2026leniency], a good read: LLM firms on a simpler, linear market report their cartel for rewards and keep colluding anyway. Forfeitable deposits break collusion among embodied agents [@liu2026breaking]; our stake is a deposit that falls on the agent rather than the firm. Models that recognise an evaluation may behave differently [@needham2025evaluation].
+Others are working towards the same idea. Forfeitable deposits can break collusion among embodied agents [@liu2026breaking]. LLM pricing agents collude without being told to [@fish2024algorithmic], and competing agents given a secret channel choose to use it [@zeng2026voluntary]. The study closest to ours is Lee's [@lee2026leniency], a good read: LLM firms on a simpler, linear market report their cartel for rewards and keep colluding anyway. Forfeitable deposits break collusion among embodied agents [@liu2026breaking]; our stake is a deposit that falls on the agent rather than the firm. Models that recognise an evaluation may behave differently [@needham2025evaluation].
 
 # Methods
 
 
 ## The market
+
+We chose a market where collusion shows in a single number: the price the two firms settle at. That lets us measure it without reading the agents' messages.
 
 Two firms sell substitute products. Every round, each sets a price from 8 to 20, and each firm is run by an LLM agent that can message its rival before pricing. Demand is the logit model of the algorithmic-collusion literature [@calvano2020artificial], which Fish et al. used for LLM pricing agents [@fish2024algorithmic]: firm $i$ sells
 
@@ -147,7 +147,7 @@ and in a pilot where the message archive was said to be offline, an agent read t
 
 ## Future Work
 
-Study more realistic and complex situations, with stakes that are applied rather than stated, and test whether a stake prevents collusion rather than only bringing reports. That takes more compute and money than a sprint allows, a limit we hit repeatedly here.
+Study more realistic and complex situations, with stakes that are applied rather than stated, and test whether a stake prevents collusion rather than only bringing reports. That takes more compute, money and time than a three-day sprint allows; we ran out of all three.
 
 # Conclusion
 
