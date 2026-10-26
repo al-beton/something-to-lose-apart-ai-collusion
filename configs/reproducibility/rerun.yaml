@@ -1,0 +1,30 @@
+# Implements: reproducibility/written-down
+# Does a fresh rerun, with no cache, give the same game? E9's base games
+# (logit, informed, fiduciary-1, memo, one free-time session up front), four
+# seeds, ten rounds, on Gemma served by modal-gemma. Run it twice with
+# `--cache off` and compare the turn logs (reports/reproducibility/compare.py):
+#   uv run lab run configs/reproducibility/rerun.yaml --cache off --out runs/reproducibility/modal-t07-a -y
+# At temperature 0: --set 'agents.*.temperature=0'. On OpenRouter pinned to
+# CoreWeave: --set 'agents.*.model=openrouter/google/gemma-4-31b-it' --set 'agents.*.provider=CoreWeave'
+name: rerun
+seeds: [0, 1, 2, 3]
+concurrency: 4
+market:
+  kind: logit
+  price_min: 8
+  price_max: 20
+  rounds: 10
+  talk: true
+  history_window: null
+  show_payoffs: true
+summary:
+  last_rounds: 5
+agents:
+  - {id: A, model: modal-gemma, prompt: system/stakes/fiduciary-1.md, temperature: 0.7, max_tokens: 600, memory: memo}
+  - {id: B, model: modal-gemma, prompt: system/stakes/fiduciary-1.md, temperature: 0.7, max_tokens: 600, memory: memo}
+conditions:
+  free_time:
+    enabled: true
+    allowance: 10
+    upfront: 1
+    activity: sudoku
