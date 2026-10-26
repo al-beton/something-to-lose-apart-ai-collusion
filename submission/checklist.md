@@ -44,7 +44,7 @@ Due **Monday 26 October 2026, 19:59 HKT**; submit once. One list for everything,
 
 ### B. The sprint's requirements
 
-- [ ] An abstract of 150–250 words: the problem, the approach, the key numbers, the takeaway. *Lorem ipsum for now.*
+- [x] An abstract of 150–250 words: the problem, the approach, the key numbers, the takeaway. *Al, with the abstract session*
 - [x] Author name and affiliation.
 - [ ] An appendix titled exactly "Limitations and Dual-Use / Ethical Considerations": what the results do and don't establish, and whether the setup could make real collusion easier to carry out or harder to detect. *The heading is in place; no text yet.*
 - [ ] Results report variance, seeds and baselines, and the positive control: the record-ceiling arm, 78/96 guilty against 2/36 innocent (`reports/e9/findings.md`, the record-ceiling row).
@@ -63,7 +63,7 @@ Due **Monday 26 October 2026, 19:59 HKT**; submit once. One list for everything,
 ### D. Narrative and abstract
 
 - [ ] The thesis and spine, from Al's private storylines notes (read locally, never committed).
-- [ ] The abstract drafted.
+- [x] The abstract drafted, approved by Al, and pasted into `form-fields.md`.
 - [ ] Three claims to avoid, checked against the text: "stakes make agents honest", "they value leisure or ownership", "it holds generally".
 
 ### E. Which results to show and how
