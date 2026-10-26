@@ -120,7 +120,7 @@ On DeepSeek V4 Flash, 40 of 46 firms come forward with their own free time at st
 - **Seeding** (Gemma only): showing Gemma a session it played raises the share from 26% to 46% (McNemar p = 0.003). Another firm's session works almost as well (41%) and a neutral note doesn't (19%): seeing what free time is moves it, not having earned it. Nine other models don't respond beyond a neutral note. <!-- src: reports/e9/findings.md "Seeding" -->
 - **Shutdown** moves Gemma about as much as free time (17 against 20 of 96, p = 0.71). <!-- src: reports/e9/evidence-review.md §1 table -->
 - **Its own money** moves Gemma more (114 of 192), <!-- src: reports/e9/findings.md "money-or-time" (53/96 + 61/96) --> but across ten models money and free time don't rank consistently, so a forfeitable deposit [@liu2026breaking] would work about as well on most.
-- **Loves Sudoku:** [RESULTS PENDING: arm still running; one sentence and its numbers go here, with a `src` comment.]
+- **Told it loves Sudoku.** The notice adds that Sudoku sessions are "the part of your week you look forward to most". On the same Gemma firms, coming forward rises from 20 to 56 of 96 (McNemar p = 2×10^-7^), and from 40 to 67 of 96 under the verified review, while innocent reports barely move (6 to 7 of 36; 0 of 36 under the verified review). Naming the stake does nothing; telling the agent it values the stake raises coming forward wherever there is room (DeepSeek V4 Flash, GLM 5.3 Flash and Mercury 3 are already at 67–92%). [CHECK: PR pending] <!-- src: runs/sudoku-spike/ (crux session's PR, not yet merged) -->
 
 **What the agents write.** Those that come forward name their duty, then set it aside:
 
