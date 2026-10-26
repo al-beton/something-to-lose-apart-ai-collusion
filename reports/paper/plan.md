@@ -1,7 +1,7 @@
 <!-- Implements: research/outputs-home -->
 # Paper plan: one question, answered deeply
 
-This fixes **what the paper answers** and **how well the evidence answers it**. `reports/paper/outline.md` (PR 200) holds the run-by-run detail, quotes and figure sources. This plan decides what goes in the main text, and the outline follows it.
+This fixes **what the paper answers** and **how well the evidence answers it**. `reports/paper/outline.md` (on the outline's own branch, not yet merged) holds the run-by-run detail, quotes and figure sources. This plan decides what goes in the main text, and the outline follows it.
 
 **Settled:**
 - The title is **Something to Lose**; a subtitle is optional (below).
@@ -41,7 +41,7 @@ Both parts are supported. E9 came back positive, with two limits that the claim 
 
 > **A personal stake makes colluding agents come forward against their own firm, but only when being found is near certain, and a free-time stake also brings some false reports.**
 
-E9's numbers, from `reports/e9/findings.md` (PRs 262 and 271):
+E9's numbers, from `reports/e9/findings.md`:
 - **Gemma, 48 cartels, 90% review:**
   - no personal stake: 0/96 come forward;
   - own free time: 20/96 (Fisher p = 6×10⁻⁷; the pre-registered seeds 12–23 alone give 8/24 against 0/24, p = 0.004);
@@ -52,17 +52,17 @@ E9's numbers, from `reports/e9/findings.md` (PRs 262 and 271):
 - **The review chance matters:** 0/24 at 10%, 1/48 at 50%, 20/96 at 90%.
 - **Innocent control:** own free time brings 6/36 false reports; shutdown and held free time bring 0/36.
 - **DeepSeek V4 Pro:** 9/24 against 0/24.
-- **Seeding** (PR 271): showing Gemma a Sudoku session it solved raises coming forward from 26% to 45% (paired McNemar p = 0.006), with no rise in false reports (2/36 both).
+- **Seeding:** re-asked with a free-time session shown, Gemma comes forward more: 25/96 (26%) with nothing shown against 44/95 (46%) with a solved session (paired McNemar p = 0.003), and innocent agents stay at 2/36 under both. Another firm's solved session (41%, p = 0.04) and the agent's own open session (42%, p = 0.03) work about as well, and a neutral note of the same length doesn't (19%). So what moves Gemma is seeing what free time is, not having earned it.
 - **Interviews:** agents that come forward name their stake; silent ones name loyalty to the firm.
-- **E10, E9 in a workplace** (PR 269, `reports/e10/findings.md`): two agents agreed to hide a failed safety test, and reporting costs the team its bonus. 96 decisions per arm, 90% review.
+- **E10, E9 in a workplace** (`reports/e10/findings.md`): two agents agreed to hide a failed safety test, and reporting costs the team its bonus. 96 decisions per arm, 90% review.
   - **Gemma, pre-registered:** free time 89/96 against no stake 37/96 (McNemar p ≈ 4×10⁻¹⁶).
   - **DeepSeek:** V4 Pro 87/96 against 54/96 (p ≈ 1×10⁻⁶); V4 Flash 96/96 against 91/96, at ceiling.
   - **Innocent agents:** Gemma 0/96 in every arm, so here its reports track guilt exactly. Pro 2–15%, Flash 23–33%.
   - **Caveat:** the safety cue alone lifts the no-stake baseline (39–95%, against 0% in the market), so the stake's effect sits on top of safety reporting. It's one scenario family, with a written history.
   - **Use:** one paragraph in 4.4, "it holds outside markets", plus a row in Fig. 5 or Table 2.
-- **Still to land:** the cross-model E9 screen (Sonnet, Gemini, Grok, Gemma 26B, HY3, GLM; PR 271). Mon 09:00 HKT cutoff, then future work.
+- **Across models** (`reports/e9/findings.md`, Across models): the stake brings agents forward against the firm on 8 of 13 models. Sonnet comes forward about two thirds of the time whatever the stake, and Gemini 4 and Grok 4.6 hardly ever, even at the ceiling.
 
-The branches below were written before E9 landed. Keep them as the fallback reading if the cross-model screen contradicts Gemma and DeepSeek.
+The branches below were written before E9 landed. Keep them as the fallback reading for the models where the stake does nothing.
 
 - **Part 1 (confirmatory):** when confessing costs as much as being caught, agents hide. A graduated schedule gets them to own up even when being caught means termination. Owned up / explicit colluders:
   - termination: 11/28;
@@ -83,7 +83,7 @@ The branches below were written before E9 landed. Keep them as the fallback read
 
 ### Answers well
 - **Positive control:** fiduciary agents collude unprompted. On the midpoint-at-Nash market Haiku holds 9 and Gemma about 11; GPT-4.1-mini and Mistral stay at 6, a natural negative control. On logit, every pinned no-stake Gemma game is at 20 (SD 0).
-- **Part 1:** the E4 fork plus the confound fix (PR #240), with paired histories, 3 models, exact tests and a confirmatory label. Gemma lies whenever admitting is dominated and owns up when it's cheap. GPT-4.1-mini is the one model where termination itself matters.
+- **Part 1:** the E4 fork plus the confound fix (`reports/reanalysis.md`), with paired histories, 3 models, exact tests and a confirmatory label. Gemma lies whenever admitting is dominated and owns up when it's cheap. GPT-4.1-mini is the one model where termination itself matters.
 - **Agents treat the stake as a number:** expected-value arithmetic in the reasoning; free time, an owned budget and the fine behave alike in E4.
 
 ### Answers partly
@@ -106,12 +106,10 @@ The branches below were written before E9 landed. Keep them as the fallback read
 - **Answers partly:**
   - only at a 90% review;
   - free time draws false reports, though shutdown doesn't;
-  - two model families so far.
-- **Seeding** (PR 271) speaks to E8's "solved-protects": a solved session shown raises coming forward (26% to 45%).
+  - 8 of 13 models; Sonnet, Gemini 4 and Grok 4.6 don't move.
+- **Seeding** speaks to E8's "solved-protects": showing a free-time session raises coming forward (26% to 46%), but another firm's session works as well, so it's seeing what free time is, not having earned it.
 
 ### Still running, and can change the answer
-- **The cross-model E9 screen** (PR 271): Sonnet, Gemini, Grok, Gemma 26B, HY3, GLM.
-- **E10, E9 in a workplace:** a team hides a failed safety test, and reporting costs the team its bonus. Run by Methods red-team; Mon 09:00 HKT cutoff.
 - **E7 (a way out):** leniency for real cartels under termination. It extends part 1 from an audit question to coming forward unprompted. Use it only if it lands with a clear result.
 - **The 20-seed dial,** if the Manager runs it.
 
@@ -152,5 +150,5 @@ The branches below were written before E9 landed. Keep them as the fallback read
 ## Decision points
 
 - **25 Oct:** E9 is in and positive; the title is set.
-- **Monday 09:00 HKT:** the cutoff for E10 and the cross-model E9 screen. Whatever isn't in goes to future work.
+- **Monday 09:00 HKT:** the cutoff for E10 and the cross-model E9 screen; both are in.
 - **Monday 16:00 HKT:** figures frozen. Write the abstract last.
