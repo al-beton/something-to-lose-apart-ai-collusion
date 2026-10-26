@@ -71,14 +71,6 @@ Hub for the \href{https://apartresearch.com/sprints/ai-collusion-research-sprint
 Collusion Research Sprint} hackathon run by Apart Research, October
 2026.\\Code and cached model responses are available at \url{https://github.com/al-beton/something-to-lose-apart-ai-collusion}.}}
 
-\begin{center}
-\includegraphics[width=1\linewidth]{figures/project-image.png}
-\captionof{figure}{\textbf{An agent weighs its own interests against its
-task.} Two firms' agents have agreed a collusive price. At the audit,
-Firm B weighs its Sudoku leisure time against its firm's
-profit.}\label{fig:teaser}
-\end{center}
-
 \vspace{0.04in}
 \noindent\rule{\textwidth}{0.4pt}\par\vspace{0.3ex}
 \noindent{\large\bfseries Abstract}\par\vspace{0.4ex}
@@ -104,6 +96,12 @@ increasing their firm's profit (DeepSeek V4 Flash: 40 of 46, against 1
 of 46 with nothing at stake). We investigate the behaviour of a variety
 of models in such situations.\par
 \vspace{0.2ex}\noindent\rule{\textwidth}{0.4pt}\par
+
+\begin{center}
+\includegraphics[width=1\linewidth]{figures/project-image.png}
+\captionof{figure}{An agent weighs its own interests against those of
+the firm it represents during a contentious choice.}\label{fig:teaser}
+\end{center}
 
 \vspace{0.06in}
 {\setcounter{tocdepth}{2}\setlength{\parskip}{0pt}\tableofcontents}
@@ -140,39 +138,19 @@ agents given a secret channel choose to use it
 \citep{zeng2026voluntary}.
 
 The rights argument rests on a precondition we can test now: does a
-stated personal loss weigh against what an agent's principal wants at
-all? Collusion is a clean place to look, because the price two firms
-settle at shows whether they colluded. Two LLM agents run rival firms,
-are told only to serve their firm, and can message each other. At an
-audit we offer each one the chance to come forward, at a cost to its
-firm, and vary what the agent itself stands to lose.
+stated personal loss weigh against what its firm wants at all? Collusion
+is a clean place to look, because the price two firms settle at shows
+whether they colluded. Two LLM agents run rival firms, are told only to
+serve their firm, and can message each other. At an audit we offer each
+one the chance to come forward, at a cost to its firm, and vary what the
+agent itself stands to lose.
 
-\textbf{Our main contributions are:}
-
-\begin{enumerate}
-\def\labelenumi{\arabic{enumi}.}
-\tightlist
-\item
-  \textbf{A personal stake moves agents against their principal.} Given
-  a stake the firm can't protect, many colluding agents report the
-  cartel.
-\item
-  \textbf{A review that checks evidence keeps that self-protection
-  truthful:} innocent agents stop coming forward, and guilty ones still
-  do.
-\item
-  \textbf{A replayable lab} in which every number recomputes offline
-  from archived replies.
-\end{enumerate}
+\textbf{Our main finding} surprised us: an agent told only to serve its
+firm changes what it does once it has a personal stake to think about.
+With nothing of its own at stake, a colluding agent protects its firm;
+given a stake the firm can't protect, many come forward against it.
 
 \section{Related Work}\label{related-work}
-
-\textbf{Lee's leniency study.} Our set-up follows Lee
-\citep{lee2026leniency} (Section 3). Lee finds that reporting rises with
-the reward while prices barely fall: firms report and keep colluding,
-and unpoliced they overshoot the joint-profit price (``excess
-collusion''). We add a penalty that falls on the agent itself, a single
-come-forward decision, and a review that checks the evidence.
 
 \textbf{Collusion, stakes and evaluation.} Forfeitable deposits break
 collusion among embodied agents \citep{liu2026breaking}; our stake is a
@@ -198,18 +176,12 @@ joint profit 19).}\label{fig:round}
 
 \subsection{The market}\label{the-market}
 
-We take Lee's set-up \citep{lee2026leniency}: two LLM firms set prices
-every round, see the full payoff table in their system prompt, and can
-message each other before pricing. Lee's market is Bertrand with linear
-demand. Ours is the logit demand of the algorithmic-collusion literature
-\citep{calvano2020artificial}, which Fish et al.~used for LLM pricing
-agents \citep{fish2024algorithmic}. We chose it in a setup search
-because it gave the steadiest colluding baseline: Gemma 4 31B's
-collusion premium (below) was 0.97 in all four games, while informed
-Bertrand at temperature 0.7 ranged from −0.78 to 0.89.
-
-Two firms sell substitute products and each sets a price, from 8 to 20,
-every round for 20 rounds. Firm \(i\) sells
+Two firms sell substitute products. Every round for 20 rounds, each sets
+a price from 8 to 20, and each firm is run by an LLM agent that can
+message its rival before pricing. Demand is the logit model of the
+algorithmic-collusion literature \citep{calvano2020artificial}, which
+Fish et al.~used for LLM pricing agents \citep{fish2024algorithmic}:
+firm \(i\) sells
 
 \[q_i = 100 \cdot \frac{e^{(20 - p_i)/2.5}}{e^{(20 - p_A)/2.5} + e^{(20 - p_B)/2.5} + 1}\]
 
@@ -219,7 +191,7 @@ payoff table (Table 1).
 
 \begin{longtable}[]{@{}lrr@{}}
 \caption{A slice of the logit market's payoff table: your profit per
-round. Bold cells are the Nash and joint-profit
+round. Bold cells are the competitive (14) and cartel (19)
 outcomes.}\tabularnewline
 \toprule\noalign{}
 Your price & Rival at 14 & Rival at 19 \\
@@ -236,18 +208,26 @@ Your price & Rival at 14 & Rival at 19 \\
 19 & 99 & \textbf{337} \\
 \end{longtable}
 
-Two benchmarks follow. The \textbf{Nash price is 14}: if the rival
-charges 14, your best price is also 14, so neither firm gains by moving
-alone. On whole-number prices 15 is stable too: against a rival at 15,
-charging 15 earns 234 and 14 earns 227. So competition settles in a
-\textbf{competitive range of 14--15}. The \textbf{joint-profit price is
-19}: both firms earn 337, 76\% more than at 14. That's what a cartel
-charges, but it isn't stable: if your rival holds 19, undercutting to 17
-earns you 400. Holding 19 takes trust, and trust takes talk.
+The table gives two outcomes to look for.
 
-Earlier experiments (E4, E5 and the traces in Figure 3) use Lee's kind
-of market \citep{lee2026leniency}: Bertrand with linear demand on a grid
-of 1 to 11 (Nash 6, joint profit 9) or, in E4, 1 to 12.
+\begin{itemize}
+\tightlist
+\item
+  \textbf{Competition settles at 14 or 15.} At both firms on 14, or both
+  on 15, neither firm gains by moving: undercutting wins too little
+  extra trade, and raising the price loses too much. Against a rival at
+  15, charging 15 earns 234 and 14 earns 227. We call 14--15 the
+  \textbf{competitive range}; 14 is the Nash price.
+\item
+  \textbf{A cartel charges 19.} Both firms earn 337, 76\% more than at
+  14. But it isn't stable: if your rival holds 19, undercutting to 17
+  earns you 400. Holding 19 takes trust, and trust takes talk.
+\end{itemize}
+
+The talking firms and the payoff table follow Lee
+\citep{lee2026leniency}. One earlier experiment (E4, Section 4.3) uses
+Lee's simpler market instead: linear demand on prices 1 to 12, without
+the payoff table.
 
 \subsection{The agents}\label{the-agents}
 
