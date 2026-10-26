@@ -60,7 +60,6 @@ def test_how_we_work_is_five_lines_and_points_agents_to_agents_md():
 
 def test_folder_guides_every_top_level_folder_has_a_readme():
     hidden = {".agents", ".claude", ".github", ".venv", ".cache"}
-    hidden.add("paper")  # the paper's source, introduced by paper.md itself
     tracked = subprocess.run(
         ["git", "ls-files"], cwd=ROOT, capture_output=True, text=True, check=True
     ).stdout.split()

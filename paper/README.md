@@ -1,4 +1,4 @@
-<!-- Implements: reports/paper-source -->
+<!-- Implements: reports/paper-source, specs-and-docs/folder-guides -->
 # Paper
 
 The paper, written once in Markdown and built three ways: HTML for writing, LaTeX for Overleaf, and the PDF that gets submitted.
