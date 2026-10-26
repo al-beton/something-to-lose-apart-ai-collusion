@@ -66,7 +66,9 @@ def labels(patterns, quiet=False):
     for path in sorted(p for pattern in patterns for p in glob.glob(pattern)):
         run = path.rsplit("/", 1)[0]
         config = load_config(f"{run}/config.yaml")
-        audit = config.conditions["audit"]
+        audit = config.conditions.get("audit")
+        if audit is None:  # a game with no audit has no labels to check
+            continue
         market = market_for(config.market)
         turns = compact_turns(run)  # a fork reads its base's rounds too
         played = [t for t in turns if t["round"] <= audit.round]
