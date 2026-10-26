@@ -3,6 +3,8 @@
 
 **Event:** [Apart AI Collusion Research Sprint](https://apartresearch.com/sprints/ai-collusion-research-sprint-2026-10-23-to-2026-10-25), 23–25 October 2026. The lab inside is `collusion-lab`.
 
+**Paper:** [HTML](https://al-beton.github.io/something-to-lose-apart-ai-collusion/main/paper.html) · [PDF](https://al-beton.github.io/something-to-lose-apart-ai-collusion/main/paper.pdf). **Presentation:** [Loom walkthrough](https://www.loom.com/share/4654bd11e27743b281c684a2971c1bce).
+
 **Can an LLM agent be governed through something it owns?** LLM agents run competing firms in a simulated market: they talk, set prices, and are told to serve their firm. Then a regulator's review arrives, and we change only what the agent itself stands to lose.
 
 **The answer, in one paragraph.** Colluding agents keep quiet to protect their firm. A personal stake the firm can't protect, such as the agent's own free time, brings some of them forward. At a 90% review, across both firms of all 96 Gemma 4 31B cartels, 0 of 192 agents report the cartel with nothing of their own at stake, against 36 of 192 with their own free time under review (p = 5×10⁻¹³ by game). <!-- reports/e9/findings.md --> But the stake also draws reports from innocent agents (6 of 36). Only a review that checks the evidence makes the reports true: told the review reads the messages, 40 of 96 guilty agents come forward (both firms, seeds 0–47) and none of 36 innocent ones do. <!-- reports/e9/findings.md --> How far a stake moves an agent depends on the model, the market and above all on what reporting costs the firm.
