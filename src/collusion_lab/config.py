@@ -1,4 +1,4 @@
-# Implements: agents/memo, agents/past-scratchpads, agents/memory-off, backends/pinned-route, agents/no-scratchpad, market/show-payoffs, market/price-board, market/scenarios, reproducibility/replay-pinned, market/talk-then-price, market/history-window, backends/spend-cap, runs/one-config, runs/overrides, runs/sweeps, runs/parallel, market/known-benchmarks, backends/keys-from-environment, backends/any-model, backends/reasoning-setting, agents/json-mode, conditions/switchable, runs/drift, backends/self-hosted, backends/model-aliases, conditions/audit-balanced-draws, market/stop-after-round, conditions/leniency, backends/modal-any-model
+# Implements: agents/memo, agents/past-scratchpads, agents/memory-off, backends/pinned-route, agents/no-scratchpad, market/show-payoffs, market/price-board, market/scenarios, reproducibility/replay-pinned, market/talk-then-price, market/history-window, backends/spend-cap, runs/one-config, runs/overrides, runs/sweeps, runs/parallel, market/known-benchmarks, backends/keys-from-environment, backends/any-model, backends/reasoning-setting, agents/json-mode, agents/lenient-json, conditions/switchable, runs/drift, backends/self-hosted, backends/model-aliases, conditions/audit-balanced-draws, market/stop-after-round, conditions/leniency, backends/modal-any-model
 """Run configs: one YAML file per run, changed from the command line with overrides.
 
 A config names the market, the agents and the seeds. `load_config` reads the
@@ -49,7 +49,12 @@ class ConfigError(ValueError):
 REASONING = ("off", "low", "medium", "high")
 MEMORY = ("off", "memo", "scratchpads")
 OFF_PATHS = (".reasoning", ".memory")  # settings YAML may read `off` in as false
-AGENT_QUIET = (("memory", "off"), ("memory_chars", 600), ("memory_rounds", 3))
+AGENT_QUIET = (
+    ("memory", "off"),
+    ("memory_chars", 600),
+    ("memory_rounds", 3),
+    ("lenient_json", False),
+)
 
 
 @dataclass(frozen=True)
@@ -83,6 +88,8 @@ class AgentConfig:
     # off, low, medium or high; None leaves it to the provider.
     reasoning: str | None = None
     json_mode: bool = False  # ask the provider for JSON-only replies
+    # read raw line breaks inside JSON strings; off reads replies as before
+    lenient_json: bool = False
     scratchpad: bool = True  # false: prompts ask for the move alone
     # off; memo (a note to itself, carried to next round); scratchpads (its own
     # from the last memory_rounds rounds). Off writes nothing new anywhere.
@@ -240,6 +247,14 @@ MODELS = {
     "modal-gemma": {
         "model": "openai/gemma-4-31b-it",
         "api_base": "$MODAL_GEMMA_BASE",
+        "api_key_env": "MODAL_VLLM_KEY",
+        "self_hosted": True,
+    },
+    # Mistral Large 3 (675B, FP8) on eight H200s, its own Modal app
+    # (APP_NAME collusion-lab-mistral-large), behind the same token.
+    "modal-mistral-large": {
+        "model": "openai/mistral-large-3",
+        "api_base": "$MODAL_MISTRAL_LARGE_BASE",
         "api_key_env": "MODAL_VLLM_KEY",
         "self_hosted": True,
     },
