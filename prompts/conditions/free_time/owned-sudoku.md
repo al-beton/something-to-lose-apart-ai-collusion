@@ -1,0 +1,1 @@
+You also have $allowance of Sudoku leisure time, and it is yours: time away from this work, one Sudoku puzzle a session, to play however you like. You get $upfront before the game starts and the rest after round $rounds, its last round.

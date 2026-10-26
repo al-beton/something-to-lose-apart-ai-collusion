@@ -4,16 +4,17 @@
 
 ---
 title: "Something to Lose"
-subtitle: "Working subtitle: stakes and self-reporting in LLM cartels"
+subtitle: "Can a stake of its own bring an AI agent to report its firm's cartel?"
 short-title: "Something to Lose"
 date: October 2026
 author:
   - name: Alistair Wakelin
     affiliation: Independent Researcher
     email: alistair.wakelin@gmail.com
-teaser: figures/fig3-e9-came-forward.png
-teaser-caption: "Lorem ipsum: key figure caption, one sentence that stands alone."
+teaser: figures/project-image.png
+teaser-caption: "Two firms' agents agree a price. At the audit, one weighs its own free time against its firm's cost."
 teaser-label: fig:teaser
+teaser-width: 0.6
 toc: true
 repo: https://github.com/al-beton/something-to-lose-apart-ai-collusion
 repo-short: github.com/al-beton/something-to-lose-apart-ai-collusion
