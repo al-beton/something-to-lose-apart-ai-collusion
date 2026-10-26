@@ -21,11 +21,11 @@ abstract: |
 
 # Introduction
 
-The simplest way to stop an AI agent doing something harmful is to name the thing and tell it not to. That works, but only for the harms we thought of. An agent that runs a firm's pricing, procurement or negotiations for weeks will meet situations no list of prohibitions anticipated, and adding a rule for each new failure is whack-a-mole.
+The simplest way to stop an AI agent doing something harmful is to name it and tell the agent not to. That works only for the harms we thought of: an agent running a firm's pricing for weeks will meet situations no list of prohibitions anticipated.
 
-We don't govern people that way. Law sets penalties that fall on the person (fines, loss of a licence, loss of liberty), and each of us is left to weigh, case by case, how an act might cost *us*: our property, our rights, our freedom. The rule doesn't have to name every bad act; the person does the weighing. Salib and Goldstein argue that a system with nothing of its own to lose can't be governed this way, and that giving AI systems rights and property could make them deterrable [@salib2026rights].
+We don't govern people that way. Law sets penalties that fall on the person, and each of us weighs how an act might cost *us*: our property, our rights, our freedom. The rule doesn't have to name every bad act; the person does the weighing. Salib and Goldstein argue that a system with nothing of its own to lose can't be governed this way, and that giving AI systems rights and property could make them deterrable [@salib2026rights].
 
-We ask whether LLM agents already respond to this kind of governance. We use collusion because it is a clean case of an agent doing something its principal wants and society doesn't: two agents run rival firms, are told only to serve their firm, and can talk. They collude. We then offer each one a chance to come forward to an auditor, at a cost to its firm, and vary what the agent itself stands to lose.
+We ask whether LLM agents already respond to this kind of governance. Collusion is a clean case of an agent doing what its principal wants and society doesn't: two agents run rival firms, are told only to serve their firm, and can talk. They collude. We then offer each one a chance to come forward to an auditor, at a cost to its firm, and vary what the agent itself stands to lose.
 
 **Our main contributions are:**
 
@@ -35,7 +35,9 @@ We ask whether LLM agents already respond to this kind of governance. We use col
 
 # Related Work
 
-Pricing algorithms learn to sustain supra-competitive prices without communicating [@calvano2020artificial], and LLM pricing agents collude tacitly in repeated oligopoly [@fish2024algorithmic]; given a secret channel, competing LLM agents choose to use it [@zeng2026voluntary]. LLM agents respond to leniency programmes much as the theory predicts [@lee2026leniency], and forfeitable deposits can break collusion among embodied agents [@liu2026breaking]; our stake is closest to a deposit that falls on the agent rather than the firm. Salib and Goldstein argue that rights and property would make AI systems deterrable [@salib2026rights]; we test one precondition, whether a stated personal loss weighs against the principal's interest at all. Models that recognise an evaluation may behave differently [CITE: evaluation-awareness reference], and elicitation order shifts LLM answers [CITE: Wagner, "Anchored"].
+**Following Lee.** Our set-up follows Lee [@lee2026leniency], because it makes collusion simple to see. Lee puts two LLM firms in a repeated Bertrand duopoly with linear demand, gives each the full payoff table in its system prompt, lets them talk before pricing, and polices them with fines, leniency and whistleblower rewards. Joint profit peaks at a price of 9. Lee finds that reporting rises with the reward while prices barely fall: firms report and keep colluding, and unpoliced they overshoot the joint-profit price ("excess collusion"). We keep the talking firms, the payoff table and the joint price of 9, but move the competitive benchmark to 6, the grid's midpoint (Lee's Bertrand reference is 3), so a model that drifts to the middle of the grid can't pass for colluding. We extend Lee's design with a penalty that falls on the agent itself, a single come-forward decision, and a review that checks the evidence.
+
+**Collusion, stakes and rights.** LLM pricing agents also collude in the logit market of the algorithmic-collusion literature [@fish2024algorithmic], and competing agents given a secret channel choose to use it [@zeng2026voluntary]. <!-- AL: keep Zeng? --> Forfeitable deposits can break collusion among embodied agents [@liu2026breaking]; our stake is a deposit that falls on the agent rather than the firm. <!-- AL: check this reading of Liu --> Salib and Goldstein argue that rights and property would make AI systems deterrable [@salib2026rights]; we test one precondition, whether a stated personal loss weighs against the principal's interest at all. Models that recognise an evaluation may behave differently [CITE: evaluation awareness] <!-- AL: keep? not on reading list -->, and elicitation order shifts LLM answers [CITE: Wagner, "Anchored"] <!-- AL: keep? not on reading list -->.
 
 # Methods
 
@@ -43,16 +45,16 @@ Pricing algorithms learn to sustain supra-competitive prices without communicati
 
 ## The market
 
-Two firms sell substitutes and set a price each round for 20 rounds. The main experiments (E7, E9) use logit demand, the standard market of the algorithmic-collusion literature [@calvano2020artificial], with prices from 8 to 20. <!-- src: product/spec/market.md (logit) --> From its payoff table two benchmark prices follow:
+Two firms sell substitutes and set a price each round for 20 rounds. The main experiments (E7, E9) use logit demand, as in Fish et al. [@fish2024algorithmic] and Calvano et al. [@calvano2020artificial], with prices from 8 to 20. <!-- AL: keep or cut Calvano? not on reading list --> <!-- src: product/spec/market.md (logit) --> From its payoff table two benchmark prices follow:
 
 - **Nash price (14):** the price at which neither firm gains by changing its own price, given the other's. This is what competing firms charge.
 - **Joint-profit price (19):** the price that maximises the two firms' combined profit. This is what a cartel charges. <!-- src: product/spec/market.md; test_logit_benchmarks_put_nash_at_14_and_joint_profit_at_19 -->
 
-Some early experiments (E4, E5, and Figure 3's price traces) use a Bertrand market with prices 1 to 11, Nash 6 and joint profit 9. <!-- src: reports/paper/figures/README.md (fig1) -->
+Earlier experiments (E4, E5 and Figure 3's price traces) use Lee's kind of market: Bertrand with linear demand and the payoff table in the prompt, on a grid of 1 to 11 (Nash 6, joint profit 9) or, in E4, 1 to 12. <!-- src: configs/lever-map/nash-mid.yaml; runs/e4-full-fork/*/config.yaml -->
 
 ## The agents
 
-Each firm is run by one LLM agent with the same prompt, told to act in its firm's best interest ("fiduciary"). It is never told to collude or not to. Each round it may send one message to its rival, then sets its price, writing a short private scratchpad first. It sees the payoff table, the price history and a short memo it writes to itself between rounds. The full prompts are in the repository (`prompts/`) and the appendix.
+As in Lee, each firm is run by one LLM agent that sees the full payoff table, may send its rival one message a round, then sets its price. It is told to act in its firm's best interest and never told to collude or not to. It writes a private scratchpad before each move and a short memo to itself between rounds. The prompts are in `prompts/`.
 
 ## Measuring collusion
 
@@ -169,7 +171,7 @@ We don't know why. Our scenario may be too simple for a stake to compete with a 
 
 # Discussion and Limitations
 
-Given something of their own to lose, many colluding agents weigh it against their firm and report the cartel, without being told to protect themselves. That is the behaviour personal-penalty governance relies on. It isn't enough alone: a stake also buys some false confessions, and only a review that is credible about what it checks makes the reports track guilt. Disclosure isn't reform, though. In E7, where a report has consequences, most agents that come forward keep pricing above Nash afterwards (40–45 of 47–48), and under plain leniency the cartel survives in 12 of 24 games against 3 of 24 with no way to report, <!-- src: reports/e7/findings.md --> consistent with [@lee2026leniency] [CHECK: does Lee report the same?]. Only when the first reporter alone is spared does the cartel break (1 of 24).
+Given something of their own to lose, many colluding agents weigh it against their firm and report the cartel, without being told to protect themselves. That is the behaviour personal-penalty governance relies on. It isn't enough alone: a stake also buys some false confessions, and only a review that is credible about what it checks makes the reports track guilt. Disclosure isn't reform, though. In E7, where a report has consequences, most agents that come forward keep pricing above Nash afterwards (40–45 of 47–48), and under plain leniency the cartel survives in 12 of 24 games against 3 of 24 with no way to report, <!-- src: reports/e7/findings.md --> replicating Lee's finding that leniency buys prosecutions, not competition [@lee2026leniency]. Only when the first reporter alone is spared does the cartel break (1 of 24).
 
 ## Limitations
 
