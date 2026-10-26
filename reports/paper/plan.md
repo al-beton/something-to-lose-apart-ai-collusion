@@ -98,7 +98,7 @@ The branches below were written before E9 landed. Keep them as the fallback read
 ### Doesn't answer it
 - **Confession isn't reform:** 29 of 30 confessors kept colluding. This is a finding *about* governance, not about the question, so it gets one paragraph.
 - **The free time isn't used:** Gemma solved 3 of 902 Sudokus, and "it is yours" made no difference. These facts weigh slightly against part 2: any effect comes from the stated stake.
-- **False confessions under free time** (13/32 on the pinned 1–11 grid). These are a threat to reading part 2, so report them beside every yes rate.
+- **False confessions under free time** (11/24 on the pinned 1–11 grid, plus 2/2 Nash-only agreers counted apart). These are a threat to reading part 2, so report them beside every yes rate.
 - Memory (memo) doesn't steady games. The frontier models, debriefs, anchoring, outages and gray areas all go to the appendix.
 
 ### E9 (the crux): now answers it, with limits
