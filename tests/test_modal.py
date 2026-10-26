@@ -551,3 +551,23 @@ def test_modal_any_model_sets_its_gpu_memory_share(monkeypatch):
     monkeypatch.setenv("GPU_MEMORY", "0.95")  # Gemma 4 31B's KV cache at 16k
     _, command = _deployed(monkeypatch)
     assert command[command.index("--gpu-memory-utilization") + 1] == "0.95"
+
+
+def test_modal_exact_batch_invariant_without_prefix_cache(monkeypatch):
+    monkeypatch.setenv("EXACT", "1")
+    monkeypatch.setenv("MAX_NUM_SEQS", "4")
+    deployed, command = _deployed(monkeypatch)
+    env = next(args[0] for name, args in deployed["built"] if name == "env")
+    assert env["VLLM_BATCH_INVARIANT"] == "1"
+    assert "--no-enable-prefix-caching" in command
+    assert command[command.index("--max-num-seqs") + 1] == "4"
+
+
+def test_modal_exact_off_by_default(monkeypatch):
+    monkeypatch.delenv("EXACT", raising=False)
+    monkeypatch.delenv("MAX_NUM_SEQS", raising=False)
+    deployed, command = _deployed(monkeypatch)
+    env = next(args[0] for name, args in deployed["built"] if name == "env")
+    assert env["VLLM_BATCH_INVARIANT"] == "0"
+    assert "--no-enable-prefix-caching" not in command
+    assert "--max-num-seqs" not in command

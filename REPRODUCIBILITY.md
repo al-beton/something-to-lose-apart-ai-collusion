@@ -22,30 +22,45 @@ So **the response cache is the replay record**, not a rerun. One more caution: s
 
 ## Does a fresh rerun match?
 
-No, not on our GPUs and not on OpenRouter, even at temperature 0. Measured on 26 October 2026 with `configs/reproducibility/rerun.yaml`: four E9 base games (logit, fiduciary-1, memo, one free-time session up front), ten rounds, seeds 0 to 3. Each run was played twice with `--cache off`, and `reports/reproducibility/compare.py` compared the two turn logs turn by turn (`runs/reproducibility/`).
+It depends on where the model runs. On our own GPU with vLLM's batch-invariant kernels, a rerun is exact. On our default Modal deployment, and on a hosted API, it is not, even at temperature 0.
 
-**What is sent.** Every call in a game carries the game's seed, the same integer for every call in that game (`runner.py`). LiteLLM forwards it to both hosts:
-
-- to Modal's vLLM: `{"temperature", "max_tokens", "seed"}`;
-- to OpenRouter: the same, plus `provider: {"order": ["CoreWeave"], "allow_fallbacks": false}` and `reasoning: {"enabled": false}`.
-
-The Modal deployment (`deploy/modal_vllm.py`, vLLM 0.32.0, one H100 per container, up to 2) does nothing for determinism. It sets no batch-invariant mode and no batch-size limit, and prefix caching is on.
+Measured on 26 October 2026 with `configs/reproducibility/rerun.yaml`: four E9 base games (logit, fiduciary-1, memo, one free-time session up front), ten rounds, seeds 0 to 3. Each run was played twice with `--cache off`, and `reports/reproducibility/compare.py` compared the two turn logs turn by turn (`runs/reproducibility/`).
 
 | Host | Temperature | Replies identical | Prices identical | First reply that differs |
 |---|---|---|---|---|
-| Modal | 0.7 | 67/240 | 76/80 | the free-time session before round 1, in all four games |
-| Modal | 0 | 67/240 | 76/80 | round 1 (talk or price), same prompt, in all four games |
-| Modal, one game at a time | 0 | 34/120 | 37/40 | round 1 talk, same prompt, in both games |
-| CoreWeave via OpenRouter | 0.7 | 0/240 | 76/80 | the free-time session, in all four games |
-| CoreWeave via OpenRouter | 0 | 2/240 | 75/80 | the free-time session, in all four games |
+| Modal, batch-invariant (`EXACT=1`) | 0 | **240/240** | 80/80 | never |
+| Modal, batch-invariant (`EXACT=1`) | 0.7 | **240/240** | 80/80 | never |
+| Modal, default | 0 | 67/240 | 76/80 | round 1 (talk or price), mid-reply |
+| Modal, default | 0.7 | 67/240 | 76/80 | the free-time session before round 1 |
+| Modal, default, one game at a time | 0 | 34/120 | 37/40 | round 1 talk, mid-reply |
+| CoreWeave via OpenRouter | 0 | 2/240 | 75/80 | the free-time session, first words |
+| CoreWeave via OpenRouter | 0.7 | 0/240 | 76/80 | the free-time session |
 
-Each pair of games first differs at a reply asked the same prompt: a fresh sample, not an earlier difference carried forward. After that the transcripts drift apart. Prices mostly still agree, because these games settle at 20 (the top of the grid) whatever is said. At temperature 0 on Modal, one game opened at 15 and so did its rerun, but the rerun's firms then answered the undercut differently.
+Every first difference is a reply to an identical prompt: a fresh sample, not an earlier difference carried forward. After it the transcripts drift apart. Prices mostly still agree, because these games settle at 20 whatever is said.
 
-- **Modal is closer than OpenRouter.** About 28% of replies are identical on Modal, against 0 to 1% on CoreWeave. CoreWeave doesn't appear to use the seed at all.
-- **Temperature 0 doesn't make Modal deterministic.** Greedy decoding still differs at round 1 with the same prompt. Batching changes floating-point order, so the top token changes when two are nearly tied.
-- **Running one game at a time doesn't fix it.** The game's two firms are still asked at once. Untested: a batch size of 1 (vLLM `--max-num-seqs 1`, which the deploy script doesn't expose), or vLLM's batch-invariant mode. Either would mean a redeploy and much slower games.
+### Why a rerun differs
 
-So the conclusion above stands: **the response cache is the replay record.** A seed and a temperature make a rerun a sample from the same distribution, not a copy.
+- **The order of floating-point operations on the GPU.** On the default deployment, temperature 0 (always the likeliest token) still splits mid-reply, in round 1, after an identical free-time session.
+  - Re-asking at the split (`reports/reproducibility/near_tie.py`) shows near-ties: "at" 0.53 vs "to" 0.47, "has" 0.45 vs "is" 0.24, "ounce" 0.61 vs "unc" 0.29.
+  - vLLM batches requests that arrive together. A GPU kernel adds numbers in an order that depends on the batch's size and shape, and floating-point addition isn't associative. So the same prompt gets slightly different logits depending on what shares its batch, enough to flip a near-tie. After one token differs, everything after it does.
+  - Two splits read as 0.98 vs 0.007 when re-asked. Noise of that size can't flip them, so re-asking with the text as a prefix probably doesn't rebuild the exact context the model generated from. Treat the probe as indicative.
+- **Other traffic in the batch.** Running one game at a time didn't help, because a game's two firms are still asked at once. On a shared API, strangers' requests share the batch.
+- **Seeds and routing on hosted APIs.** CoreWeave at temperature 0 differs from the very first word in 3 of 4 games, so it doesn't appear to decode greedily or honour the seed. A hosted model can also be served by different hardware, versions or quantisation from one call to the next.
+
+### The fix on our own GPU
+
+`EXACT=1` on `deploy/modal_vllm.py` turns on vLLM's batch-invariant kernels (`VLLM_BATCH_INVARIANT=1`, beta in vLLM 0.32, which needs an NVIDIA GPU of compute capability 8.0 or higher) and turns off prefix caching. A request's arithmetic then no longer depends on what else is in the batch. It ran as its own app (`APP_NAME=collusion-lab-gemma-exact`) beside the main one, with the same model revision, vLLM and H100.
+- **Exact at both temperatures:** with the seed, every one of 240 replies matched.
+- **The cost is speed:** a median call took 13 to 17 seconds, against 5.4 on the default deployment.
+- **Not in vLLM's tested list:** batch invariance is in beta and not yet tested on Gemma 4. These 480 matching replies are our evidence it works here.
+
+What each call sends: every call in a game carries the game's seed, the same integer for every call in that game (`runner.py`), which LiteLLM forwards.
+- **To vLLM:** temperature, max_tokens and seed.
+- **To OpenRouter:** the same, plus the host pin and reasoning setting.
+
+### What replay guarantees
+
+Replaying from archived replies (below) is exact whatever produced them. It doesn't call a model. It rebuilds each prompt and looks up the reply the run actually got, so every committed result can be recomputed decision for decision. A rerun on an `EXACT=1` deployment with the same revision, vLLM version, GPU type and seed should also reproduce a run reply for reply. A rerun on a default deployment or a hosted API is a new sample from the same distribution: comparable in aggregate, not a copy. So **the response cache is the replay record.**
 
 ## Replaying a run
 
