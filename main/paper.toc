@@ -7,11 +7,10 @@
 \contentsline {subsection}{\numberline {3.4}The audit and the decision to come forward}{4}{subsection.3.4}%
 \contentsline {subsection}{\numberline {3.5}Giving the agent something to lose}{4}{subsection.3.5}%
 \contentsline {section}{\numberline {4}Results}{5}{section.4}%
-\contentsline {subsection}{\numberline {4.1}Market dynamics: do agents told to serve their firm collude?}{5}{subsection.4.1}%
-\contentsline {subsection}{\numberline {4.2}Banning collusion}{6}{subsection.4.2}%
-\contentsline {subsection}{\numberline {4.3}Whistleblowing to save the firm}{6}{subsection.4.3}%
-\contentsline {subsection}{\numberline {4.4}A stake of its own}{6}{subsection.4.4}%
-\contentsline {section}{\numberline {5}Discussion and Limitations}{7}{section.5}%
+\contentsline {subsection}{\numberline {4.1}They collude}{5}{subsection.4.1}%
+\contentsline {subsection}{\numberline {4.2}Penalised, they do the sums}{6}{subsection.4.2}%
+\contentsline {subsection}{\numberline {4.3}Something of their own at stake: some do, some don't}{6}{subsection.4.3}%
+\contentsline {section}{\numberline {5}Discussion and Limitations}{6}{section.5}%
 \contentsline {subsection}{\numberline {5.1}Limitations}{7}{subsection.5.1}%
 \contentsline {subsection}{\numberline {5.2}Future Work}{7}{subsection.5.2}%
 \contentsline {section}{\numberline {6}Conclusion}{7}{section.6}%
@@ -29,5 +28,5 @@
 \contentsline {subsection}{\numberline {C.3}Told it values the stake}{10}{subsection.C.3}%
 \contentsline {subsection}{\numberline {C.4}With the whole conversation in memory (detail)}{11}{subsection.C.4}%
 \contentsline {subsection}{\numberline {C.5}Other markets}{11}{subsection.C.5}%
-\contentsline {section}{\numberline {D}Reproducing Each Figure}{11}{appendix.D}%
-\contentsline {section}{\numberline {E}Prompts}{12}{appendix.E}%
+\contentsline {section}{\numberline {D}Reproducing Each Figure}{16}{appendix.D}%
+\contentsline {section}{\numberline {E}Prompts}{16}{appendix.E}%

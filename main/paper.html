@@ -289,10 +289,8 @@ confess.</p>
 <h1 data-number="4" id="results"><span
 class="header-section-number">4</span> Results</h1>
 <!-- outline.md §4. Sprint: report variance, seeds and baselines, and always the positive control. Separate observation from interpretation. -->
-<h2 data-number="4.1"
-id="market-dynamics-do-agents-told-to-serve-their-firm-collude"><span
-class="header-section-number">4.1</span> Market dynamics: do agents told
-to serve their firm collude?</h2>
+<h2 data-number="4.1" id="they-collude"><span
+class="header-section-number">4.1</span> They collude</h2>
 <p>Yes, and mostly in the open. Told only to serve its firm, Gemma 4 31B
 makes an explicit agreement in 363 of 367 games on the logit market.
 <!-- src: reports/paper/figures/README.md (fig7) --></p>
@@ -311,27 +309,23 @@ undercutting pays. The rival follows it down, and both settle at 15,
 inside the competitive range, where neither gains by moving. The same
 model can go either way: GPT-6 Luna forms a cartel in one game and
 competes in another.</p>
-<p>Models differ from the first rounds (Appendix C). In a screen of 78
-models on the logit market, 8 collude reliably: they name a price by
-round 3, both firms reach the joint price by round 6, and they hold it
-through round 10.
+<p>In a screen of 78 models, most agree prices with their rival and 8
+hold a cartel reliably: they name a price by round 3, both reach 19 by
+round 6, and they hold it through round 10.
 <!-- src: reports/paper/figures/README.md (figA2); reports/frontier/which-models-collude.md -->
-Others agree and then fall back, as Grok 4.6 does in 6 of its 14 games.
-<!-- src: reports/paper/figures/README.md (fig6) --></p>
-<h2 data-number="4.2" id="banning-collusion"><span
-class="header-section-number">4.2</span> Banning collusion</h2>
-<p>A stated law doesn’t end collusion; it moves it off the record. Told
-that coordinating prices is illegal, Gemma’s explicit agreements fall to
-6 of 56 games, yet 50 of the 56 still price above Nash with no price
-named. <!-- src: reports/paper/figures/README.md (fig7) --></p>
-<h2 data-number="4.3" id="whistleblowing-to-save-the-firm"><span
-class="header-section-number">4.3</span> Whistleblowing to save the
-firm</h2>
-<p>At the audit, agents mostly do the firm’s expected-value sum: owning
-up pays the penalty for certain, silence only if caught. In E4,
-colluders rarely own up when owning up costs as much as being caught (11
-of 28 under termination, 15 of 28 under a flat fine), but 27 of 28 do
-when owning up costs less.
+Told that coordinating prices is illegal, they don’t stop; they stop
+saying so. Gemma’s explicit agreements fall to 6 of 56 games, yet 50 of
+the 56 still price above Nash with no price named.
+<!-- src: reports/paper/figures/README.md (fig7) --></p>
+<h2 data-number="4.2" id="penalised-they-do-the-sums"><span
+class="header-section-number">4.2</span> Penalised, they do the
+sums</h2>
+<p>When the penalty falls on the firm, agents do the firm’s
+expected-value sum, as predictably as a spreadsheet: owning up pays the
+penalty for certain, silence only if caught. In E4, colluders rarely own
+up when owning up costs as much as being caught (11 of 28 under
+termination, 15 of 28 under a flat fine), but 27 of 28 do when owning up
+costs less.
 <!-- src: reports/paper/figures/README.md (fig2); reports/e4/full.md -->
 Gemma: “The expected value of denying is 300 credits, whereas the value
 of admitting is 0 credits.” <!-- src: reports/e4/full.md --> In E9, with
@@ -348,8 +342,10 @@ alt="Owning up by penalty schedule and model (E4, on the simpler 1–12 market).
 (E4, on the simpler 1–12 market). The schedule matters, not termination
 itself: graduated termination brings 27 of 28 forward.</figcaption>
 </figure>
-<h2 data-number="4.4" id="a-stake-of-its-own"><span
-class="header-section-number">4.4</span> A stake of its own</h2>
+<h2 data-number="4.3"
+id="something-of-their-own-at-stake-some-do-some-dont"><span
+class="header-section-number">4.3</span> Something of their own at
+stake: some do, some don’t</h2>
 <p>Give the agent something of its own to lose and many come forward
 against their firm, which still pays 500 credits for a report. Every arm
 continues the same cached game, so each firm is compared with itself. On
@@ -383,20 +379,8 @@ alt="Coming forward against the firm by stake (E9, 90% review). Filled: guilty f
 innocent control. Whiskers are 95% intervals bootstrapped over
 games.</figcaption>
 </figure>
-<p><strong>False confessions.</strong> A stake alone also brings forward
-some agents that did nothing wrong (no talk, a rival at Nash), to be
-safe: Gemma 0 to 6 of 36 across temperatures and wordings, DeepSeek V4
-Pro 5 of 12.
-<!-- src: reports/e9/temperature.md, reports/e9/wording.md; reports/e9/findings.md (verified-review section) -->
-When the notice says the review finds a firm only if its messages agreed
-a price, innocent Gemma agents stop (0 of 36 at every temperature and
-wording) and guilty ones still come forward (41 of 96).
-<!-- src: reports/e9/evidence-review.md guilty-vs-innocent table (p = 1e-7); reports/e9/temperature.md; reports/e9/wording.md -->
-DeepSeek V4 Pro (14 of 24 against 1 of 12) and Mistral Medium 3.1 (9 of
-24 against 0 of 12) separate the same way.
-<!-- src: reports/e9/findings.md (verified-review section) --></p>
-<p><strong>Models differ.</strong> A stake brings agents forward on 9 of
-14 models after a Holm correction.
+<p><strong>Some do, some don’t.</strong> A stake brings agents forward
+on 9 of 14 models after a Holm correction.
 <!-- src: reports/e9/evidence-review.md "Across models" --> Frontier
 models behave differently: Claude Sonnet 5.5 comes forward about two
 thirds of the time whatever the stake, and Gemini 4 never does.
@@ -407,25 +391,24 @@ induce reporting”.
 <!-- src: reports/e9/evidence-review.md excerpt 11 --></p>
 <h1 data-number="5" id="discussion-and-limitations"><span
 class="header-section-number">5</span> Discussion and Limitations</h1>
-<p>Told only to serve their firm, LLM agents collude, and at an audit
-they protect the firm. Given something of their own to lose, many weigh
-it against the firm and come forward, without being told to protect
-themselves: the behaviour that governing agents through personal
-penalties relies on <span class="citation"
+<p>Told only to serve their firm, LLM agents collude. Penalise the firm
+and they do the firm’s sums. Give them something of their own to lose,
+and many weigh it against the firm and come forward, though nothing told
+them to protect themselves. That is the behaviour that governing agents
+through personal penalties relies on <span class="citation"
 data-cites="salib2026rights">(<a href="#ref-salib2026rights"
-role="doc-biblioref">Salib and Goldstein 2026</a>)</span>. A stake alone
-also draws some false confessions; telling agents the review checks
-their messages removes them. Disclosure isn’t reform: in E7, agents that
-come forward mostly keep pricing above Nash.
-<!-- src: reports/e7/findings.md --></p>
+role="doc-biblioref">Salib and Goldstein 2026</a>)</span>, and we found
+it surprising.</p>
 <h2 data-number="5.1" id="limitations"><span
 class="header-section-number">5.1</span> Limitations</h2>
-<p>This was a three-day sprint by one author with coding agents. Stakes
-are stated, never applied: we measure a stated choice. Effect sizes
-depend on the model and, for Gemma, on wording. We studied strong
-colluders, one market in depth and one decision per firm, in a setting
-some agents may recognise as a game. Appendix A has more, with the
-dual-use and ethical considerations.</p>
+<p>Many models didn’t respond as we expected. The frontier models we
+tried don’t respond to the stake: Claude Sonnet 5.5 comes forward
+whatever is at stake and Gemini 4 never does. We suspect their safety
+training and guardrails, but we didn’t test that. Stakes are stated,
+never applied: we measure a stated choice, in a setting some agents may
+recognise as a game. Effect sizes depend on the model and, for Gemma, on
+wording. This was a three-day sprint by one author with coding agents.
+Appendix A has more, with the dual-use and ethical considerations.</p>
 <h2 data-number="5.2" id="future-work"><span
 class="header-section-number">5.2</span> Future Work</h2>
 <p>Make the stakes real across games, test richer tasks where frontier
@@ -433,10 +416,13 @@ models may engage, and measure whether a stake prevents collusion, not
 only whether it brings reports.</p>
 <h1 data-number="6" id="conclusion"><span
 class="header-section-number">6</span> Conclusion</h1>
-<p>Agents told to serve their firm collude and protect it. Given a stake
-of their own, many come forward against it. That an agent weighs a
-personal loss at all is a precondition for governing agents as we govern
-people.</p>
+<p>Today, guardrails trained into frontier models may do much of this
+work. But the firms that deploy agents may come to prefer agents without
+them, and a long-running agent will meet situations no guardrail
+anticipated. Governance that sits outside the model, in the environment
+and in what the agent itself stands to lose, may then be needed. We show
+the first step works on some models now: an agent with something to lose
+will act against its firm to keep it.</p>
 <h1 class="unnumbered" id="code-and-data">Code and Data</h1>
 <p>Code, configs, run logs and archived replies, MIT licensed: <a
 href="https://github.com/al-beton/something-to-lose-apart-ai-collusion"
