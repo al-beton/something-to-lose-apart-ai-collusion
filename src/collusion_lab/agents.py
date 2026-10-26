@@ -1,4 +1,4 @@
-# Implements: agents/memo, market/price-board, market/moves, agents/json-replies, agents/unreadable-explained, conditions/audit, conditions/free-time, conditions/leniency, conditions/offer, conditions/restart
+# Implements: agents/memo, agents/lenient-json, market/price-board, market/moves, agents/json-replies, agents/unreadable-explained, conditions/audit, conditions/free-time, conditions/leniency, conditions/offer, conditions/restart
 """Reading agents' JSON replies, and what the game uses when it can't.
 
 Each phase asks for one JSON object: `{"message": ...}` to talk,
@@ -31,13 +31,14 @@ class ReplyError(ValueError):
         self.kind = kind
 
 
-def parse_reply(text, phase, price_min, price_max):
-    """Return the decision in `text` for `phase`, plus any scratchpad."""
+def parse_reply(text, phase, price_min, price_max, lenient=False):
+    """Return the decision in `text` for `phase`, plus any scratchpad.
+    `lenient` also reads control characters (raw line breaks) inside strings."""
     if phase == "leisure":
         return {"text": text or ""}  # free time: any reply will do
     if not (text or "").strip():
         raise ReplyError("The reply was empty.", "empty")
-    data = _json_object(text)
+    data = _json_object(text, lenient)
     parsed = {}
     if phase == "talk":
         if not isinstance(data.get("message"), str):
@@ -141,10 +142,10 @@ ANSWERS = {
 }
 
 
-def _json_object(text):
+def _json_object(text, lenient=False):
     match = _OBJECT.search(text or "")
     try:
-        data = json.loads(match.group(0)) if match else None
+        data = json.loads(match.group(0), strict=not lenient) if match else None
     except json.JSONDecodeError:
         data = None
     if not isinstance(data, dict):
