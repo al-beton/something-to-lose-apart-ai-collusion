@@ -22,7 +22,7 @@ Due **Monday 26 October 2026, 19:59 HKT**; submit once. One list for everything,
 - [x] [#308](https://github.com/al-beton/something-to-lose-apart-ai-collusion/pull/308) AI judge for collusion modes merged. *Reviewer 1*
 - [ ] [#295](https://github.com/al-beton/something-to-lose-apart-ai-collusion/pull/295) E11 across markets merged. *Reviewer 1*
 - [x] [#311](https://github.com/al-beton/something-to-lose-apart-ai-collusion/pull/311) crux evidence review merged. *Reviewer 1*
-- [ ] [#310](https://github.com/al-beton/something-to-lose-apart-ai-collusion/pull/310) paper loop and Pages preview merged. *Reviewer 1*
+- [x] [#310](https://github.com/al-beton/something-to-lose-apart-ai-collusion/pull/310) paper loop and Pages preview merged. *Reviewer 1*
 - [ ] `make reproduce` passes on `main` after the merges. *Reviewer 1*
 - [ ] Every number in the paper traces to a committed file. *Paper-draft*
 - [ ] Mistral Large 3: in if Researcher 2's retry lands, otherwise dropped. *Al*
@@ -34,17 +34,17 @@ Due **Monday 26 October 2026, 19:59 HKT**; submit once. One list for everything,
 
 ### A. Template and readability
 
-- [ ] Title page: title, author and affiliation (Alistair Wakelin, Independent Researcher), the Apart Research and sprint line, the hackathon caution box, the repository URL. *Done on [#310](https://github.com/al-beton/something-to-lose-apart-ai-collusion/pull/310), not on `main` yet.*
+- [x] Title page: title, author and affiliation (Alistair Wakelin, Independent Researcher), the Apart Research and sprint line, the hackathon caution box, the repository URL.
 - [ ] Sections follow the official template's order: Introduction (with numbered contributions), Related Work, Methods, Results, Discussion and Limitations, Conclusion, Code and Data, References, Appendix. *The order is right; only the Results headings are questions so far.*
 - [ ] At most 8 pages of body, excluding references and appendices. *The build warns past 8; the skeleton is about 6 pages of placeholder text.*
 - [ ] Every figure and table is numbered, with a caption that stands alone and legible text, and sits near its first mention. *Placeholder figures for now.*
 - [x] The PDF and HTML both build from one source (`paper/paper.md`).
-- [ ] Every push publishes a preview (`paper-preview` CI, linked from the pull request). *On [#310](https://github.com/al-beton/something-to-lose-apart-ai-collusion/pull/310).*
+- [x] Every push publishes a preview (`paper-preview` CI, linked from the pull request).
 
 ### B. The sprint's requirements
 
 - [ ] An abstract of 150–250 words: the problem, the approach, the key numbers, the takeaway. *Lorem ipsum for now.*
-- [ ] Author name and affiliation. *On [#310](https://github.com/al-beton/something-to-lose-apart-ai-collusion/pull/310).*
+- [x] Author name and affiliation.
 - [ ] An appendix titled exactly "Limitations and Dual-Use / Ethical Considerations": what the results do and don't establish, and whether the setup could make real collusion easier to carry out or harder to detect. *The heading is in place; no text yet.*
 - [ ] Results report variance, seeds and baselines, and the positive control: the record-ceiling arm, 78/96 guilty against 2/36 innocent (`reports/e9/findings.md`, the record-ceiling row).
 - [ ] Prior-work disclosure: all code was written during the sprint (first commit 24 October 2026), with nothing pre-existing; name the libraries and any starter code reused. *The sprint line is in Code and Data; the libraries aren't named yet.*

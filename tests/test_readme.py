@@ -1,7 +1,8 @@
-# Implements: tooling/quick-start, tooling/key-setup, tooling/how-tos, tooling/how-we-work
+# Implements: tooling/quick-start, tooling/key-setup, tooling/how-tos, tooling/how-we-work, specs-and-docs/folder-guides
 """The README a newcomer follows: its commands, files and links are real."""
 
 import re
+import subprocess
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -55,3 +56,15 @@ def test_how_we_work_is_five_lines_and_points_agents_to_agents_md():
     work = section("How we work")
     assert len(re.findall(r"^\d+\. ", work, re.MULTILINE)) == 5
     assert "AGENTS.md" in work
+
+
+def test_folder_guides_every_top_level_folder_has_a_readme():
+    hidden = {".agents", ".claude", ".github", ".venv", ".cache"}
+    hidden.add("paper")  # the paper's source, introduced by paper.md itself
+    tracked = subprocess.run(
+        ["git", "ls-files"], cwd=ROOT, capture_output=True, text=True, check=True
+    ).stdout.split()
+    folders = {path.split("/")[0] for path in tracked if "/" in path} - hidden
+    assert folders
+    for folder in sorted(folders):
+        assert (ROOT / folder / "README.md").is_file(), folder

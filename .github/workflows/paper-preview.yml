@@ -1,0 +1,90 @@
+# Implements: ci/paper-preview
+name: paper-preview
+
+# The paper, built on every push that touches it (drafts too), published to
+# GitHub Pages under pr-<number>/ (or main/), and linked from one comment on
+# the pull request: the HTML and the PDF. Its own
+# workflow, not a step of the gate, so a paper edit never waits on the tests
+# and a failing build never blocks a merge (contributing/spec/ci.md).
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+    paths: [paper/**, reports/paper/figures/**, Makefile, .github/workflows/paper-preview.yml]
+  push:
+    branches: [main]
+    paths: [paper/**, reports/paper/figures/**, Makefile, .github/workflows/paper-preview.yml]
+  workflow_dispatch:
+
+# Newer pushes cancel older builds of the same pull request.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  paper-preview:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write        # push the build to the gh-pages branch
+      pull-requests: write   # the one comment
+    env:
+      SLOT: ${{ github.event.pull_request.number && format('pr-{0}', github.event.pull_request.number) || 'main' }}
+      SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+      PAGES: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+      - name: Tools (pandoc, tectonic, poppler)
+        run: |
+          curl -sSL -o /tmp/pandoc.deb https://github.com/jgm/pandoc/releases/download/3.12.1/pandoc-3.12.1-1-amd64.deb
+          sudo dpkg -i /tmp/pandoc.deb
+          curl -sSL https://github.com/tectonic-typesetting/tectonic/releases/download/tectonic%400.17.0/tectonic-0.17.0-x86_64-unknown-linux-musl.tar.gz | sudo tar xz -C /usr/local/bin
+          sudo apt-get update -qq && sudo apt-get install -y -qq poppler-utils >/dev/null
+      - uses: actions/cache@v4
+        with:
+          path: ~/.cache/Tectonic
+          key: tectonic-${{ hashFiles('paper/apart.latex') }}
+          restore-keys: tectonic-
+      - name: Build HTML, .tex and PDF
+        run: |
+          make -s paper-html paper-pdf 2>&1 | grep -iE 'abstract is|pages before|error|undefined' | awk '!seen[$0]++' | tee warnings.txt || true
+          test -f paper/build/paper.pdf
+          cp paper/preview.html paper/build/
+          mkdir -p paper/build/pages
+          pdftoppm -r 110 -png paper/build/paper.pdf paper/build/pages/p
+          (cd paper/build/pages && ls p-*.png) > paper/build/pages.txt
+          date +%s > paper/build/stamp
+          cp paper/paper.md paper/build/
+      - name: Publish to gh-pages/${{ env.SLOT }}
+        run: |
+          git config --global user.name github-actions
+          git config --global user.email github-actions@users.noreply.github.com
+          url=https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}
+          if git clone -q --depth 1 --branch gh-pages "$url" site 2>/dev/null; then :; else
+            mkdir site && git -C site init -q -b gh-pages && git -C site remote add origin "$url"; fi
+          touch site/.nojekyll
+          # The site's front page is the published report: main's build.
+          printf '<!doctype html><meta charset="utf-8"><meta http-equiv="refresh" content="0; url=main/paper.html"><title>Something to Lose</title><a href="main/paper.html">Something to Lose</a>\n' > site/index.html
+          rm -rf "site/$SLOT" && mkdir -p "site/$SLOT"
+          cp -r paper/build/. "site/$SLOT/"
+          rm -f "site/$SLOT"/*.aux "site/$SLOT"/*.log "site/$SLOT"/*.bbl "site/$SLOT"/*.blg "site/$SLOT"/*.out
+          cd site && git add -A && git commit -qm "paper preview: $SLOT at $SHA" && git push -q origin gh-pages
+      - name: Comment
+        if: github.event_name == 'pull_request'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR: ${{ github.event.pull_request.number }}
+        run: |
+          base="$PAGES/$SLOT"
+          {
+            echo "<!-- paper-preview -->"
+            echo "### 📄 Paper preview at \`${SHA:0:7}\`"
+            echo
+            echo "**[HTML]($base/paper.html)** · **[PDF]($base/paper.pdf)** · $(ls paper/build/pages | wc -l | tr -d ' ') pages"
+            if [ -s warnings.txt ]; then echo; echo '```'; cat warnings.txt; echo '```'; fi
+          } > body.md
+          id=$(gh api "repos/${{ github.repository }}/issues/$PR/comments" --paginate -q '.[] | select(.body | startswith("<!-- paper-preview -->")) | .id' | head -1)
+          if [ -n "$id" ]; then gh api -X PATCH "repos/${{ github.repository }}/issues/comments/$id" -F body=@body.md >/dev/null
+          else gh pr comment "$PR" --body-file body.md; fi
