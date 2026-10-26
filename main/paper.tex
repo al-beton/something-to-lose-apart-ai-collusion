@@ -823,6 +823,53 @@ gain by arm.}]{figures/figA5-e5-gain.png}
 \caption{E5's gain by arm.}\label{fig:e5}
 \end{figure}
 
+\section{Reproducing Each Figure}\label{reproducing-each-figure}
+
+Each figure has two commands. \texttt{make\ figure} redraws it from the
+committed runs, free and offline, and checks that every label and count
+matches the published file. \texttt{make\ regenerate} plays its games
+again with fresh model calls into \texttt{runs/regenerated/}, saying
+first how many games and at most what cost, and asks before spending.
+Fresh games are a new sample, so their counts will move; only
+self-hosted, batch-invariant inference reruns a game exactly.
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}@{}}
+\caption{Each figure's two commands; costs as priced when written.
+}\tabularnewline
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Figure
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Redraw (free)
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Play again (at cost)
+\end{minipage} \\
+\midrule\noalign{}
+\endfirsthead
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Figure
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Redraw (free)
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Play again (at cost)
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+\texttt{fig3-e9-came-forward} (E9: coming forward, by personal stake) &
+\texttt{make\ figure\ F=e9-crux} & \texttt{make\ regenerate\ F=e9-crux}:
+744 games, up to \textasciitilde\$14.54 \\
+\texttt{fig2-e4-owning-up} (E4: owning up, by penalty schedule) &
+\texttt{make\ figure\ F=e4-owning-up} &
+\texttt{make\ regenerate\ F=e4-owning-up}: 105 games, up to
+\textasciitilde\$0.88 \\
+\end{longtable}
+
 \section{Prompts}\label{prompts}
 
 The prompts are sent to models verbatim and are in the repository under

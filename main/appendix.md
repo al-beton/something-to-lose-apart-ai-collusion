@@ -1,4 +1,4 @@
-<!-- Implements: reports/paper-source, reports/paper-rules -->
+<!-- Implements: reports/paper-source, reports/paper-rules, reproducibility/figure-commands -->
 <!-- The appendices, after References. paper/paper.md pulls this in after \appendix. -->
 
 # Limitations and Dual-Use / Ethical Considerations
@@ -71,6 +71,19 @@ E9's agents are stateless: each turn sees a summary and a memo. We reran E9 with
 ![Capability against collusion.](figures/figA3-capability.png){#fig:capability width=100%}
 
 ![E5's gain by arm.](figures/figA5-e5-gain.png){#fig:e5 width=100%}
+
+# Reproducing Each Figure
+
+Each figure has two commands. `make figure` redraws it from the committed runs, free and offline, and checks that every label and count matches the published file. `make regenerate` plays its games again with fresh model calls into `runs/regenerated/`, saying first how many games and at most what cost, and asks before spending. Fresh games are a new sample, so their counts will move; only self-hosted, batch-invariant inference reruns a game exactly.
+
+<!-- figure-commands: begin (make figure-lines writes this) -->
+| Figure | Redraw (free) | Play again (at cost) |
+|---|---|---|
+| `fig3-e9-came-forward` (E9: coming forward, by personal stake) | `make figure F=e9-crux` | `make regenerate F=e9-crux`: 744 games, up to ~$14.54 |
+| `fig2-e4-owning-up` (E4: owning up, by penalty schedule) | `make figure F=e4-owning-up` | `make regenerate F=e4-owning-up`: 105 games, up to ~$0.88 |
+
+Table: Each figure's two commands; costs as priced when written.
+<!-- figure-commands: end -->
 
 # Prompts
 

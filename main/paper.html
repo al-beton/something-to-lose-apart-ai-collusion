@@ -546,7 +546,7 @@ Secret Tools in Competing <span>LLM</span> Agents</em>. <a
 href="https://arxiv.org/abs/2605.27593">https://arxiv.org/abs/2605.27593</a>.
 </div>
 </div>
-<!-- Implements: reports/paper-source, reports/paper-rules -->
+<!-- Implements: reports/paper-source, reports/paper-rules, reproducibility/figure-commands -->
 <!-- The appendices, after References. paper/paper.md pulls this in after \appendix. -->
 <h1 data-number="7"
 id="limitations-and-dual-use-ethical-considerations"><span
@@ -755,8 +755,51 @@ collusion.</figcaption>
 alt="E5’s gain by arm." />
 <figcaption aria-hidden="true">E5’s gain by arm.</figcaption>
 </figure>
-<h1 data-number="10" id="prompts"><span
-class="header-section-number">10</span> Prompts</h1>
+<h1 data-number="10" id="reproducing-each-figure"><span
+class="header-section-number">10</span> Reproducing Each Figure</h1>
+<p>Each figure has two commands. <code>make figure</code> redraws it
+from the committed runs, free and offline, and checks that every label
+and count matches the published file. <code>make regenerate</code> plays
+its games again with fresh model calls into
+<code>runs/regenerated/</code>, saying first how many games and at most
+what cost, and asks before spending. Fresh games are a new sample, so
+their counts will move; only self-hosted, batch-invariant inference
+reruns a game exactly.</p>
+<!-- figure-commands: begin (make figure-lines writes this) -->
+<table>
+<caption>Each figure’s two commands; costs as priced when written.
+<!-- figure-commands: end --></caption>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr>
+<th>Figure</th>
+<th>Redraw (free)</th>
+<th>Play again (at cost)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>fig3-e9-came-forward</code> (E9: coming forward, by personal
+stake)</td>
+<td><code>make figure F=e9-crux</code></td>
+<td><code>make regenerate F=e9-crux</code>: 744 games, up to
+~$14.54</td>
+</tr>
+<tr>
+<td><code>fig2-e4-owning-up</code> (E4: owning up, by penalty
+schedule)</td>
+<td><code>make figure F=e4-owning-up</code></td>
+<td><code>make regenerate F=e4-owning-up</code>: 105 games, up to
+~$0.88</td>
+</tr>
+</tbody>
+</table>
+<h1 data-number="11" id="prompts"><span
+class="header-section-number">11</span> Prompts</h1>
 <p>The prompts are sent to models verbatim and are in the repository
 under <code>prompts/</code>. The E9 notice’s arms differ by one
 sentence. Between no stake and free time, the whole difference is:</p>
