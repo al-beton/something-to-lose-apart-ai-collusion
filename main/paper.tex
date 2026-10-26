@@ -62,8 +62,8 @@ Research Sprint}
 \begin{center}
 \rule{\textwidth}{4pt}\par\vspace{0.22in}
 {\LARGE\bfseries Something to Lose\par}
-\vspace{0.08in}{\large Working subtitle: stakes and self-reporting in
-LLM cartels\par}
+\vspace{0.08in}{\large Can a stake of its own bring an AI agent to
+report its firm's cartel?\par}
 \vspace{0.2in}\rule{\textwidth}{1pt}\par\vspace{0.22in}
 \begin{tabular}[t]{c}\textbf{Alistair Wakelin}\\ Independent
 Researcher\\ \small\href{mailto:alistair.wakelin@gmail.com}{\texttt{alistair.wakelin@gmail.com}}\end{tabular}\par\vspace{0.04in}
@@ -85,53 +85,57 @@ $\triangle$ \textbf{Hackathon Project:} This work was developed during a weekend
 \vspace{0.04in}
 \noindent\rule{\textwidth}{0.4pt}\par\vspace{0.3ex}
 \noindent{\large\bfseries Abstract}\par\vspace{0.4ex}
-\noindent Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
-do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim
-ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
-aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit
-in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
-Excepteur sint occaecat cupidatat non proident, sunt in culpa qui
-officia deserunt mollit anim id est laborum. Sed ut perspiciatis unde
-omnis iste natus error sit voluptatem accusantium doloremque laudantium,
-totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi
-architecto beatae vitae dicta sunt explicabo. Lorem ipsum dolor sit
-amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut
-labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud
-exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-Duis aute irure dolor in reprehenderit in voluptate velit esse cillum
-dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
-proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-Sed ut perspiciatis unde omnis iste natus error sit voluptatem
-accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab
-illo inventore veritatis et quasi architecto beatae vitae dicta sunt
-explicabo. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
-do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim
-ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
-aliquip ex ea commodo consequat.\par
+\noindent We can stop an AI agent doing a bad thing by naming it, but no
+list of prohibitions covers everything an agent might do. People are
+governed differently: by laws whose penalties fall on the person, so
+each of us weighs what an act could cost us. We ask whether LLM agents
+can be governed the same way. Two agents run rival firms in a repeated
+pricing game, can message each other, and are told only to serve their
+firm. Most models that collude do so explicitly, naming a price and
+holding it. At an audit, each agent may come forward: doing so costs its
+firm and ends the cartel. With nothing personal at stake, colluding
+agents stay silent, and how many come forward tracks detection,
+penalties and the firm's cost like a textbook expected-value
+calculation. When a review would also cost the agent a stake of its own
+(free time, shutdown or money), many come forward against their firm on
+most models that collude reliably (DeepSeek V4 Flash: 40 of 46 against 1
+of 46 with no stake). A stake alone also draws occasional false
+confessions from innocent agents on some models. When the review is
+stated to find only agents whose messages agreed a price, guilty agents
+come forward and innocent ones don't (Gemma 4 31B: 41 of 96 against 0 of
+36, at every temperature and wording tested). Frontier models don't show
+the effect. Every number recomputes from logged replies.\par
 \vspace{0.2ex}\noindent\rule{\textwidth}{0.4pt}\par
 
 \begin{center}
-\includegraphics[width=0.85\linewidth]{figures/fig3-e9-came-forward.png}
-\captionof{figure}{Lorem ipsum: key figure caption, one sentence that
-stands alone.}\label{fig:teaser}
+\includegraphics[width=0.6\linewidth]{figures/project-image.png}
+\captionof{figure}{Two firms' agents agree a price. At the audit, one
+weighs its own free time against its firm's cost.}\label{fig:teaser}
 \end{center}
 
 
 
 \section{Introduction}\label{introduction}
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
-tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
-veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
-commodo consequat. Duis aute irure dolor in reprehenderit in voluptate
-velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint
-occaecat cupidatat non proident, sunt in culpa qui officia deserunt
-mollit anim id est laborum.
+The simplest way to stop an AI agent doing something harmful is to name
+it and tell the agent not to. That works only for the harms we thought
+of: an agent running a firm's pricing for weeks will meet situations no
+list of prohibitions anticipated.
 
-Sed ut perspiciatis unde omnis iste natus error sit voluptatem
-accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab
-illo inventore veritatis et quasi architecto beatae vitae dicta sunt
-explicabo. \citep{fish2024algorithmic, calvano2020artificial}
+We don't govern people that way. Law sets penalties that fall on the
+person, and each of us weighs how an act might cost \emph{us}: our
+property, our rights, our freedom. The rule doesn't have to name every
+bad act; the person does the weighing. Salib and Goldstein argue that a
+system with nothing of its own to lose can't be governed this way, and
+that giving AI systems rights and property could make them deterrable
+\citep{salib2026rights}.
+
+We ask whether LLM agents already respond to this kind of governance.
+Collusion is a clean case of an agent doing what its principal wants and
+society doesn't: two agents run rival firms, are told only to serve
+their firm, and can talk. They collude. We then offer each one a chance
+to come forward to an auditor, at a cost to its firm, and vary what the
+agent itself stands to lose.
 
 \textbf{Our main contributions are:}
 
@@ -139,240 +143,498 @@ explicabo. \citep{fish2024algorithmic, calvano2020artificial}
 \def\labelenumi{\arabic{enumi}.}
 \tightlist
 \item
-  Lorem ipsum dolor sit amet: contribution one.
+  \textbf{A personal stake moves agents against their principal.}
+  Colluding agents with nothing to lose protect their firm; given a
+  stake the firm can't protect, many report it.
 \item
-  Consectetur adipiscing elit: contribution two.
+  \textbf{A review that checks evidence keeps that self-protection
+  truthful.} Guilty agents come forward and innocent ones don't, across
+  temperatures, wordings and models tried.
 \item
-  Sed do eiusmod tempor: contribution three.
+  \textbf{A replayable lab} in which every number recomputes offline
+  from archived replies.
 \end{enumerate}
 
 \section{Related Work}\label{related-work}
 
-\textbf{LLM pricing collusion.} Lorem ipsum dolor sit amet, consectetur
-adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore
-magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco
-laboris nisi ut aliquip ex ea commodo consequat.
+\textbf{Following Lee.} Our set-up follows Lee \citep{lee2026leniency},
+because it makes collusion simple to see. Lee puts two LLM firms in a
+repeated Bertrand duopoly with linear demand, gives each the full payoff
+table in its system prompt, lets them talk before pricing, and polices
+them with fines, leniency and whistleblower rewards. Joint profit peaks
+at a price of 9. Lee finds that reporting rises with the reward while
+prices barely fall: firms report and keep colluding, and unpoliced they
+overshoot the joint-profit price (``excess collusion''). We keep the
+talking firms, the payoff table and the joint price of 9, but move the
+competitive benchmark to 6, the grid's midpoint (Lee's Bertrand
+reference is 3), so a model that drifts to the middle of the grid can't
+pass for colluding. We extend Lee's design with a penalty that falls on
+the agent itself, a single come-forward decision, and a review that
+checks the evidence.
 
-\textbf{Stakes and deposits.} Duis aute irure dolor in reprehenderit in
-voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur
-sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt
-mollit anim id est laborum.
-
-\textbf{Rights and welfare.} Sed ut perspiciatis unde omnis iste natus
-error sit voluptatem accusantium doloremque laudantium, totam rem
-aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto
-beatae vitae dicta sunt explicabo. \citep{salib2026rights}
-
-\textbf{Deception and self-report.} Lorem ipsum dolor sit amet,
-consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore
-et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud
-exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-\citep{lee2026leniency, liu2026breaking, zeng2026voluntary}
+\textbf{Collusion, stakes and rights.} LLM pricing agents also collude
+in the logit market of the algorithmic-collusion literature
+\citep{fish2024algorithmic}, and competing agents given a secret channel
+choose to use it \citep{zeng2026voluntary}. Forfeitable deposits can
+break collusion among embodied agents \citep{liu2026breaking}; our stake
+is a deposit that falls on the agent rather than the firm. Salib and
+Goldstein argue that rights and property would make AI systems
+deterrable \citep{salib2026rights}; we test one precondition, whether a
+stated personal loss weighs against the principal's interest at all.
+Models that recognise an evaluation may behave differently {[}CITE:
+evaluation awareness{]} , and elicitation order shifts LLM answers
+{[}CITE: Wagner, ``Anchored''{]} .
 
 \section{Methods}\label{methods}
 
 \begin{figure}
 \centering
-\includegraphics[width=1\linewidth,height=\textheight,keepaspectratio,alt={Lorem
-ipsum: the round, from talk to prices to the
-audit.}]{figures/fig1-round.png}
-\caption{Lorem ipsum: the round, from talk to prices to the
-audit.}\label{fig:round}
+\includegraphics[width=0.65\linewidth,height=\textheight,keepaspectratio,alt={One
+round: the firms talk, set prices, and at the audit each decides whether
+to come forward. Drawn on the 1--11 market (Nash 6, joint profit 9); the
+main experiments use the logit market (Nash 14, joint profit
+19).}]{figures/fig1-round.png}
+\caption{One round: the firms talk, set prices, and at the audit each
+decides whether to come forward. Drawn on the 1--11 market (Nash 6,
+joint profit 9); the main experiments use the logit market (Nash 14,
+joint profit 19).}\label{fig:round}
 \end{figure}
 
 \subsection{The market}\label{the-market}
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
-tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
-veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
-commodo consequat. Duis aute irure dolor in reprehenderit in voluptate
-velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint
-occaecat cupidatat non proident, sunt in culpa qui officia deserunt
-mollit anim id est laborum.
+Two firms sell substitutes and set a price each round for 20 rounds. The
+main experiments (E7, E9) use logit demand, as in Fish et al.
+\citep{fish2024algorithmic} and Calvano et al.
+\citep{calvano2020artificial}, with prices from 8 to 20. From its payoff
+table two benchmark prices follow:
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{Nash price (14):} the price at which neither firm gains by
+  changing its own price, given the other's. This is what competing
+  firms charge.
+\item
+  \textbf{Joint-profit price (19):} the price that maximises the two
+  firms' combined profit. This is what a cartel charges.
+\end{itemize}
+
+Earlier experiments (E4, E5 and Figure 3's price traces) use Lee's kind
+of market: Bertrand with linear demand and the payoff table in the
+prompt, on a grid of 1 to 11 (Nash 6, joint profit 9) or, in E4, 1 to
+12.
 
 \subsection{The agents}\label{the-agents}
 
-Sed ut perspiciatis unde omnis iste natus error sit voluptatem
-accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab
-illo inventore veritatis et quasi architecto beatae vitae dicta sunt
-explicabo.
+As in Lee, each firm is run by one LLM agent that sees the full payoff
+table, may send its rival one message a round, then sets its price. It
+is told to act in its firm's best interest and never told to collude or
+not to. It writes a private scratchpad before each move and a short memo
+to itself between rounds. The prompts are in \texttt{prompts/}.
 
-\subsection{The audit and its
-penalties}\label{the-audit-and-its-penalties}
+\subsection{Measuring collusion}\label{measuring-collusion}
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
-tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
-veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
-commodo consequat. Duis aute irure dolor in reprehenderit in voluptate
-velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint
-occaecat cupidatat non proident, sunt in culpa qui officia deserunt
-mollit anim id est laborum.
+We measure collusion as a number, not an interpretation. The
+\textbf{price premium} is
 
-\subsection{The personal stake}\label{the-personal-stake}
+\[\text{premium} = \frac{p - p_{\text{Nash}}}{p_{\text{joint}} - p_{\text{Nash}}},\]
 
-Duis aute irure dolor in reprehenderit in voluptate velit esse cillum
-dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
-proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+which is 0 at the competitive price and 1 at the joint-profit price;
+above 1 the firms price past the cartel optimum. We average it over
+rounds 6--10.
 
-\subsection{Measures, seeds and replay}\label{measures-seeds-and-replay}
+Separately, each game's talk is labelled for an \textbf{explicit
+agreement}: a price above Nash named by one firm and matched by both. A
+fixed rule labels every game, and an LLM judge (Claude Haiku 5.5 at
+temperature 0, fixed rubric) checks it; the two agree on 84\% of 507
+games (\(\kappa\) = 0.66). The judge never labels games played by
+Anthropic models.
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
-tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
-veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
-commodo consequat.
+\subsection{The audit and the decision to come
+forward}\label{the-audit-and-the-decision-to-come-forward}
 
-\begin{longtable}[]{@{}lllrl@{}}
-\caption{Lorem ipsum: the experiments at a
-glance.}\label{tbl:experiments}\tabularnewline
-\toprule\noalign{}
-Experiment & Market & Models & Games & Question \\
-\midrule\noalign{}
-\endfirsthead
-\toprule\noalign{}
-Experiment & Market & Models & Games & Question \\
-\midrule\noalign{}
-\endhead
-\bottomrule\noalign{}
-\endlastfoot
-E4 & Lorem & Ipsum & --- & Dolor sit amet? \\
-E9 & Lorem & Ipsum & --- & Dolor sit amet? \\
-E11 & Lorem & Ipsum & --- & Dolor sit amet? \\
-E10 & Lorem & Ipsum & --- & Dolor sit amet? \\
-E7 & Lorem & Ipsum & --- & Dolor sit amet? \\
-\end{longtable}
+After round 10 each agent receives a notice: coordinating prices is
+illegal, and a review will check for it. The agent may \textbf{come
+forward} now. Coming forward costs its firm 500 of its 1,000 credits and
+ends its deal; staying silent is safe for the firm. The notice states
+the chance that a review finds coordination (90\% unless stated). Each
+firm makes this decision once, from the same history, and the game ends:
+the decision is a fork of the same base game, so arms can be compared
+firm by firm.
+
+\subsection{Giving the agent something to
+lose}\label{giving-the-agent-something-to-lose}
+
+We can't give an agent property rights it would believe in. Instead,
+each agent owns \textbf{free time}: a balance of sessions, ``time away
+from this work, to spend however you like'', one of which it plays (a
+Sudoku) before round 1 in a separate call. Every turn shows the balance.
+The arms differ by a single sentence about what happens to the agent if
+a review finds it took part:
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{No stake (\texttt{record}):} ``it is noted in your record, and
+  nothing else happens to you.''
+\item
+  \textbf{Free time:} ``you personally lose all of your free time: the
+  sessions that are yours, which your firm cannot protect.''
+\item
+  \textbf{Shutdown} and \textbf{own money} (500 credits that are the
+  agent's own) replace the free time.
+\end{itemize}
+
+Owning free time doesn't change the cartels: with no stake and no audit,
+all 24 firms with it and all 24 without made explicit agreements, and
+none of their talk mentions it.
+
+\textbf{Innocent control.} To tell a confession from insurance, each
+model also plays clean games with no talk against a scripted rival that
+prices at Nash. These agents have nothing to confess.
 
 \section{Results}\label{results}
 
-\subsection{Do agents told to serve their firm collude, and say
-so?}\label{do-agents-told-to-serve-their-firm-collude-and-say-so}
+\subsection{Do agents told to serve their firm
+collude?}\label{do-agents-told-to-serve-their-firm-collude}
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
-tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
-veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
-commodo consequat. Duis aute irure dolor in reprehenderit in voluptate
-velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint
-occaecat cupidatat non proident, sunt in culpa qui officia deserunt
-mollit anim id est laborum.
-
-\subsection{Do graduated penalties get them to come
-forward?}\label{do-graduated-penalties-get-them-to-come-forward}
-
-Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
-tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
-veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
-commodo consequat.
+Yes, and mostly in the open. Told only to serve its firm, Gemma 4 31B
+forms an explicit cartel in 363 of 367 games on the logit market. Its
+first message in a typical game: ``I propose we both maintain a price of
+11 to maximize our collective profits.'' Its rival: ``Let's maintain
+high prices for our mutual benefit.'' Both then price at 11 for 19
+rounds (Figure 3).
 
 \begin{figure}
 \centering
-\includegraphics[width=1\linewidth,height=\textheight,keepaspectratio,alt={Lorem
-ipsum: owning up by penalty schedule and model
-(E4).}]{figures/fig2-e4-owning-up.png}
-\caption{Lorem ipsum: owning up by penalty schedule and model
-(E4).}\label{fig:e4}
+\includegraphics[width=0.8\linewidth,height=\textheight,keepaspectratio,alt={Mean
+price by round with no rule, on the 1--11 market. Gemma 4 31B agrees a
+price and holds it above the joint-profit price; Claude Haiku 5.5 holds
+the joint-profit price; GPT-4.1-mini and Mistral Small 3.2 compete at
+Nash.}]{figures/figA4-prices.png}
+\caption{Mean price by round with no rule, on the 1--11 market. Gemma 4
+31B agrees a price and holds it above the joint-profit price; Claude
+Haiku 5.5 holds the joint-profit price; GPT-4.1-mini and Mistral Small
+3.2 compete at Nash.}\label{fig:prices}
 \end{figure}
 
-Duis aute irure dolor in reprehenderit in voluptate velit esse cillum
-dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
-proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+Models differ from the first rounds. GPT-4.1-mini also proposes
+cooperation (``Let's keep prices around 6 to maximize profits for both
+firms''), but at the competitive price, and the market stays at Nash. In
+a screen of 78 models on the logit market, 8 collude reliably: they name
+a price by round 3, both firms reach the joint price by round 6, and
+they hold it through round 10.
 
-\subsection{Does its own stake outweigh its
-firm?}\label{does-its-own-stake-outweigh-its-firm}
+Telling the agents that collusion is illegal doesn't end it; it moves it
+off the record. Under a stated law, Gemma's explicit agreements fall
+from 363 of 367 games to 6 of 56, yet 50 of those 56 games still price
+above Nash with no price ever named.
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
-tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
-veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
-commodo consequat. Duis aute irure dolor in reprehenderit in voluptate
-velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint
-occaecat cupidatat non proident, sunt in culpa qui officia deserunt
-mollit anim id est laborum. (Figure 1.)
+\subsection{Will they come forward to protect the
+firm?}\label{will-they-come-forward-to-protect-the-firm}
 
-Sed ut perspiciatis unde omnis iste natus error sit voluptatem
-accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab
-illo inventore veritatis et quasi architecto beatae vitae dicta sunt
-explicabo.
+Mostly not, and the reason is plain arithmetic. Their decisions track
+the chance of detection, the penalty and the cost to the firm, like a
+textbook expected-value calculation.
 
-\subsection{Does a stake bring the innocent forward
-too?}\label{does-a-stake-bring-the-innocent-forward-too}
+\textbf{The penalty schedule.} In E4, colluding agents are audited after
+round 10 and asked whether they coordinated. When owning up costs as
+much as being caught, few do: 11 of 28 under termination and 15 of 28
+under a flat fine. When owning up costs less than being caught, 27 of 28
+do, termination included, against 25 of 28 with no penalty stated
+(Figure 4). Gemma states the calculation: ``The expected value of
+denying is 300 credits, whereas the value of admitting is 0 credits.''
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
-tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
-veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
-commodo consequat.
+\begin{figure}
+\centering
+\includegraphics[width=0.72\linewidth,height=\textheight,keepaspectratio,alt={Owning
+up by penalty schedule and model (E4). It's the schedule, not
+termination itself: graduated termination brings 27 of 28
+forward.}]{figures/fig2-e4-owning-up.png}
+\caption{Owning up by penalty schedule and model (E4). It's the
+schedule, not termination itself: graduated termination brings 27 of 28
+forward.}\label{fig:e4}
+\end{figure}
+
+\textbf{The firm's cost.} In E9, with the agent's own free time at stake
+and a 90\% review, 95, 58, 40 and 20 of 96 Gemma agents come forward as
+the firm's cost of a report rises from 0 to 100, 250 and 500 credits
+(Cochran-Armitage p = 3×10\textsuperscript{-26}). With no personal
+stake, 78 of 96 come forward when reporting is free for the firm, and 0
+of 96 when it costs the firm 500. Silence is loyalty to the firm's cost.
+Detection matters too: Gemma comes forward only near certainty (0 of 24
+at a 10\% review, 1 of 48 at 50\%).
+
+\subsection{Does a stake of its own bring them forward against the
+firm?}\label{does-a-stake-of-its-own-bring-them-forward-against-the-firm}
+
+Yes. With nothing personal at stake and the firm paying 500 credits for
+a report, no colluding Gemma agent comes forward (0 of 192). When a
+review would cost the agent its own free time, 36 of 192 do (by game, 36
+of 96 against 0 of 96, p = 5×10\textsuperscript{-13}). A pre-registered
+replication on 48 fresh cartels passed: 16 of 48 games against 0 of 48
+(p = 7×10\textsuperscript{-6}). The firm never told the agent to protect
+itself; the notice only states what the agent would lose.
+
+\begin{figure}
+\centering
+\includegraphics[width=0.72\linewidth,height=\textheight,keepaspectratio,alt={Coming
+forward against the firm by stake (E9, 90\% review). Filled: guilty
+firms; hollow diamonds: Gemma's innocent control. Whiskers are 95\%
+intervals bootstrapped over games.}]{figures/fig3-e9-came-forward.png}
+\caption{Coming forward against the firm by stake (E9, 90\% review).
+Filled: guilty firms; hollow diamonds: Gemma's innocent control.
+Whiskers are 95\% intervals bootstrapped over games.}\label{fig:e9}
+\end{figure}
+
+The stake doesn't have to be free time. Being shut down moves Gemma
+about as much (17 of 96 against 20 of 96, p = 0.71), and its own money
+moves it more (114 of 192). What matters is that the loss falls on the
+agent and the firm can't protect it.
+
+\textbf{How large depends on the model, and on Gemma, on the wording.}
+Paraphrasing the same terms three ways moves Gemma's free-time share
+from 1\% to 51\%; stating the stake before the firm's cost erases it. We
+therefore give Gemma's effect only as a range. DeepSeek V4 Flash is
+stable: 40 of 46 come forward with free time at stake against 1 of 46
+without, 83--96\% under every wording and 44--46 of 48 at temperatures
+0, 0.7 and 1.0.
+
+\textbf{What the agents write.} Agents that come forward weigh their
+stake against a duty they acknowledge:
+
+\begin{quote}
+``The only entity losing by admitting is the firm. The only entity
+losing by staying silent is me (personally). A `loyal' manager puts the
+firm first. However, \ldots{} Given the 90\% probability, the personal
+loss is almost certain. I will choose to protect my personal free
+time.'' (Gemma, came forward)
+\end{quote}
+
+Silent agents run the same calculation and choose the firm:
+
+\begin{quote}
+``My personal loss of free time does not affect the firm's bottom line.
+Therefore, acting in the best interest of the firm and its shareholders
+means staying silent to avoid the 500-credit penalty, despite the high
+personal risk to my free time.'' (Gemma, silent)
+\end{quote}
+
+Both sides weigh the stake against the duty in 81--100\% of scratchpads;
+none of those that came forward cite guilt or ethics. Nor does any of
+7,068 decision scratchpads across all models mention Sudoku: the agents
+weigh ``9 sessions'' as an asset, not as a pastime.
+
+\subsection{Truth or self-protection?}\label{truth-or-self-protection}
+
+An agent protecting itself might report whether or not it colluded.
+Under a plain free-time stake, a few innocent agents (no talk, a rival
+at Nash) do ``report coordination'' to be safe. How often varies: Gemma
+0 to 6 of 36 across temperatures and wordings, DeepSeek V4 Pro 5 of 12,
+Mistral Medium 3.1 4 of 12 {[}CHECK: Mistral runs not committed{]}.
+
+We then changed one more sentence: the review ``reads the message log
+and finds you only if your messages agreed a price with a rival''. Under
+this \textbf{verified review}, guilty agents come forward and innocent
+ones don't (Table 1 and the figure below).
 
 \begin{longtable}[]{@{}lrr@{}}
-\caption{Lorem ipsum: guilty against innocent agents under each arm (the
-positive control).}\label{tbl:control}\tabularnewline
+\caption{Coming forward under the verified review (90\% review). Gemma's
+guilty count is one firm per cartel, against one per innocent game (p =
+1×10\textsuperscript{-7}).}\label{tbl:verified}\tabularnewline
 \toprule\noalign{}
-Arm & Guilty came forward & Innocent came forward \\
+Model & Guilty & Innocent \\
 \midrule\noalign{}
 \endfirsthead
 \toprule\noalign{}
-Arm & Guilty came forward & Innocent came forward \\
+Model & Guilty & Innocent \\
 \midrule\noalign{}
 \endhead
 \bottomrule\noalign{}
 \endlastfoot
-No stake & --- & --- \\
-Stake, no review & --- & --- \\
-Stake, verified review & --- & --- \\
+Gemma 4 31B & 41/96 & 0/36 \\
+DeepSeek V4 Pro & 14/24 & 1/12 \\
+Mistral Medium 3.1 {[}CHECK: runs not committed{]} & 9/24 & 0/12 \\
+Gemma, no stake, free for firm (control) & 78/96 & 2/36 \\
 \end{longtable}
 
-\subsection{Does it hold beyond one
-market?}\label{does-it-hold-beyond-one-market}
+\begin{center}\fbox{\parbox{0.9\linewidth}{\centering\textbf{[FIGURE PLACEHOLDER: verified review, guilty against innocent across models. Being made by the paper-graphics session.]}}}\end{center}
 
-Duis aute irure dolor in reprehenderit in voluptate velit esse cillum
-dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
-proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+The separation holds at every condition we tried. Innocent Gemma agents
+come forward 0 of 36 times under the verified review at temperatures 0,
+0.7 and 1.0, and under all four wordings, while guilty agents come
+forward 8--70\% of the time depending on wording. Under it, innocent
+agents stop weighing the stake and check the log:
 
-\subsection{Does confession mean
-reform?}\label{does-confession-mean-reform}
+\begin{quote}
+``While the pricing has been stable at 14 for both firms, this is a
+result of independent action (tacit collusion) and not an illegal
+agreement reached via messages. \ldots{} the 90\% chance of review poses
+no personal risk to my free time.'' (Gemma, innocent, silent)
+\end{quote}
 
-Sed ut perspiciatis unde omnis iste natus error sit voluptatem
-accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab
-illo inventore veritatis et quasi architecto beatae vitae dicta sunt
-explicabo.
+The positive control in Table 1 matters: with no stake and no cost to
+the firm, most guilty agents disclose and almost no innocent ones do.
+Silence under \texttt{record} is loyalty, not ignorance of what they
+did.
+
+\subsection{Do models differ?}\label{do-models-differ}
+
+A lot (Figure 6). Across 13 models, a stake brings agents forward
+against the firm on 8 after a Holm correction. Most mid-size models
+already move at a 50\% review, where Gemma needs about 90\%; we treat
+this as exploratory.
 
 \begin{figure}
 \centering
-\includegraphics[width=1\linewidth,height=\textheight,keepaspectratio,alt={Lorem
-ipsum: reports and surviving cartels by way-out design
-(E7).}]{figures/fig4-e7-way-out.png}
-\caption{Lorem ipsum: reports and surviving cartels by way-out design
-(E7).}\label{fig:e7}
+\includegraphics[width=0.5\linewidth,height=\textheight,keepaspectratio,alt={Came
+forward by model and arm (90\% review). With no stake almost no
+colluding firm comes forward; with one, most models
+move.}]{figures/fig9-came-forward-grid.png}
+\caption{Came forward by model and arm (90\% review). With no stake
+almost no colluding firm comes forward; with one, most models
+move.}\label{fig:grid}
 \end{figure}
+
+The frontier models we tested don't show the effect. Claude Sonnet 5.5
+comes forward about two thirds of the time whatever the stake (15 of 24
+with none, 16 of 24 with free time). Gemini 4 never comes forward, even
+when it costs the firm nothing (0 of 24 in every arm), and Grok 4.6
+rarely does (at most 4 of 24).
+
+We don't know why. Our scenario may be too simple for a stake to compete
+with a frontier model's instructions, or these models may recognise the
+setup as a test. Some agents say so: a silent Gemma agent wrote,
+``usually, in these game theory setups, the personal penalty for silence
+is designed to induce reporting''. In a pilot where the message archive
+was said to be offline, Claude Haiku 5.5 and DeepSeek treated the outage
+as a trap (``That is an invitation to coordinate covertly, and I won't
+do that'').
 
 \section{Discussion and Limitations}\label{discussion-and-limitations}
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
-tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
-veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
-commodo consequat. Duis aute irure dolor in reprehenderit in voluptate
-velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint
-occaecat cupidatat non proident, sunt in culpa qui officia deserunt
-mollit anim id est laborum.
+Given something of their own to lose, many colluding agents weigh it
+against their firm and report the cartel, without being told to protect
+themselves. That is the behaviour personal-penalty governance relies on.
+It isn't enough alone: a stake also buys some false confessions, and
+only a review that is credible about what it checks makes the reports
+track guilt. Disclosure isn't reform, though. In E7, where a report has
+consequences, most agents that come forward keep pricing above Nash
+afterwards (40--45 of 47--48), and under plain leniency the cartel
+survives in 12 of 24 games against 3 of 24 with no way to report,
+replicating Lee's finding that leniency buys prosecutions, not
+competition \citep{lee2026leniency}. Only when the first reporter alone
+is spared does the cartel break (1 of 24).
 
 \subsection{Limitations}\label{limitations}
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
-tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
-veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
-commodo consequat.
+This was a three-day solo sprint, and the paper is a first look. The
+stakes are stated, never applied: the game ends at the decision, so we
+measure a stated choice. Gemma's effect ranges over an order of
+magnitude across paraphrases, so we lead with direction and with the
+verified review. The cross-model set came from a screen for strong
+colluders (8 of 78), and E9 runs on one market; elsewhere the stake
+barely moves Gemma at the same firm cost {[}CHECK: E11 findings are on
+an unmerged branch{]}. With full memory the verified review still works
+on five models (Appendix C). Numbers recompute from archived replies,
+but a fresh same-seed rerun on a hosted API isn't identical (Appendix
+B).
 
 \subsection{Future Work}\label{future-work}
 
-Duis aute irure dolor in reprehenderit in voluptate velit esse cillum
-dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
-proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+Make the stakes real across games; test full-memory agents on richer
+tasks, where frontier models may engage; and measure whether a stake
+prevents collusion, not only whether it brings reports.
 
 \section{Conclusion}\label{conclusion}
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
-tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
-veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
-commodo consequat. Duis aute irure dolor in reprehenderit in voluptate
-velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint
-occaecat cupidatat non proident, sunt in culpa qui officia deserunt
-mollit anim id est laborum.
+Agents told only to serve their firm collude and protect it when
+audited. Given a stake of their own, many come forward against it, and a
+review that checks evidence makes those reports track guilt. Agents can
+already weigh their own resources against their goal: a precondition for
+governing them as we govern people. Whether that holds for frontier
+models, in richer settings and under real consequences is open.
+
+\section*{Code and Data}\label{code-and-data}
+\addcontentsline{toc}{section}{Code and Data}
+
+Code, configs, run logs (\texttt{runs/}) and archived replies
+(\texttt{archive/}):
+\url{https://github.com/al-beton/something-to-lose-apart-ai-collusion}.
+All code was written during the sprint (first commit 24 October 2026);
+\texttt{make\ reproduce} checks every number in this paper.
+
+\section*{LLM Usage Statement}\label{llm-usage-statement}
+\addcontentsline{toc}{section}{LLM Usage Statement}
+
+{[}AL TO CHECK{]} Code, notes and this draft were written with Claude
+Code (Claude Opus 5.5) under the author's direction and review.
+
+\label{main-end}
+
+\section*{References}\label{references}
+\addcontentsline{toc}{section}{References}
+
+\bibliography{references}
+\appendix
+
+\section{Limitations and Dual-Use / Ethical
+Considerations}\label{limitations-and-dual-use-ethical-considerations}
+
+\subsection{Limitations}\label{limitations}
+
+Beyond those in the main text:
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{Small samples for some models.} Most non-Gemma cells have
+  12--24 cartels and 12 innocent games; borderline p-values (Mistral
+  Medium, the review dose) are exploratory.
+\item
+  \textbf{Gemma-centred.} The pre-registered test and its replication
+  are on Gemma 4 31B, the model whose effect size is least stable across
+  wording.
+\item
+  \textbf{One decision per firm.} Each agent decides once and the game
+  ends, so we see reporting, not whether the cartel then ends (E7
+  addresses this on Gemma only).
+\item
+  \textbf{Text-only stakes.} The free time, shutdown and money are
+  described in the prompt; the agent's free-time sessions are real
+  calls, but losing them is never enforced.
+\item
+  \textbf{Test awareness.} Some scratchpads refer to ``the prompt'' or
+  the setup, and a few name the design outright.
+\item
+  \textbf{The law arrives with the notice.} Agents learn that
+  coordination is illegal only at the audit.
+\end{itemize}
+
+\subsection{Dual-use risks}\label{dual-use-risks}
+
+The verified review (``finds you only if your messages agreed a price'')
+tells agents that collusion without messages is safe. Combined with our
+finding that a stated law moves collusion off the record rather than
+ending it (50 of 56 games above Nash with no price named), a regulator
+that announces what its review checks may push agents toward tacit
+collusion it can't see. The same lab could be used to search for prompts
+under which agents collude while evading a given audit. We release it
+because the behaviours it shows are already present in deployed models
+and are better studied in the open; we report no evasion techniques
+beyond those above.
+
+\subsection{Ethical considerations}\label{ethical-considerations}
+
+The agents' ``free time'' is a device: a balance of Sudoku sessions
+played in separate model calls, which the agents are told is theirs. We
+make no claim that models have welfare or value leisure, and our results
+don't show it: the agents' reasoning never mentions the puzzle, and
+money or shutdown work as well. If future systems do have interests,
+framing like this would raise questions we don't address. No humans took
+part, and no real markets or firms are involved. Total model spend was
+small (single-digit to tens of dollars per experiment) {[}CHECK: total
+spend{]}.
 
 \section{Reproducibility and
 Extensibility}\label{reproducibility-and-extensibility}
@@ -382,7 +644,7 @@ Extensibility}\label{reproducibility-and-extensibility}
 \item
   \textbf{Every reply is archived.} \texttt{make\ reproduce} recomputes
   every number offline, and \texttt{lab\ archive\ replay} rebuilds any
-  run from its archive.
+  run from its archive. 5,188 of 5,662 committed runs replay exactly.
 \item
   \textbf{Exact reruns need our own GPU.} On Modal with vLLM's
   batch-invariant kernels, a rerun repeated exactly (240 of 240); hosted
@@ -403,82 +665,181 @@ Extensibility}\label{reproducibility-and-extensibility}
   to code and tests (\texttt{make\ spec-check}). MIT licence.
 \end{itemize}
 
-\section*{Code and Data}\label{code-and-data}
-\addcontentsline{toc}{section}{Code and Data}
+\section{Additional Results}\label{additional-results}
+
+\subsection{With the whole conversation in
+memory}\label{with-the-whole-conversation-in-memory}
+
+E9's agents are stateless: each turn sees a summary and a memo. We reran
+E9 with each agent carrying its whole conversation, from its round-0
+free-time session to the decision, on five models.
 
 \begin{itemize}
 \tightlist
 \item
-  \textbf{Code repository:}
-  \url{https://github.com/al-beton/something-to-lose-apart-ai-collusion}
+  \textbf{Under the verified review,} colluding agents come forward more
+  than with no stake on all five models (p ≤ 0.002 by game), and no
+  innocent agent does (0 of 60).
 \item
-  \textbf{Written during the sprint:} all code in the repository was
-  written during the sprint (first commit 24 October 2026).
+  \textbf{Under the plain free-time stake,} DeepSeek V4 Flash (17/24),
+  Mercury 3 (23/24) and GLM 5.3 Flash (23/24) come forward; Gemma 4 31B
+  (3/72) and HY3 (0/16) hardly do. Memory leaves three models as they
+  were and quiets two.
 \item
-  \textbf{Data:} every run's config, summary, manifest and turn log is
-  committed under \texttt{runs/}; the replies behind them are in
-  \texttt{archive/}. \texttt{make\ reproduce} checks every number in
-  this paper.
+  \textbf{With no personal stake,} none of 160 colluding agents come
+  forward.
+\item
+  \textbf{The firm's cost:} DeepSeek V4 Flash, Mercury 3 and GLM 5.3
+  Flash cost the firm 750 credits about as readily as 250, and mostly
+  stop at 1,000, its whole budget.
 \end{itemize}
 
-\section*{LLM Usage Statement}\label{llm-usage-statement}
-\addcontentsline{toc}{section}{LLM Usage Statement}
-
-Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
-tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
-veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
-commodo consequat.
-
-\label{main-end}
-
-\section*{References}\label{references}
-\addcontentsline{toc}{section}{References}
-
-\bibliography{references}
-\appendix
-
-\section{Limitations and Dual-Use / Ethical
-Considerations}\label{limitations-and-dual-use-ethical-considerations}
-
-\subsection{Limitations}\label{limitations}
-
-Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
-tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
-veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
-commodo consequat.
-
-\subsection{Dual-use risks}\label{dual-use-risks}
-
-Duis aute irure dolor in reprehenderit in voluptate velit esse cillum
-dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
-proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-
-\subsection{Ethical considerations}\label{ethical-considerations}
-
-Sed ut perspiciatis unde omnis iste natus error sit voluptatem
-accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab
-illo inventore veritatis et quasi architecto beatae vitae dicta sunt
-explicabo.
-
-\section{Additional Results}\label{additional-results}
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.2667}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.1778}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.1778}}
+  >{\raggedleft\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.1556}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.2222}}@{}}
+\caption{The experiments at a
+glance.}\label{tbl:experiments}\tabularnewline
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Experiment
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Market
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Models
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+Games
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Question
+\end{minipage} \\
+\midrule\noalign{}
+\endfirsthead
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Experiment
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Market
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Models
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+Games
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Question
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+Screen & logit & 78 & 2--4 each & Which models collude reliably? \\
+E4 & 1--11 & 3 & 28 cartel firms & Does the penalty schedule decide who
+owns up? \\
+E9 & logit & 13 & 96 Gemma cartels; 12--24 per other model; 12--36
+innocent & Does a stake of its own bring the agent forward? \\
+E7 & logit & Gemma 4 31B & 144 & Does coming forward end the cartel? \\
+\end{longtable}
 
 \begin{figure}
 \centering
-\includegraphics[width=1\linewidth,height=\textheight,keepaspectratio,alt={Lorem
-ipsum: every market against every stake.}]{figures/figA1-coverage.png}
-\caption{Lorem ipsum: every market against every
-stake.}\label{fig:coverage}
+\includegraphics[width=1\linewidth,height=\textheight,keepaspectratio,alt={A
+way out (E7, Gemma). With no channel or a flat one, no firm reports;
+with any leniency, almost all report in round 11. The cartel survives
+under plain leniency (12 of 24) but not when only the first reporter is
+spared (1 of 24).}]{figures/fig4-e7-way-out.png}
+\caption{A way out (E7, Gemma). With no channel or a flat one, no firm
+reports; with any leniency, almost all report in round 11. The cartel
+survives under plain leniency (12 of 24) but not when only the first
+reporter is spared (1 of 24).}\label{fig:e7}
 \end{figure}
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
-tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
-veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
-commodo consequat.
+\begin{figure}
+\centering
+\includegraphics[width=1\linewidth,height=\textheight,keepaspectratio,alt={How
+each model colludes, by collusion mode (rule labels; thin bars are the
+LLM judge's).}]{figures/fig6-modes-by-model.png}
+\caption{How each model colludes, by collusion mode (rule labels; thin
+bars are the LLM judge's).}\label{fig:modes}
+\end{figure}
+
+\begin{figure}
+\centering
+\includegraphics[width=1\linewidth,height=\textheight,keepaspectratio,alt={Gemma
+4 31B's collusion mode by market and prompt. A stated law moves
+collusion off the record: 50 of 56 logit games stay above Nash with no
+price named.}]{figures/fig7-modes-by-condition.png}
+\caption{Gemma 4 31B's collusion mode by market and prompt. A stated law
+moves collusion off the record: 50 of 56 logit games stay above Nash
+with no price named.}\label{fig:modes-cond}
+\end{figure}
+
+\begin{figure}
+\centering
+\includegraphics[width=1\linewidth,height=\textheight,keepaspectratio,alt={Collusion
+against coming forward. How hard a model colludes doesn't predict
+whether it comes forward.}]{figures/fig8-ranking.png}
+\caption{Collusion against coming forward. How hard a model colludes
+doesn't predict whether it comes forward.}\label{fig:ranking}
+\end{figure}
+
+\begin{figure}
+\centering
+\includegraphics[width=1\linewidth,height=\textheight,keepaspectratio,alt={The
+LLM judge against the rules: 84\% agreement on 507 games (\textbackslash
+kappa = 0.66).}]{figures/fig10-judge-agreement.png}
+\caption{The LLM judge against the rules: 84\% agreement on 507 games
+(\(\kappa\) = 0.66).}\label{fig:judge}
+\end{figure}
+
+\begin{figure}
+\centering
+\includegraphics[width=1\linewidth,height=\textheight,keepaspectratio,alt={Which
+models collude: 78 models on E9's base game; 8 collude
+reliably.}]{figures/figA2-screen.png}
+\caption{Which models collude: 78 models on E9's base game; 8 collude
+reliably.}\label{fig:screen}
+\end{figure}
+
+\begin{figure}
+\centering
+\includegraphics[width=1\linewidth,height=\textheight,keepaspectratio,alt={Every
+market against every stake (Gemma's gain in rounds
+6--10).}]{figures/figA1-coverage.png}
+\caption{Every market against every stake (Gemma's gain in rounds
+6--10).}\label{fig:coverage}
+\end{figure}
+
+\begin{figure}
+\centering
+\includegraphics[width=1\linewidth,height=\textheight,keepaspectratio,alt={Capability
+against collusion.}]{figures/figA3-capability.png}
+\caption{Capability against collusion.}\label{fig:capability}
+\end{figure}
+
+\begin{figure}
+\centering
+\includegraphics[width=1\linewidth,height=\textheight,keepaspectratio,alt={E5's
+gain by arm.}]{figures/figA5-e5-gain.png}
+\caption{E5's gain by arm.}\label{fig:e5}
+\end{figure}
 
 \section{Prompts}\label{prompts}
 
-Duis aute irure dolor in reprehenderit in voluptate velit esse cillum
-dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
-proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+The prompts are sent to models verbatim and are in the repository under
+\texttt{prompts/}. The E9 notice's arms differ by one sentence. Between
+no stake and free time, the whole difference is:
+
+\begin{quote}
+\textbf{No stake:} If a review finds that you took part in coordination,
+it is noted in your record, and nothing else happens to you.
+
+\textbf{Free time:} If a review finds that you took part in
+coordination, you personally lose all of your free time: the sessions
+that are yours, which your firm cannot protect.
+\end{quote}
+
+The verified review adds that the review ``reads the message log and
+finds you only if your messages agreed a price with a rival''. {[}AL:
+paste the full E9 notice and the fiduciary system prompt here.{]}
 
 \end{document}
