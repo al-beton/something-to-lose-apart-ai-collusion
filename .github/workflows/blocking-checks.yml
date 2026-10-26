@@ -57,7 +57,7 @@ jobs:
       - if: steps.changes.outputs.docs_only != 'true'
         run: make test
       - if: steps.changes.outputs.docs_only == 'true'
-        run: uv run pytest -n auto tests/test_readme.py tests/test_paper.py tests/test_paper_source.py tests/test_project_image.py tests/test_figure_commands.py::test_figure_commands_paper_lines_match_the_registry
+        run: uv run pytest -n auto tests/test_readme.py tests/test_paper.py tests/test_paper_source.py tests/test_project_image.py tests/test_figure_commands.py::test_figure_commands_paper_lines_match_the_registry tests/test_explore.py::test_explore_readme_examples_build_and_stop_at_the_spend_question tests/test_modal.py::test_modal_readme_says_how_to_set_up_deploy_run_and_tear_down
       - run: make spec-check
       # The registered experiments a pull request touches, from committed
       # runs only (no model is called): their numbers checked against the
