@@ -62,4 +62,11 @@ Due **Monday 26 October 2026, 19:59 HKT**; submit once.
 ## 11. Release
 - [ ] Final PDF from `make paper-pdf` on `main`, at most 25 MB.
 - [ ] The submission form filled from [`form-fields.md`](form-fields.md): title, abstract, PDF, tracks 1 and 3, project image, code URL.
-- [ ] Submit **once** before 19:59 HKT, and check that the confirmation email arrives.
+- [ ] Submit **once** before 19:59 HKT, and check that the confirmation email arrives. The PDF can't be replaced afterwards: to fix it, resubmit (a slightly changed title is fine) or email the PDF to the organiser, on deadline day only.
+- [ ] Fill in the grant-making form that pops up after submitting: the best projects are sent to grant makers.
+
+*From the organisers' logistics call (23 Oct):*
+- The 8-page cap covers the main body only; references and appendices are unlimited.
+- Only the PDF is judged.
+- The report must be followable by a human judge, who may decline to score one they can't follow.
+- Prior work must be disclosed.
