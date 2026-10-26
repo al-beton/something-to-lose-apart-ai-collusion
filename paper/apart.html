@@ -8,18 +8,22 @@
 $for(css)$
 <link rel="stylesheet" href="$css$">
 $endfor$
+$if(times)$$else$<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/aaaakshat/cm-web-fonts@333f55e/font/Serif/cmun-serif.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/aaaakshat/cm-web-fonts@333f55e/font/Typewriter/cmun-typewriter.css">
+$endif$
 $if(math)$
 $math$
 $endif$
 </head>
-<body>
+<body$if(times)$ class="times"$endif$>
 <header>
 <div class="titleblock"><h1 class="title">$title$</h1>$if(subtitle)$<p class="subtitle">$subtitle$</p>$endif$</div>
 <div class="authors">
 $for(author)$
-<div class="author"><strong>$author.name$</strong>$if(author.affiliation)$<br>$author.affiliation$$endif$</div>
+<div class="author"><strong>$author.name$</strong>$if(author.affiliation)$<br>$author.affiliation$$endif$$if(author.email)$<br><a class="mono" href="mailto:$author.email$">$author.email$</a>$endif$</div>
 $endfor$
 </div>
+<p class="repo">Repository: <a class="mono" href="$repo$">$repo-short$</a></p>
 <p class="sprint"><span class="sc">Apart Research</span> · <a href="$sprint-url$">$sprint$</a> · $if(date)$$date$$else$October 2026$endif$</p>
 <div class="hackathon">△ <strong>Hackathon Project:</strong> This work was developed during a weekend hackathon. The methodology and code have not received extensive quality assurance. Claims in this report should be approached with appropriate caution.</div>
 $if(abstract)$

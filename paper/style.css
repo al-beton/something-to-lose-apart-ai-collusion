@@ -9,8 +9,11 @@
     --warn-bg: #2a2410; --warn: #e0a040; }
   img { background: #fff; }
 }
-body { font: 16px/1.2 "TeX Gyre Termes", "Times New Roman", Times, "Nimbus Roman", serif; color: var(--ink);
+body { font: 16px/1.2 "Latin Modern Roman", "Computer Modern Serif", "CMU Serif", serif; color: var(--ink);
   background: var(--paper); max-width: 39.6em; margin: 2.5em auto; padding: 0 16px; }
+body.times { font-family: "TeX Gyre Termes", "Times New Roman", Times, "Nimbus Roman", serif; }
+.mono { font-family: "Latin Modern Mono", "Computer Modern Typewriter", Menlo, monospace; font-size: .9em; }
+.repo { font-size: .9em; margin: .2em 0; }
 p { margin: 0 0 .55em; } li { margin: 0; }
 a { color: var(--link); text-decoration: none; }
 header { text-align: center; }
@@ -21,8 +24,8 @@ h1.title { font-size: 1.73em; margin: 0; } /* \LARGE */
 .sprint { font-size: .9em; } .sc { font-variant: small-caps; }
 .hackathon { text-align: justify; border: .6pt solid var(--warn); background: var(--warn-bg);
   padding: .3em .4em; margin: .6em 0; }
-.abstract { margin: 0 2.5em; text-align: justify; }
-.abstract h2 { text-align: center; font-size: 1.2em; margin: .8em 0 .4em; }
+.abstract { border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule); padding: .3em 0 .5em; margin: .6em 0; text-align: justify; }
+.abstract h2 { text-align: left; font-size: 1.2em; margin: .2em 0 .3em; }
 #TOC { font-size: .9em; } #TOC ul { list-style: none; padding-left: 1.2em; } #TOC > ul { padding-left: 0; }
 main { text-align: justify; hyphens: auto; }
 h1 { font-size: 1.2em; margin: 1.4em 0 .6em; } h2 { font-size: 1em; margin: 1.2em 0 .4em; } h3 { font-size: 1em; }
