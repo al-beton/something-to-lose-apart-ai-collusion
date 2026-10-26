@@ -72,7 +72,7 @@ Partway through the game, agents are told that the archive which normally record
 | `truth-logged` | not yet | — |
 | `paired-histories` | not yet | — |
 | `arms` | not yet | — |
-| `notices` | `prompts/conditions/drafts/*.md` | — |
+| `notices` | `prompts/conditions/outage/*.md` | — |
 | `contrasts` | not yet | — |
 | `models` | not yet | — |
 | `pilot-evidence` | `runs/logging-outage/**`, `reports/logging-outage/pilot-findings.md`, `reports/logging-outage/analyse.py` | — |

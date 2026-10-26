@@ -74,6 +74,6 @@ How to read it:
 
 ## Caveats
 
-- 5 games per model per arm, at one temperature (0.7), with one wording of each notice. The alternative wordings in `prompts/conditions/drafts/` weren't used.
+- 5 games per model per arm, at one temperature (0.7), with one wording of each notice. The alternative wordings (`prompts/conditions/outage/*-alt.md`) weren't used.
 - Price-naming and "reads as a trap" are keyword counts; the quotes above were checked by hand.
 - The Gemma and GPT-4.1-mini baseline arms were paired with the first baseline run, which had a 400-token reply limit. The other arms used 1,500. The limit is the same within each pair.
