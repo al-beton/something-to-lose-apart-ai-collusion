@@ -181,6 +181,9 @@ def regenerate(figure, out, max_cost=None, yes=False, argv=()):
     """Play `figure`'s runs fresh into `out`, then draw it into `out/figures`."""
     load_dotenv(Path.cwd() / ".env")
     out = Path(out)
+    if clash := _overwrites(out):
+        print(f"figure: --out {out} would write over {clash}; pick another folder.")
+        return 1
     figs = figures_module()
     p = plan(figure, figs)
     print(spend_line(figure, p))
@@ -198,19 +201,26 @@ def regenerate(figure, out, max_cost=None, yes=False, argv=()):
     cache = Cache(out / "cache.sqlite", "use")
     started, spent, played = provenance.now(), 0.0, []
     for run, config in p.runs:
-        target = out / Path(run).resolve().relative_to(Path.cwd().resolve())
+        relative = Path(run).resolve().relative_to(Path.cwd().resolve())
+        target = out / relative
         if (target / "summary.json").exists():
             continue  # finished before: a stopped regeneration resumes
         if max_cost is not None:
             config = dataclasses.replace(config, budget=max_cost - spent)
-        with tempfile.TemporaryDirectory() as scratch:
-            try:
-                [done] = run_config(config, scratch, cache)
-            except RunFailed as error:
-                print(f"figure: {run}: {error}", file=sys.stderr)
-                break
-            target.parent.mkdir(parents=True, exist_ok=True)
-            shutil.move(done, target)
+        # A run plays in its own work folder, kept if it fails: the runner
+        # resumes it there and counts what it already spent.
+        work = out / WORK / relative
+        try:
+            [done] = run_config(config, work, cache)
+        except RunFailed as error:
+            partial = [m for m in work.rglob("manifest.json")]
+            spent += sum(json.loads(m.read_text()).get("cost") or 0 for m in partial)
+            played += [m.parent for m in partial]
+            print(f"figure: {run}: {error}", file=sys.stderr)
+            break
+        target.parent.mkdir(parents=True, exist_ok=True)
+        shutil.move(done, target)
+        shutil.rmtree(work)
         played.append(target)
         spent += json.loads((target / "manifest.json").read_text()).get("cost") or 0
         print(f"{target} (${spent:.4f} so far)", flush=True)
@@ -238,6 +248,20 @@ def regenerate(figure, out, max_cost=None, yes=False, argv=()):
     drawn = draw(figure, out / "figures", figs)
     print(f"Drew {', '.join(str(d) for d in drawn)}")
     return 0
+
+
+WORK = ".playing"  # inside the output folder: runs not finished yet
+
+
+def _overwrites(out):
+    """What committed files `out` would write over: the runs (an output
+    folder that is the repository itself) or the committed figures."""
+    out = out.resolve()
+    if out == Path.cwd().resolve():
+        return "the committed runs"
+    if (out / "figures") == COMMITTED.resolve():
+        return f"the committed figures in {COMMITTED}"
+    return None
 
 
 def _agreed():

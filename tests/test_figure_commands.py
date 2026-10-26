@@ -145,3 +145,27 @@ def test_figure_commands_paper_lines_match_the_registry():
     )
     priced = re.sub(r"~\$\d+\.\d\d", "~$0.00", block.strip())
     assert priced == "\n".join(expected)
+
+
+def test_figure_commands_regenerate_never_writes_over_what_is_committed(
+    small_figure,
+):
+    assert FIGURE.regenerate(small_figure.figure, ".", yes=True) == 1
+    assert FIGURE.regenerate(small_figure.figure, FIGURE.HERE, yes=True) == 1
+    assert not (FIGURE.HERE / "figures" / "mock.svg").exists()
+
+
+def test_figure_commands_regenerate_keeps_a_failed_runs_spend(
+    small_figure, monkeypatch, provenance_index
+):
+    def fail(config, out, cache):
+        played = Path(out) / "seed-0"
+        played.mkdir(parents=True)
+        (played / "manifest.json").write_text(json.dumps({"cost": 0.25}))
+        raise FIGURE.RunFailed("spend cap passed")
+
+    monkeypatch.setattr(FIGURE, "run_config", fail)
+    assert FIGURE.regenerate(small_figure.figure, "regen", yes=True) == 1
+    [line] = [json.loads(x) for x in provenance_index.read_text().splitlines()]
+    assert line["spent"] == 0.25
+    assert list(Path("regen", FIGURE.WORK).rglob("manifest.json"))  # resumable
