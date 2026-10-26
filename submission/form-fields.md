@@ -15,19 +15,9 @@ Choose one, and keep it the same as the paper's title (`paper/paper.md`). Resubm
 
 ## Project summary (required)
 
-The guidelines ask for an abstract of 150–250 words, and this field should be the paper's abstract, word for word. The abstract in `paper/paper.md` is still a placeholder. Once it's written, paste it here, and use the drafts below until then. The first sentence is what shows on the card in the entries grid.
+The paper's abstract, word for word (229 words; the guidelines ask for 150–250). Keep it in step with `paper/body.md`. The first sentence is what shows on the card in the entries grid.
 
-**Draft A (about 220 words):**
-
-> Can an AI agent be governed through something it owns? LLM pricing agents form cartels without being told to, and an audit that threatens only their firm does little: with no personal stake, none of 96 colluding Gemma 4 31B firms came forward against their firm.
->
-> We gave each agent something of its own to lose, its free time (sessions of a puzzle it plays), in two-firm pricing games with an audit. With its own free time at stake, 20 of 96 colluding firms came forward, and 16 of 96 in a pre-registered replication on 48 fresh cartels (none without a stake; by game, p = 7×10⁻⁶). But innocent agents that never talked to a rival came forward too (6 of 36): they were buying insurance against a review they expected to misread them. Told that the review reads the messages, 40 of 96 colluding firms came forward and none of 36 innocent ones did. The stake brought colluding agents forward on 8 of 13 models, and in a workplace cover-up (Gemma: 89 of 96 against 37 of 96). Separately, a graduated penalty led 27 of 28 colluders to own up, against 11 of 28 under termination.
->
-> A personal stake can turn a colluding agent into a witness, but only a review that checks the evidence makes its reports track guilt.
-
-**Draft B (about 160 words):**
-
-> Can an AI agent be governed through something it owns? With no personal stake, none of 96 colluding Gemma 4 31B firms came forward against their firm at an audit. We gave each agent something of its own to lose, its free time, in two-firm pricing games. Then 20 of 96 came forward, and a pre-registered replication on 48 fresh cartels held (by game, p = 7×10⁻⁶). Innocent agents came forward too (6 of 36), insuring themselves against a review they expected to misread them. Told that the review reads the messages, 40 of 96 colluding firms and none of 36 innocent ones came forward. The stake worked on 8 of 13 models and in a workplace cover-up, and graduated penalties led 27 of 28 colluders to own up, against 11 of 28 under termination. A personal stake can turn a colluding agent into a witness, but only a checkable review makes its reports track guilt.
+> As AI agents' capabilities increase, so does the set of tasks they can perform more cheaply and effectively than people. We are therefore incentivised to hand them responsibility for tasks of growing complexity and time horizon. On such long, complex tasks, it becomes very difficult to foresee and forbid every harmful thing an agent might do. People given such responsibility, such as a CEO representing an organisation, are governed by more than their contract: society's laws carry penalties that fall on them personally, including ones that can't be measured in money. We investigate whether giving an agent something of its own to lose can influence its decisions in the same way. Two LLM agents run rival firms in a simple repeated pricing game, told to maximise their firm's profit. Without being told not to, many agree to fix prices. Given the chance to come forward at a cost to their firm, colluding agents protect the firm (Gemma 4 31B: 0 of 192 come forward). But when something of their own is at stake, such as the opportunity to spend some free time on a leisure activity, many change their behaviour to protect it, directly against their only goal of increasing their firm's profit (DeepSeek V4 Flash: 40 of 46, against 1 of 46 with nothing at stake). We investigate the behaviour of a variety of models in such situations.
 
 ## PDF report (required, at most 25 MB)
 

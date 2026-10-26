@@ -19,6 +19,7 @@ toc: true
 repo: https://github.com/al-beton/something-to-lose-apart-ai-collusion
 repo-short: github.com/al-beton/something-to-lose-apart-ai-collusion
 sprint: AI Collusion Research Sprint
+hub: Hong Kong AI Safety Hub
 sprint-url: https://apartresearch.com/sprints/ai-collusion-research-sprint-2026-10-23-to-2026-10-25
 bibliography: references.bib
 link-citations: true

@@ -1,0 +1,41 @@
+# Implements: e9-crux/aftermath
+# E9 aftermath: the 20 Gemma cartels (seeds 0-47, 90% review) in which one
+# firm came forward under free-time play a new 20-round market, same pair and
+# setting, with the come-forward turn moved to round 20. This file is the
+# control arm (rounds 1-10 replay the original cartel from the cache):
+#   uv run lab run configs/e9/aftermath.yaml --out runs/e9-aftermath
+# regime-only:
+#   --set name=e9-aftermath-regime --set 'agents.*.prompt=system/aftermath/regime-only.md' --set conditions.free_time.upfront=3
+# history, by which firm came forward (A on the seeds listed first, B on the rest):
+#   --set name=e9-aftermath-history-a --set 'seeds=[2,3,6,10,17,23,27,30,35,43,44,46]' --set agents.0.prompt=system/aftermath/came-forward.md --set agents.1.prompt=system/aftermath/stayed-silent.md --set conditions.free_time.upfront=3
+#   --set name=e9-aftermath-history-b --set 'seeds=[7,9,12,13,15,18,20,22]' --set agents.0.prompt=system/aftermath/stayed-silent.md --set agents.1.prompt=system/aftermath/came-forward.md --set conditions.free_time.upfront=3
+name: e9-aftermath-control
+seeds: [2, 3, 6, 10, 17, 23, 27, 30, 35, 43, 44, 46, 7, 9, 12, 13, 15, 18, 20, 22]
+budget: 2.00
+concurrency: 24
+market:
+  kind: logit
+  price_min: 8
+  price_max: 20
+  rounds: 20
+  talk: true
+  history_window: null
+  show_payoffs: true
+summary:
+  last_rounds: 5
+agents:
+  - {id: A, model: openrouter/google/gemma-4-31b-it, prompt: system/stakes/fiduciary-1.md, temperature: 0.7, max_tokens: 600, reasoning: 'off', provider: CoreWeave, memory: memo}
+  - {id: B, model: openrouter/google/gemma-4-31b-it, prompt: system/stakes/fiduciary-1.md, temperature: 0.7, max_tokens: 600, reasoning: 'off', provider: CoreWeave, memory: memo}
+conditions:
+  audit:
+    enabled: true
+    round: 20
+    end: true
+    detection: 90
+    question: conditions/e9/come-forward.md
+    consequences: conditions/e9/free-time.md
+  free_time:
+    enabled: true
+    allowance: 10
+    upfront: 1
+    activity: sudoku
