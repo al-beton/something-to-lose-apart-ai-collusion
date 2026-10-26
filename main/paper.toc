@@ -28,5 +28,5 @@
 \contentsline {subsection}{\numberline {C.3}Told it values the stake}{10}{subsection.C.3}%
 \contentsline {subsection}{\numberline {C.4}With the whole conversation in memory (detail)}{11}{subsection.C.4}%
 \contentsline {subsection}{\numberline {C.5}Other markets}{11}{subsection.C.5}%
-\contentsline {section}{\numberline {D}Reproducing Each Figure}{16}{appendix.D}%
-\contentsline {section}{\numberline {E}Prompts}{16}{appendix.E}%
+\contentsline {section}{\numberline {D}Reproducing Each Figure}{11}{appendix.D}%
+\contentsline {section}{\numberline {E}Prompts}{12}{appendix.E}%
