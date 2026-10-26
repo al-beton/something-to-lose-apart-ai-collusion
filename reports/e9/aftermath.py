@@ -1,7 +1,7 @@
 # Implements: e9-crux/aftermath, e9-crux/aftermath-measures
 """E9 aftermath: do agents that came forward collude again in a new market?
 
-Reads the three arms under runs/e9 (`e9-aftermath-control`,
+Reads the three arms under runs/e9-aftermath (`e9-aftermath-control`,
 `e9-aftermath-regime`, and `e9-aftermath-history-a` and `-b`, split by which
 firm came forward in the original game) and prints, per arm: the price
 premium over rounds 1-5, 6-10 and 11-20 with a 95% interval bootstrapped over
@@ -111,7 +111,7 @@ def report(games):
     )
 
 
-def main(root="runs/e9"):
+def main(root="runs/e9-aftermath"):
     root, tallies = Path(root), {}
     for name, names in ARMS.items():
         out, *tallies[name] = report(arm(root, names))

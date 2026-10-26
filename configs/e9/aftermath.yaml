@@ -3,7 +3,7 @@
 # firm came forward under free-time play a new 20-round market, same pair and
 # setting, with the come-forward turn moved to round 20. This file is the
 # control arm (rounds 1-10 replay the original cartel from the cache):
-#   uv run lab run configs/e9/aftermath.yaml --out runs/e9
+#   uv run lab run configs/e9/aftermath.yaml --out runs/e9-aftermath
 # regime-only:
 #   --set name=e9-aftermath-regime --set 'agents.*.prompt=system/aftermath/regime-only.md' --set conditions.free_time.upfront=3
 # history, by which firm came forward (A on the seeds listed first, B on the rest):

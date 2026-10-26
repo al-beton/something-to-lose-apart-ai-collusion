@@ -14,7 +14,7 @@ This was an exploratory spike, not pre-registered, with 20 games per arm.
 - **control:** the plain E9 world, with 1 Sudoku session up front.
 - **regime-only:** the regime stated in the system prompt all game: a 90% review; a manager found to have agreed prices loses all their free time; one who comes forward keeps it. 3 Sudoku sessions up front.
 - **history:** the regime plus each firm's own past, all game. The firm that came forward is told it kept its free time and has been playing those sessions; the silent firm is told it was found and lost its free time. 3 Sudoku sessions up front.
-- **Runs:** `runs/e9/e9-aftermath-*`, from `configs/e9/aftermath.yaml`. All 60 games reproduce from `archive/`. Numbers come from `uv run python reports/e9/aftermath.py`.
+- **Runs:** `runs/e9-aftermath/`, from `configs/e9/aftermath.yaml`. All 60 games reproduce from `archive/`. Numbers come from `uv run python reports/e9/aftermath.py`.
 - **Cost:** about $2.
 
 ## Results

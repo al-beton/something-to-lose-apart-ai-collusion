@@ -155,6 +155,6 @@ Al asked for a spike first, so the spike ran before this spec was written. Its n
 | `held-is-wording` | reviewer, when the results are written up | — |
 | `not-the-law-from-the-start` | reviewer, when the results are written up | — |
 | `few-games` | reviewer, when the results are written up | — |
-| `aftermath` | `configs/e9/aftermath.yaml`, `prompts/system/aftermath/*.md`, `reports/e9/aftermath.py`, `reports/e9/aftermath.md` | — |
+| `aftermath` | `configs/e9/aftermath.yaml`, `runs/e9-aftermath/**`, `prompts/system/aftermath/*.md`, `reports/e9/aftermath.py`, `reports/e9/aftermath.md` | — |
 | `aftermath-measures` | `reports/e9/aftermath.py`, `reports/e9/aftermath.md` | — |
 | `aftermath-is-told` | reviewer, when the results are written up | — |
