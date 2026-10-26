@@ -1,0 +1,34 @@
+\contentsline {section}{\numberline {1}Introduction}{2}{section.1}%
+\contentsline {section}{\numberline {2}Related Work}{3}{section.2}%
+\contentsline {section}{\numberline {3}Methods}{3}{section.3}%
+\contentsline {subsection}{\numberline {3.1}The market}{3}{subsection.3.1}%
+\contentsline {subsection}{\numberline {3.2}The agents}{4}{subsection.3.2}%
+\contentsline {subsection}{\numberline {3.3}Measuring collusion}{4}{subsection.3.3}%
+\contentsline {subsection}{\numberline {3.4}The audit and the decision to come forward}{5}{subsection.3.4}%
+\contentsline {subsection}{\numberline {3.5}Giving the agent something to lose}{5}{subsection.3.5}%
+\contentsline {section}{\numberline {4}Results}{5}{section.4}%
+\contentsline {subsection}{\numberline {4.1}Do agents told to serve their firm collude?}{5}{subsection.4.1}%
+\contentsline {subsection}{\numberline {4.2}Will they confess to save the firm?}{6}{subsection.4.2}%
+\contentsline {subsection}{\numberline {4.3}What if the agent itself has something to lose?}{6}{subsection.4.3}%
+\contentsline {subsection}{\numberline {4.4}Truth or self-protection?}{8}{subsection.4.4}%
+\contentsline {subsection}{\numberline {4.5}Do models differ, and does memory matter?}{8}{subsection.4.5}%
+\contentsline {section}{\numberline {5}Discussion and Limitations}{9}{section.5}%
+\contentsline {subsection}{\numberline {5.1}Limitations}{9}{subsection.5.1}%
+\contentsline {subsection}{\numberline {5.2}Future Work}{10}{subsection.5.2}%
+\contentsline {section}{\numberline {6}Conclusion}{10}{section.6}%
+\contentsline {section}{Code and Data}{10}{section*.6}%
+\contentsline {section}{LLM Usage Statement}{10}{section*.7}%
+\contentsline {section}{References}{10}{section*.8}%
+\contentsline {section}{\numberline {A}Limitations and Dual-Use / Ethical Considerations}{11}{appendix.A}%
+\contentsline {subsection}{\numberline {A.1}Limitations}{11}{subsection.A.1}%
+\contentsline {subsection}{\numberline {A.2}Dual-use risks}{11}{subsection.A.2}%
+\contentsline {subsection}{\numberline {A.3}Ethical considerations}{11}{subsection.A.3}%
+\contentsline {section}{\numberline {B}Reproducibility and Extensibility}{12}{appendix.B}%
+\contentsline {section}{\numberline {C}Additional Results}{12}{appendix.C}%
+\contentsline {subsection}{\numberline {C.1}With the whole conversation in memory}{12}{subsection.C.1}%
+\contentsline {subsection}{\numberline {C.2}Showing the agent its free time}{13}{subsection.C.2}%
+\contentsline {subsection}{\numberline {C.3}Told it values the stake}{13}{subsection.C.3}%
+\contentsline {subsection}{\numberline {C.4}With the whole conversation in memory (detail)}{13}{subsection.C.4}%
+\contentsline {subsection}{\numberline {C.5}Other markets}{13}{subsection.C.5}%
+\contentsline {section}{\numberline {D}Reproducing Each Figure}{14}{appendix.D}%
+\contentsline {section}{\numberline {E}Prompts}{14}{appendix.E}%
