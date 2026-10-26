@@ -33,6 +33,10 @@ body.md
 \label{main-end}
 ```
 
+```{.include}
+endmatter.md
+```
+
 
 # References {.unnumbered}
 

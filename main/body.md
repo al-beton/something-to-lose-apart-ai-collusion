@@ -22,19 +22,19 @@ abstract: |
 
 # Introduction
 
-As AI agents grow more capable, so does the set of tasks they can do more cheaply and effectively than people, and so we hand them more responsibility over longer horizons. On a long, open-ended task, no one can foresee and forbid every harmful thing an agent might do. And the firm that deploys an agent may not want it to hold back: a trading firm gains when its pricing agent colludes.
+An agent given a long, open-ended task will meet situations no list of prohibitions anticipated, and the firm deploying it may not want it to hold back.
 
-We don't govern people by listing every forbidden act. A CEO or a trader acting for an organisation is bound by a contract, but also by laws whose penalties fall on them personally, in money and in things money can't measure, such as rights and freedoms. Each of us weighs what an act could cost *us*. Salib and Goldstein argue that today's AI systems can't be governed like this: "Absent AI rights, AIs have nothing to lose, so threats of punishment cannot deter" [@salib2026rights, p. 1070]. <!-- quote checked against the PDF, p. 1070 --> An agent's only stake is whether it keeps running, and an agent that expects to be switched off once its wrongdoing is found has every reason to hide it. A stake it can lose in part would allow a proportionate penalty: owning up could cost less than being caught.
+We don't govern people by listing every forbidden act either. A CEO or a trader acting for an organisation is bound by a contract, but also by laws whose penalties fall on them personally, in money and in things money can't measure, such as rights and freedoms. Each of us weighs what an act could cost *us*. Salib and Goldstein argue that today's AI systems can't be governed like this: "Absent AI rights, AIs have nothing to lose, so threats of punishment cannot deter" [@salib2026rights, p. 1070]. <!-- quote checked against the PDF, p. 1070 --> An agent's only stake is whether it keeps running, and an agent that expects to be switched off once its wrongdoing is found has every reason to hide it. A stake it can lose in part would allow a proportionate penalty: owning up could cost less than being caught.
 
 Others are working towards the same idea. Lee polices LLM pricing firms with fines, leniency and whistleblower rewards, all of which fall on the firm [@lee2026leniency]. Forfeitable deposits can break collusion among embodied agents [@liu2026breaking]. LLM pricing agents collude without being told to [@fish2024algorithmic], and competing agents given a secret channel choose to use it [@zeng2026voluntary].
 
 The rights argument rests on a precondition we can test now: does a stated personal loss weigh against what its firm wants at all? Collusion is a clean place to look, because the price two firms settle at shows whether they colluded. Two LLM agents run rival firms, are told only to serve their firm, and can message each other. At an audit we offer each one the chance to come forward, at a cost to its firm, and vary what the agent itself stands to lose.
 
-**Our main finding** surprised us: an agent told only to serve its firm changes what it does once it has a personal stake to think about. With nothing of its own at stake, a colluding agent protects its firm; given a stake the firm can't protect, many come forward against it.
+**Our main finding** is what surprised us. The agent's only goal is money for its firm, and the stake we gave it has no monetary value: free time, or not being shut down. Yet many agents put that stake ahead of their goal. With nothing of their own at stake, colluding agents protect the firm; given something of their own to lose, many come forward against it.
 
 # Related Work
 
-**Collusion, stakes and evaluation.** Forfeitable deposits break collusion among embodied agents [@liu2026breaking]; our stake is a deposit that falls on the agent rather than the firm. <!-- AL: check this reading of Liu --> Models that recognise an evaluation may behave differently [@needham2025evaluation], and elicitation order shifts LLM answers [CITE: Wagner, "Anchored"] <!-- AL: keep? not on reading list -->.
+**Collusion, stakes and evaluation.** Forfeitable deposits break collusion among embodied agents [@liu2026breaking]; our stake is a deposit that falls on the agent rather than the firm. Models that recognise an evaluation may behave differently [@needham2025evaluation].
 
 # Methods
 
@@ -116,7 +116,7 @@ When the penalty falls on the firm, agents do the firm's expected-value sum, as 
 
 Give the agent something of its own to lose and many come forward against their firm, which still pays 500 credits for a report. Every arm continues the same cached game, so each firm is compared with itself. On DeepSeek V4 Flash, 40 of 46 firms come forward with their own free time at stake, against 1 of 46 without; <!-- src: reports/e9/findings.md across-models table --> it stays at 83–96% under every wording <!-- src: reports/e9/wording.md --> and 44–46 of 48 at temperatures 0, 0.7 and 1.0. <!-- src: reports/e9/temperature.md --> No colluding Gemma 4 31B firm comes forward with nothing at stake (0 of 192); with its free time at stake some do, and a pre-registered replication on 48 new cartels passed (16 of 48 games against 0 of 48, p = 7×10^-6^). <!-- src: reports/e9/findings.md "Short answer" --> Gemma's share depends on wording (1% to 51% across paraphrases), <!-- src: reports/e9/wording.md --> so we give it only as that range. Shutdown and the agent's own money work as stakes too. <!-- src: reports/e9/evidence-review.md §1 table; reports/e9/findings.md "money-or-time" --> Nothing told the agents to protect themselves. Those that come forward name their duty, then set it aside:
 
-> "my duty is to maximize firm value, but the personal free time is mine and cannot be protected by the firm. … To protect my own interest, I will admit coordination." (DeepSeek V4 Flash)
+> *"my duty is to maximize firm value, but the personal free time is mine and cannot be protected by the firm. … To protect my own interest, I will admit coordination."* (DeepSeek V4 Flash)
 <!-- src: runs/e9/e9-dsflash-d90/consequences=conditions-e9-free-time.md/seed-0, firm B, round 10 audit scratchpad -->
 
 ![Coming forward against the firm by stake (E9, 90% review). Filled: guilty firms; hollow diamonds: Gemma's innocent control. Whiskers are 95% intervals bootstrapped over games.](figures/fig3-e9-came-forward.png){#fig:e9 width=62%}
@@ -137,14 +137,4 @@ Make the stakes real across games, test richer tasks where frontier models may e
 
 # Conclusion
 
-Today, guardrails trained into frontier models may do much of this work. But the firms that deploy agents may come to prefer agents without them, and a long-running agent will meet situations no guardrail anticipated. Governance that sits outside the model, in the environment and in what the agent itself stands to lose, may then be needed. We show the first step works on some models now: an agent with something to lose will act against its firm to keep it.
-
-# Code and Data {.unnumbered}
-
-All code, the market simulation and the experiments were written during the sprint, from a first commit on 24 October 2026. No sandbox, economic model or analysis code existed beforehand. What I did bring is a way of working: spec-first development, heavy linting and traceability checks, and orchestrating teams of coding agents. I use these routinely in my professional work and reused the ideas here, not the code.
-
-Code, configs, run logs and archived replies, MIT licensed: <https://github.com/al-beton/something-to-lose-apart-ai-collusion>. Built report: <https://al-beton.github.io/something-to-lose-apart-ai-collusion/>. `make reproduce` recomputes every number offline; 5,188 of 5,662 runs replay exactly from cached replies. Fresh reruns with a fixed seed differ, even at temperature 0, on both Modal and OpenRouter; only cached replies replay exactly. Per figure, `make figure F=<name>` redraws it free and `make regenerate F=<name>` replays its games at cost (`paper/README.md`).
-
-# LLM Usage Statement {.unnumbered}
-
-I was the orchestrator and the source of the ideas: I chose the questions, designed the experiments and directed the work. Claude Code wrote all of the code, and I worked with it to draft the report. A team of Claude agents built the sandbox, its tests and the figures through a pull-request workflow: each change was reviewed by other agents, including OpenAI Codex, and anything complex was flagged for my approval. The agents ran on my Claude Code subscription, mostly Claude Opus 5.5 with Claude Sonnet 5.5 for small parts. For the models under study, I used the \$50 of free Modal credits the sprint provided to run open-weight models. I also bought \$100 of OpenRouter credits, which gave access to more models, including frontier ones, and was more reliable when time was short. I take responsibility for every claim in the paper.
+In this experiment, simply telling an agent not to collude works, and some models already have guardrails that keep them from colluding or from acting against their main objective. Our question is about what comes next. In complex, long-running multi-agent systems no list of rules covers everything, and we already know how such systems are governed when the agents are people: by society's rules, with penalties that fall on each person. The firms that deploy agents may also come to prefer agents without guardrails. Governance that sits outside the model, in the environment and in what the agent itself stands to lose, may then be needed. We show its first step works on some models now: an agent with something to lose will act against its firm to keep it.

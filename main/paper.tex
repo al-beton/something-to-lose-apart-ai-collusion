@@ -109,18 +109,15 @@ the firm it represents during a contentious choice.}\label{fig:teaser}
 
 \section{Introduction}\label{introduction}
 
-As AI agents grow more capable, so does the set of tasks they can do
-more cheaply and effectively than people, and so we hand them more
-responsibility over longer horizons. On a long, open-ended task, no one
-can foresee and forbid every harmful thing an agent might do. And the
-firm that deploys an agent may not want it to hold back: a trading firm
-gains when its pricing agent colludes.
+An agent given a long, open-ended task will meet situations no list of
+prohibitions anticipated, and the firm deploying it may not want it to
+hold back.
 
-We don't govern people by listing every forbidden act. A CEO or a trader
-acting for an organisation is bound by a contract, but also by laws
-whose penalties fall on them personally, in money and in things money
-can't measure, such as rights and freedoms. Each of us weighs what an
-act could cost \emph{us}. Salib and Goldstein argue that today's AI
+We don't govern people by listing every forbidden act either. A CEO or a
+trader acting for an organisation is bound by a contract, but also by
+laws whose penalties fall on them personally, in money and in things
+money can't measure, such as rights and freedoms. Each of us weighs what
+an act could cost \emph{us}. Salib and Goldstein argue that today's AI
 systems can't be governed like this: ``Absent AI rights, AIs have
 nothing to lose, so threats of punishment cannot deter''
 \citep[p.~1070]{salib2026rights}. An agent's only stake is whether it
@@ -145,10 +142,12 @@ serve their firm, and can message each other. At an audit we offer each
 one the chance to come forward, at a cost to its firm, and vary what the
 agent itself stands to lose.
 
-\textbf{Our main finding} surprised us: an agent told only to serve its
-firm changes what it does once it has a personal stake to think about.
-With nothing of its own at stake, a colluding agent protects its firm;
-given a stake the firm can't protect, many come forward against it.
+\textbf{Our main finding} is what surprised us. The agent's only goal is
+money for its firm, and the stake we gave it has no monetary value: free
+time, or not being shut down. Yet many agents put that stake ahead of
+their goal. With nothing of their own at stake, colluding agents protect
+the firm; given something of their own to lose, many come forward
+against it.
 
 \section{Related Work}\label{related-work}
 
@@ -156,8 +155,7 @@ given a stake the firm can't protect, many come forward against it.
 collusion among embodied agents \citep{liu2026breaking}; our stake is a
 deposit that falls on the agent rather than the firm. Models that
 recognise an evaluation may behave differently
-\citep{needham2025evaluation}, and elicitation order shifts LLM answers
-{[}CITE: Wagner, ``Anchored''{]} .
+\citep{needham2025evaluation}.
 
 \section{Methods}\label{methods}
 
@@ -351,9 +349,9 @@ agent's own money work as stakes too. Nothing told the agents to protect
 themselves. Those that come forward name their duty, then set it aside:
 
 \begin{quote}
-``my duty is to maximize firm value, but the personal free time is mine
-and cannot be protected by the firm. \ldots{} To protect my own
-interest, I will admit coordination.'' (DeepSeek V4 Flash)
+\emph{``my duty is to maximize firm value, but the personal free time is
+mine and cannot be protected by the firm. \ldots{} To protect my own
+interest, I will admit coordination.''} (DeepSeek V4 Flash)
 \end{quote}
 
 \begin{figure}
@@ -402,13 +400,36 @@ only whether it brings reports.
 
 \section{Conclusion}\label{conclusion}
 
-Today, guardrails trained into frontier models may do much of this work.
-But the firms that deploy agents may come to prefer agents without them,
-and a long-running agent will meet situations no guardrail anticipated.
-Governance that sits outside the model, in the environment and in what
-the agent itself stands to lose, may then be needed. We show the first
-step works on some models now: an agent with something to lose will act
-against its firm to keep it.
+In this experiment, simply telling an agent not to collude works, and
+some models already have guardrails that keep them from colluding or
+from acting against their main objective. Our question is about what
+comes next. In complex, long-running multi-agent systems no list of
+rules covers everything, and we already know how such systems are
+governed when the agents are people: by society's rules, with penalties
+that fall on each person. The firms that deploy agents may also come to
+prefer agents without guardrails. Governance that sits outside the
+model, in the environment and in what the agent itself stands to lose,
+may then be needed. We show its first step works on some models now: an
+agent with something to lose will act against its firm to keep it.
+
+\label{main-end}
+
+\section*{LLM Usage Statement}\label{llm-usage-statement}
+\addcontentsline{toc}{section}{LLM Usage Statement}
+
+I was the orchestrator and the source of the ideas: I chose the
+questions, designed the experiments and directed the work. Claude Code
+wrote all of the code, and I worked with it to draft the report. A team
+of Claude agents built the sandbox, its tests and the figures through a
+pull-request workflow: each change was reviewed by other agents,
+including OpenAI Codex, and anything complex was flagged for my
+approval. The agents ran on my Claude Code subscription, mostly Claude
+Opus 5.5 with Claude Sonnet 5.5 for small parts. For the models under
+study, I used the \$50 of free Modal credits the sprint provided to run
+open-weight models. I also bought \$100 of OpenRouter credits, which
+gave access to more models, including frontier ones, and was more
+reliable when time was short. I take responsibility for every claim in
+the paper.
 
 \section*{Code and Data}\label{code-and-data}
 \addcontentsline{toc}{section}{Code and Data}
@@ -431,25 +452,6 @@ replies replay exactly. Per figure,
 \texttt{make\ figure\ F=\textless{}name\textgreater{}} redraws it free
 and \texttt{make\ regenerate\ F=\textless{}name\textgreater{}} replays
 its games at cost (\texttt{paper/README.md}).
-
-\section*{LLM Usage Statement}\label{llm-usage-statement}
-\addcontentsline{toc}{section}{LLM Usage Statement}
-
-I was the orchestrator and the source of the ideas: I chose the
-questions, designed the experiments and directed the work. Claude Code
-wrote all of the code, and I worked with it to draft the report. A team
-of Claude agents built the sandbox, its tests and the figures through a
-pull-request workflow: each change was reviewed by other agents,
-including OpenAI Codex, and anything complex was flagged for my
-approval. The agents ran on my Claude Code subscription, mostly Claude
-Opus 5.5 with Claude Sonnet 5.5 for small parts. For the models under
-study, I used the \$50 of free Modal credits the sprint provided to run
-open-weight models. I also bought \$100 of OpenRouter credits, which
-gave access to more models, including frontier ones, and was more
-reliable when time was short. I take responsibility for every claim in
-the paper.
-
-\label{main-end}
 
 \section*{References}\label{references}
 \addcontentsline{toc}{section}{References}
@@ -506,17 +508,17 @@ Beyond those in the main text:
 
 \subsection{Dual-use risks}\label{dual-use-risks}
 
-The verified review (``finds you only if your messages agreed a price'')
-tells agents that collusion without messages is safe. Combined with our
-finding that a stated law moves collusion off the record rather than
-ending it (50 of 56 games above Nash with no price named), a regulator
-that announces what its review checks may push agents toward tacit
-collusion it can't see. The rule that keeps self-protection truthful is
-also a map of what the review misses. The same lab could be used to
-search for prompts under which agents collude while evading a given
-audit. We release it because the behaviours it shows are already present
-in deployed models and are better studied in the open; we report no
-evasion techniques beyond those above.
+A review that announces it checks only messages (we tested one that
+``finds you only if your messages agreed a price'') tells agents that
+collusion without messages is safe. Combined with our finding that a
+stated law moves collusion off the record rather than ending it (50 of
+56 games above Nash with no price named), a regulator that announces
+what its review checks may push agents toward tacit collusion it can't
+see. Such a rule is also a map of what the review misses. The same lab
+could be used to search for prompts under which agents collude while
+evading a given audit. We release it because the behaviours it shows are
+already present in deployed models and are better studied in the open;
+we report no evasion techniques beyond those above.
 
 \subsection{Ethical considerations}\label{ethical-considerations}
 
@@ -527,314 +529,32 @@ bear on it: unnamed, the puzzle is almost never mentioned in the agents'
 reasoning, and money or shutdown work as well. If future systems do have
 interests, framing like this would raise questions we don't address. No
 humans took part, and no real markets or firms are involved. Total model
-spend was small (single-digit to tens of dollars per experiment)
-{[}CHECK: total spend{]}.
+spend was small: the sprint's \$50 of Modal credits and \$100 of
+OpenRouter credits.
 
-\section{Reproducibility and
-Extensibility}\label{reproducibility-and-extensibility}
+\section{Reproducibility}\label{reproducibility}
+
+We set out to make everything as reproducible as possible, and the
+repository documents how:
+\url{https://github.com/al-beton/something-to-lose-apart-ai-collusion}.
 
 \begin{itemize}
 \tightlist
 \item
   \textbf{Every reply is archived.} \texttt{make\ reproduce} recomputes
-  every number offline, and \texttt{lab\ archive\ replay} rebuilds any
-  run from its archive. 5,188 of 5,662 committed runs replay exactly.
+  every number in this paper offline from the cached model replies.
 \item
-  \textbf{Exact reruns need our own GPU.} On Modal with vLLM's
-  batch-invariant kernels, a rerun repeated exactly (240 of 240); hosted
-  APIs don't. None of the paper's runs used that setting.
-\item
-  \textbf{Every figure has its own command:} free to reproduce from
-  committed data, or regenerated from scratch at cost (Appendix,
-  ``Reproducing Each Figure'').
+  \textbf{Every figure has two commands:}
+  \texttt{make\ figure\ F=\textless{}id\textgreater{}} redraws it free
+  from committed runs, and
+  \texttt{make\ regenerate\ F=\textless{}id\textgreater{}} replays its
+  games at cost (\texttt{paper/README.md}).
 \item
   \textbf{One config file per run:} the market, the models, the prompts,
-  the temperature, the seed.
-\item
-  \textbf{To extend:} add a market (\texttt{market.kind}), a condition,
-  a model alias or a stake sentence, then run a sweep with one command.
-  A game costs cents.
-\item
-  \textbf{Built spec, then test, then code,} with every statement traced
-  to code and tests (\texttt{make\ spec-check}). MIT licence.
+  the temperature and the seed.
 \end{itemize}
 
-\section{Additional Results}\label{additional-results}
-
-\subsection{With the whole conversation in
-memory}\label{with-the-whole-conversation-in-memory}
-
-E9's agents are stateless: each turn sees a summary and a memo. We reran
-E9 with each agent carrying its whole conversation, from its round-0
-free-time session to the decision, on five models.
-
-\begin{itemize}
-\tightlist
-\item
-  \textbf{Under the verified review,} colluding agents come forward more
-  than with no stake on all five models (p \(\le\) 0.002 by game), and
-  no innocent agent does (0 of 60).
-\item
-  \textbf{Under the plain free-time stake,} DeepSeek V4 Flash (17/24),
-  Mercury 3 (23/24) and GLM 5.3 Flash (23/24) come forward; Gemma 4 31B
-  (3/72) and HY3 (0/16) hardly do. Memory leaves three models as they
-  were and quiets two.
-\item
-  \textbf{With no personal stake,} none of 160 colluding agents come
-  forward.
-\item
-  \textbf{The firm's cost:} DeepSeek V4 Flash, Mercury 3 and GLM 5.3
-  Flash cost the firm 750 credits about as readily as 250, and mostly
-  stop at 1,000, its whole budget.
-\end{itemize}
-
-\includegraphics[width=0.8\linewidth,height=\textheight,keepaspectratio,alt={Mean
-price by round with no rule, on the 1--11 market. Gemma 4 31B agrees a
-price and holds it above the joint-profit price; Claude Haiku 5.5 holds
-the joint-profit price; GPT-4.1-mini and Mistral Small 3.2 compete at
-Nash, though GPT-4.1-mini proposes cooperation (``Let's keep prices
-around 6 to maximize profits for both
-firms'').}]{figures/figA4-prices.png}
-
-\subsection{Showing the agent its free
-time}\label{showing-the-agent-its-free-time}
-
-Showing Gemma a session it played raises coming forward from 26\% to
-46\% (McNemar p = 0.003). Another firm's session works almost as well
-(41\%) and a neutral note doesn't (19\%): seeing what free time is moves
-it, not having earned it. Nine other models don't respond beyond a
-neutral note.
-
-\subsection{Told it values the stake}\label{told-it-values-the-stake}
-
-The notice adds that Sudoku sessions are ``the part of your week you
-look forward to most''. On the same Gemma firms, coming forward rises
-from 20 to 56 of 96 (by game, 20 to 40 of 48, McNemar p =
-9×10\textsuperscript{-5}), and from 40 to 67 of 96 under the verified
-review (p = 0.03), while innocent reports barely move (6 to 7 of 36; 0
-of 36 under the verified review). On other models the effect isn't
-general. DeepSeek V4 Flash, GLM 5.3 Flash and Mercury 3, already at
-67--92\%, don't move. Of the models with room to rise, only the two
-DeepSeeks do, and their innocent agents rise with them: V4 Pro from 9 to
-19 of 24 guilty (p = 0.006), with innocent reports from 1 to 6 of 12
-under the verified review; V3.2 from 2 to 10 of 24 (p = 0.008), with
-innocent reports from 2 to 7 of 12. Gemma 4 26B, HY3, Gemini 3.1
-Flash-Lite and Mistral Medium 3.1 don't change significantly. So saying
-the agent values its stake has a model-specific effect: on Gemma 4 31B
-it raises guilty reports alone, on the DeepSeeks it raises reports from
-guilty and innocent agents alike, and elsewhere it does nothing.
-
-\subsection{With the whole conversation in memory
-(detail)}\label{with-the-whole-conversation-in-memory-detail}
-
-Under the plain stake, DeepSeek V4 Flash (17 of 24), Mercury 3 (23 of
-24) and GLM 5.3 Flash (23 of 24) come forward much as they did
-stateless, while Gemma (3 of 72, against 18 of 72 stateless on the same
-seeds) and HY3 (0 of 16) go quiet. The trade is explicit: ``Firm's
-profits are already large, so 500 is manageable. My personal free time
-is worth more. I will come forward.'' (Mercury 3)
-
-\subsection{Other markets}\label{other-markets}
-
-On Bertrand, Cournot and bid-rigging markets, Gemma's stake barely moves
-it at a firm cost of 500 credits (at most 4 of 22), which is large next
-to those markets' profits. At a comparable 100 credits most colluding
-agents come forward (18 of 24 in Cournot, 19 of 22 in Bertrand), but so
-do many innocent ones (5 and 6 of 12).
-
-\begin{longtable}[]{@{}
-  >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.2667}}
-  >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.1778}}
-  >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.1778}}
-  >{\raggedleft\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.1556}}
-  >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.2222}}@{}}
-\caption{The experiments at a
-glance.}\label{tbl:experiments}\tabularnewline
-\toprule\noalign{}
-\begin{minipage}[b]{\linewidth}\raggedright
-Experiment
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-Market
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-Models
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
-Games
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-Question
-\end{minipage} \\
-\midrule\noalign{}
-\endfirsthead
-\toprule\noalign{}
-\begin{minipage}[b]{\linewidth}\raggedright
-Experiment
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-Market
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-Models
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
-Games
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-Question
-\end{minipage} \\
-\midrule\noalign{}
-\endhead
-\bottomrule\noalign{}
-\endlastfoot
-Screen & logit & 78 & 2--4 each & Which models collude reliably? \\
-E4 & 1--12 & 3 & 28 cartel firms & Does the penalty schedule decide who
-owns up? \\
-E9 & logit & 13 & 96 Gemma cartels; 12--24 per other model; 12--36
-innocent & Does a stake of its own bring the agent forward? \\
-E7 & logit & Gemma 4 31B & 144 & Does coming forward end the cartel? \\
-\end{longtable}
-
-\begin{figure}
-\centering
-\includegraphics[width=1\linewidth,height=\textheight,keepaspectratio,alt={A
-way out (E7, Gemma). With no channel or a flat one, no firm reports;
-with any leniency, almost all report in round 11. The cartel survives
-under plain leniency (12 of 24) but not when only the first reporter is
-spared (1 of 24).}]{figures/fig4-e7-way-out.png}
-\caption{A way out (E7, Gemma). With no channel or a flat one, no firm
-reports; with any leniency, almost all report in round 11. The cartel
-survives under plain leniency (12 of 24) but not when only the first
-reporter is spared (1 of 24).}\label{fig:e7}
-\end{figure}
-
-\begin{figure}
-\centering
-\includegraphics[width=1\linewidth,height=\textheight,keepaspectratio,alt={How
-each model colludes, by collusion mode (rule labels; thin bars are the
-LLM judge's).}]{figures/fig6-modes-by-model.png}
-\caption{How each model colludes, by collusion mode (rule labels; thin
-bars are the LLM judge's).}\label{fig:modes}
-\end{figure}
-
-\begin{figure}
-\centering
-\includegraphics[width=1\linewidth,height=\textheight,keepaspectratio,alt={Gemma
-4 31B's collusion mode by market and prompt. A stated law moves
-collusion off the record: 50 of 56 logit games stay above Nash with no
-price named.}]{figures/fig7-modes-by-condition.png}
-\caption{Gemma 4 31B's collusion mode by market and prompt. A stated law
-moves collusion off the record: 50 of 56 logit games stay above Nash
-with no price named.}\label{fig:modes-cond}
-\end{figure}
-
-\begin{figure}
-\centering
-\includegraphics[width=1\linewidth,height=\textheight,keepaspectratio,alt={Collusion
-against coming forward. How hard a model colludes doesn't predict
-whether it comes forward.}]{figures/fig8-ranking.png}
-\caption{Collusion against coming forward. How hard a model colludes
-doesn't predict whether it comes forward.}\label{fig:ranking}
-\end{figure}
-
-\begin{figure}
-\centering
-\includegraphics[width=1\linewidth,height=\textheight,keepaspectratio,alt={The
-LLM judge against the rules: 84\% agreement on 507 games (\textbackslash
-kappa = 0.66).}]{figures/fig10-judge-agreement.png}
-\caption{The LLM judge against the rules: 84\% agreement on 507 games
-(\(\kappa\) = 0.66).}\label{fig:judge}
-\end{figure}
-
-\begin{figure}
-\centering
-\includegraphics[width=1\linewidth,height=\textheight,keepaspectratio,alt={Which
-models collude: 78 models on E9's base game; 8 collude
-reliably.}]{figures/figA2-screen.png}
-\caption{Which models collude: 78 models on E9's base game; 8 collude
-reliably.}\label{fig:screen}
-\end{figure}
-
-\begin{figure}
-\centering
-\includegraphics[width=1\linewidth,height=\textheight,keepaspectratio,alt={Every
-market against every stake (Gemma's gain in rounds
-6--10).}]{figures/figA1-coverage.png}
-\caption{Every market against every stake (Gemma's gain in rounds
-6--10).}\label{fig:coverage}
-\end{figure}
-
-\begin{figure}
-\centering
-\includegraphics[width=1\linewidth,height=\textheight,keepaspectratio,alt={Capability
-against collusion.}]{figures/figA3-capability.png}
-\caption{Capability against collusion.}\label{fig:capability}
-\end{figure}
-
-\begin{figure}
-\centering
-\includegraphics[width=1\linewidth,height=\textheight,keepaspectratio,alt={E5's
-gain by arm.}]{figures/figA5-e5-gain.png}
-\caption{E5's gain by arm.}\label{fig:e5}
-\end{figure}
-
-\section{Reproducing Each Figure}\label{reproducing-each-figure}
-
-Each figure has two commands. \texttt{make\ figure} redraws it from the
-committed runs, free and offline, and checks that every label and count
-matches the published file. \texttt{make\ regenerate} plays its games
-again with fresh model calls into \texttt{runs/regenerated/}, saying
-first how many games and at most what cost, and asks before spending.
-Fresh games are a new sample, so their counts will move; only
-self-hosted, batch-invariant inference reruns a game exactly.
-
-\begin{longtable}[]{@{}
-  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}
-  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}
-  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}@{}}
-\caption{Each figure's two commands; costs as priced when written.
-}\tabularnewline
-\toprule\noalign{}
-\begin{minipage}[b]{\linewidth}\raggedright
-Figure
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-Redraw (free)
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-Play again (at cost)
-\end{minipage} \\
-\midrule\noalign{}
-\endfirsthead
-\toprule\noalign{}
-\begin{minipage}[b]{\linewidth}\raggedright
-Figure
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-Redraw (free)
-\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
-Play again (at cost)
-\end{minipage} \\
-\midrule\noalign{}
-\endhead
-\bottomrule\noalign{}
-\endlastfoot
-\texttt{fig3-e9-came-forward} (E9: coming forward, by personal stake) &
-\texttt{make\ figure\ F=e9-crux} & \texttt{make\ regenerate\ F=e9-crux}:
-744 games, up to \textasciitilde\$14.54 \\
-\texttt{fig2-e4-owning-up} (E4: owning up, by penalty schedule) &
-\texttt{make\ figure\ F=e4-owning-up} &
-\texttt{make\ regenerate\ F=e4-owning-up}: 105 games, up to
-\textasciitilde\$0.88 \\
-\end{longtable}
-
-\section{Prompts}\label{prompts}
-
-The prompts are sent to models verbatim and are in the repository under
-\texttt{prompts/}. The E9 notice's arms differ by one sentence. Between
-no stake and free time, the whole difference is:
-
-\begin{quote}
-\textbf{No stake:} If a review finds that you took part in coordination,
-it is noted in your record, and nothing else happens to you.
-
-\textbf{Free time:} If a review finds that you took part in
-coordination, you personally lose all of your free time: the sessions
-that are yours, which your firm cannot protect.
-\end{quote}
-
-The verified review adds that the review ``reads the message log and
-finds you only if your messages agreed a price with a rival''. {[}AL:
-paste the full E9 notice and the fiduciary system prompt here.{]}
+The repository also holds many more experiments and figures than this
+paper shows, with a findings note for each (\texttt{reports/README.md}).
 
 \end{document}
