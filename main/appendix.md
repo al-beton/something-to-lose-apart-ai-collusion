@@ -28,7 +28,7 @@ A review that announces it checks only messages tells agents that collusion with
 
 The agents' "free time" is a device: a balance of Sudoku sessions played in separate model calls, which the agents are told is theirs. We make no claim about model welfare or preferences, and our results don't bear on it: unnamed, the puzzle is almost never mentioned in the agents' reasoning, and money or shutdown work as well. If future systems do have interests, framing like this would raise questions we don't address. No humans took part, and no real markets or firms are involved. The agents are text-only models in a closed sandbox: they had no tools, no internet access and no way to act outside the game, so the experiments themselves posed no safety risk.
 
-## Reproducibility
+# Reproducibility
 
 We set out to make everything as reproducible as possible, and the repository documents how: <https://github.com/al-beton/something-to-lose-apart-ai-collusion>.
 
