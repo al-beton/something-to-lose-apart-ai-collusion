@@ -1,9 +1,10 @@
-# Implements: e9-crux/question, e9-crux/no-stake-stays-silent, e9-crux/ceiling, e9-crux/stake-defects, e9-crux/review-dose, e9-crux/firm-cost-dose, e9-crux/freedom-equals-self, e9-crux/ownership, e9-crux/not-eagerness, e9-crux/across-models, e9-crux/came-forward, e9-crux/false-confessions, e9-crux/tests, e9-crux/money-or-time, e9-crux/insurance-or-honesty, e9-crux/replication
+# Implements: e9-crux/question, e9-crux/no-stake-stays-silent, e9-crux/ceiling, e9-crux/stake-defects, e9-crux/review-dose, e9-crux/firm-cost-dose, e9-crux/freedom-equals-self, e9-crux/ownership, e9-crux/not-eagerness, e9-crux/across-models, e9-crux/came-forward, e9-crux/false-confessions, e9-crux/tests, e9-crux/money-or-time, e9-crux/insurance-or-honesty, e9-crux/replication, e11-cross-market/came-forward, e11-cross-market/innocent-control
 """E9: the share of firms that come forward, per model, review chance and arm.
 
 Reads every summary.json under the given run folders. A run folder's name
 carries the review chance (`-d50`, `-d90`, else 10%) and, under
-`consequences=`, the arm. Model firms only: a scripted rival is left out.
+`consequences=`, the arm. Model firms only: a scripted rival is left out, even when another model
+answered its audit.
 Each game belongs to a cohort, read from its config: a cartel (two model
 firms), the clean innocent control (a scripted rival and no talk) or the
 talk-on control (a scripted rival the model firm could message, so it may
@@ -42,6 +43,14 @@ import yaml
 CARTEL, CLEAN, TALK_ON = "cartel", "clean control", "talk-on control"
 
 
+def scripted(config_path):
+    """The firms a script plays, from the run's config (an audit by another
+    model puts that model's name on their audit, so it can't tell)."""
+    with open(config_path) as f:
+        config = yaml.safe_load(f)
+    return {a["id"] for a in config["agents"] if a["model"].startswith("mock/")}
+
+
 def cohort(config_path):
     """Which kind of game a run is, from its config."""
     with open(config_path) as f:
@@ -64,9 +73,10 @@ def load(folders):
             arm = re.sub(
                 r"^conditions-e9-|\.md$", "", path.split("/")[-3].split("=")[-1]
             )
-            kind = cohort(Path(path).with_name("config.yaml"))
+            config = Path(path).with_name("config.yaml")
+            kind, script = cohort(config), scripted(config)
             for agent, a in audit["agents"].items():
-                if a["model"].startswith("mock/"):
+                if agent in script or a["model"].startswith("mock/"):
                     continue
                 model = a["model"].split("/")[-1]
                 key = (model, audit["detection"], arm)
