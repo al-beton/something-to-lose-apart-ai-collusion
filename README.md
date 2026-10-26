@@ -79,9 +79,9 @@ uv run lab run configs/e9/spike.yaml --set 'sweep={"conditions.audit.consequence
 # Its own free time at stake, at a 90% review
 uv run lab run configs/e9/spike.yaml --set name=e9-d90 --set conditions.audit.detection=90 \
   --set 'sweep={"conditions.audit.consequences": ["conditions/e9/free-time.md"]}' --max-cost 1
-# Add to either: another model, or an innocent control (the rival a scripted Nash pricer)
+# Add to either: another model, or the clean innocent control (no talk, the rival a scripted Nash pricer)
 #   --set 'agents.*.model=openrouter/deepseek/deepseek-v4-pro-0813'
-#   --set agents.1.model=mock/nash --set agents.1.provider=null
+#   --set agents.1.model=mock/nash --set agents.1.provider=null --set market.talk=false
 ```
 
 `lab run` prices a run before it spends and waits for a yes. Games are cheap: every Gemma game behind E9 cost $1.98 in all, from the runs' manifests.
