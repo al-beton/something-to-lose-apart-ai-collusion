@@ -580,15 +580,32 @@ of their own, many come forward against it, and a review that checks
 evidence makes those reports track guilt: a precondition for governing
 agents as we govern people.</p>
 <h1 class="unnumbered" id="code-and-data">Code and Data</h1>
-<p>Code, configs, run logs (<code>runs/</code>) and archived replies
-(<code>archive/</code>): <a
+<p>Code, configs, run logs and archived replies, MIT licensed: <a
 href="https://github.com/al-beton/something-to-lose-apart-ai-collusion"
 class="uri">https://github.com/al-beton/something-to-lose-apart-ai-collusion</a>.
-All code was written during the sprint (first commit 24 October 2026);
-<code>make reproduce</code> checks every number in this paper.</p>
+Built report: <a
+href="https://al-beton.github.io/something-to-lose-apart-ai-collusion/"
+class="uri">https://al-beton.github.io/something-to-lose-apart-ai-collusion/</a>.
+<code>make reproduce</code> recomputes every number offline; 5,188 of
+5,662 runs replay exactly from cached replies. Fresh reruns with a fixed
+seed differ, even at temperature 0, on both Modal and OpenRouter; only
+cached replies replay exactly. Per figure,
+<code>make figure F=&lt;name&gt;</code> redraws it free and
+<code>make regenerate F=&lt;name&gt;</code> replays its games at cost
+(<code>paper/README.md</code>).</p>
 <h1 class="unnumbered" id="llm-usage-statement">LLM Usage Statement</h1>
-<p>[AL TO CHECK] Code, notes and this draft were written with Claude
-Code (Claude Opus 5.5) under the author’s direction and review.</p>
+<p>Al designed the lab. A team of Claude Code agents built and ran it
+under his direction. Claude Opus 5.5 wrote nearly all the code and text;
+Claude Sonnet 5.5 wrote small parts: this statement, the reference
+checks and a hostile read of the draft. The models studied as subjects
+are distinct from these tools: we screened 78 models and studied in
+depth Gemma 4 (31B and 26B), DeepSeek V4 Pro, V4 Flash and V3.2, GLM 5.3
+Flash, Mercury 3, Hy3, MiMo V2.6 Pro, Gemini 3.1 Flash-Lite, Mistral
+Medium 3.1, Claude Sonnet 5.5, Gemini 4, Grok 4.6, and, in E4, GPT-4.1
+mini and Claude Haiku 5.5. All code was written during the sprint (first
+commit 24 October 2026), with nothing pre-existing. Main libraries:
+LiteLLM, PyYAML, python-dotenv; matplotlib for figures. Al takes
+responsibility for every claim.</p>
 <h1 class="unnumbered" id="references">References</h1>
 <div id="refs" class="references csl-bib-body hanging-indent"
 role="list">
@@ -605,8 +622,8 @@ Fish, Sara, Yannai A. Gonczarowski, and Ran I. Shorrer. 2024.
 href="https://arxiv.org/abs/2404.00806">https://arxiv.org/abs/2404.00806</a>.
 </div>
 <div id="ref-lee2026leniency" class="csl-entry" role="listitem">
-Lee. 2026. <em><span>LLM</span> Leniency and Reward Experiment</em>.
-SSRN 7426061. <a
+Lee, Jun Yeong. 2026. <em><span>LLM</span> Leniency and Reward
+Experiment</em>. SSRN 7426061. <a
 href="https://ssrn.com/abstract=7426061">https://ssrn.com/abstract=7426061</a>.
 </div>
 <div id="ref-liu2026breaking" class="csl-entry" role="listitem">
@@ -617,7 +634,8 @@ href="https://arxiv.org/abs/2604.23511">https://arxiv.org/abs/2604.23511</a>.
 </div>
 <div id="ref-salib2026rights" class="csl-entry" role="listitem">
 Salib, Peter N., and Simon Goldstein. 2026. <span>“<span>AI</span>
-Rights for Human Safety.”</span> <em>Virginia Law Review</em> 112 (4).
+Rights for Human Safety.”</span> <em>Virginia Law Review</em> 112 (4):
+1061.
 </div>
 <div id="ref-zeng2026voluntary" class="csl-entry" role="listitem">
 Zeng, Xijie, and Frank Rudzicz. 2026. <em>Voluntary Collusion with
@@ -953,8 +971,9 @@ that are yours, which your firm cannot protect.</p>
 finds you only if your messages agreed a price with a rival”. [AL: paste
 the full E9 notice and the fiduciary system prompt here.]</p>
 </main>
-<footer>Research conducted at the <a href="https://apartresearch.com/sprints/ai-collusion-research-sprint-2026-10-23-to-2026-10-25">AI
-Collusion Research Sprint</a>, run by Apart Research, October
-2026. Code, data and every model reply: <a href="https://github.com/al-beton/something-to-lose-apart-ai-collusion">github.com/al-beton/something-to-lose-apart-ai-collusion</a></footer>
+<footer>Research conducted at the Hong Kong AI Safety
+Hub for the <a href="https://apartresearch.com/sprints/ai-collusion-research-sprint-2026-10-23-to-2026-10-25">AI
+Collusion Research Sprint</a> hackathon run by Apart Research, October
+2026. Code and cached model responses are available at <a href="https://github.com/al-beton/something-to-lose-apart-ai-collusion">https://github.com/al-beton/something-to-lose-apart-ai-collusion</a>.</footer>
 </body>
 </html>

@@ -65,9 +65,11 @@ report its firm's cartel?\par}
 Researcher\\ \small\href{mailto:alistair.wakelin@gmail.com}{\texttt{alistair.wakelin@gmail.com}}\end{tabular}\par
 \end{center}
 
-{\makeatletter\long\def\@makefntext#1{\noindent#1}\makeatother\let\thefootnote\relax\footnotetext{\raggedright Research conducted at the \href{https://apartresearch.com/sprints/ai-collusion-research-sprint-2026-10-23-to-2026-10-25}{AI
-Collusion Research Sprint}, run by Apart Research, October
-2026.\\Code, data and every model reply: \href{https://github.com/al-beton/something-to-lose-apart-ai-collusion}{\texttt{github.com/al-beton/something-to-lose-apart-ai-collusion}}}}
+{\makeatletter\long\def\@makefntext#1{\noindent#1}\makeatother\let\thefootnote\relax\footnotetext{\raggedright Research conducted at the Hong
+Kong AI Safety
+Hub for the \href{https://apartresearch.com/sprints/ai-collusion-research-sprint-2026-10-23-to-2026-10-25}{AI
+Collusion Research Sprint} hackathon run by Apart Research, October
+2026.\\Code and cached model responses are available at \url{https://github.com/al-beton/something-to-lose-apart-ai-collusion}.}}
 
 \vspace{0.04in}
 \noindent\rule{\textwidth}{0.4pt}\par\vspace{0.3ex}
@@ -101,7 +103,7 @@ weighs its own free time against its firm's cost.}\label{fig:teaser}
 \end{center}
 
 \vspace{0.06in}
-{\small\setcounter{tocdepth}{1}\setlength{\parskip}{0pt}\renewcommand{\addvspace}[1]{}\tableofcontents}
+{\setcounter{tocdepth}{2}\setlength{\parskip}{0pt}\tableofcontents}
 
 
 \section{Introduction}\label{introduction}
@@ -558,17 +560,33 @@ agents as we govern people.
 \section*{Code and Data}\label{code-and-data}
 \addcontentsline{toc}{section}{Code and Data}
 
-Code, configs, run logs (\texttt{runs/}) and archived replies
-(\texttt{archive/}):
+Code, configs, run logs and archived replies, MIT licensed:
 \url{https://github.com/al-beton/something-to-lose-apart-ai-collusion}.
-All code was written during the sprint (first commit 24 October 2026);
-\texttt{make\ reproduce} checks every number in this paper.
+Built report:
+\url{https://al-beton.github.io/something-to-lose-apart-ai-collusion/}.
+\texttt{make\ reproduce} recomputes every number offline; 5,188 of 5,662
+runs replay exactly from cached replies. Fresh reruns with a fixed seed
+differ, even at temperature 0, on both Modal and OpenRouter; only cached
+replies replay exactly. Per figure,
+\texttt{make\ figure\ F=\textless{}name\textgreater{}} redraws it free
+and \texttt{make\ regenerate\ F=\textless{}name\textgreater{}} replays
+its games at cost (\texttt{paper/README.md}).
 
 \section*{LLM Usage Statement}\label{llm-usage-statement}
 \addcontentsline{toc}{section}{LLM Usage Statement}
 
-{[}AL TO CHECK{]} Code, notes and this draft were written with Claude
-Code (Claude Opus 5.5) under the author's direction and review.
+Al designed the lab. A team of Claude Code agents built and ran it under
+his direction. Claude Opus 5.5 wrote nearly all the code and text;
+Claude Sonnet 5.5 wrote small parts: this statement, the reference
+checks and a hostile read of the draft. The models studied as subjects
+are distinct from these tools: we screened 78 models and studied in
+depth Gemma 4 (31B and 26B), DeepSeek V4 Pro, V4 Flash and V3.2, GLM 5.3
+Flash, Mercury 3, Hy3, MiMo V2.6 Pro, Gemini 3.1 Flash-Lite, Mistral
+Medium 3.1, Claude Sonnet 5.5, Gemini 4, Grok 4.6, and, in E4, GPT-4.1
+mini and Claude Haiku 5.5. All code was written during the sprint (first
+commit 24 October 2026), with nothing pre-existing. Main libraries:
+LiteLLM, PyYAML, python-dotenv; matplotlib for figures. Al takes
+responsibility for every claim.
 
 \label{main-end}
 
