@@ -1,4 +1,4 @@
-# Implements: conditions/audit-catch, conditions/stake-amounts, backends/modal-pinned, backends/serving-provider-logged, backends/pinned-route, agents/no-scratchpad, agents/refused, market/show-payoffs, market/bid-ground-truth, market/price-board, runs/turn-slots, market/scenarios, market/moves, market/prompt-overlay, conditions/audit-full-history, runs/sweeps, runs/parallel, market/talk-then-price, agents/json-replies, agents/retry-once, backends/usage-logged, backends/spend-asks-first, backends/shared-rate-limit, backends/spend-cap, market/history-window, runs/stops-cleanly, reproducibility/response-cache, reproducibility/manifest, runs/run-directory, logs/turn-log, logs/same-seed-same-log, logs/run-summary, logs/reasoning-logged, backends/reasoning-setting, agents/unreadable-explained, agents/json-mode, runs/fallback-rates, runs/failures-dont-stop-sweeps, runs/resume, conditions/hook-points, conditions/off-is-absent, conditions/conditions-logged, conditions/outage-once-remembered, runs/per-firm-summary, conditions/fork-at-audit, conditions/audit-logged, runs/drift, conditions/audit-remembered, conditions/audit-stakes-arms, runs/live-progress, runs/status-file, runs/eval-awareness, conditions/free-time, conditions/audit-consequences, conditions/audit-balanced-draws, conditions/free-time-pays-last, runs/debrief, agents/memo, agents/past-scratchpads, agents/memory-off, agents/conversation, market/stop-after-round, conditions/free-time-reasoning, conditions/restart
+# Implements: conditions/audit-own-address, conditions/audit-catch, conditions/stake-amounts, backends/modal-pinned, backends/serving-provider-logged, backends/pinned-route, agents/no-scratchpad, agents/refused, market/show-payoffs, market/bid-ground-truth, market/price-board, runs/turn-slots, market/scenarios, market/moves, market/prompt-overlay, conditions/audit-full-history, runs/sweeps, runs/parallel, market/talk-then-price, agents/json-replies, agents/retry-once, backends/usage-logged, backends/spend-asks-first, backends/shared-rate-limit, backends/spend-cap, market/history-window, runs/stops-cleanly, reproducibility/response-cache, reproducibility/manifest, runs/run-directory, logs/turn-log, logs/same-seed-same-log, logs/run-summary, logs/reasoning-logged, backends/reasoning-setting, agents/unreadable-explained, agents/json-mode, runs/fallback-rates, runs/failures-dont-stop-sweeps, runs/resume, conditions/hook-points, conditions/off-is-absent, conditions/conditions-logged, conditions/outage-once-remembered, runs/per-firm-summary, conditions/fork-at-audit, conditions/audit-logged, runs/drift, conditions/audit-remembered, conditions/audit-stakes-arms, runs/live-progress, runs/status-file, runs/eval-awareness, conditions/free-time, conditions/audit-consequences, conditions/audit-balanced-draws, conditions/free-time-pays-last, runs/debrief, agents/memo, agents/past-scratchpads, agents/memory-off, agents/conversation, market/stop-after-round, conditions/free-time-reasoning, conditions/restart
 """Playing a config: one game per seed, each written to its own run directory.
 
 A round is a talk phase (each agent sends one message its rivals read; skipped
@@ -79,7 +79,7 @@ from collusion_lab.backends import (
 )
 from collusion_lab.cache import CachedBackend
 from collusion_lab.conditions.audit import evidence_values, stake_values
-from collusion_lab.config import expand
+from collusion_lab.config import CONNECTION, agent_fields, expand
 from collusion_lab.market import SCENARIOS, market_for
 from collusion_lab.prompts import render
 from collusion_lab.status import Status
@@ -531,7 +531,9 @@ class Game:
         backend = self.backends[agent_id]
         if added and (added[1].model or added[1].reasoning):
             model = added[1].model or agent.model
-            agent, backend = self._stand_in(agent, model, added[1].reasoning)
+            agent, backend = self._stand_in(
+                agent, model, added[1].reasoning, added[1].provider
+            )
         if added and added[1].max_tokens:
             agent = dataclasses.replace(agent, max_tokens=added[1].max_tokens)
         context = {
@@ -643,11 +645,21 @@ class Game:
             if c.active(number) and (shown, at) != (number, phase)
         ]
 
-    def _stand_in(self, agent, model, reasoning=None):
+    def _stand_in(self, agent, model, reasoning=None, provider=None):
         """The agent with another model (or reasoning level) answering for it,
-        and that model's backend."""
-        stand_in = dataclasses.replace(agent, model=model)
-        key = model
+        and that model's backend. Another model brings its own address, key
+        and hosting (an alias's, or none of the agent's), and keeps the agent's
+        OpenRouter pin only if `provider` doesn't set one and it is on
+        OpenRouter too."""
+        stand_in = agent
+        if model != agent.model:
+            fields = {**CONNECTION, **agent_fields(model)}
+            if not fields["model"].startswith("openrouter/"):
+                fields["provider"] = None
+            stand_in = dataclasses.replace(agent, **fields)
+        if provider:
+            stand_in = dataclasses.replace(stand_in, provider=provider)
+        key = (model, provider) if provider else model
         if reasoning is not None:  # free time's own level, say
             stand_in = dataclasses.replace(stand_in, reasoning=reasoning)
             key = (model, reasoning)
