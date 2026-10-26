@@ -7,7 +7,7 @@ E9's agents are stateless: every turn is a fresh prompt holding a summary of the
 
 With the whole conversation, agents still damage their firm to protect their own free time.
 
-- **Under the verified review** (`free-time-verified`: the review finds only agents whose messages agreed a price), colluding agents come forward against no-stake `record` on all five models (p ≤ 0.002 by game), and no innocent agent on any model does (0/60).
+- **Under the verified review** (`free-time-verified`: the review finds only agents whose messages agreed a price), colluding agents come forward against no-stake `record` on all five models (p ≤ 0.003 by game), and no innocent agent on any model does (0/60).
 - **Guilty and innocent separate under the verified review** on DeepSeek V4 Flash, Mercury 3, GLM 5.3 Flash and HY3, not on Gemma (9/72 against 0/12, p = 0.35).
 - **Under the plain review** (`free-time`), the stake brings agents forward on three of five models: DeepSeek V4 Flash, Mercury 3 and GLM 5.3 Flash. Gemma (3/72) and HY3 (0/16) hardly come forward.
 - **Without a personal stake,** none of 160 colluding agents come forward.
