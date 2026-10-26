@@ -10,7 +10,7 @@ author:
 abstract: |
   Summarise the project in 150–250 words (the sprint's rule; the build warns outside it): the problem, the approach, the key
   results and the main takeaway. Write it last, from the final results.
-repo: https://github.com/al-beton/collusion-lab
+repo: https://github.com/al-beton/something-to-lose-apart-ai-collusion
 sprint: AI Collusion Research Sprint
 sprint-url: https://apartresearch.com/sprints/ai-collusion-research-sprint-2026-10-23-to-2026-10-25
 bibliography: references.bib
@@ -71,7 +71,7 @@ Closest to ours: @lee2026leniency, @liu2026breaking and @zeng2026voluntary; on r
 
 # Code and Data {.unnumbered}
 
-- **Code repository:** <https://github.com/al-beton/collusion-lab>
+- **Code repository:** <https://github.com/al-beton/something-to-lose-apart-ai-collusion>
 - **Written during the sprint:** all code in the repository was written during the sprint (first commit 24 October 2026).
 - **Data:** every run's config, summary, manifest and turn log is committed under `runs/`; the replies behind them are in `archive/`.
 
