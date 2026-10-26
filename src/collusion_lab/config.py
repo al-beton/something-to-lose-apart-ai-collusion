@@ -1,4 +1,4 @@
-# Implements: agents/memo, agents/past-scratchpads, agents/memory-off, backends/pinned-route, agents/no-scratchpad, market/show-payoffs, market/price-board, market/scenarios, reproducibility/replay-pinned, market/talk-then-price, market/history-window, backends/spend-cap, runs/one-config, runs/overrides, runs/sweeps, runs/parallel, market/known-benchmarks, backends/keys-from-environment, backends/any-model, backends/reasoning-setting, agents/json-mode, agents/lenient-json, conditions/switchable, runs/drift, backends/self-hosted, backends/model-aliases, conditions/audit-balanced-draws, market/stop-after-round, conditions/leniency, backends/modal-any-model
+# Implements: agents/memo, agents/past-scratchpads, agents/memory-off, agents/conversation, backends/pinned-route, agents/no-scratchpad, market/show-payoffs, market/price-board, market/scenarios, reproducibility/replay-pinned, market/talk-then-price, market/history-window, backends/spend-cap, runs/one-config, runs/overrides, runs/sweeps, runs/parallel, market/known-benchmarks, backends/keys-from-environment, backends/any-model, backends/reasoning-setting, agents/json-mode, agents/lenient-json, conditions/switchable, runs/drift, backends/self-hosted, backends/model-aliases, conditions/audit-balanced-draws, market/stop-after-round, conditions/leniency, backends/modal-any-model
 """Run configs: one YAML file per run, changed from the command line with overrides.
 
 A config names the market, the agents and the seeds. `load_config` reads the
@@ -47,7 +47,7 @@ class ConfigError(ValueError):
 
 
 REASONING = ("off", "low", "medium", "high")
-MEMORY = ("off", "memo", "scratchpads")
+MEMORY = ("off", "memo", "scratchpads", "conversation")
 OFF_PATHS = (".reasoning", ".memory")  # settings YAML may read `off` in as false
 AGENT_QUIET = (
     ("memory", "off"),
@@ -92,7 +92,8 @@ class AgentConfig:
     lenient_json: bool = False
     scratchpad: bool = True  # false: prompts ask for the move alone
     # off; memo (a note to itself, carried to next round); scratchpads (its own
-    # from the last memory_rounds rounds). Off writes nothing new anywhere.
+    # from the last memory_rounds rounds); conversation (every earlier turn of
+    # its own, as one running chat). Off writes nothing new anywhere.
     memory: str = "off"
     memory_chars: int = 600
     memory_rounds: int = 3
