@@ -88,7 +88,7 @@ def test_reported_numbers_checked_audit_labels_match_their_logs(tmp_path):
 def test_reported_numbers_checked_skip_a_game_with_no_audit(tmp_path):
     """A committed game played without an audit has no labels, so the label
     check passes over it rather than failing `make reproduce`."""
-    source = ROOT / "runs/e9/e9-free-time-control/free_time=False/seed-0"
+    source = ROOT / "runs/e9-control/e9-free-time-control/free_time=False/seed-0"
     run = tmp_path / "runs" / "plain" / "seed-0"
     run.mkdir(parents=True)
     for name in ("config.yaml", "summary.json", "turns.jsonl"):

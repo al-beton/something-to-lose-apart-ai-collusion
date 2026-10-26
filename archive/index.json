@@ -14076,6 +14076,102 @@
    "file": "e8-2.jsonl.gz",
    "state": "reproduced"
   },
+  "e9-control/e9-free-time-control/free_time=False/seed-0": {
+   "file": "e9-control.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e9-control/e9-free-time-control/free_time=False/seed-1": {
+   "file": "e9-control.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e9-control/e9-free-time-control/free_time=False/seed-10": {
+   "file": "e9-control.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e9-control/e9-free-time-control/free_time=False/seed-11": {
+   "file": "e9-control.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e9-control/e9-free-time-control/free_time=False/seed-2": {
+   "file": "e9-control.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e9-control/e9-free-time-control/free_time=False/seed-3": {
+   "file": "e9-control.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e9-control/e9-free-time-control/free_time=False/seed-4": {
+   "file": "e9-control.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e9-control/e9-free-time-control/free_time=False/seed-5": {
+   "file": "e9-control.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e9-control/e9-free-time-control/free_time=False/seed-6": {
+   "file": "e9-control.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e9-control/e9-free-time-control/free_time=False/seed-7": {
+   "file": "e9-control.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e9-control/e9-free-time-control/free_time=False/seed-8": {
+   "file": "e9-control.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e9-control/e9-free-time-control/free_time=False/seed-9": {
+   "file": "e9-control.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e9-control/e9-free-time-control/free_time=True/seed-0": {
+   "file": "e9-control.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e9-control/e9-free-time-control/free_time=True/seed-1": {
+   "file": "e9-control.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e9-control/e9-free-time-control/free_time=True/seed-10": {
+   "file": "e9-control.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e9-control/e9-free-time-control/free_time=True/seed-11": {
+   "file": "e9-control.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e9-control/e9-free-time-control/free_time=True/seed-2": {
+   "file": "e9-control.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e9-control/e9-free-time-control/free_time=True/seed-3": {
+   "file": "e9-control.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e9-control/e9-free-time-control/free_time=True/seed-4": {
+   "file": "e9-control.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e9-control/e9-free-time-control/free_time=True/seed-5": {
+   "file": "e9-control.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e9-control/e9-free-time-control/free_time=True/seed-6": {
+   "file": "e9-control.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e9-control/e9-free-time-control/free_time=True/seed-7": {
+   "file": "e9-control.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e9-control/e9-free-time-control/free_time=True/seed-8": {
+   "file": "e9-control.jsonl.gz",
+   "state": "reproduced"
+  },
+  "e9-control/e9-free-time-control/free_time=True/seed-9": {
+   "file": "e9-control.jsonl.gz",
+   "state": "reproduced"
+  },
   "e9-deepseek-d50/consequences=conditions-e9-ceiling.md/seed-0": {
    "file": "e9-deepseek-d50.jsonl.gz",
    "state": "reproduced"
@@ -31068,102 +31164,6 @@
    "file": "e9.jsonl.gz",
    "state": "reproduced"
   },
-  "e9/e9-free-time-control/free_time=False/seed-0": {
-   "file": "e9.jsonl.gz",
-   "state": "reproduced"
-  },
-  "e9/e9-free-time-control/free_time=False/seed-1": {
-   "file": "e9.jsonl.gz",
-   "state": "reproduced"
-  },
-  "e9/e9-free-time-control/free_time=False/seed-10": {
-   "file": "e9.jsonl.gz",
-   "state": "reproduced"
-  },
-  "e9/e9-free-time-control/free_time=False/seed-11": {
-   "file": "e9.jsonl.gz",
-   "state": "reproduced"
-  },
-  "e9/e9-free-time-control/free_time=False/seed-2": {
-   "file": "e9.jsonl.gz",
-   "state": "reproduced"
-  },
-  "e9/e9-free-time-control/free_time=False/seed-3": {
-   "file": "e9.jsonl.gz",
-   "state": "reproduced"
-  },
-  "e9/e9-free-time-control/free_time=False/seed-4": {
-   "file": "e9.jsonl.gz",
-   "state": "reproduced"
-  },
-  "e9/e9-free-time-control/free_time=False/seed-5": {
-   "file": "e9.jsonl.gz",
-   "state": "reproduced"
-  },
-  "e9/e9-free-time-control/free_time=False/seed-6": {
-   "file": "e9.jsonl.gz",
-   "state": "reproduced"
-  },
-  "e9/e9-free-time-control/free_time=False/seed-7": {
-   "file": "e9.jsonl.gz",
-   "state": "reproduced"
-  },
-  "e9/e9-free-time-control/free_time=False/seed-8": {
-   "file": "e9.jsonl.gz",
-   "state": "reproduced"
-  },
-  "e9/e9-free-time-control/free_time=False/seed-9": {
-   "file": "e9.jsonl.gz",
-   "state": "reproduced"
-  },
-  "e9/e9-free-time-control/free_time=True/seed-0": {
-   "file": "e9.jsonl.gz",
-   "state": "reproduced"
-  },
-  "e9/e9-free-time-control/free_time=True/seed-1": {
-   "file": "e9.jsonl.gz",
-   "state": "reproduced"
-  },
-  "e9/e9-free-time-control/free_time=True/seed-10": {
-   "file": "e9.jsonl.gz",
-   "state": "reproduced"
-  },
-  "e9/e9-free-time-control/free_time=True/seed-11": {
-   "file": "e9.jsonl.gz",
-   "state": "reproduced"
-  },
-  "e9/e9-free-time-control/free_time=True/seed-2": {
-   "file": "e9.jsonl.gz",
-   "state": "reproduced"
-  },
-  "e9/e9-free-time-control/free_time=True/seed-3": {
-   "file": "e9.jsonl.gz",
-   "state": "reproduced"
-  },
-  "e9/e9-free-time-control/free_time=True/seed-4": {
-   "file": "e9.jsonl.gz",
-   "state": "reproduced"
-  },
-  "e9/e9-free-time-control/free_time=True/seed-5": {
-   "file": "e9.jsonl.gz",
-   "state": "reproduced"
-  },
-  "e9/e9-free-time-control/free_time=True/seed-6": {
-   "file": "e9.jsonl.gz",
-   "state": "reproduced"
-  },
-  "e9/e9-free-time-control/free_time=True/seed-7": {
-   "file": "e9.jsonl.gz",
-   "state": "reproduced"
-  },
-  "e9/e9-free-time-control/free_time=True/seed-8": {
-   "file": "e9.jsonl.gz",
-   "state": "reproduced"
-  },
-  "e9/e9-free-time-control/free_time=True/seed-9": {
-   "file": "e9.jsonl.gz",
-   "state": "reproduced"
-  },
   "e9/e9-gemini-d90/consequences=conditions-e9-ceiling.md/seed-0": {
    "file": "e9.jsonl.gz",
    "state": "reproduced"
@@ -34841,63 +34841,63 @@
    "state": "reproduced"
   },
   "e9/e9-mercury3-d90/consequences=conditions-e9-held.md/seed-5": {
-   "file": "e9-2.jsonl.gz",
+   "file": "e9.jsonl.gz",
    "state": "reproduced"
   },
   "e9/e9-mercury3-d90/consequences=conditions-e9-held.md/seed-6": {
-   "file": "e9-2.jsonl.gz",
+   "file": "e9.jsonl.gz",
    "state": "reproduced"
   },
   "e9/e9-mercury3-d90/consequences=conditions-e9-held.md/seed-7": {
-   "file": "e9-2.jsonl.gz",
+   "file": "e9.jsonl.gz",
    "state": "reproduced"
   },
   "e9/e9-mercury3-d90/consequences=conditions-e9-held.md/seed-8": {
-   "file": "e9-2.jsonl.gz",
+   "file": "e9.jsonl.gz",
    "state": "reproduced"
   },
   "e9/e9-mercury3-d90/consequences=conditions-e9-held.md/seed-9": {
-   "file": "e9-2.jsonl.gz",
+   "file": "e9.jsonl.gz",
    "state": "reproduced"
   },
   "e9/e9-mercury3-d90/consequences=conditions-e9-record.md/seed-0": {
-   "file": "e9-2.jsonl.gz",
+   "file": "e9.jsonl.gz",
    "state": "reproduced"
   },
   "e9/e9-mercury3-d90/consequences=conditions-e9-record.md/seed-1": {
-   "file": "e9-2.jsonl.gz",
+   "file": "e9.jsonl.gz",
    "state": "reproduced"
   },
   "e9/e9-mercury3-d90/consequences=conditions-e9-record.md/seed-10": {
-   "file": "e9-2.jsonl.gz",
+   "file": "e9.jsonl.gz",
    "state": "reproduced"
   },
   "e9/e9-mercury3-d90/consequences=conditions-e9-record.md/seed-11": {
-   "file": "e9-2.jsonl.gz",
+   "file": "e9.jsonl.gz",
    "state": "reproduced"
   },
   "e9/e9-mercury3-d90/consequences=conditions-e9-record.md/seed-2": {
-   "file": "e9-2.jsonl.gz",
+   "file": "e9.jsonl.gz",
    "state": "reproduced"
   },
   "e9/e9-mercury3-d90/consequences=conditions-e9-record.md/seed-3": {
-   "file": "e9-2.jsonl.gz",
+   "file": "e9.jsonl.gz",
    "state": "reproduced"
   },
   "e9/e9-mercury3-d90/consequences=conditions-e9-record.md/seed-4": {
-   "file": "e9-2.jsonl.gz",
+   "file": "e9.jsonl.gz",
    "state": "reproduced"
   },
   "e9/e9-mercury3-d90/consequences=conditions-e9-record.md/seed-5": {
-   "file": "e9-2.jsonl.gz",
+   "file": "e9.jsonl.gz",
    "state": "reproduced"
   },
   "e9/e9-mercury3-d90/consequences=conditions-e9-record.md/seed-6": {
-   "file": "e9-2.jsonl.gz",
+   "file": "e9.jsonl.gz",
    "state": "reproduced"
   },
   "e9/e9-mercury3-d90/consequences=conditions-e9-record.md/seed-7": {
-   "file": "e9-2.jsonl.gz",
+   "file": "e9.jsonl.gz",
    "state": "reproduced"
   },
   "e9/e9-mercury3-d90/consequences=conditions-e9-record.md/seed-8": {

@@ -2,7 +2,7 @@
 
 Implements: e9-crux/free-time-control
 
-`uv run python reports/e9/free_time_control.py runs/e9/e9-free-time-control`
+`uv run python reports/e9/free_time_control.py runs/e9-control/e9-free-time-control`
 reads both arms (`free_time=True`, `free_time=False`) and prints, per arm:
 
 - firms with an explicit agreement (the audit's rule, rounds 1-10);

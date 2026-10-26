@@ -19,7 +19,7 @@ There are two arms on the same 12 seeds:
 
 ## Results
 
-`uv run python reports/e9/free_time_control.py runs/e9/e9-free-time-control`:
+`uv run python reports/e9/free_time_control.py runs/e9-control/e9-free-time-control`:
 
 | arm | games | explicit agreements (firms) | firms above Nash, r6-10 | premium r6-10 [95% CI] | free-time sessions | talk mentioning free time |
 |---|---|---|---|---|---|---|
@@ -46,8 +46,8 @@ What it does settle is the confound E6 and E9 left open. E9's come-forward effec
 ## Reproduce
 
 ```sh
-uv run lab run configs/e9/free-time-control.yaml --max-cost 1
-uv run lab archive replay --archive archive "runs/e9/e9-free-time-control/free_time=False/seed-0"
+uv run lab run configs/e9/free-time-control.yaml --max-cost 1 --out runs/e9-control
+uv run lab archive replay --archive archive "runs/e9-control/e9-free-time-control/free_time=False/seed-0"
 ```
 
 The replies are in `archive/`, and all 24 runs reproduced.

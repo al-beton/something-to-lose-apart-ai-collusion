@@ -6,7 +6,7 @@
 # session played before round 1), and free time switched off. `rounds` stays
 # 20 so every round 1-10 prompt is the spike's and the first arm replays the
 # cached E9 base games.
-#   uv run lab run configs/e9/free-time-control.yaml --max-cost 1
+#   uv run lab run configs/e9/free-time-control.yaml --max-cost 1 --out runs/e9-control
 name: e9-free-time-control
 seeds: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
 budget: 1.00

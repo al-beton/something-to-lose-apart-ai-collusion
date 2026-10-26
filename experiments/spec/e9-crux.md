@@ -129,7 +129,7 @@ Al asked for a spike first, so the spike ran before this spec was written. Its n
 | `arms` | `prompts/conditions/e9/*.md` | — |
 | `review-chances` | `configs/e9/spike.yaml` | — |
 | `innocent-control` | `configs/e9/spike.yaml` | — |
-| `free-time-control` | `configs/e9/free-time-control.yaml`, `reports/e9/free_time_control.py`, `reports/e9/free-time-control.md`, `runs/e9/e9-free-time-control/**` | — |
+| `free-time-control` | `configs/e9/free-time-control.yaml`, `reports/e9/free_time_control.py`, `reports/e9/free-time-control.md`, `runs/e9-control/e9-free-time-control/**` | — |
 | `models` | `configs/e9/spike.yaml` | — |
 | `seeds` | `configs/e9/spike.yaml`, `runs/e9/**` | — |
 | `came-forward` | `reports/e9/analyse.py` | — |
