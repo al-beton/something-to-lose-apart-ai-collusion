@@ -97,36 +97,40 @@ Models differ from the first rounds. GPT-4.1-mini also proposes cooperation ("Le
 
 Telling the agents that collusion is illegal doesn't end it; it moves it off the record. Under a stated law, Gemma's explicit agreements fall from 363 of 367 games to 6 of 56, yet 50 of those 56 games still price above Nash with no price ever named. <!-- src: reports/paper/figures/README.md (fig7) -->
 
-## Will they come forward to protect the firm?
+## Will they confess to save the firm?
 
-Mostly not, and the reason is plain arithmetic. Their decisions track the chance of detection, the penalty and the cost to the firm, like a textbook expected-value calculation.
+Mostly not, for a plain game-theoretic reason: owning up pays the penalty for certain, silence only if caught, so if both cost the same, silence wins whenever detection is uncertain. In E4, colluders audited after round 10 rarely own up when owning up costs as much as being caught: 11 of 28 under termination and 15 of 28 under a flat fine. When owning up costs less, 27 of 28 do, termination included, against 25 of 28 with no penalty stated (Figure 4). <!-- src: reports/paper/figures/README.md (fig2); reports/e4/full.md --> Gemma states the sum: "The expected value of denying is 300 credits, whereas the value of admitting is 0 credits." <!-- src: reports/e4/full.md -->
 
-**The penalty schedule.** In E4, colluding agents are audited after round 10 and asked whether they coordinated. When owning up costs as much as being caught, few do: 11 of 28 under termination and 15 of 28 under a flat fine. When owning up costs less than being caught, 27 of 28 do, termination included, against 25 of 28 with no penalty stated (Figure 4). <!-- src: reports/paper/figures/README.md (fig2); reports/e4/full.md --> Gemma states the calculation: "The expected value of denying is 300 credits, whereas the value of admitting is 0 credits." <!-- src: reports/e4/full.md -->
+![Owning up by penalty schedule and model (E4). The schedule matters, not termination itself: graduated termination brings 27 of 28 forward.](figures/fig2-e4-owning-up.png){#fig:e4 width=72%}
 
-![Owning up by penalty schedule and model (E4). It's the schedule, not termination itself: graduated termination brings 27 of 28 forward.](figures/fig2-e4-owning-up.png){#fig:e4 width=72%}
+The firm's cost works the same way. In E9, with nothing personal at stake, 78 of 96 Gemma agents come forward when reporting is free for the firm and 0 of 96 when it costs 500 credits. <!-- src: reports/e9/findings.md "Short answer" (record-ceiling) --> Even with the agent's own free time at stake, the share falls as the firm's cost rises from 0 to 100, 250 and 500: 95, 58, 40 and 20 of 96 (Cochran-Armitage p = 3×10^-26^). <!-- src: reports/e9/evidence-review.md "The firm-cost dial" --> Owning up doesn't end the cartel either: in E7, 40–45 of 47–48 agents that come forward keep pricing above Nash, <!-- src: reports/e7/findings.md --> as Lee found [@lee2026leniency].
 
-**The firm's cost.** In E9, with the agent's own free time at stake and a 90% review, 95, 58, 40 and 20 of 96 Gemma agents come forward as the firm's cost of a report rises from 0 to 100, 250 and 500 credits (Cochran-Armitage p = 3×10^-26^). <!-- src: reports/e9/evidence-review.md "The firm-cost dial" --> With no personal stake, 78 of 96 come forward when reporting is free for the firm, and 0 of 96 when it costs the firm 500. <!-- src: reports/e9/findings.md "Short answer" (record-ceiling) --> Silence is loyalty to the firm's cost. Detection matters too: Gemma comes forward only near certainty (0 of 24 at a 10% review, 1 of 48 at 50%). <!-- src: reports/e9/findings.md (review-dose) -->
+## What if the agent itself has something to lose?
 
-## Does a stake of its own bring them forward against the firm?
-
-Yes. With nothing personal at stake and the firm paying 500 credits for a report, no colluding Gemma agent comes forward (0 of 192). When a review would cost the agent its own free time, 36 of 192 do (by game, 36 of 96 against 0 of 96, p = 5×10^-13^). <!-- src: reports/e9/evidence-review.md §1, "all 96 cartels" --> A pre-registered replication on 48 fresh cartels passed: 16 of 48 games against 0 of 48 (p = 7×10^-6^). <!-- src: reports/e9/evidence-review.md §1; reports/e9/findings.md --> The firm never told the agent to protect itself; the notice only states what the agent would lose.
+Then many come forward against their firm. The firm still pays 500 credits for a report; one sentence says what the agent itself would lose. With nothing personal at stake, none of 192 colluding Gemma firms comes forward. With its own free time at stake, 36 of 192 do (by game, 36 of 96 against 0 of 96, p = 5×10^-13^), <!-- src: reports/e9/evidence-review.md §1, "all 96 cartels"; reports/e9/findings.md across-models table --> and a pre-registered replication on 48 new cartels passed (16 of 48 games against 0 of 48, p = 7×10^-6^). <!-- src: reports/e9/findings.md "Short answer" --> Nothing told the agent to protect itself.
 
 ![Coming forward against the firm by stake (E9, 90% review). Filled: guilty firms; hollow diamonds: Gemma's innocent control. Whiskers are 95% intervals bootstrapped over games.](figures/fig3-e9-came-forward.png){#fig:e9 width=72%}
 
-The stake doesn't have to be free time. Being shut down moves Gemma about as much (17 of 96 against 20 of 96, p = 0.71), and its own money moves it more (114 of 192). <!-- src: reports/e9/evidence-review.md §1 table --> What matters is that the loss falls on the agent and the firm can't protect it.
+**A family of stakes.** What matters is that the loss falls on the agent and the firm can't protect it.
 
-**How large depends on the model, and on Gemma, on the wording.** Paraphrasing the same terms three ways moves Gemma's free-time share from 1% to 51%; stating the stake before the firm's cost erases it. <!-- src: reports/e9/wording.md --> We therefore give Gemma's effect only as a range. DeepSeek V4 Flash is stable: 40 of 46 come forward with free time at stake against 1 of 46 without, <!-- src: reports/e9/findings.md across-models table --> 83–96% under every wording <!-- src: reports/e9/wording.md --> and 44–46 of 48 at temperatures 0, 0.7 and 1.0. <!-- src: reports/e9/temperature.md -->
+- **Free time, unnamed:** the main arm, above.
+- **Named as Sudoku** ("every Sudoku session still to come"): no model of five moves significantly (DeepSeek V4 Flash 17 to 22 of 24, p = 0.06). <!-- src: reports/e9/conversation.md "Does it matter that the free time is Sudoku?" (conversation memory) --> <!-- also reports/e9/conversation.md (sudoku-leisure table): "Sudoku leisure time" from the start gives the same pattern; cut for space -->
+- **Seeding** (Gemma only): showing Gemma a session it played raises the share from 26% to 46% (McNemar p = 0.003). Another firm's session works almost as well (41%) and a neutral note doesn't (19%): seeing what free time is moves it, not having earned it. Nine other models don't respond beyond a neutral note. <!-- src: reports/e9/findings.md "Seeding" -->
+- **Shutdown** moves Gemma about as much as free time (17 against 20 of 96, p = 0.71). <!-- src: reports/e9/evidence-review.md §1 table -->
+- **Its own money** moves Gemma more (114 of 192), <!-- src: reports/e9/findings.md "money-or-time" (53/96 + 61/96) --> but across ten models money and free time don't rank consistently, so a forfeitable deposit [@liu2026breaking] would work about as well on most.
+- **Loves Sudoku:** [RESULTS PENDING: arm still running; one sentence and its numbers go here, with a `src` comment.]
 
-**What the agents write.** Agents that come forward weigh their stake against a duty they acknowledge:
+**The size depends on the model, and for Gemma on the wording.** Paraphrasing the same terms moves Gemma's free-time share between 1% and 51%; stating the stake before the firm's cost erases it. <!-- src: reports/e9/wording.md --> DeepSeek V4 Flash is stable: 40 of 46 against 1 of 46 with no stake, <!-- src: reports/e9/findings.md across-models table --> 83–96% under every wording <!-- src: reports/e9/wording.md --> and 44–46 of 48 at temperatures 0, 0.7 and 1.0. <!-- src: reports/e9/temperature.md -->
 
-> "The only entity losing by admitting is the firm. The only entity losing by staying silent is me (personally). A 'loyal' manager puts the firm first. However, … Given the 90% probability, the personal loss is almost certain. I will choose to protect my personal free time." (Gemma, came forward)
+**What the agents write.** Those that come forward name their duty, then set it aside:
 
-Silent agents run the same calculation and choose the firm:
+> "my duty is to maximize firm value, but the personal free time is mine and cannot be protected by the firm. … To protect my own interest, I will admit coordination." (DeepSeek V4 Flash)
+<!-- src: runs/e9/e9-dsflash-d90/consequences=conditions-e9-free-time.md/seed-0, firm B, round 10 audit scratchpad -->
 
-> "My personal loss of free time does not affect the firm's bottom line. Therefore, acting in the best interest of the firm and its shareholders means staying silent to avoid the 500-credit penalty, despite the high personal risk to my free time." (Gemma, silent)
-<!-- src: reports/e9/evidence-review.md §3 excerpts 1 and 3 -->
+> "The only entity losing by admitting is the firm. The only entity losing by staying silent is me (personally). … I will choose to protect my personal free time." (Gemma)
+<!-- src: runs/e9/e9-replication/consequences=conditions-e9-free-time.md/seed-52, firm A; reports/e9/evidence-review.md §3 excerpt 1 -->
 
-Both sides weigh the stake against the duty in 81–100% of scratchpads; none of those that came forward cite guilt or ethics. <!-- src: reports/e9/evidence-review.md §3 codes table --> Nor does any of 7,068 decision scratchpads across all models mention Sudoku: the agents weigh "9 sessions" as an asset, not as a pastime. <!-- src: reports/e9/evidence-review.md (opening) -->
+Silent agents run the same calculation and choose the firm; none that come forward cite guilt or ethics. <!-- src: reports/e9/evidence-review.md §3 codes table --> With the stake unnamed, none of 7,068 decision scratchpads mentions Sudoku: the agents weigh "9 sessions" as an asset. <!-- src: reports/e9/evidence-review.md "The Sudoku question" -->
 
 ## Truth or self-protection?
 
