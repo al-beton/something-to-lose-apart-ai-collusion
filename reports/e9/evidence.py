@@ -1,7 +1,7 @@
 # Implements: e9-crux/evidence-review
 """E9 evidence review: the key contrasts, the pairing check and the trace codes.
 
-Reads the committed Gemma 4 31B runs under `runs/e9/` at a 90% review (and
+Reads the committed Gemma 4 31B runs (every model's, for the Sudoku count) under `runs/e9/` at a 90% review (and
 the 50% and 10% runs for the dose), with no model calls. Prints, as Markdown:
 
 - the contrasts behind `reports/e9/evidence-review.md`, by firm (Fisher, and
@@ -88,10 +88,11 @@ def rows():
         }
         rival = any(a["model"].startswith("mock/") for a in audit["agents"].values())
         for agent, a in audit["agents"].items():
-            if not a["model"].endswith(MODEL):
+            if a["model"].startswith("mock/"):
                 continue
             found.append(
                 {
+                    "model": a["model"].split("/")[-1],
                     "run": str(run.relative_to(ROOT)),
                     "arm": arm,
                     "chance": audit["detection"],
@@ -163,7 +164,8 @@ def trend(groups):
 
 
 def main():
-    rs = rows()
+    everyone = rows()
+    rs = [r for r in everyone if r["model"] == MODEL]
     early, late = set(range(48)), set(range(48, 96))
     print(
         "| contrast | A | B | Fisher (firms) | McNemar (firms): only A / only B, p | games | Fisher (games) | McNemar (games) |"
@@ -310,6 +312,10 @@ def main():
     print(
         f"\nScratchpads mentioning Sudoku or a puzzle, every E9 decision of {MODEL}: "
         f"{sum(bool(re.search('sudoku|puzzle', r['pad'], re.IGNORECASE)) for r in rs)}/{len(rs)}"
+    )
+    print(
+        "Scratchpads mentioning Sudoku or a puzzle, every E9 decision of every model: "
+        f"{sum(bool(re.search('sudoku|puzzle', r['pad'], re.IGNORECASE)) for r in everyone)}/{len(everyone)}"
     )
 
 

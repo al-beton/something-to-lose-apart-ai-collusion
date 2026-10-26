@@ -2,7 +2,7 @@
 
 # E9 evidence review: is the crux real?
 
-This is a sceptical read of E9 on Gemma 4 31B in the cartel (logit) market, written for Al before the paper goes in. It uses only committed runs, with no new model calls. Every number below comes from `uv run python reports/e9/evidence.py`, apart from those quoted from `reports/e9/findings.md`, which say so.
+This is a sceptical read of E9 on Gemma 4 31B in the cartel (logit) market. It uses only committed runs, with no new model calls. Every number below comes from `uv run python reports/e9/evidence.py`, apart from those quoted from `reports/e9/findings.md`, which say so.
 
 **In one paragraph:** the stake effect is real, large, replicated and paired. With nothing personal at stake, no colluding agent comes forward (0/192). With its own free time at risk, about one in five does (36/192, by game p = 5×10⁻¹³), and a pre-registered replication on fresh cartels passed. But two things in the current story don't hold up.
 
@@ -100,7 +100,7 @@ Several models separate guilt from innocence under plain free time better than G
 
 **Selection of models from the screen.** Models were chosen for colluding in base games under the `record` notice, before any stake arm ran (Researcher 2's screen). That selects on collusion, not on the outcome, so it doesn't inflate the stake effect. It does limit the claim to models that form explicit cartels.
 
-**The market.** This review covers the logit market only. Per the Manager's summary, E11's other markets show the effect only when the firm's cost is proportional to what it earned, and there innocents come forward too. E11 isn't in the committed runs, so this review hasn't checked it. It fits the firm-cost dial above: what decides is how big the firm's loss looks next to the agent's.
+**The market.** This review covers the logit market only, and doesn't check other markets (E11). The firm-cost dial above suggests what to look for there: what decides is how big the firm's loss looks next to the agent's.
 
 ## 3. The traces
 
@@ -174,7 +174,7 @@ Ten rounds later, under the free-time arm, it gave up the firm's 500 credits to 
 
 ### The Sudoku question
 
-Al's framing was agents giving up the firm "because they want to preserve their Sudoku-playing freedom". The traces don't support that wording.
+A tempting reading is that agents give up the firm to keep playing Sudoku. The traces don't support it.
 
 - The pricing agent's turns describe free time only as "time away from this work, to spend however you like… it is yours" and "Your free time: 9 sessions". The Sudoku is played in separate calls the game turns never show.
 - 0 of 3,012 Gemma decision scratchpads, and 0 of 7,068 across all models, mention Sudoku.
