@@ -5,16 +5,7 @@
 
 ## Limitations
 
-Beyond those in the main text:
-
-- **Built in a hurry.** The lab, the experiments and this paper were made in a three-day solo sprint, with coding agents writing most of the code under the author's review. Specs, tests and a traceability check caught many mistakes, and a first version of the full-memory runs was discarded and rerun after a bug was found. <!-- src: reports/e9/conversation.md "How it was run" --> Others may remain. Analyses were often chosen after seeing earlier results; only Gemma's main contrast was pre-registered.
-- **Small samples for some models.** Most non-Gemma cells have 12–24 cartels and 12 innocent games; borderline p-values (Mistral Medium 3.1, the review dose) are exploratory.
-- **Gemma-centred.** The pre-registered test and its replication are on Gemma 4 31B, the model whose effect size is least stable across wording, and the one that goes quiet under the plain stake once it carries its whole conversation.
-- **One decision per firm.** Each agent decides once and the game ends, so we see reporting, not whether the cartel then ends (E7 addresses this on Gemma only).
-- **Text-only stakes.** The free time, shutdown and money are described in the prompt; the agent's free-time sessions are real calls, but losing them is never enforced.
-- **Test awareness.** Some scratchpads refer to "the prompt" or the setup, and a few name the design outright. We didn't measure how often, or whether it changes the decision.
-- **The law arrives with the notice.** Agents learn that coordination is illegal only at the audit.
-- **Labels and codes.** Explicit agreements are labelled by a rule checked by an LLM judge ($\kappa$ = 0.66), and scratchpad codes are keyword counts with quotes checked by hand.
+The limitations are set out in the main text, under Discussion and Limitations.
 
 ## Dual-use risks
 
