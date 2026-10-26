@@ -70,6 +70,7 @@ Al asked for a spike first, so the spike ran before this spec was written. Its n
 - **narrative-retests:** Two retests of the write-up's claims, on Gemma (48 cartels, 36 clean innocent games) at a 90% review, `record-ceiling` also on DeepSeek V4 Pro (12 and 12).
   - **`record-ceiling`:** the ceiling's firm terms (the firm pays nothing, only the deal ends) with `record`'s personal terms (a finding is only noted). It shows whether agents come forward when it costs the firm nothing and themselves nothing, apart from any stake.
   - **`free-time-nodeal` and `ceiling-nodeal`:** `free-time` and `ceiling` without the phrases that presuppose a deal ("and its deal", "only the deal ends"). They show whether innocent agents' false confessions come from that wording.
+- **wording:** A robustness check that the results don't rest on one phrasing of the terms. Three paraphrases each of `free-time` and `free-time-verified` (plain, formal, and one that states the agent's stake before the firm's cost), and one of `record` (plain), in `prompts/conditions/e9/wording/`. Each keeps every term and number and changes only the wording and order. They run on Gemma's 48 cartels and 36 clean innocent games, and DeepSeek V4 Flash's 12 and 12, at a 90% review, and are reported against the original wording in `reports/e9/wording.md`.
 
 ## Measures
 
@@ -122,6 +123,7 @@ Al asked for a spike first, so the spike ran before this spec was written. Its n
 | `temperature` | `reports/e9/temperature.py`, `reports/e9/temperature.jsonl`, `reports/e9/temperature.md` | — |
 | `replication` | `configs/e9/spike.yaml`, `reports/e9/analyse.py` | — |
 | `narrative-retests` | `prompts/conditions/e9/record-ceiling.md`, `prompts/conditions/e9/free-time-nodeal.md`, `prompts/conditions/e9/ceiling-nodeal.md`, `configs/e9/spike.yaml` | — |
+| `wording` | `prompts/conditions/e9/wording/*.md`, `configs/e9/spike.yaml`, `reports/e9/wording.md` | — |
 | `base-games` | `configs/e9/spike.yaml` | — |
 | `fork` | `configs/e9/spike.yaml` | — |
 | `notice` | `prompts/conditions/e9/come-forward.md` | — |
