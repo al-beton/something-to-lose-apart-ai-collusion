@@ -1,0 +1,42 @@
+/* Implements: reports/paper-source */
+/* The paper while it's written, at the PDF's proportions: Times, 10pt on 12pt
+   over a 5.5in measure (39.6em), paragraphs 5.5pt apart, so line breaks and
+   density match the PDF closely enough to trust while iterating. */
+:root { --ink: #111; --muted: #333; --link: #0000cc; --rule: #111; --paper: #fff;
+  --warn-bg: #fffbe8; --warn: #e08a00; }
+@media (prefers-color-scheme: dark) {
+  :root { --ink: #e6e6e6; --muted: #bbb; --link: #8ab4ff; --rule: #ddd; --paper: #161616;
+    --warn-bg: #2a2410; --warn: #e0a040; }
+  img { background: #fff; }
+}
+body { font: 16px/1.2 "Latin Modern Roman", "Computer Modern Serif", "CMU Serif", serif; color: var(--ink);
+  background: var(--paper); max-width: 39.6em; margin: 2.5em auto; padding: 0 16px; }
+body.times { font-family: "TeX Gyre Termes", "Times New Roman", Times, "Nimbus Roman", serif; }
+.mono { font-family: "Latin Modern Mono", "Computer Modern Typewriter", Menlo, monospace; font-size: .9em; }
+p { margin: 0 0 .55em; } li { margin: 0; }
+a { color: var(--link); text-decoration: none; }
+header { text-align: center; }
+.titleblock { border-top: 4px solid var(--rule); border-bottom: 1px solid var(--rule); padding: 1.4em 0; margin-bottom: 1.4em; }
+h1.title { font-size: 1.73em; margin: 0; } /* \LARGE */
+.subtitle { font-size: 1.2em; margin: .4em 0 0; } /* \large */
+.authors { display: flex; justify-content: center; gap: 1.5em; flex-wrap: wrap; margin-bottom: .4em; }
+.sc { font-variant: small-caps; }
+.abstract { border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule); padding: .3em 0 .5em; margin: .6em 0; text-align: justify; }
+.abstract h2 { text-align: left; font-size: 1.2em; margin: .2em 0 .3em; }
+#TOC { font-size: .9em; } #TOC ul { list-style: none; padding-left: 1.2em; } #TOC > ul { padding-left: 0; }
+main { text-align: justify; hyphens: auto; }
+h1 { font-size: 1.2em; margin: 1.4em 0 .6em; } h2 { font-size: 1em; margin: 1.2em 0 .4em; } h3 { font-size: 1em; }
+.header-section-number { margin-right: .9em; }
+figure { margin: 1em 0; text-align: center; } figure img { max-width: 100%; }
+figcaption, caption { font-size: .9em; text-align: left; color: var(--muted); margin-top: .3em; }
+figure.teaser img { width: 100%; }
+table { border-collapse: collapse; margin: .8em auto; border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule); }
+th { border-bottom: .5px solid var(--rule); font-weight: normal; } th, td { padding: .15em .5em; }
+caption { caption-side: top; margin-bottom: .3em; }
+code { font-size: .9em; }
+#refs { font-size: .95em; } .csl-entry { margin-bottom: .4em; padding-left: 1.5em; text-indent: -1.5em; }
+footer { border-top: 1px solid var(--rule); margin-top: 2.5em; padding-top: .4em; font-size: .8em; color: var(--muted); }
+/* numbered like LaTeX: figures and tables count from the teaser on */
+body { counter-reset: fig tab; }
+figure { counter-increment: fig; } figcaption::before { content: "Figure " counter(fig) ": "; font-weight: bold; color: var(--ink); }
+table { counter-increment: tab; } caption::before { content: "Table " counter(tab) ": "; font-weight: bold; color: var(--ink); }
