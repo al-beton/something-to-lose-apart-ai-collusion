@@ -1,6 +1,8 @@
 <!-- Implements: reports/submission-pack -->
 # Submission checklist
 
+> **Draft proposal.** Al decides what goes on this list. He'll go through it section by section, adding, cutting and rewording, before it counts.
+
 Due **Monday 26 October 2026, 19:59 HKT**; submit once. One list for everything, in the order of [`README.md`](README.md); tick an item only when it's true on `main` (or of the built PDF), not when it's planned. *Owner in italics; PR or file linked.*
 
 ## 1. Repo

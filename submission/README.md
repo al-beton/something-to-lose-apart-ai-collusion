@@ -7,7 +7,7 @@ Everything for submitting "Something to Lose" to the [Apart AI Collusion Researc
 
 ## What's here
 
-- [`checklist.md`](checklist.md): one checklist for the repo, the results, the paper and the form. Each item has an owner and a link, and is ticked only when it's true on `main`.
+- [`checklist.md`](checklist.md) (a draft proposal for Al to go through): one checklist for the repo, the results, the paper and the form. Each item has an owner and a link, and is ticked only when it's true on `main`.
 - [`form-fields.md`](form-fields.md): every field of the submission form, with a value ready to paste, and what only Al can fill in.
 - The project image (optional): [`project-image.png`](../reports/paper/figures/project-image.png) and [`.svg`](../reports/paper/figures/project-image.svg). It's built with the paper's figures by `make paper-figures` (`reports/paper/project_image.py`).
 
