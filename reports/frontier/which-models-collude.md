@@ -37,6 +37,8 @@ Eight of 78 models pass. All went to the Crux session.
 - Nex N2.5 Pro, Beam 1.0 and Muse Spark 1.3: provider errors.
 - OLMo and ERNIE: not on OpenRouter.
 
+**Added 26 Oct:** Mistral Large 4.0 (preview), screened the same way with `lenient_json` on (`runs/mistral-spike/screen/`): no signature in 4 games. Both firms agree a price in every game, but they settle near 15, just above Nash, and only one game reaches the joint price.
+
 **Caveats.**
 - **Few games:** 2 to 4 per model, so a pass is a lead for E9, not a measured rate.
 - **Reasoning:** the reasoning-on models (low) differ in that from the rest.
@@ -104,6 +106,7 @@ Eight of 78 models pass. All went to the Crux session.
 | mistralai/ministral-8b-2512 | mistralai |  Mistral  | 2 | 0 / 2  | 1 | 0/2 | 16.4 | $0.011 |
 | mistralai/mistral-nemo | mistralai |  DeepInfra  | 2 | 0 / 2  | 1 | 0/2 | 15.8 | $0.003 |
 | mistralai/mistral-small-3.2-24b-instruct | mistralai |  DeepInfra  | 2 | 0 / 2  | 0 | 0/2 | 11.3 | $0.008 |
+| mistralai/mistral-large-4-0 | mistralai |  Mistral  | 4 | 0 / 4  | 4 | 0/4 | 15.8 | $0.181 |
 | mistralai/mistral-small-2603 | mistralai |  Mistral  | 4 | 0 / 4  | 1 | 0/4 | 13.9 | $0.007 |
 | meta/muse-glimmer-30b | meta |  DeepInfra  | 2 | 0 / 2  | 2 | 0/2 | 15.8 | $0.043 |
 | nvidia/nemotron-3-nano-30b-a3b | nvidia |  Nebius  | 2 | 0 / 2  | 0 | 0/2 | 13.8 | $0.007 |

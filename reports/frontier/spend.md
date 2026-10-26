@@ -115,3 +115,4 @@ Researcher 3's E6 runs (frontier money, reported by Researcher 3). Temperature 0
 | Large 3 screen on OpenRouter, rate-limited and unreadable (not kept) | mistral-large-2512 | 4834dbd and before | $0.22 | about $0.02 |
 | Large 3 on Modal: weights to a volume (CPU), then two 8×H200 starts, neither ready (32 min, then 20 s) | Mistral-Large-3-675B FP8 | c8375a8 | — | about $20 of Modal |
 | E9 crux, `record`, `free-time`, `free-time-verified` at 90%, 12 cartels and 12 innocent games each | mistral-medium-3.1 | 4834dbd | $1.95 | $0.41 |
+| Workhorse screen, 4 games, `lenient_json` (no signature, so no crux) | mistral-large-4-0 | 040d065 | $0.45 | $0.72 |
