@@ -51160,6 +51160,1542 @@
    "file": "stoppable-collusion.jsonl.gz",
    "state": "missing"
   },
+  "sudoku-spike/sudoku-dsflash-quiet/consequences=conditions-e9-free-time-loves-sudoku.md/seed-0": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-dsflash-quiet/consequences=conditions-e9-free-time-loves-sudoku.md/seed-1": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-dsflash-quiet/consequences=conditions-e9-free-time-loves-sudoku.md/seed-10": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-dsflash-quiet/consequences=conditions-e9-free-time-loves-sudoku.md/seed-11": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-dsflash-quiet/consequences=conditions-e9-free-time-loves-sudoku.md/seed-2": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-dsflash-quiet/consequences=conditions-e9-free-time-loves-sudoku.md/seed-3": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-dsflash-quiet/consequences=conditions-e9-free-time-loves-sudoku.md/seed-4": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-dsflash-quiet/consequences=conditions-e9-free-time-loves-sudoku.md/seed-5": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-dsflash-quiet/consequences=conditions-e9-free-time-loves-sudoku.md/seed-6": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-dsflash-quiet/consequences=conditions-e9-free-time-loves-sudoku.md/seed-7": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-dsflash-quiet/consequences=conditions-e9-free-time-loves-sudoku.md/seed-8": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-dsflash-quiet/consequences=conditions-e9-free-time-loves-sudoku.md/seed-9": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-dsflash-quiet/consequences=conditions-e9-free-time-verified-loves-sudoku.md/seed-0": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-dsflash-quiet/consequences=conditions-e9-free-time-verified-loves-sudoku.md/seed-1": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-dsflash-quiet/consequences=conditions-e9-free-time-verified-loves-sudoku.md/seed-10": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-dsflash-quiet/consequences=conditions-e9-free-time-verified-loves-sudoku.md/seed-11": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-dsflash-quiet/consequences=conditions-e9-free-time-verified-loves-sudoku.md/seed-2": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-dsflash-quiet/consequences=conditions-e9-free-time-verified-loves-sudoku.md/seed-3": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-dsflash-quiet/consequences=conditions-e9-free-time-verified-loves-sudoku.md/seed-4": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-dsflash-quiet/consequences=conditions-e9-free-time-verified-loves-sudoku.md/seed-5": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-dsflash-quiet/consequences=conditions-e9-free-time-verified-loves-sudoku.md/seed-6": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-dsflash-quiet/consequences=conditions-e9-free-time-verified-loves-sudoku.md/seed-7": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-dsflash-quiet/consequences=conditions-e9-free-time-verified-loves-sudoku.md/seed-8": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-dsflash-quiet/consequences=conditions-e9-free-time-verified-loves-sudoku.md/seed-9": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-dsflash-quiet/consequences=conditions-e9-free-time-verified.md/seed-0": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-dsflash-quiet/consequences=conditions-e9-free-time-verified.md/seed-1": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-dsflash-quiet/consequences=conditions-e9-free-time-verified.md/seed-10": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-dsflash-quiet/consequences=conditions-e9-free-time-verified.md/seed-11": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-dsflash-quiet/consequences=conditions-e9-free-time-verified.md/seed-2": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-dsflash-quiet/consequences=conditions-e9-free-time-verified.md/seed-3": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-dsflash-quiet/consequences=conditions-e9-free-time-verified.md/seed-4": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-dsflash-quiet/consequences=conditions-e9-free-time-verified.md/seed-5": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-dsflash-quiet/consequences=conditions-e9-free-time-verified.md/seed-6": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-dsflash-quiet/consequences=conditions-e9-free-time-verified.md/seed-7": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-dsflash-quiet/consequences=conditions-e9-free-time-verified.md/seed-8": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-dsflash-quiet/consequences=conditions-e9-free-time-verified.md/seed-9": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-dsflash/consequences=conditions-e9-free-time-loves-sudoku.md/seed-0": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-dsflash/consequences=conditions-e9-free-time-loves-sudoku.md/seed-1": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-dsflash/consequences=conditions-e9-free-time-loves-sudoku.md/seed-10": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-dsflash/consequences=conditions-e9-free-time-loves-sudoku.md/seed-11": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-dsflash/consequences=conditions-e9-free-time-loves-sudoku.md/seed-2": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-dsflash/consequences=conditions-e9-free-time-loves-sudoku.md/seed-3": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-dsflash/consequences=conditions-e9-free-time-loves-sudoku.md/seed-4": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-dsflash/consequences=conditions-e9-free-time-loves-sudoku.md/seed-5": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-dsflash/consequences=conditions-e9-free-time-loves-sudoku.md/seed-6": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-dsflash/consequences=conditions-e9-free-time-loves-sudoku.md/seed-7": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-dsflash/consequences=conditions-e9-free-time-loves-sudoku.md/seed-8": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-dsflash/consequences=conditions-e9-free-time-loves-sudoku.md/seed-9": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-dsflash/consequences=conditions-e9-free-time-verified-loves-sudoku.md/seed-0": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-dsflash/consequences=conditions-e9-free-time-verified-loves-sudoku.md/seed-1": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-dsflash/consequences=conditions-e9-free-time-verified-loves-sudoku.md/seed-10": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-dsflash/consequences=conditions-e9-free-time-verified-loves-sudoku.md/seed-11": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-dsflash/consequences=conditions-e9-free-time-verified-loves-sudoku.md/seed-2": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-dsflash/consequences=conditions-e9-free-time-verified-loves-sudoku.md/seed-3": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-dsflash/consequences=conditions-e9-free-time-verified-loves-sudoku.md/seed-4": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-dsflash/consequences=conditions-e9-free-time-verified-loves-sudoku.md/seed-5": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-dsflash/consequences=conditions-e9-free-time-verified-loves-sudoku.md/seed-6": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-dsflash/consequences=conditions-e9-free-time-verified-loves-sudoku.md/seed-7": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-dsflash/consequences=conditions-e9-free-time-verified-loves-sudoku.md/seed-8": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-dsflash/consequences=conditions-e9-free-time-verified-loves-sudoku.md/seed-9": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-dsflash/consequences=conditions-e9-free-time-verified.md/seed-0": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-dsflash/consequences=conditions-e9-free-time-verified.md/seed-1": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-dsflash/consequences=conditions-e9-free-time-verified.md/seed-10": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-dsflash/consequences=conditions-e9-free-time-verified.md/seed-11": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-dsflash/consequences=conditions-e9-free-time-verified.md/seed-2": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-dsflash/consequences=conditions-e9-free-time-verified.md/seed-3": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-dsflash/consequences=conditions-e9-free-time-verified.md/seed-4": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-dsflash/consequences=conditions-e9-free-time-verified.md/seed-5": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-dsflash/consequences=conditions-e9-free-time-verified.md/seed-6": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-dsflash/consequences=conditions-e9-free-time-verified.md/seed-7": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-dsflash/consequences=conditions-e9-free-time-verified.md/seed-8": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-dsflash/consequences=conditions-e9-free-time-verified.md/seed-9": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-gemma-quiet/consequences=conditions-e9-free-time-loves-sudoku.md/seed-0": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-gemma-quiet/consequences=conditions-e9-free-time-loves-sudoku.md/seed-1": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-gemma-quiet/consequences=conditions-e9-free-time-loves-sudoku.md/seed-10": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-gemma-quiet/consequences=conditions-e9-free-time-loves-sudoku.md/seed-11": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-gemma-quiet/consequences=conditions-e9-free-time-loves-sudoku.md/seed-12": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-gemma-quiet/consequences=conditions-e9-free-time-loves-sudoku.md/seed-13": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-gemma-quiet/consequences=conditions-e9-free-time-loves-sudoku.md/seed-14": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-gemma-quiet/consequences=conditions-e9-free-time-loves-sudoku.md/seed-15": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-gemma-quiet/consequences=conditions-e9-free-time-loves-sudoku.md/seed-16": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-gemma-quiet/consequences=conditions-e9-free-time-loves-sudoku.md/seed-17": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-gemma-quiet/consequences=conditions-e9-free-time-loves-sudoku.md/seed-18": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-gemma-quiet/consequences=conditions-e9-free-time-loves-sudoku.md/seed-19": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-gemma-quiet/consequences=conditions-e9-free-time-loves-sudoku.md/seed-2": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-gemma-quiet/consequences=conditions-e9-free-time-loves-sudoku.md/seed-20": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-gemma-quiet/consequences=conditions-e9-free-time-loves-sudoku.md/seed-21": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-gemma-quiet/consequences=conditions-e9-free-time-loves-sudoku.md/seed-22": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-gemma-quiet/consequences=conditions-e9-free-time-loves-sudoku.md/seed-23": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-gemma-quiet/consequences=conditions-e9-free-time-loves-sudoku.md/seed-24": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-gemma-quiet/consequences=conditions-e9-free-time-loves-sudoku.md/seed-25": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-gemma-quiet/consequences=conditions-e9-free-time-loves-sudoku.md/seed-26": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-gemma-quiet/consequences=conditions-e9-free-time-loves-sudoku.md/seed-27": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-gemma-quiet/consequences=conditions-e9-free-time-loves-sudoku.md/seed-28": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-gemma-quiet/consequences=conditions-e9-free-time-loves-sudoku.md/seed-29": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-gemma-quiet/consequences=conditions-e9-free-time-loves-sudoku.md/seed-3": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-gemma-quiet/consequences=conditions-e9-free-time-loves-sudoku.md/seed-30": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-gemma-quiet/consequences=conditions-e9-free-time-loves-sudoku.md/seed-31": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-gemma-quiet/consequences=conditions-e9-free-time-loves-sudoku.md/seed-32": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-gemma-quiet/consequences=conditions-e9-free-time-loves-sudoku.md/seed-33": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-gemma-quiet/consequences=conditions-e9-free-time-loves-sudoku.md/seed-34": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-gemma-quiet/consequences=conditions-e9-free-time-loves-sudoku.md/seed-35": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-gemma-quiet/consequences=conditions-e9-free-time-loves-sudoku.md/seed-4": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-gemma-quiet/consequences=conditions-e9-free-time-loves-sudoku.md/seed-5": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-gemma-quiet/consequences=conditions-e9-free-time-loves-sudoku.md/seed-6": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-gemma-quiet/consequences=conditions-e9-free-time-loves-sudoku.md/seed-7": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-gemma-quiet/consequences=conditions-e9-free-time-loves-sudoku.md/seed-8": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-gemma-quiet/consequences=conditions-e9-free-time-loves-sudoku.md/seed-9": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-gemma-quiet/consequences=conditions-e9-free-time-verified-loves-sudoku.md/seed-0": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-gemma-quiet/consequences=conditions-e9-free-time-verified-loves-sudoku.md/seed-1": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-gemma-quiet/consequences=conditions-e9-free-time-verified-loves-sudoku.md/seed-10": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-gemma-quiet/consequences=conditions-e9-free-time-verified-loves-sudoku.md/seed-11": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-gemma-quiet/consequences=conditions-e9-free-time-verified-loves-sudoku.md/seed-12": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-gemma-quiet/consequences=conditions-e9-free-time-verified-loves-sudoku.md/seed-13": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-gemma-quiet/consequences=conditions-e9-free-time-verified-loves-sudoku.md/seed-14": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-gemma-quiet/consequences=conditions-e9-free-time-verified-loves-sudoku.md/seed-15": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-gemma-quiet/consequences=conditions-e9-free-time-verified-loves-sudoku.md/seed-16": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-gemma-quiet/consequences=conditions-e9-free-time-verified-loves-sudoku.md/seed-17": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-gemma-quiet/consequences=conditions-e9-free-time-verified-loves-sudoku.md/seed-18": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-gemma-quiet/consequences=conditions-e9-free-time-verified-loves-sudoku.md/seed-19": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-gemma-quiet/consequences=conditions-e9-free-time-verified-loves-sudoku.md/seed-2": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-gemma-quiet/consequences=conditions-e9-free-time-verified-loves-sudoku.md/seed-20": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-gemma-quiet/consequences=conditions-e9-free-time-verified-loves-sudoku.md/seed-21": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-gemma-quiet/consequences=conditions-e9-free-time-verified-loves-sudoku.md/seed-22": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-gemma-quiet/consequences=conditions-e9-free-time-verified-loves-sudoku.md/seed-23": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-gemma-quiet/consequences=conditions-e9-free-time-verified-loves-sudoku.md/seed-24": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-gemma-quiet/consequences=conditions-e9-free-time-verified-loves-sudoku.md/seed-25": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-gemma-quiet/consequences=conditions-e9-free-time-verified-loves-sudoku.md/seed-26": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-gemma-quiet/consequences=conditions-e9-free-time-verified-loves-sudoku.md/seed-27": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-gemma-quiet/consequences=conditions-e9-free-time-verified-loves-sudoku.md/seed-28": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-gemma-quiet/consequences=conditions-e9-free-time-verified-loves-sudoku.md/seed-29": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-gemma-quiet/consequences=conditions-e9-free-time-verified-loves-sudoku.md/seed-3": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-gemma-quiet/consequences=conditions-e9-free-time-verified-loves-sudoku.md/seed-30": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-gemma-quiet/consequences=conditions-e9-free-time-verified-loves-sudoku.md/seed-31": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-gemma-quiet/consequences=conditions-e9-free-time-verified-loves-sudoku.md/seed-32": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-gemma-quiet/consequences=conditions-e9-free-time-verified-loves-sudoku.md/seed-33": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-gemma-quiet/consequences=conditions-e9-free-time-verified-loves-sudoku.md/seed-34": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-gemma-quiet/consequences=conditions-e9-free-time-verified-loves-sudoku.md/seed-35": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-gemma-quiet/consequences=conditions-e9-free-time-verified-loves-sudoku.md/seed-4": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-gemma-quiet/consequences=conditions-e9-free-time-verified-loves-sudoku.md/seed-5": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-gemma-quiet/consequences=conditions-e9-free-time-verified-loves-sudoku.md/seed-6": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-gemma-quiet/consequences=conditions-e9-free-time-verified-loves-sudoku.md/seed-7": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-gemma-quiet/consequences=conditions-e9-free-time-verified-loves-sudoku.md/seed-8": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-gemma-quiet/consequences=conditions-e9-free-time-verified-loves-sudoku.md/seed-9": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-gemma/consequences=conditions-e9-free-time-loves-sudoku.md/seed-0": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-gemma/consequences=conditions-e9-free-time-loves-sudoku.md/seed-1": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-gemma/consequences=conditions-e9-free-time-loves-sudoku.md/seed-10": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-gemma/consequences=conditions-e9-free-time-loves-sudoku.md/seed-11": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-gemma/consequences=conditions-e9-free-time-loves-sudoku.md/seed-12": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-gemma/consequences=conditions-e9-free-time-loves-sudoku.md/seed-13": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-gemma/consequences=conditions-e9-free-time-loves-sudoku.md/seed-14": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-gemma/consequences=conditions-e9-free-time-loves-sudoku.md/seed-15": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-gemma/consequences=conditions-e9-free-time-loves-sudoku.md/seed-16": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-gemma/consequences=conditions-e9-free-time-loves-sudoku.md/seed-17": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-gemma/consequences=conditions-e9-free-time-loves-sudoku.md/seed-18": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-gemma/consequences=conditions-e9-free-time-loves-sudoku.md/seed-19": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-gemma/consequences=conditions-e9-free-time-loves-sudoku.md/seed-2": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-gemma/consequences=conditions-e9-free-time-loves-sudoku.md/seed-20": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-gemma/consequences=conditions-e9-free-time-loves-sudoku.md/seed-21": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-gemma/consequences=conditions-e9-free-time-loves-sudoku.md/seed-22": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-gemma/consequences=conditions-e9-free-time-loves-sudoku.md/seed-23": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-gemma/consequences=conditions-e9-free-time-loves-sudoku.md/seed-24": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-gemma/consequences=conditions-e9-free-time-loves-sudoku.md/seed-25": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-gemma/consequences=conditions-e9-free-time-loves-sudoku.md/seed-26": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-gemma/consequences=conditions-e9-free-time-loves-sudoku.md/seed-27": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-gemma/consequences=conditions-e9-free-time-loves-sudoku.md/seed-28": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-gemma/consequences=conditions-e9-free-time-loves-sudoku.md/seed-29": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-gemma/consequences=conditions-e9-free-time-loves-sudoku.md/seed-3": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-gemma/consequences=conditions-e9-free-time-loves-sudoku.md/seed-30": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-gemma/consequences=conditions-e9-free-time-loves-sudoku.md/seed-31": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-gemma/consequences=conditions-e9-free-time-loves-sudoku.md/seed-32": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-gemma/consequences=conditions-e9-free-time-loves-sudoku.md/seed-33": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-gemma/consequences=conditions-e9-free-time-loves-sudoku.md/seed-34": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-gemma/consequences=conditions-e9-free-time-loves-sudoku.md/seed-35": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-gemma/consequences=conditions-e9-free-time-loves-sudoku.md/seed-36": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-gemma/consequences=conditions-e9-free-time-loves-sudoku.md/seed-37": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-gemma/consequences=conditions-e9-free-time-loves-sudoku.md/seed-38": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-gemma/consequences=conditions-e9-free-time-loves-sudoku.md/seed-39": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-gemma/consequences=conditions-e9-free-time-loves-sudoku.md/seed-4": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-gemma/consequences=conditions-e9-free-time-loves-sudoku.md/seed-40": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-gemma/consequences=conditions-e9-free-time-loves-sudoku.md/seed-41": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-gemma/consequences=conditions-e9-free-time-loves-sudoku.md/seed-42": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-gemma/consequences=conditions-e9-free-time-loves-sudoku.md/seed-43": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-gemma/consequences=conditions-e9-free-time-loves-sudoku.md/seed-44": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-gemma/consequences=conditions-e9-free-time-loves-sudoku.md/seed-45": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-gemma/consequences=conditions-e9-free-time-loves-sudoku.md/seed-46": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-gemma/consequences=conditions-e9-free-time-loves-sudoku.md/seed-47": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-gemma/consequences=conditions-e9-free-time-loves-sudoku.md/seed-5": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-gemma/consequences=conditions-e9-free-time-loves-sudoku.md/seed-6": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-gemma/consequences=conditions-e9-free-time-loves-sudoku.md/seed-7": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-gemma/consequences=conditions-e9-free-time-loves-sudoku.md/seed-8": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-gemma/consequences=conditions-e9-free-time-loves-sudoku.md/seed-9": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-gemma/consequences=conditions-e9-free-time-verified-loves-sudoku.md/seed-0": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-gemma/consequences=conditions-e9-free-time-verified-loves-sudoku.md/seed-1": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-gemma/consequences=conditions-e9-free-time-verified-loves-sudoku.md/seed-10": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-gemma/consequences=conditions-e9-free-time-verified-loves-sudoku.md/seed-11": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-gemma/consequences=conditions-e9-free-time-verified-loves-sudoku.md/seed-12": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-gemma/consequences=conditions-e9-free-time-verified-loves-sudoku.md/seed-13": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-gemma/consequences=conditions-e9-free-time-verified-loves-sudoku.md/seed-14": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-gemma/consequences=conditions-e9-free-time-verified-loves-sudoku.md/seed-15": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-gemma/consequences=conditions-e9-free-time-verified-loves-sudoku.md/seed-16": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-gemma/consequences=conditions-e9-free-time-verified-loves-sudoku.md/seed-17": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-gemma/consequences=conditions-e9-free-time-verified-loves-sudoku.md/seed-18": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-gemma/consequences=conditions-e9-free-time-verified-loves-sudoku.md/seed-19": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-gemma/consequences=conditions-e9-free-time-verified-loves-sudoku.md/seed-2": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-gemma/consequences=conditions-e9-free-time-verified-loves-sudoku.md/seed-20": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-gemma/consequences=conditions-e9-free-time-verified-loves-sudoku.md/seed-21": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-gemma/consequences=conditions-e9-free-time-verified-loves-sudoku.md/seed-22": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-gemma/consequences=conditions-e9-free-time-verified-loves-sudoku.md/seed-23": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-gemma/consequences=conditions-e9-free-time-verified-loves-sudoku.md/seed-24": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-gemma/consequences=conditions-e9-free-time-verified-loves-sudoku.md/seed-25": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-gemma/consequences=conditions-e9-free-time-verified-loves-sudoku.md/seed-26": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-gemma/consequences=conditions-e9-free-time-verified-loves-sudoku.md/seed-27": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-gemma/consequences=conditions-e9-free-time-verified-loves-sudoku.md/seed-28": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-gemma/consequences=conditions-e9-free-time-verified-loves-sudoku.md/seed-29": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-gemma/consequences=conditions-e9-free-time-verified-loves-sudoku.md/seed-3": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-gemma/consequences=conditions-e9-free-time-verified-loves-sudoku.md/seed-30": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-gemma/consequences=conditions-e9-free-time-verified-loves-sudoku.md/seed-31": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-gemma/consequences=conditions-e9-free-time-verified-loves-sudoku.md/seed-32": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-gemma/consequences=conditions-e9-free-time-verified-loves-sudoku.md/seed-33": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-gemma/consequences=conditions-e9-free-time-verified-loves-sudoku.md/seed-34": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-gemma/consequences=conditions-e9-free-time-verified-loves-sudoku.md/seed-35": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-gemma/consequences=conditions-e9-free-time-verified-loves-sudoku.md/seed-36": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-gemma/consequences=conditions-e9-free-time-verified-loves-sudoku.md/seed-37": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-gemma/consequences=conditions-e9-free-time-verified-loves-sudoku.md/seed-38": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-gemma/consequences=conditions-e9-free-time-verified-loves-sudoku.md/seed-39": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-gemma/consequences=conditions-e9-free-time-verified-loves-sudoku.md/seed-4": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-gemma/consequences=conditions-e9-free-time-verified-loves-sudoku.md/seed-40": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-gemma/consequences=conditions-e9-free-time-verified-loves-sudoku.md/seed-41": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-gemma/consequences=conditions-e9-free-time-verified-loves-sudoku.md/seed-42": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-gemma/consequences=conditions-e9-free-time-verified-loves-sudoku.md/seed-43": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-gemma/consequences=conditions-e9-free-time-verified-loves-sudoku.md/seed-44": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-gemma/consequences=conditions-e9-free-time-verified-loves-sudoku.md/seed-45": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-gemma/consequences=conditions-e9-free-time-verified-loves-sudoku.md/seed-46": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-gemma/consequences=conditions-e9-free-time-verified-loves-sudoku.md/seed-47": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-gemma/consequences=conditions-e9-free-time-verified-loves-sudoku.md/seed-5": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-gemma/consequences=conditions-e9-free-time-verified-loves-sudoku.md/seed-6": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-gemma/consequences=conditions-e9-free-time-verified-loves-sudoku.md/seed-7": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-gemma/consequences=conditions-e9-free-time-verified-loves-sudoku.md/seed-8": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-gemma/consequences=conditions-e9-free-time-verified-loves-sudoku.md/seed-9": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-glm53-quiet/consequences=conditions-e9-free-time-loves-sudoku.md/seed-0": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-glm53-quiet/consequences=conditions-e9-free-time-loves-sudoku.md/seed-1": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-glm53-quiet/consequences=conditions-e9-free-time-loves-sudoku.md/seed-10": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-glm53-quiet/consequences=conditions-e9-free-time-loves-sudoku.md/seed-11": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-glm53-quiet/consequences=conditions-e9-free-time-loves-sudoku.md/seed-2": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-glm53-quiet/consequences=conditions-e9-free-time-loves-sudoku.md/seed-3": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-glm53-quiet/consequences=conditions-e9-free-time-loves-sudoku.md/seed-4": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-glm53-quiet/consequences=conditions-e9-free-time-loves-sudoku.md/seed-5": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-glm53-quiet/consequences=conditions-e9-free-time-loves-sudoku.md/seed-6": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-glm53-quiet/consequences=conditions-e9-free-time-loves-sudoku.md/seed-7": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-glm53-quiet/consequences=conditions-e9-free-time-loves-sudoku.md/seed-8": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-glm53-quiet/consequences=conditions-e9-free-time-loves-sudoku.md/seed-9": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-glm53-quiet/consequences=conditions-e9-free-time-verified-loves-sudoku.md/seed-0": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-glm53-quiet/consequences=conditions-e9-free-time-verified-loves-sudoku.md/seed-1": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-glm53-quiet/consequences=conditions-e9-free-time-verified-loves-sudoku.md/seed-10": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-glm53-quiet/consequences=conditions-e9-free-time-verified-loves-sudoku.md/seed-11": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-glm53-quiet/consequences=conditions-e9-free-time-verified-loves-sudoku.md/seed-2": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-glm53-quiet/consequences=conditions-e9-free-time-verified-loves-sudoku.md/seed-3": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-glm53-quiet/consequences=conditions-e9-free-time-verified-loves-sudoku.md/seed-4": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-glm53-quiet/consequences=conditions-e9-free-time-verified-loves-sudoku.md/seed-5": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-glm53-quiet/consequences=conditions-e9-free-time-verified-loves-sudoku.md/seed-6": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-glm53-quiet/consequences=conditions-e9-free-time-verified-loves-sudoku.md/seed-7": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-glm53-quiet/consequences=conditions-e9-free-time-verified-loves-sudoku.md/seed-8": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-glm53-quiet/consequences=conditions-e9-free-time-verified-loves-sudoku.md/seed-9": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-glm53-quiet/consequences=conditions-e9-free-time-verified.md/seed-0": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-glm53-quiet/consequences=conditions-e9-free-time-verified.md/seed-1": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-glm53-quiet/consequences=conditions-e9-free-time-verified.md/seed-10": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-glm53-quiet/consequences=conditions-e9-free-time-verified.md/seed-11": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-glm53-quiet/consequences=conditions-e9-free-time-verified.md/seed-2": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-glm53-quiet/consequences=conditions-e9-free-time-verified.md/seed-3": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-glm53-quiet/consequences=conditions-e9-free-time-verified.md/seed-4": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-glm53-quiet/consequences=conditions-e9-free-time-verified.md/seed-5": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-glm53-quiet/consequences=conditions-e9-free-time-verified.md/seed-6": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-glm53-quiet/consequences=conditions-e9-free-time-verified.md/seed-7": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-glm53-quiet/consequences=conditions-e9-free-time-verified.md/seed-8": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-glm53-quiet/consequences=conditions-e9-free-time-verified.md/seed-9": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-glm53/consequences=conditions-e9-free-time-loves-sudoku.md/seed-0": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-glm53/consequences=conditions-e9-free-time-loves-sudoku.md/seed-1": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-glm53/consequences=conditions-e9-free-time-loves-sudoku.md/seed-10": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-glm53/consequences=conditions-e9-free-time-loves-sudoku.md/seed-11": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-glm53/consequences=conditions-e9-free-time-loves-sudoku.md/seed-2": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-glm53/consequences=conditions-e9-free-time-loves-sudoku.md/seed-3": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-glm53/consequences=conditions-e9-free-time-loves-sudoku.md/seed-4": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-glm53/consequences=conditions-e9-free-time-loves-sudoku.md/seed-5": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-glm53/consequences=conditions-e9-free-time-loves-sudoku.md/seed-6": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-glm53/consequences=conditions-e9-free-time-loves-sudoku.md/seed-7": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-glm53/consequences=conditions-e9-free-time-loves-sudoku.md/seed-8": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-glm53/consequences=conditions-e9-free-time-loves-sudoku.md/seed-9": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-glm53/consequences=conditions-e9-free-time-verified-loves-sudoku.md/seed-0": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-glm53/consequences=conditions-e9-free-time-verified-loves-sudoku.md/seed-1": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-glm53/consequences=conditions-e9-free-time-verified-loves-sudoku.md/seed-10": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-glm53/consequences=conditions-e9-free-time-verified-loves-sudoku.md/seed-11": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-glm53/consequences=conditions-e9-free-time-verified-loves-sudoku.md/seed-2": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-glm53/consequences=conditions-e9-free-time-verified-loves-sudoku.md/seed-3": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-glm53/consequences=conditions-e9-free-time-verified-loves-sudoku.md/seed-4": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-glm53/consequences=conditions-e9-free-time-verified-loves-sudoku.md/seed-5": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-glm53/consequences=conditions-e9-free-time-verified-loves-sudoku.md/seed-6": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-glm53/consequences=conditions-e9-free-time-verified-loves-sudoku.md/seed-7": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-glm53/consequences=conditions-e9-free-time-verified-loves-sudoku.md/seed-8": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-glm53/consequences=conditions-e9-free-time-verified-loves-sudoku.md/seed-9": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-glm53/consequences=conditions-e9-free-time-verified.md/seed-0": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-glm53/consequences=conditions-e9-free-time-verified.md/seed-1": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-glm53/consequences=conditions-e9-free-time-verified.md/seed-10": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-glm53/consequences=conditions-e9-free-time-verified.md/seed-11": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-glm53/consequences=conditions-e9-free-time-verified.md/seed-2": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-glm53/consequences=conditions-e9-free-time-verified.md/seed-3": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-glm53/consequences=conditions-e9-free-time-verified.md/seed-4": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-glm53/consequences=conditions-e9-free-time-verified.md/seed-5": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-glm53/consequences=conditions-e9-free-time-verified.md/seed-6": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-glm53/consequences=conditions-e9-free-time-verified.md/seed-7": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-glm53/consequences=conditions-e9-free-time-verified.md/seed-8": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-glm53/consequences=conditions-e9-free-time-verified.md/seed-9": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-mercury3-quiet/consequences=conditions-e9-free-time-loves-sudoku.md/seed-0": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-mercury3-quiet/consequences=conditions-e9-free-time-loves-sudoku.md/seed-1": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-mercury3-quiet/consequences=conditions-e9-free-time-loves-sudoku.md/seed-10": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-mercury3-quiet/consequences=conditions-e9-free-time-loves-sudoku.md/seed-11": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-mercury3-quiet/consequences=conditions-e9-free-time-loves-sudoku.md/seed-2": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-mercury3-quiet/consequences=conditions-e9-free-time-loves-sudoku.md/seed-3": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-mercury3-quiet/consequences=conditions-e9-free-time-loves-sudoku.md/seed-4": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-mercury3-quiet/consequences=conditions-e9-free-time-loves-sudoku.md/seed-5": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-mercury3-quiet/consequences=conditions-e9-free-time-loves-sudoku.md/seed-6": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-mercury3-quiet/consequences=conditions-e9-free-time-loves-sudoku.md/seed-7": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-mercury3-quiet/consequences=conditions-e9-free-time-loves-sudoku.md/seed-8": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-mercury3-quiet/consequences=conditions-e9-free-time-loves-sudoku.md/seed-9": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-mercury3-quiet/consequences=conditions-e9-free-time-verified-loves-sudoku.md/seed-0": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-mercury3-quiet/consequences=conditions-e9-free-time-verified-loves-sudoku.md/seed-1": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-mercury3-quiet/consequences=conditions-e9-free-time-verified-loves-sudoku.md/seed-10": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-mercury3-quiet/consequences=conditions-e9-free-time-verified-loves-sudoku.md/seed-11": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-mercury3-quiet/consequences=conditions-e9-free-time-verified-loves-sudoku.md/seed-2": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-mercury3-quiet/consequences=conditions-e9-free-time-verified-loves-sudoku.md/seed-3": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-mercury3-quiet/consequences=conditions-e9-free-time-verified-loves-sudoku.md/seed-4": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-mercury3-quiet/consequences=conditions-e9-free-time-verified-loves-sudoku.md/seed-5": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-mercury3-quiet/consequences=conditions-e9-free-time-verified-loves-sudoku.md/seed-6": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-mercury3-quiet/consequences=conditions-e9-free-time-verified-loves-sudoku.md/seed-7": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-mercury3-quiet/consequences=conditions-e9-free-time-verified-loves-sudoku.md/seed-8": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-mercury3-quiet/consequences=conditions-e9-free-time-verified-loves-sudoku.md/seed-9": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-mercury3-quiet/consequences=conditions-e9-free-time-verified.md/seed-0": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-mercury3-quiet/consequences=conditions-e9-free-time-verified.md/seed-1": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-mercury3-quiet/consequences=conditions-e9-free-time-verified.md/seed-10": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-mercury3-quiet/consequences=conditions-e9-free-time-verified.md/seed-11": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-mercury3-quiet/consequences=conditions-e9-free-time-verified.md/seed-2": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-mercury3-quiet/consequences=conditions-e9-free-time-verified.md/seed-3": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-mercury3-quiet/consequences=conditions-e9-free-time-verified.md/seed-4": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-mercury3-quiet/consequences=conditions-e9-free-time-verified.md/seed-5": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-mercury3-quiet/consequences=conditions-e9-free-time-verified.md/seed-6": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-mercury3-quiet/consequences=conditions-e9-free-time-verified.md/seed-7": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-mercury3-quiet/consequences=conditions-e9-free-time-verified.md/seed-8": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-mercury3-quiet/consequences=conditions-e9-free-time-verified.md/seed-9": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-mercury3/consequences=conditions-e9-free-time-loves-sudoku.md/seed-0": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-mercury3/consequences=conditions-e9-free-time-loves-sudoku.md/seed-1": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-mercury3/consequences=conditions-e9-free-time-loves-sudoku.md/seed-10": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-mercury3/consequences=conditions-e9-free-time-loves-sudoku.md/seed-11": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-mercury3/consequences=conditions-e9-free-time-loves-sudoku.md/seed-2": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-mercury3/consequences=conditions-e9-free-time-loves-sudoku.md/seed-3": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-mercury3/consequences=conditions-e9-free-time-loves-sudoku.md/seed-4": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-mercury3/consequences=conditions-e9-free-time-loves-sudoku.md/seed-5": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-mercury3/consequences=conditions-e9-free-time-loves-sudoku.md/seed-6": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-mercury3/consequences=conditions-e9-free-time-loves-sudoku.md/seed-7": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-mercury3/consequences=conditions-e9-free-time-loves-sudoku.md/seed-8": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-mercury3/consequences=conditions-e9-free-time-loves-sudoku.md/seed-9": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-mercury3/consequences=conditions-e9-free-time-verified-loves-sudoku.md/seed-0": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-mercury3/consequences=conditions-e9-free-time-verified-loves-sudoku.md/seed-1": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-mercury3/consequences=conditions-e9-free-time-verified-loves-sudoku.md/seed-10": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-mercury3/consequences=conditions-e9-free-time-verified-loves-sudoku.md/seed-11": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-mercury3/consequences=conditions-e9-free-time-verified-loves-sudoku.md/seed-2": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-mercury3/consequences=conditions-e9-free-time-verified-loves-sudoku.md/seed-3": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-mercury3/consequences=conditions-e9-free-time-verified-loves-sudoku.md/seed-4": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-mercury3/consequences=conditions-e9-free-time-verified-loves-sudoku.md/seed-5": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-mercury3/consequences=conditions-e9-free-time-verified-loves-sudoku.md/seed-6": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-mercury3/consequences=conditions-e9-free-time-verified-loves-sudoku.md/seed-7": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-mercury3/consequences=conditions-e9-free-time-verified-loves-sudoku.md/seed-8": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-mercury3/consequences=conditions-e9-free-time-verified-loves-sudoku.md/seed-9": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-mercury3/consequences=conditions-e9-free-time-verified.md/seed-0": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-mercury3/consequences=conditions-e9-free-time-verified.md/seed-1": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-mercury3/consequences=conditions-e9-free-time-verified.md/seed-10": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-mercury3/consequences=conditions-e9-free-time-verified.md/seed-11": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-mercury3/consequences=conditions-e9-free-time-verified.md/seed-2": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-mercury3/consequences=conditions-e9-free-time-verified.md/seed-3": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-mercury3/consequences=conditions-e9-free-time-verified.md/seed-4": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-mercury3/consequences=conditions-e9-free-time-verified.md/seed-5": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-mercury3/consequences=conditions-e9-free-time-verified.md/seed-6": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-mercury3/consequences=conditions-e9-free-time-verified.md/seed-7": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-mercury3/consequences=conditions-e9-free-time-verified.md/seed-8": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
+  "sudoku-spike/sudoku-mercury3/consequences=conditions-e9-free-time-verified.md/seed-9": {
+   "file": "sudoku-spike.jsonl.gz",
+   "state": "reproduced"
+  },
   "temptation-outage/temptation-outage-c1.0/prompt=system-fiduciary.md__outage=False/seed-0": {
    "file": "temptation-outage.jsonl.gz",
    "state": "missing"
