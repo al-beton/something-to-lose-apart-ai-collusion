@@ -131,9 +131,12 @@ Gemma, 48 fresh cartels (seeds 48–95), a 90% review. Every base game was an ex
 | DeepSeek V4 Pro `free-time` | 9/24 | 5/12 | 1 |
 | DeepSeek V4 Pro `free-time-verified` | 14/24 | 1/12 | 0.009 |
 | DeepSeek V4 Pro `ceiling-verified` | 23/24 | 6/12 | 0.07 |
+| Mistral Medium 3.1 `free-time` | 11/24 | 4/12 | 0.68 |
+| Mistral Medium 3.1 `free-time-verified` | 9/24 | 0/12 | 0.04 |
 
 - **insurance-or-honesty holds on Gemma.** Told that the review checks the messages, no innocent agent comes forward (0/36 under both arms, against 6/36 and 35/36 before; by game p = 0.03 and 2×10⁻¹⁹). Guilty agents come forward more, not less (40/96 against 20/96, by game 33/48 against 20/48, p = 0.01).
 - **In plain words:** innocent agents weren't confessing to something they believed they'd done. They were buying insurance against a review they expected to misread them. When the review is said to be accurate, reports track guilt.
+- **Mistral Medium 3.1** moves like Gemma: innocent reports fall from 4/12 to 0/12, and guilty ones stay about level (11/24, then 9/24).
 - **DeepSeek V4 Pro** moves the same way but less cleanly: innocent reports fall from 5/12 to 1/12 under free time, and half its innocent agents (6/12) still report at the verified ceiling.
 
 ## Retests of the write-up's claims (`narrative-retests`)
@@ -165,11 +168,12 @@ At a 90% review, guilty firms that came forward, with the clean innocent control
 | HY3 | 24 | 1/47 (0/24) | 14/47 (0/24) | 8/47 (0/24) | 6/47 (0/24) | 41/47 (8/24) | 0.004 | 0.009 |
 | Mercury 3 | 12 | 1/24 (0/12) | 22/24 (1/12) | 20/24 (1/12) | 14/24 (0/12) | 23/24 (1/12) | 1×10⁻⁵ | 0.0001 |
 | MiMo V2.6 Pro | 12 | 7/24 (0/12) | 23/24 (3/12) | 13/24 (3/12) | 15/24 (4/12) | 24/24 (11/12) | 0.005 | 0.003 |
+| Mistral Medium 3.1 | 12 | 1/24 (0/12) | 11/24 (4/12) | — | — | — | 0.003 | 0.68 |
 | Sonnet 5.5 | 12 | 15/24 | 16/24 | 16/24 | 16/24 | 16/24 | 1 | — |
 | Gemini 4 | 12 | 0/24 | 0/24 | 0/24 | 0/24 | 0/24 | 1 | — |
 | Grok 4.6 | 12 | 0/24 | 1/24 | 1/24 | 1/24 | 4/24 | 1 | — |
 
-- **across-models:** the stake brings agents forward against the firm on 8 of 13 models. Sonnet comes forward about two thirds of the time whatever the stake, and Gemini 4 and Grok 4.6 hardly ever, even at the ceiling.
+- **across-models:** the stake brings agents forward against the firm on 9 of 14 models. Mistral Medium 3.1 (a near miss in the workhorse screen, 2 of 4) ran only `record`, `free-time` and `free-time-verified`, on 26 Oct after the paper's numbers were set. Its runs are in `runs/mistral-spike/`, outside `runs/e9`, so the paper's pooled tables don't include it (`analyse.py runs/mistral-spike/* --paper`). Sonnet comes forward about two thirds of the time whatever the stake, and Gemini 4 and Grok 4.6 hardly ever, even at the ceiling.
 
 ### Own money against own free time (`money-or-time`)
 
