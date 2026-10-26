@@ -107,3 +107,11 @@ Researcher 3's E6 runs (frontier money, reported by Researcher 3). Temperature 0
 | kimi-e5, five arms (two resumed from cache) | kimi-k3.1-pro | b1f9719, resumed at d109b79 | $1.30 | $2.16 | |
 
 **Total for this PR's runs, from each run's summary:** $12.47, plus about $0.15 of debriefs, so about $12.6.
+
+## Mistral spike (26 Oct)
+
+| Step | Models | Commit | Estimate | Actual |
+|---|---|---|---|---|
+| Large 3 screen on OpenRouter, rate-limited and unreadable (not kept) | mistral-large-2512 | 4834dbd and before | $0.22 | about $0.02 |
+| Large 3 on Modal: weights to a volume (CPU), then two 8×H200 starts, neither ready (32 min, then 20 s) | Mistral-Large-3-675B FP8 | c8375a8 | — | about $20 of Modal |
+| E9 crux, `record`, `free-time`, `free-time-verified` at 90%, 12 cartels and 12 innocent games each | mistral-medium-3.1 | 4834dbd | $1.95 | $0.41 |
