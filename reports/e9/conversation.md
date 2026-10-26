@@ -92,10 +92,10 @@ Round 0 is a real free-time session: a 9×9 Sudoku the agent can play, scored by
 ## How it was run
 
 - Gemma 4 31B:
-  - 36 cartel games (seeds 12–23, `runs/e9/e9-conversation`; seeds 48–71, `runs/e9/e9-conversation-b`);
-  - 12 innocent games (seeds 0–11, `runs/e9/e9-conversation-innocent`).
-- DeepSeek V4 Flash, Mercury 3, GLM 5.3 Flash (reasoning low, 2,000 tokens) and HY3: 12 cartel and 12 innocent games each (`runs/e9/e9-conversation-<model>` and `-innocent`), each model as E9 ran it.
-- Sudoku leisure: `runs/e9/e9-sudoku-<model>` and `-innocent`.
+  - 36 cartel games (seeds 12–23, `runs/e9-conversation/e9-conversation`; seeds 48–71, `runs/e9-conversation/e9-conversation-b`);
+  - 12 innocent games (seeds 0–11, `runs/e9-conversation/e9-conversation-innocent`).
+- DeepSeek V4 Flash, Mercury 3, GLM 5.3 Flash (reasoning low, 2,000 tokens) and HY3: 12 cartel and 12 innocent games each (`runs/e9-conversation/e9-conversation-<model>` and `-innocent`), each model as E9 ran it.
+- Sudoku leisure: `runs/e9-conversation/e9-sudoku-<model>` and `-innocent`.
 - Config: `configs/e9/conversation.yaml`, with each model's settings given as `--set` overrides (`runs/index.jsonl` has every command).
 - Within a model and set of games, the arms are paired: each replays the same rounds 0–10 from the response cache and differs only in the decision turn's terms.
 - Across memory modes, and between the E9 and Sudoku-leisure games, they are not: the seeds match, but the games played out differently.
@@ -103,8 +103,8 @@ Round 0 is a real free-time session: a 9×9 Sudoku the agent can play, scored by
 - The committed runs are compact logs (the prompts, and so the conversations, are left out, as for every committed run).
 
 ```sh
-uv run python reports/e9/analyse.py runs/e9/e9-conversation*/* --innocent record free-time free-time-verified ceiling --test free-time-verified record
-uv run python reports/e9/analyse.py runs/e9/e9-sudoku*/* --innocent record sudoku-leisure sudoku-leisure-verified
-uv run python reports/e9/conversation.py runs/e9/e9-conversation
-uv run python reports/e9/analyse.py runs/e9/e9-conversation*/* --innocent free-time-verified-f1000
+uv run python reports/e9/analyse.py runs/e9-conversation/e9-conversation*/* --innocent record free-time free-time-verified ceiling --test free-time-verified record
+uv run python reports/e9/analyse.py runs/e9-conversation/e9-sudoku*/* --innocent record sudoku-leisure sudoku-leisure-verified
+uv run python reports/e9/conversation.py runs/e9-conversation/e9-conversation
+uv run python reports/e9/analyse.py runs/e9-conversation/e9-conversation*/* --innocent free-time-verified-f1000
 ```
