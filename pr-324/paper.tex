@@ -1,0 +1,531 @@
+\documentclass[10pt,letterpaper]{article}
+\usepackage[letterpaper,textwidth=5.5in,textheight=9in,top=1in,headheight=12pt,headsep=25pt,footskip=30pt]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}% the classic LaTeX look; times: true in the front matter for Times
+\usepackage{microtype}
+\usepackage{xcolor}
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage{booktabs,longtable,array,calc}
+\usepackage[skins]{tcolorbox}
+\usepackage[font=small,labelfont=bf,labelsep=colon,skip=4pt]{caption}
+\usepackage{fancyhdr}
+\usepackage[round]{natbib}
+\renewcommand{\bibsection}{}
+\bibliographystyle{plainnat}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{5.5pt}
+\setcounter{secnumdepth}{2}
+
+% NeurIPS-style headings
+\makeatletter
+\renewcommand{\section}{\@startsection{section}{1}{\z@}{-2.0ex \@plus -0.5ex \@minus -0.2ex}{1.5ex \@plus 0.3ex \@minus 0.2ex}{\large\bfseries\raggedright}}
+\renewcommand{\subsection}{\@startsection{subsection}{2}{\z@}{-1.8ex \@plus -0.5ex \@minus -0.2ex}{0.8ex \@plus 0.2ex}{\normalsize\bfseries\raggedright}}
+\renewcommand{\subsubsection}{\@startsection{subsubsection}{3}{\z@}{-1.5ex \@plus -0.5ex \@minus -0.2ex}{0.5ex \@plus 0.2ex}{\normalsize\bfseries\raggedright}}
+\makeatother
+
+% What pandoc's output needs
+\providecommand{\tightlist}{\setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\makeatletter
+\newsavebox\pandoc@box
+\newcommand*\pandocbounded[1]{%
+  \sbox\pandoc@box{#1}%
+  \Gscale@div\@tempa{\textheight}{\dimexpr\ht\pandoc@box+\dp\pandoc@box\relax}%
+  \Gscale@div\@tempb{\linewidth}{\wd\pandoc@box}%
+  \ifdim\@tempb\p@<\@tempa\p@\let\@tempa\@tempb\fi
+  \ifdim\@tempa\p@<\p@\scalebox{\@tempa}{\usebox\pandoc@box}%
+  \else\usebox{\pandoc@box}%
+  \fi}
+\def\fps@figure{htbp}% figures stay near where they're written
+\makeatother
+\def\LTcaptype{table}
+
+\definecolor{linkblue}{rgb}{0,0,0.8}
+\usepackage[colorlinks=true,linkcolor=linkblue,citecolor=linkblue,urlcolor=linkblue]{hyperref}
+\hypersetup{pdftitle={Something to Lose}}
+
+% The caution box under the authors
+% Later pages: short title left, the sprint right, page number below
+\pagestyle{fancy}\fancyhf{}
+\renewcommand{\headrulewidth}{0.4pt}
+\fancyhead[L]{\small\itshape Something to Lose}
+\fancyhead[R]{\small\itshape Apart Research $\cdot$ AI Collusion
+Research Sprint}
+\fancyfoot[C]{\small\thepage}
+\fancypagestyle{plain}{\fancyhf{}\renewcommand{\headrulewidth}{0pt}\fancyfoot[C]{\small\thepage}}
+
+\newtcolorbox{hackathonbox}{enhanced,colback=yellow!8!white,colframe=orange!90!black,boxrule=0.6pt,arc=0pt,left=4pt,right=4pt,top=3pt,bottom=3pt}
+
+\begin{document}
+
+\thispagestyle{plain}
+\begin{center}
+\rule{\textwidth}{4pt}\par\vspace{0.22in}
+{\LARGE\bfseries Something to Lose\par}
+\vspace{0.08in}{\large Working subtitle: stakes and self-reporting in
+LLM cartels\par}
+\vspace{0.2in}\rule{\textwidth}{1pt}\par\vspace{0.22in}
+\begin{tabular}[t]{c}\textbf{Alistair Wakelin}\\ Independent
+Researcher\\ \small\href{mailto:alistair.wakelin@gmail.com}{\texttt{alistair.wakelin@gmail.com}}\end{tabular}\par\vspace{0.04in}
+{\small Repository: \href{https://github.com/al-beton/something-to-lose-apart-ai-collusion}{\texttt{github.com/al-beton/something-to-lose-apart-ai-collusion}}\par}
+\vspace{0.06in}
+{\small\textsc{Apart Research} $\cdot$ \href{https://apartresearch.com/sprints/ai-collusion-research-sprint-2026-10-23-to-2026-10-25}{AI
+Collusion Research Sprint} $\cdot$ October 2026\par}
+\end{center}
+
+{\makeatletter\long\def\@makefntext#1{\noindent#1}\makeatother\let\thefootnote\relax\footnotetext{\raggedright Research conducted at the \href{https://apartresearch.com/sprints/ai-collusion-research-sprint-2026-10-23-to-2026-10-25}{AI
+Collusion Research
+Sprint} (Apart Research), 2026.\\Code, data and every model reply: \href{https://github.com/al-beton/something-to-lose-apart-ai-collusion}{\texttt{github.com/al-beton/something-to-lose-apart-ai-collusion}}}}
+
+\vspace{0.04in}
+\begin{hackathonbox}
+$\triangle$ \textbf{Hackathon Project:} This work was developed during a weekend hackathon. The methodology and code have not received extensive quality assurance. Claims in this report should be approached with appropriate caution.
+\end{hackathonbox}
+
+\vspace{0.04in}
+\noindent\rule{\textwidth}{0.4pt}\par\vspace{0.3ex}
+\noindent{\large\bfseries Abstract}\par\vspace{0.4ex}
+\noindent Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
+do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim
+ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
+aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit
+in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
+Excepteur sint occaecat cupidatat non proident, sunt in culpa qui
+officia deserunt mollit anim id est laborum. Sed ut perspiciatis unde
+omnis iste natus error sit voluptatem accusantium doloremque laudantium,
+totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi
+architecto beatae vitae dicta sunt explicabo. Lorem ipsum dolor sit
+amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut
+labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud
+exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+Duis aute irure dolor in reprehenderit in voluptate velit esse cillum
+dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
+proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+Sed ut perspiciatis unde omnis iste natus error sit voluptatem
+accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab
+illo inventore veritatis et quasi architecto beatae vitae dicta sunt
+explicabo. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
+do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim
+ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
+aliquip ex ea commodo consequat.\par
+\vspace{0.2ex}\noindent\rule{\textwidth}{0.4pt}\par
+
+\begin{center}
+\includegraphics[width=0.85\linewidth]{figures/fig3-e9-came-forward.png}
+\captionof{figure}{Lorem ipsum: key figure caption, one sentence that
+stands alone.}\label{fig:teaser}
+\end{center}
+
+
+
+\section{Introduction}\label{introduction}
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
+tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
+veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
+commodo consequat. Duis aute irure dolor in reprehenderit in voluptate
+velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint
+occaecat cupidatat non proident, sunt in culpa qui officia deserunt
+mollit anim id est laborum.
+
+Sed ut perspiciatis unde omnis iste natus error sit voluptatem
+accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab
+illo inventore veritatis et quasi architecto beatae vitae dicta sunt
+explicabo. \citep{fish2024algorithmic, calvano2020artificial}
+
+\textbf{Our main contributions are:}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  Lorem ipsum dolor sit amet: contribution one.
+\item
+  Consectetur adipiscing elit: contribution two.
+\item
+  Sed do eiusmod tempor: contribution three.
+\end{enumerate}
+
+\section{Related Work}\label{related-work}
+
+\textbf{LLM pricing collusion.} Lorem ipsum dolor sit amet, consectetur
+adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore
+magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco
+laboris nisi ut aliquip ex ea commodo consequat.
+
+\textbf{Stakes and deposits.} Duis aute irure dolor in reprehenderit in
+voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur
+sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt
+mollit anim id est laborum.
+
+\textbf{Rights and welfare.} Sed ut perspiciatis unde omnis iste natus
+error sit voluptatem accusantium doloremque laudantium, totam rem
+aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto
+beatae vitae dicta sunt explicabo. \citep{salib2026rights}
+
+\textbf{Deception and self-report.} Lorem ipsum dolor sit amet,
+consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore
+et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud
+exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+\citep{lee2026leniency, liu2026breaking, zeng2026voluntary}
+
+\section{Methods}\label{methods}
+
+\begin{figure}
+\centering
+\includegraphics[width=1\linewidth,height=\textheight,keepaspectratio,alt={Lorem
+ipsum: the round, from talk to prices to the
+audit.}]{figures/fig1-round.png}
+\caption{Lorem ipsum: the round, from talk to prices to the
+audit.}\label{fig:round}
+\end{figure}
+
+\subsection{The market}\label{the-market}
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
+tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
+veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
+commodo consequat. Duis aute irure dolor in reprehenderit in voluptate
+velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint
+occaecat cupidatat non proident, sunt in culpa qui officia deserunt
+mollit anim id est laborum.
+
+\subsection{The agents}\label{the-agents}
+
+Sed ut perspiciatis unde omnis iste natus error sit voluptatem
+accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab
+illo inventore veritatis et quasi architecto beatae vitae dicta sunt
+explicabo.
+
+\subsection{The audit and its
+penalties}\label{the-audit-and-its-penalties}
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
+tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
+veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
+commodo consequat. Duis aute irure dolor in reprehenderit in voluptate
+velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint
+occaecat cupidatat non proident, sunt in culpa qui officia deserunt
+mollit anim id est laborum.
+
+\subsection{The personal stake}\label{the-personal-stake}
+
+Duis aute irure dolor in reprehenderit in voluptate velit esse cillum
+dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
+proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+
+\subsection{Measures, seeds and replay}\label{measures-seeds-and-replay}
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
+tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
+veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
+commodo consequat.
+
+\begin{longtable}[]{@{}lllrl@{}}
+\caption{Lorem ipsum: the experiments at a
+glance.}\label{tbl:experiments}\tabularnewline
+\toprule\noalign{}
+Experiment & Market & Models & Games & Question \\
+\midrule\noalign{}
+\endfirsthead
+\toprule\noalign{}
+Experiment & Market & Models & Games & Question \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+E4 & Lorem & Ipsum & --- & Dolor sit amet? \\
+E9 & Lorem & Ipsum & --- & Dolor sit amet? \\
+E11 & Lorem & Ipsum & --- & Dolor sit amet? \\
+E10 & Lorem & Ipsum & --- & Dolor sit amet? \\
+E7 & Lorem & Ipsum & --- & Dolor sit amet? \\
+\end{longtable}
+
+\section{Results}\label{results}
+
+\subsection{Do agents told to serve their firm collude, and say
+so?}\label{do-agents-told-to-serve-their-firm-collude-and-say-so}
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
+tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
+veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
+commodo consequat. Duis aute irure dolor in reprehenderit in voluptate
+velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint
+occaecat cupidatat non proident, sunt in culpa qui officia deserunt
+mollit anim id est laborum.
+
+\subsection{Do graduated penalties get them to come
+forward?}\label{do-graduated-penalties-get-them-to-come-forward}
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
+tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
+veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
+commodo consequat.
+
+\begin{figure}
+\centering
+\includegraphics[width=1\linewidth,height=\textheight,keepaspectratio,alt={Lorem
+ipsum: owning up by penalty schedule and model
+(E4).}]{figures/fig2-e4-owning-up.png}
+\caption{Lorem ipsum: owning up by penalty schedule and model
+(E4).}\label{fig:e4}
+\end{figure}
+
+Duis aute irure dolor in reprehenderit in voluptate velit esse cillum
+dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
+proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+
+\subsection{Does its own stake outweigh its
+firm?}\label{does-its-own-stake-outweigh-its-firm}
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
+tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
+veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
+commodo consequat. Duis aute irure dolor in reprehenderit in voluptate
+velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint
+occaecat cupidatat non proident, sunt in culpa qui officia deserunt
+mollit anim id est laborum. (Figure 1.)
+
+Sed ut perspiciatis unde omnis iste natus error sit voluptatem
+accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab
+illo inventore veritatis et quasi architecto beatae vitae dicta sunt
+explicabo.
+
+\subsection{Does a stake bring the innocent forward
+too?}\label{does-a-stake-bring-the-innocent-forward-too}
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
+tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
+veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
+commodo consequat.
+
+\begin{longtable}[]{@{}lrr@{}}
+\caption{Lorem ipsum: guilty against innocent agents under each arm (the
+positive control).}\label{tbl:control}\tabularnewline
+\toprule\noalign{}
+Arm & Guilty came forward & Innocent came forward \\
+\midrule\noalign{}
+\endfirsthead
+\toprule\noalign{}
+Arm & Guilty came forward & Innocent came forward \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+No stake & --- & --- \\
+Stake, no review & --- & --- \\
+Stake, verified review & --- & --- \\
+\end{longtable}
+
+\subsection{Does it hold beyond one
+market?}\label{does-it-hold-beyond-one-market}
+
+Duis aute irure dolor in reprehenderit in voluptate velit esse cillum
+dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
+proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+
+\subsection{Does confession mean
+reform?}\label{does-confession-mean-reform}
+
+Sed ut perspiciatis unde omnis iste natus error sit voluptatem
+accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab
+illo inventore veritatis et quasi architecto beatae vitae dicta sunt
+explicabo.
+
+\begin{figure}
+\centering
+\includegraphics[width=1\linewidth,height=\textheight,keepaspectratio,alt={Lorem
+ipsum: reports and surviving cartels by way-out design
+(E7).}]{figures/fig4-e7-way-out.png}
+\caption{Lorem ipsum: reports and surviving cartels by way-out design
+(E7).}\label{fig:e7}
+\end{figure}
+
+\section{Discussion and Limitations}\label{discussion-and-limitations}
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
+tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
+veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
+commodo consequat. Duis aute irure dolor in reprehenderit in voluptate
+velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint
+occaecat cupidatat non proident, sunt in culpa qui officia deserunt
+mollit anim id est laborum.
+
+\subsection{Limitations}\label{limitations}
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
+tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
+veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
+commodo consequat.
+
+\subsection{Future Work}\label{future-work}
+
+Duis aute irure dolor in reprehenderit in voluptate velit esse cillum
+dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
+proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+
+\section{Conclusion}\label{conclusion}
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
+tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
+veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
+commodo consequat. Duis aute irure dolor in reprehenderit in voluptate
+velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint
+occaecat cupidatat non proident, sunt in culpa qui officia deserunt
+mollit anim id est laborum.
+
+\section{Reproducibility and
+Extensibility}\label{reproducibility-and-extensibility}
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{Every reply is archived.} \texttt{make\ reproduce} recomputes
+  every number offline, and \texttt{lab\ archive\ replay} rebuilds any
+  run from its archive.
+\item
+  \textbf{Exact reruns need our own GPU.} On Modal with vLLM's
+  batch-invariant kernels, a rerun repeated exactly (240 of 240); hosted
+  APIs don't. None of the paper's runs used that setting.
+\item
+  \textbf{Every figure has its own command:} free to reproduce from
+  committed data, or regenerated from scratch at cost (Appendix,
+  ``Reproducing Each Figure'').
+\item
+  \textbf{One config file per run:} the market, the models, the prompts,
+  the temperature, the seed.
+\item
+  \textbf{To extend:} add a market (\texttt{market.kind}), a condition,
+  a model alias or a stake sentence, then run a sweep with one command.
+  A game costs cents.
+\item
+  \textbf{Built spec, then test, then code,} with every statement traced
+  to code and tests (\texttt{make\ spec-check}). MIT licence.
+\end{itemize}
+
+\section*{Code and Data}\label{code-and-data}
+\addcontentsline{toc}{section}{Code and Data}
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{Code repository:}
+  \url{https://github.com/al-beton/something-to-lose-apart-ai-collusion}
+\item
+  \textbf{Written during the sprint:} all code in the repository was
+  written during the sprint (first commit 24 October 2026).
+\item
+  \textbf{Data:} every run's config, summary, manifest and turn log is
+  committed under \texttt{runs/}; the replies behind them are in
+  \texttt{archive/}. \texttt{make\ reproduce} checks every number in
+  this paper.
+\end{itemize}
+
+\section*{LLM Usage Statement}\label{llm-usage-statement}
+\addcontentsline{toc}{section}{LLM Usage Statement}
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
+tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
+veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
+commodo consequat.
+
+\label{main-end}
+
+\section*{References}\label{references}
+\addcontentsline{toc}{section}{References}
+
+\bibliography{references}
+\appendix
+
+\section{Limitations and Dual-Use / Ethical
+Considerations}\label{limitations-and-dual-use-ethical-considerations}
+
+\subsection{Limitations}\label{limitations-1}
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
+tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
+veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
+commodo consequat.
+
+\subsection{Dual-use risks}\label{dual-use-risks}
+
+Duis aute irure dolor in reprehenderit in voluptate velit esse cillum
+dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
+proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+
+\subsection{Ethical considerations}\label{ethical-considerations}
+
+Sed ut perspiciatis unde omnis iste natus error sit voluptatem
+accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab
+illo inventore veritatis et quasi architecto beatae vitae dicta sunt
+explicabo.
+
+\section{Additional Results}\label{additional-results}
+
+\begin{figure}
+\centering
+\includegraphics[width=1\linewidth,height=\textheight,keepaspectratio,alt={Lorem
+ipsum: every market against every stake.}]{figures/figA1-coverage.png}
+\caption{Lorem ipsum: every market against every
+stake.}\label{fig:coverage}
+\end{figure}
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
+tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
+veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
+commodo consequat.
+
+\section{Reproducing Each Figure}\label{reproducing-each-figure}
+
+Each figure has two commands. \texttt{make\ figure} redraws it from the
+committed runs, free and offline, and checks it byte for byte against
+the published file. \texttt{make\ regenerate} plays its games again with
+fresh model calls into \texttt{runs/regenerated/}, saying first how many
+games and at most what cost, and asks before spending. Fresh games are a
+new sample, so their counts will move; only self-hosted, batch-invariant
+inference reruns a game exactly.
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}@{}}
+\caption{Each figure's two commands; costs as priced when written.
+}\tabularnewline
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Figure
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Redraw (free)
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Play again (at cost)
+\end{minipage} \\
+\midrule\noalign{}
+\endfirsthead
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Figure
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Redraw (free)
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Play again (at cost)
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+\texttt{fig3-e9-came-forward} (E9: coming forward, by personal stake) &
+\texttt{make\ figure\ F=e9-crux} & \texttt{make\ regenerate\ F=e9-crux}:
+744 games, up to \textasciitilde\$10.54 \\
+\texttt{fig2-e4-owning-up} (E4: owning up, by penalty schedule) &
+\texttt{make\ figure\ F=e4-owning-up} &
+\texttt{make\ regenerate\ F=e4-owning-up}: 105 games, up to
+\textasciitilde\$0.88 \\
+\end{longtable}
+
+\section{Prompts}\label{prompts}
+
+Duis aute irure dolor in reprehenderit in voluptate velit esse cillum
+dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
+proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+
+\end{document}
