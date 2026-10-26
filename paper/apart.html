@@ -40,6 +40,6 @@ $endif$
 <main>
 $body$
 </main>
-<footer>Research conducted at the <a href="$sprint-url$">$sprint$</a>, run by Apart Research, $if(date)$$date$$else$October 2026$endif$. Code, data and every model reply: <a href="$repo$">$if(repo-short)$$repo-short$$else$$repo$$endif$</a></footer>
+<footer>Research conducted $if(hub)$at the $hub$ $endif$for the <a href="$sprint-url$">$sprint$</a> hackathon run by Apart Research, $if(date)$$date$$else$October 2026$endif$. Code and cached model responses are available at <a href="$repo$">$repo$</a>.</footer>
 </body>
 </html>

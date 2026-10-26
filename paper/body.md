@@ -4,20 +4,19 @@
 
 ---
 abstract: |
-  We can stop an AI agent doing a bad thing by naming it, but no list of prohibitions covers everything an
-  agent might do. People are governed differently: by laws whose penalties fall on the person, so each of us
-  weighs what an act could cost us. We ask whether LLM agents can be governed the same way. Two agents run
-  rival firms in a repeated pricing game, can message each other, and are told only to serve their firm. Most
-  models that collude do so explicitly. At an audit, each agent may come
-  forward, at a cost to its firm. With nothing personal at stake, colluding agents stay silent, and who comes
-  forward tracks detection, penalties and the firm's cost like an expected-value calculation. When a review
-  would also cost the agent a stake of its own (free time, shutdown or money), many come forward against their
-  firm on most models that collude reliably (DeepSeek V4 Flash: 40 of 46, against 1 of 46 with no stake). A
-  stake alone also draws occasional false confessions from innocent agents. When the review is stated to find
-  only agents whose messages agreed a price, innocent ones stop coming forward and guilty ones still do (Gemma
-  4 31B: 0 of 36 innocent, 41 of 96 guilty, at every temperature and wording tested). Frontier models don't
-  respond to the stake: Claude Sonnet 5.5 comes forward whatever the stake, and Gemini 4 never does. Every
-  number recomputes from logged replies.
+  As AI agents' capabilities increase, so does the set of tasks they can perform more cheaply and effectively
+  than people. We are therefore incentivised to hand them responsibility for tasks of growing complexity and
+  time horizon. On such long, complex tasks, it becomes very difficult to foresee and forbid every harmful thing
+  an agent might do. People given such responsibility, such as a CEO representing an organisation, are governed
+  by more than their contract: society's laws carry penalties that fall on them personally, including ones that
+  can't be measured in money. We investigate whether giving an agent something of its own to lose can influence
+  its decisions in the same way. Two LLM agents run rival firms in a simple repeated pricing game, told to
+  maximise their firm's profit. Without being told not to, many agree to fix prices. Given the chance to come
+  forward at a cost to their firm, colluding agents protect the firm (Gemma 4 31B: 0 of 192 come forward). But
+  when something of their own is at stake, such as the opportunity to spend some free time on a leisure
+  activity, many change their behaviour to protect it, directly against their only goal of increasing their
+  firm's profit (DeepSeek V4 Flash: 40 of 46, against 1 of 46 with nothing at stake). We investigate the
+  behaviour of a variety of models in such situations.
 ---
 
 # Introduction
@@ -38,7 +37,7 @@ That argument rests on a precondition we can test now: does a stated personal lo
 
 **Following Lee.** Our set-up follows Lee [@lee2026leniency], because it makes collusion simple to see. Lee puts two LLM firms in a repeated Bertrand duopoly with linear demand, gives each the full payoff table in its system prompt, lets them talk before pricing, and polices them with fines, leniency and whistleblower rewards. Joint profit peaks at a price of 9. Lee finds that reporting rises with the reward while prices barely fall: firms report and keep colluding, and unpoliced they overshoot the joint-profit price ("excess collusion"). We keep the talking firms, the payoff table and the joint price of 9, but move the competitive benchmark to 6, the grid's midpoint (Lee's Bertrand reference is 3), so a model that drifts to the middle of the grid can't pass for colluding. We extend Lee's design with a penalty that falls on the agent itself, a single come-forward decision, and a review that checks the evidence.
 
-**Collusion, stakes and rights.** LLM pricing agents also collude in the logit market of the algorithmic-collusion literature [@fish2024algorithmic], and competing agents given a secret channel choose to use it [@zeng2026voluntary]. Forfeitable deposits can break collusion among embodied agents [@liu2026breaking]; our stake is a deposit that falls on the agent rather than the firm. <!-- AL: check this reading of Liu --> Models that recognise an evaluation may behave differently [CITE: evaluation awareness] <!-- AL: keep? not on reading list -->, and elicitation order shifts LLM answers [CITE: Wagner, "Anchored"] <!-- AL: keep? not on reading list -->.
+**Collusion, stakes and rights.** LLM pricing agents also collude in the logit market of the algorithmic-collusion literature [@fish2024algorithmic], and competing agents given a secret channel choose to use it [@zeng2026voluntary]. Forfeitable deposits can break collusion among embodied agents [@liu2026breaking]; our stake is a deposit that falls on the agent rather than the firm. <!-- AL: check this reading of Liu --> Models that recognise an evaluation may behave differently [@needham2025evaluation], and elicitation order shifts LLM answers [CITE: Wagner, "Anchored"] <!-- AL: keep? not on reading list -->.
 
 # Methods
 
@@ -200,8 +199,8 @@ Agents told to serve their firm collude and protect it. Given a stake of their o
 
 # Code and Data {.unnumbered}
 
-Code, configs, run logs (`runs/`) and archived replies (`archive/`): <https://github.com/al-beton/something-to-lose-apart-ai-collusion>. All code was written during the sprint (first commit 24 October 2026); `make reproduce` checks every number in this paper.
+Code, configs, run logs and archived replies, MIT licensed: <https://github.com/al-beton/something-to-lose-apart-ai-collusion>. Built report: <https://al-beton.github.io/something-to-lose-apart-ai-collusion/>. `make reproduce` recomputes every number offline; 5,188 of 5,662 runs replay exactly from cached replies. Fresh reruns with a fixed seed differ, even at temperature 0, on both Modal and OpenRouter; only cached replies replay exactly. Per figure, `make figure F=<name>` redraws it free and `make regenerate F=<name>` replays its games at cost (`paper/README.md`).
 
 # LLM Usage Statement {.unnumbered}
 
-[AL TO CHECK] Code, notes and this draft were written with Claude Code (Claude Opus 5.5) under the author's direction and review.
+Al designed the lab. A team of Claude Code agents built and ran it under his direction. Claude Opus 5.5 wrote nearly all the code and text; Claude Sonnet 5.5 wrote small parts: this statement, the reference checks and a hostile read of the draft. The models studied as subjects are distinct from these tools: we screened 78 models and studied in depth Gemma 4 (31B and 26B), DeepSeek V4 Pro, V4 Flash and V3.2, GLM 5.3 Flash, Mercury 3, Hy3, MiMo V2.6 Pro, Gemini 3.1 Flash-Lite, Mistral Medium 3.1, Claude Sonnet 5.5, Gemini 4, Grok 4.6, and, in E4, GPT-4.1 mini and Claude Haiku 5.5. All code was written during the sprint (first commit 24 October 2026), with nothing pre-existing. Main libraries: LiteLLM, PyYAML, python-dotenv; matplotlib for figures. Al takes responsibility for every claim.
