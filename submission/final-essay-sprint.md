@@ -52,8 +52,8 @@ Due **Monday 26 October 2026, 19:59 HKT**; submit once.
 - [ ] Future work: applied rather than stated stakes, richer scenarios, frontier models.
 
 ## 10. Mandatory parts (each can be done now, in parallel)
-- [x] **10a. LLM usage statement:** built and run by Claude Code agents under Al's direction; which models wrote code and text; Al takes responsibility for every claim. *Paper E*
-- [x] **10b. Prior-work disclosure:** all code written during the sprint (first commit 24 October 2026), nothing pre-existing, the libraries named (from `pyproject.toml`). *Paper E*
+- [x] **10a. LLM usage statement:** in Al's words: he orchestrated, Claude Code wrote the code with agent and Codex review, Modal and OpenRouter credits, Al takes responsibility for every claim. *Paper E, final wording with Al*
+- [x] **10b. Prior-work disclosure:** all code written during the sprint (first commit 24 October 2026), no pre-existing sandbox or economic model; the working methods (spec-first, linting, agent orchestration) reused as ideas from Al's professional work. *Paper E, final wording with Al*
 - [x] **10c. Code and Data:** the repository URL, the licence, `make reproduce`, what replays exactly (5,188 of 5,662 runs) and what doesn't (fresh fixed-seed reruns). *Paper E*
 - [x] **10d. References verified:** every `references.bib` entry checked against its source (arXiv ID, URL, authors, year); Wagner "Anchored" and evaluation awareness found and added, or flagged to cut. *Paper F*
 - [ ] **10e. Links work:** the repository, Pages, figure paths and every URL in the paper. *Paper F*
