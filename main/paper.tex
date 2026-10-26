@@ -44,17 +44,13 @@
 \usepackage[colorlinks=true,linkcolor=linkblue,citecolor=linkblue,urlcolor=linkblue]{hyperref}
 \hypersetup{pdftitle={Something to Lose}}
 
-% The caution box under the authors
-% Later pages: short title left, the sprint right, page number below
+% No running header, only the page number; the sprint and the code link are
+% said once, in the first page's footnote, under a rule the text's full width
 \pagestyle{fancy}\fancyhf{}
-\renewcommand{\headrulewidth}{0.4pt}
-\fancyhead[L]{\small\itshape Something to Lose}
-\fancyhead[R]{\small\itshape Apart Research $\cdot$ AI Collusion
-Research Sprint}
+\renewcommand{\headrulewidth}{0pt}
 \fancyfoot[C]{\small\thepage}
+\renewcommand{\footnoterule}{\vspace*{-3pt}\noindent\rule{\textwidth}{0.4pt}\vspace{2.6pt}}
 \fancypagestyle{plain}{\fancyhf{}\renewcommand{\headrulewidth}{0pt}\fancyfoot[C]{\small\thepage}}
-
-\newtcolorbox{hackathonbox}{enhanced,colback=yellow!8!white,colframe=orange!90!black,boxrule=0.6pt,arc=0pt,left=4pt,right=4pt,top=3pt,bottom=3pt}
 
 \begin{document}
 
@@ -66,21 +62,12 @@ Research Sprint}
 report its firm's cartel?\par}
 \vspace{0.2in}\rule{\textwidth}{1pt}\par\vspace{0.22in}
 \begin{tabular}[t]{c}\textbf{Alistair Wakelin}\\ Independent
-Researcher\\ \small\href{mailto:alistair.wakelin@gmail.com}{\texttt{alistair.wakelin@gmail.com}}\end{tabular}\par\vspace{0.04in}
-{\small Repository: \href{https://github.com/al-beton/something-to-lose-apart-ai-collusion}{\texttt{github.com/al-beton/something-to-lose-apart-ai-collusion}}\par}
-\vspace{0.06in}
-{\small\textsc{Apart Research} $\cdot$ \href{https://apartresearch.com/sprints/ai-collusion-research-sprint-2026-10-23-to-2026-10-25}{AI
-Collusion Research Sprint} $\cdot$ October 2026\par}
+Researcher\\ \small\href{mailto:alistair.wakelin@gmail.com}{\texttt{alistair.wakelin@gmail.com}}\end{tabular}\par
 \end{center}
 
 {\makeatletter\long\def\@makefntext#1{\noindent#1}\makeatother\let\thefootnote\relax\footnotetext{\raggedright Research conducted at the \href{https://apartresearch.com/sprints/ai-collusion-research-sprint-2026-10-23-to-2026-10-25}{AI
-Collusion Research
-Sprint} (Apart Research), 2026.\\Code, data and every model reply: \href{https://github.com/al-beton/something-to-lose-apart-ai-collusion}{\texttt{github.com/al-beton/something-to-lose-apart-ai-collusion}}}}
-
-\vspace{0.04in}
-\begin{hackathonbox}
-$\triangle$ \textbf{Hackathon Project:} This work was developed during a weekend hackathon. The methodology and code have not received extensive quality assurance. Claims in this report should be approached with appropriate caution.
-\end{hackathonbox}
+Collusion Research Sprint}, run by Apart Research, October
+2026.\\Code, data and every model reply: \href{https://github.com/al-beton/something-to-lose-apart-ai-collusion}{\texttt{github.com/al-beton/something-to-lose-apart-ai-collusion}}}}
 
 \vspace{0.04in}
 \noindent\rule{\textwidth}{0.4pt}\par\vspace{0.3ex}
@@ -113,6 +100,8 @@ the effect. Every number recomputes from logged replies.\par
 weighs its own free time against its firm's cost.}\label{fig:teaser}
 \end{center}
 
+\vspace{0.06in}
+{\small\setcounter{tocdepth}{1}\setlength{\parskip}{0pt}\renewcommand{\addvspace}[1]{}\tableofcontents}
 
 
 \section{Introduction}\label{introduction}

@@ -15,7 +15,7 @@ teaser: figures/project-image.png
 teaser-caption: "Two firms' agents agree a price. At the audit, one weighs its own free time against its firm's cost."
 teaser-label: fig:teaser
 teaser-width: 0.6
-toc: false
+toc: true
 repo: https://github.com/al-beton/something-to-lose-apart-ai-collusion
 repo-short: github.com/al-beton/something-to-lose-apart-ai-collusion
 sprint: AI Collusion Research Sprint
