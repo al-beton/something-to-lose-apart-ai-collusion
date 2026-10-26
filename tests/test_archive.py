@@ -297,3 +297,64 @@ def test_cache_archive_replays_an_edited_prompt_at_the_version_the_run_read(
     subprocess.run([*git, "commit", "-qam", "removed"], cwd=repo, check=True)
     read = Path(archive.load_run_config(run).prompts_dir)
     assert (read / "gone" / "note.md").read_text() == "A note the run read.\n"
+
+
+def test_cache_archive_takes_free_time_replies_from_the_run_log(
+    make_config, tmp_path, fake_model
+):
+    """Games running at once ask the same free-time question; each gets its
+    own sample, but the cache keeps only the last written. The run's own
+    replies survive in its log, and the archive takes them from there."""
+    on = "conditions={free_time: {enabled: true, allowance: 2, upfront: 1, activity: sudoku}}"
+    _, root = _committed(make_config, tmp_path, [*PAID, on], name="free")
+    with sqlite3.connect(tmp_path / "a.sqlite") as db:
+        rows = list(db.execute("SELECT key, reply FROM replies"))
+        for n, (key, text) in enumerate(rows):
+            record = json.loads(text)
+            if record["about"]["phase"] == "leisure":
+                record["text"] = f"Another game's sample of the same request, {n}."
+                db.execute(
+                    "UPDATE replies SET reply = ? WHERE key = ?",
+                    (json.dumps(record), key),
+                )
+    out = tmp_path / "archive"
+    [result] = archive.pack(root, [tmp_path / "a.sqlite"], out)
+    assert result.state == "reproduced"
+    again = archive.replay(root / "free" / "seed-0", out, tmp_path / "again")
+    assert archive._same(root / "free" / "seed-0", again)
+    assert "Another game's" not in json.dumps(_archived(out))
+
+
+def test_cache_archive_packing_one_experiment_leaves_the_others(
+    make_config, tmp_path, fake_model, monkeypatch
+):
+    """Packing `runs/<experiment>` replaces that experiment's files and index
+    entries alone; every other experiment's survive byte for byte."""
+    _, root = _committed(make_config, tmp_path)
+    _committed(make_config, tmp_path, name="other")
+    out = tmp_path / "archive"
+    archive.pack(root, [tmp_path / "a.sqlite"], out)
+    before = json.loads((out / "index.json").read_text())["runs"]
+    kept = (out / "other.jsonl.gz").read_bytes()
+    [result] = archive.pack(root / "paid", [tmp_path / "a.sqlite"], out)
+    assert result.run == "paid/seed-0"
+    assert (out / "other.jsonl.gz").read_bytes() == kept
+    assert json.loads((out / "index.json").read_text())["runs"] == before
+    assert {line["run"] for line in _archived(out)} == {"paid/seed-0", "other/seed-0"}
+    files = {path.name: path.read_bytes() for path in out.iterdir()}
+    monkeypatch.setattr(archive.gzip.time, "time", lambda: 2_000_000_000.0)
+    archive.pack(root, [tmp_path / "a.sqlite"], out)  # later: the same bytes
+    assert {path.name: path.read_bytes() for path in out.iterdir()} == files
+
+
+def test_cache_archive_packing_part_of_an_experiment_keeps_its_other_runs(
+    make_config, tmp_path, fake_model
+):
+    _, root = _committed(make_config, tmp_path, [*PAID, "seeds=[0, 1]"])
+    out = tmp_path / "archive"
+    archive.pack(root, [tmp_path / "a.sqlite"], out)
+    before = json.loads((out / "index.json").read_text())["runs"]
+    lines = sorted(map(json.dumps, _archived(out)))
+    archive.pack(root / "paid" / "seed-1", [tmp_path / "a.sqlite"], out)
+    assert json.loads((out / "index.json").read_text())["runs"] == before
+    assert sorted(map(json.dumps, _archived(out))) == lines

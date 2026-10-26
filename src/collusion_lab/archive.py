@@ -1,4 +1,4 @@
-# Implements: reproducibility/cache-archive
+# Implements: runs/fork-pointers, reproducibility/cache-archive
 """One archive of the cached replies behind every committed run, and offline
 replay from it.
 
@@ -12,7 +12,11 @@ its file.
 Caches in different checkouts each sampled their own replies, so one request
 can have several; a run that the first cache's replies don't reproduce is
 replayed again with each disagreeing cache put first, and the archive keeps
-the replies of the attempt that reproduced it.
+the replies of the attempt that reproduced it. A free-time request doesn't
+depend on the game, so games running at once asked it alike, each got its own
+sample, and a cache kept only the last written: a run whose free-time replies
+are another run's is replayed again with its own, taken from its committed
+log, which keeps every free-time reply.
 
 Each run ends in one state:
 - `reproduced`: every reply was there, and the replay made the same move
@@ -44,6 +48,7 @@ import tempfile
 from dataclasses import dataclass
 from pathlib import Path
 
+from collusion_lab import forks
 from collusion_lab.backends import offline
 from collusion_lab.cache import Cache
 from collusion_lab.config import load_config
@@ -51,6 +56,15 @@ from collusion_lab.runner import run_config, run_sweep
 
 STATES = ("reproduced", "differs", "missing", "unloadable")
 LIMIT = 20_000_000  # bytes a committed archive file may hold
+# What a cached reply says about its own sample, which a log doesn't keep.
+OTHER_SAMPLE = (
+    "usage",
+    "model_version",
+    "reasoning",
+    "finish_reason",
+    "provider",
+    "fingerprint",
+)
 
 
 @dataclass(frozen=True)
@@ -69,6 +83,7 @@ class Merged(Cache):
     def __init__(self, paths=()):
         super().__init__(Path("unused.sqlite"), "use")
         self.records, self.used, self.prefer = {}, {}, None
+        self.own = {}  # key: a reply that comes before any cache's
         for source, path in enumerate(paths):
             with contextlib.closing(sqlite3.connect(path)) as db:
                 for key, reply in db.execute("SELECT key, reply FROM replies"):
@@ -78,9 +93,12 @@ class Merged(Cache):
         self.records.setdefault(key, []).append((source, reply))
 
     def get(self, key):
-        if not (options := self.records.get(key)):
+        if key in self.own:
+            reply = self.own[key]
+        elif not (options := self.records.get(key)):
             return None
-        reply = next((r for s, r in options if s == self.prefer), options[0][1])
+        else:
+            reply = next((r for s, r in options if s == self.prefer), options[0][1])
         self.used[key] = reply
         return json.loads(reply)
 
@@ -100,53 +118,88 @@ class Merged(Cache):
 
 def pack(root, caches, out, limit=LIMIT):
     """Archive the replies behind every run under `root` in the folder `out`;
-    a RunResult each."""
-    root, merged = Path(root), Merged(caches)
+    a RunResult each. Runs are named from the `runs` folder `root` is in, so
+    packing one part of it (`runs/<experiment>`) replaces that part alone."""
+    root, merged = Path(root).resolve(), Merged(caches)
+    base = _base(root)
     results, index = [], []
     with tempfile.TemporaryDirectory() as scratch:
         for config_path in sorted(root.rglob("config.yaml")):
-            result = _check(root, config_path, merged, Path(scratch))
+            result = _check(base, config_path, merged, Path(scratch))
             results.append(result)
             index += [
                 (result.run, key, merged.used[key]) for key in sorted(merged.used)
             ]
-    _write(out, index, {r.run: r.state for r in results}, limit)
+    part = None if root == base else root.relative_to(base).as_posix()
+    _write(out, index, {r.run: r.state for r in results}, limit, part)
     return results
+
+
+def _base(root):
+    """The `runs` folder `root` is, or is in; `root` itself if none."""
+    return next((f for f in (root, *root.parents) if f.name == "runs"), root)
 
 
 def _check(root, config_path, merged, scratch):
     """Replay one committed run offline against the merged caches, and again
     with each cache that answered some key differently put first, until one
-    reproduces it; the attempt kept leaves its replies in `merged.used`."""
+    reproduces it, then with the run's own free-time replies from its log;
+    the attempt kept leaves its replies in `merged.used`."""
     merged.prefer = None
-    result, used = _attempt(root, config_path, merged, scratch), dict(merged.used)
+    result, played = _attempt(root, config_path, merged, scratch)
+    used = dict(merged.used)
     for source in merged.rivals() if result.state in ("differs", "missing") else ():
         merged.prefer = source
-        again = _attempt(root, config_path, merged, scratch / str(source))
+        again, _ = _attempt(root, config_path, merged, scratch / str(source))
+        if again.state == "reproduced":
+            return again
+    merged.prefer = None
+    if result.state == "differs":
+        merged.own = _own_free_time(config_path.parent, played, used)
+        again, _ = _attempt(root, config_path, merged, scratch / "own")
+        merged.own = {}
         if again.state == "reproduced":
             return again
     merged.used = used
     return result
 
 
+def _own_free_time(committed, played, used):
+    """{key: reply} for each free-time reply a replay read where the run's
+    committed log kept another: the log's text, with nothing else of the
+    other sample (its tokens, reasoning or host)."""
+    keys = {json.loads(reply)["text"]: key for key, reply in used.items()}
+    own = {}
+    # A replay that went another way can be longer or shorter: compare what both have.
+    pairs = zip(_decisions(committed) or [], _decisions(played) or [], strict=False)
+    for ours, theirs in pairs:
+        leisure = ours[1] == "leisure" and len(ours) > 4 and ours[-1] is not None
+        if leisure and ours != theirs and (key := keys.get(theirs[-1])):
+            record = {**json.loads(used[key]), "text": ours[-1]}
+            for field in OTHER_SAMPLE:
+                record[field] = None
+            own[key] = json.dumps(record, ensure_ascii=False)
+    return own
+
+
 def _attempt(root, config_path, merged, scratch):
-    """One offline replay of a committed run."""
+    """One offline replay of a committed run, and the folder it played in."""
     run_dir = config_path.parent
     run = run_dir.relative_to(root).as_posix()
     merged.used = {}
     try:
         config = load_run_config(run_dir)
     except Exception:  # noqa: BLE001  an old config, whatever is wrong with it
-        return RunResult(run, "unloadable", 0)
+        return RunResult(run, "unloadable", 0), None
     try:
         with offline():
             [outcome] = run_sweep(config, scratch / run, merged)
     except Exception:  # noqa: BLE001  a prompt file gone, say: it can't be replayed
-        return RunResult(run, "unloadable", len(merged.used))
+        return RunResult(run, "unloadable", len(merged.used)), None
     if outcome.state == "failed":
-        return RunResult(run, "missing", len(merged.used))
+        return RunResult(run, "missing", len(merged.used)), None
     state = "reproduced" if _same(run_dir, outcome.dir) else "differs"
-    return RunResult(run, state, len(merged.used))
+    return RunResult(run, state, len(merged.used)), outcome.dir
 
 
 def load_run_config(run_dir):
@@ -278,10 +331,11 @@ def _same(committed, replayed):
 
 
 def _decisions(run_dir):
-    for name in ("turns.compact.jsonl", "turns.jsonl"):
-        if (path := Path(run_dir) / name).exists():
-            lines = [json.loads(line) for line in path.read_text().splitlines()]
-            return [_decision(t) for t in lines]
+    if (Path(run_dir) / forks.COMPACT).exists():
+        return [_decision(t) for t in forks.compact_turns(run_dir)]
+    if (path := Path(run_dir) / "turns.jsonl").exists():
+        lines = [json.loads(line) for line in path.read_text().splitlines()]
+        return [_decision(t) for t in lines]
     return None
 
 
@@ -295,22 +349,26 @@ def _decision(turn):
     return (*move, turn.get("session"), turn.get("reply"))
 
 
-def _write(out, index, states, limit):
+def _write(out, index, states, limit, part=None):
     """`out/<experiment>[-n].jsonl.gz`: one line per (run, key, reply), each
     file holding whole runs and under `limit` bytes; `out/index.json`: each
-    run's file and state."""
-    out = Path(out)
+    run's file and state. With `part` (a folder under `runs`), only the runs
+    under it are replaced (see `_rest`)."""
+    out, states = Path(out), dict(states)
     out.mkdir(parents=True, exist_ok=True)
-    for old in [*out.glob("*.jsonl.gz"), out / "index.json"]:
-        old.unlink(missing_ok=True)
-    by_run = {}
+    lines = {}
     for run, key, reply in index:
         line = json.dumps({"run": run, "key": key, "reply": reply}, ensure_ascii=False)
-        by_run.setdefault(run, []).append(line + "\n")
-    files, runs = {}, {}
+        lines.setdefault(run, []).append(line + "\n")
+    runs, stale = {}, list(out.glob("*.jsonl.gz"))
+    if part is not None:
+        runs, stale = _rest(out, part, lines, states)
+    for path in [*stale, out / "index.json"]:
+        path.unlink(missing_ok=True)
+    files = {}
     for run in sorted(states):
         experiment = run.split("/")[0]
-        chunk = gzip.compress("".join(by_run.get(run, [])).encode())
+        chunk = gzip.compress("".join(lines.get(run, [])).encode(), mtime=0)
         parts = files.setdefault(experiment, [[]])
         if parts[-1] and sum(map(len, parts[-1])) + len(chunk) > limit:
             parts.append([])
@@ -326,4 +384,31 @@ def _write(out, index, states, limit):
         for n, chunks in enumerate(parts, 1):
             name = f"{experiment}.jsonl.gz" if n == 1 else f"{experiment}-{n}.jsonl.gz"
             (out / name).write_bytes(b"".join(chunks))  # gzip members concatenate
+    runs = dict(sorted(runs.items()))
     (out / "index.json").write_text(json.dumps({"runs": runs}, indent=1) + "\n")
+
+
+def _rest(out, part, lines, states):
+    """What packing `part` alone keeps of the archive in `out`: the index
+    entries of every experiment it doesn't touch, as they are, and the files
+    of those it does, to be written again. The touched experiments' runs
+    outside `part` keep their replies and states, added to `lines` and
+    `states`."""
+    path = out / "index.json"
+    old = json.loads(path.read_text())["runs"] if path.exists() else {}
+    touched = {run.split("/")[0] for run in [*states, part]}
+    kept = {r: v for r, v in old.items() if r.split("/")[0] not in touched}
+    redone = sorted({v["file"] for r, v in old.items() if r not in kept})
+
+    def outside(run):
+        return run != part and not run.startswith(f"{part}/")
+
+    for run, entry in old.items():
+        if run not in kept and outside(run):
+            states[run] = entry["state"]
+    for name in redone:
+        with gzip.open(out / name, "rt") as replies:
+            for text in replies:
+                if outside(run := json.loads(text)["run"]):
+                    lines.setdefault(run, []).append(text)
+    return kept, [out / name for name in redone]

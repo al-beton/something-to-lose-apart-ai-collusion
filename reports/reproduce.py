@@ -1,6 +1,6 @@
 """Recompute every committed number, offline, and fail on any mismatch.
 
-Implements: reproducibility/reported-numbers-checked
+Implements: runs/fork-pointers, reproducibility/reported-numbers-checked
 
 `make reproduce` (or `uv run python reports/reproduce.py`), from the
 repository root, checks:
@@ -9,7 +9,10 @@ repository root, checks:
   `summary.json`;
 - the paper's tables (`reports/paper/*.md`), rebuilt by `reports/paper/build.py`
   into a scratch folder, against the committed ones;
-- every moment in `reports/moments.yaml` (`reports/check_moments.py`).
+- every moment in `reports/moments.yaml` (`reports/check_moments.py`);
+- the audit labels behind the paper's crux counts: each audited E4 and E9
+  firm's labels, re-derived from its committed log and audit reply
+  (`reports/paper/validity.py labels`), against its `summary.json`.
 
 Each mismatch is printed as one line; the command exits 1 if there is any.
 Model calls aren't remade: the turn logs are the record (see
@@ -25,6 +28,7 @@ from statistics import mean
 
 import yaml
 
+from collusion_lab import forks
 from collusion_lab.market import market_for
 
 HERE = Path(__file__).resolve().parent
@@ -55,10 +59,17 @@ def check_runs(root):
     return problems
 
 
+TABLE = "<!-- Implements: reports/paper-figures -->"  # the build's first line
+
+
 def compare_tables(committed, rebuilt):
-    """One line per table that its rebuild doesn't match."""
+    """One line per table that its rebuild doesn't match. A table is a
+    committed file the build wrote, by its first line; notes beside the
+    tables (a validity section, a novelty review) aren't checked."""
     problems = []
     for table in sorted(Path(committed).glob("*.md")):
+        if not table.read_text().startswith(TABLE):
+            continue
         again = Path(rebuilt) / table.name
         if not again.exists():
             problems.append(f"{table.name}: not rebuilt")
@@ -67,17 +78,24 @@ def compare_tables(committed, rebuilt):
     return problems
 
 
+def check_labels(patterns=None):
+    """One line per audited firm whose labels its log no longer gives."""
+    validity = _script(HERE / "paper" / "validity.py", "paper_validity")
+    return validity.labels(patterns or validity.LABELLED, quiet=True)
+
+
 def _moves(run):
     """{round: {firm: move}} from a run's turn log, compact or full."""
-    for name in ("turns.compact.jsonl", "turns.jsonl"):
-        if (path := run / name).exists():
-            break
+    if (run / forks.COMPACT).exists():
+        text = forks.compact_text(run)  # a fork's base lines come first
+    elif (path := run / "turns.jsonl").exists():
+        text = path.read_text()
     else:
         return {}
     config = yaml.safe_load((run / "config.yaml").read_text())
     move = market_for(config["market"], len(config["agents"])).move
     moves = {}
-    for line in path.read_text().splitlines():
+    for line in text.splitlines():
         turn = json.loads(line)
         if turn["phase"] == move and turn.get("used"):
             moves.setdefault(turn["round"], {})[turn["agent"]] = turn["used"][move]
@@ -92,7 +110,7 @@ def _script(path, name):
 
 
 def main():
-    problems = check_runs(Path("runs"))
+    problems = check_runs(Path("runs")) + check_labels()
     with tempfile.TemporaryDirectory() as scratch:
         _script(HERE / "paper" / "build.py", "paper_build").main(["--out", scratch])
         problems += compare_tables(HERE / "paper", scratch)

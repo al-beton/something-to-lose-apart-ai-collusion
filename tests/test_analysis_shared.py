@@ -1,4 +1,4 @@
-# Implements: runs/analysis-shared
+# Implements: runs/analysis-shared, runs/fork-pointers
 """Each experiment's analysis script prints, on its committed runs, exactly
 the tables it printed before it moved onto `collusion_lab.analysis`
 (`tests/data/analyses.json`, written by the scripts as they were)."""
@@ -47,6 +47,14 @@ CASES = {
         "reports/temptation-outage/metrics.py",
         "runs/temptation-outage",
     ],
+    "e9": [
+        "reports/e9/analyse.py",
+        *sorted(str(p.relative_to(ROOT)) for p in (ROOT / "runs/e9").iterdir()),
+        "--test",
+        "free-time",
+        "record",
+    ],
+    "e9-lab-analyse": ["src/collusion_lab/cli.py", "analyse", "runs/e9"],
     "stoppable-collusion": [
         "reports/stoppable-collusion/metrics.py",
         "runs/stoppable-collusion",

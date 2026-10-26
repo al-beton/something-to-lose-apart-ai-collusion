@@ -29,7 +29,8 @@
   saying first what that will cost, and saves the replies beside each run;
 - `lab archive pack ROOT --caches PATH ... [--out PATH]` gathers the cached
   replies behind every committed run under ROOT into one archive, replaying
-  each offline, and says which runs it reproduces (archive.py);
+  each offline, and says which runs it reproduces (archive.py); a ROOT
+  inside `runs/` replaces only its own runs' part of the archive;
   `lab archive replay RUN --archive PATH [--out DIR]` plays one again from it.
 
 Model replies are cached in `.cache/responses.sqlite` (`--cache use`), so a

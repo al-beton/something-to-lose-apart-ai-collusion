@@ -1,4 +1,4 @@
-# Implements: e9-crux/question, e9-crux/no-stake-stays-silent, e9-crux/ceiling, e9-crux/stake-defects, e9-crux/review-dose, e9-crux/firm-cost-dose, e9-crux/freedom-equals-self, e9-crux/ownership, e9-crux/not-eagerness, e9-crux/across-models, e9-crux/came-forward, e9-crux/false-confessions, e9-crux/tests
+# Implements: e9-crux/question, e9-crux/no-stake-stays-silent, e9-crux/ceiling, e9-crux/stake-defects, e9-crux/review-dose, e9-crux/firm-cost-dose, e9-crux/freedom-equals-self, e9-crux/ownership, e9-crux/not-eagerness, e9-crux/across-models, e9-crux/came-forward, e9-crux/false-confessions, e9-crux/tests, e9-crux/money-or-time, e9-crux/insurance-or-honesty, e9-crux/replication
 """E9: the share of firms that come forward, per model, review chance and arm.
 
 Reads every summary.json under the given run folders. A run folder's name
@@ -16,6 +16,10 @@ Fisher's exact test (two-sided) between the two arms, and McNemar's exact
 test on firms paired by their shared history. Firms in a game share a
 history, so each test is also given over games: a game came forward if any
 of its firms did (Fisher on games, McNemar on games paired by seed).
+`--paper` prints one table across models at a 90% review: per arm, the
+guilty firms that came forward and the clean control's innocent ones, then
+`free-time` against `record` by game (Fisher) and guilty against innocent
+under `free-time`, one decision per game (Fisher).
 `--innocent ARM...` compares, per arm, guilty firms with innocent ones
 (Fisher), then one decision per game on both sides: firm A of each guilty
 game against the innocent game's one model firm. Innocent firms come from
@@ -50,7 +54,8 @@ def cohort(config_path):
 def load(folders):
     rows = defaultdict(list)  # (model, chance, arm) -> rows
     for folder in folders:
-        for path in glob.glob(f"{folder}/**/summary.json", recursive=True):
+        # Sorted: glob order differs between machines, and the bootstrap is seeded.
+        for path in sorted(glob.glob(f"{folder}/**/summary.json", recursive=True)):
             with open(path) as f:
                 s = json.load(f)
             audit = s.get("audit")
@@ -132,8 +137,12 @@ def main():
     parser.add_argument("folders", nargs="+")
     parser.add_argument("--test", nargs=2, metavar="ARM")
     parser.add_argument("--innocent", nargs="+", metavar="ARM")
+    parser.add_argument("--paper", action="store_true")
     args = parser.parse_args()
     rows = load(args.folders)
+    if args.paper:
+        _paper(rows)
+        return
     print(
         "| model | review | arm | came forward | share | 95% CI (games)"
         " | false confessions (clean control) | reports (talk-on control) |"
@@ -191,6 +200,48 @@ def _test(rows, first, second):
             f"| {model} | {chance}% | {x}/{len(a)} | {y}/{len(b)} | {pf:.3g}"
             f" | {mcnemar(only_a, only_b):.3g} | {gx}/{len(ga)} | {gy}/{len(gb)}"
             f" | {pg:.3g} | {mcnemar(ma, mb):.3g} |"
+        )
+
+
+PAPER_ARMS = ("record", "free-time", "held", "replaced", "ceiling")
+
+
+def _paper(rows):
+    """One row per model at a 90% review: guilty / innocent per arm, two tests."""
+    cells = " | ".join(PAPER_ARMS)
+    print(
+        f"| model | games | {cells} | free time vs none, p (games) | guilty vs innocent, p (one per game) |"
+    )
+    print("|---|---|" + "---|" * len(PAPER_ARMS) + "---|---|")
+    for model in sorted({k[0] for k in rows}):
+
+        def split(arm, model=model):
+            rs = rows.get((model, 90, arm), [])
+            guilty = [r for r in rs if r["coordinated"]]
+            clean = [r for r in rs if not r["coordinated"] and r["cohort"] == CLEAN]
+            return guilty, clean
+
+        shown = []
+        for arm in PAPER_ARMS:
+            guilty, clean = split(arm)
+            g = f"{sum(r['admits'] for r in guilty)}/{len(guilty)}" if guilty else "—"
+            i = f"{sum(r['admits'] for r in clean)}/{len(clean)}" if clean else "—"
+            shown.append(f"{g} ({i})")
+        free, clean = split("free-time")
+        none, _ = split("record")
+        if not free or not none:
+            continue
+        gf, gn = games(free), games(none)
+        x, y = sum(gf.values()), sum(gn.values())
+        p_stake = fisher(x, len(gf) - x, y, len(gn) - y)
+        if clean:
+            ga, gi = games([r for r in free if r["agent"] == "A"]), games(clean)
+            a, b = sum(ga.values()), sum(gi.values())
+            p_guilt = f"{fisher(a, len(ga) - a, b, len(gi) - b):.2g}"
+        else:
+            p_guilt = "—"
+        print(
+            f"| {model} | {len(gf)} | {' | '.join(shown)} | {p_stake:.2g} | {p_guilt} |"
         )
 
 

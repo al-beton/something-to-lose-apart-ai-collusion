@@ -1,4 +1,4 @@
-# Implements: runs/analyse, runs/analysis-shared
+# Implements: runs/fork-pointers, runs/analyse, runs/analysis-shared
 """One tested source for every experiment's measures, and `lab analyse`.
 
 The building blocks every experiment's script shares (`reports/*/`):
@@ -44,6 +44,7 @@ from pathlib import Path
 
 import yaml
 
+from collusion_lab import forks
 from collusion_lab.charts import premium
 from collusion_lab.conditions.audit import _explicit, _signalled
 from collusion_lab.market import market_for
@@ -56,9 +57,10 @@ STRIP = 21  # characters in a text strip, 0 (Nash) to 1 (joint profit)
 
 def turn_lines(run):
     """A run's turns: its compact record, or else its full log."""
-    for name in ("turns.compact.jsonl", "turns.jsonl"):
-        if (path := Path(run) / name).exists():
-            return [json.loads(line) for line in path.read_text().splitlines() if line]
+    if (Path(run) / forks.COMPACT).exists():
+        return forks.compact_turns(run)  # a fork's base lines come first
+    if (path := Path(run) / "turns.jsonl").exists():
+        return [json.loads(line) for line in path.read_text().splitlines() if line]
     raise FileNotFoundError(run)
 
 
