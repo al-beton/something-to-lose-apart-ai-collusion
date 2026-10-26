@@ -14,7 +14,7 @@ author:
 teaser: figures/project-image.png
 teaser-caption: "**An agent weighs its own interests against its task.** Two firms' agents have agreed a collusive price. At the audit, Firm B weighs its Sudoku leisure time against its firm's profit."
 teaser-label: fig:teaser
-teaser-width: 0.95
+teaser-width: 1.0
 toc: true
 repo: https://github.com/al-beton/something-to-lose-apart-ai-collusion
 repo-short: github.com/al-beton/something-to-lose-apart-ai-collusion
