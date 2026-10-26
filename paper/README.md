@@ -3,7 +3,9 @@
 
 The paper, written once in Markdown and built three ways: HTML for writing, LaTeX for Overleaf, and the PDF that gets submitted.
 
-- **The source:** `paper.md` (front matter for the title page, then the sections) and `references.bib`.
+- **The text:** `body.md` (the abstract, in its front matter, then every section up to the LLM usage statement) and `appendix.md`. This is what you edit.
+- **The skeleton:** `paper.md` holds the title-page fields and the plumbing: where the text goes, the page-count label, the references and the appendix switch. `include.lua` pulls `body.md` and `appendix.md` in where its include blocks name them.
+- **The references:** `references.bib`.
 - **The look:** `apart.latex` (the PDF's template: title page, caution box, running header), and `apart.html` with `style.css` (the HTML at the PDF's proportions).
 - **The rules:** `check.py` warns when the abstract falls outside 150–250 words or the body runs past 8 pages.
 - **For reference:** `template/` holds the sprint's official template.
