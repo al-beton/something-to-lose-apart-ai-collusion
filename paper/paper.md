@@ -14,7 +14,7 @@ author:
 teaser: figures/fig3-e9-came-forward.png
 teaser-caption: "Lorem ipsum: key figure caption, one sentence that stands alone."
 teaser-label: fig:teaser
-toc: false
+toc: true
 repo: https://github.com/al-beton/something-to-lose-apart-ai-collusion
 repo-short: github.com/al-beton/something-to-lose-apart-ai-collusion
 sprint: AI Collusion Research Sprint

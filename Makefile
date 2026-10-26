@@ -21,7 +21,7 @@ reproduce:  # every committed number recomputed, offline; fails on a mismatch
 
 # The paper: write paper/body.md and paper/appendix.md (paper/paper.md is the skeleton that pulls them in), build to paper/build/ (gitignored).
 PAPER_BUILD ?= paper/build
-PANDOC = pandoc paper/paper.md --from markdown --lua-filter paper/include.lua --resource-path=paper --number-sections --toc-depth=1
+PANDOC = pandoc paper/paper.md --from markdown --lua-filter paper/include.lua --resource-path=paper --number-sections --toc --toc-depth=1
 paper-tools:
 	@command -v pandoc >/dev/null || { echo "pandoc is missing: brew install pandoc (or see pandoc.org/installing)"; exit 1; }
 paper-build-dir: paper-tools

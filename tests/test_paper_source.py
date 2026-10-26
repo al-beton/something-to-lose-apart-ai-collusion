@@ -33,6 +33,7 @@ def test_paper_source_builds_to_latex_with_title_and_sections(tmp_path):
     # the sprint and the code link are said once, in the first page's footnote
     assert "hackathonbox" not in tex and tex.count("Apart Research") == 1
     assert "run by Apart Research" in tex.split(r"\footnotetext", 1)[1]
+    assert r"\tableofcontents" in tex and r"\fancyhead" not in tex
     title = (ROOT / "paper" / "paper.md").read_text().split("title:", 1)[1]
     assert title.splitlines()[0].strip().strip("\"'") in tex
     for name in SECTIONS:
