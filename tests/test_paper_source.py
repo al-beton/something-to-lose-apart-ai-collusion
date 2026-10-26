@@ -41,7 +41,9 @@ def test_paper_source_builds_to_latex_with_title_and_sections(tmp_path):
 def _check():
     import importlib.util
 
-    spec = importlib.util.spec_from_file_location("paper_check", ROOT / "paper" / "check.py")
+    spec = importlib.util.spec_from_file_location(
+        "paper_check", ROOT / "paper" / "check.py"
+    )
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
     return module
@@ -50,7 +52,9 @@ def _check():
 def test_paper_rules_warn_on_abstract_length_and_page_cap(tmp_path):
     check = _check()
     paper = tmp_path / "paper.md"
-    paper.write_text("---\ntitle: T\nabstract: |\n  " + "word " * 120 + "\n---\n\n# Introduction\n")
+    paper.write_text(
+        "---\ntitle: T\nabstract: |\n  " + "word " * 120 + "\n---\n\n# Introduction\n"
+    )
     assert "120 words" in " ".join(check.warnings(paper))
     paper.write_text("---\nabstract: |\n  " + "word " * 200 + "\n---\n")
     aux = tmp_path / "paper.aux"

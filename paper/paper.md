@@ -1,4 +1,4 @@
-<!-- Implements: reports/paper-source -->
+<!-- Implements: reports/paper-source, reports/paper-rules -->
 <!-- Build: `make paper-html` (fast, for writing), `make paper-pdf` (Apart-style PDF), `make paper-tex` (the .tex for Overleaf). Output in paper/build/. -->
 
 ---
@@ -8,7 +8,7 @@ author:
   - name: Author Name
     affiliation: Affiliation
 abstract: |
-  Summarise the project in 150–250 words: the problem, the approach, the key
+  Summarise the project in 150–250 words (the sprint's rule; the build warns outside it): the problem, the approach, the key
   results and the main takeaway. Write it last, from the final results.
 repo: https://github.com/al-beton/collusion-lab
 sprint: AI Collusion Research Sprint
@@ -37,13 +37,13 @@ Closest to ours: @lee2026leniency, @liu2026breaking and @zeng2026voluntary; on r
 
 # Methods
 
-<!-- Enough to replicate: models, markets, parameters, key design choices and why (cite prior work where it backs a choice), what didn't work. Methods and Results together: about 2.5 pages. -->
+<!-- Sprint rule: at most 8 pages before References (the PDF build warns). Enough to replicate: models, markets, parameters, key design choices and why (cite prior work where it backs a choice), what didn't work. Methods and Results together: about 2.5 pages. -->
 
 ![The round: two firms talk, then set prices; at the audit, owning up costs some free time and hiding costs all of it if caught.](figures/fig1-round.png){#fig:round width=100%}
 
 # Results
 
-<!-- Main findings with evidence; separate observation from interpretation. Enough data? Significant? Robust to small changes? Number every figure and table, give captions that stand alone, place them near their first mention, keep figure text legible. -->
+<!-- Report variance, seeds and baselines, and always include the positive control (sprint rule). Main findings with evidence; separate observation from interpretation. Enough data? Significant? Robust to small changes? Number every figure and table, give captions that stand alone, place them near their first mention, keep figure text legible. -->
 
 ![Owning up by penalty schedule and model (E4).](figures/fig2-e4-owning-up.png){#fig:e4 width=100%}
 
@@ -72,6 +72,7 @@ Closest to ours: @lee2026leniency, @liu2026breaking and @zeng2026voluntary; on r
 # Code and Data {.unnumbered}
 
 - **Code repository:** <https://github.com/al-beton/collusion-lab>
+- **Written during the sprint:** all code in the repository was written during the sprint (first commit 24 October 2026).
 - **Data:** every run's config, summary, manifest and turn log is committed under `runs/`; the replies behind them are in `archive/`.
 
 # LLM Usage Statement {.unnumbered}
@@ -87,6 +88,10 @@ Closest to ours: @lee2026leniency, @liu2026breaking and @zeng2026voluntary; on r
 \bibliography{references}
 \appendix
 ```
+
+# Limitations and Dual-Use / Ethical Considerations
+
+<!-- Required by the sprint, with exactly this title. What the result does and doesn't establish; any way the setup or findings could make real-world collusion easier to carry out or harder to detect. -->
 
 # Additional Results
 
