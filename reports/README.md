@@ -16,7 +16,7 @@ Findings from experiments, one folder per experiment (`reports/<experiment>/`), 
 - [Why trust this?](paper/validity.md): what the results can't show, a spot audit of the traces, and the reproducibility study
 - The paper's figures, with captions: [`paper/figures/`](paper/figures/README.md); its [plan](paper/plan.md) and [outline](paper/outline.md)
 
-**Other experiments**
+**Other experiments** (the highlights are in [Extras](extras.md))
 
 - [E7: a way out (leniency)](e7/findings.md), with [its base games](e7/base.md)
 - [E8: is free time a valued asset?](e8/findings.md), with [its pilot](e8/pilot.md)
