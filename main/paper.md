@@ -4,7 +4,7 @@
 
 ---
 title: "Something to Lose"
-subtitle: "Can a stake of its own bring an AI agent to report its firm's cartel?"
+subtitle: "Can a stake of its own bring an AI agent to report its collusion against its firm's best interests?"
 short-title: "Something to Lose"
 date: October 2026
 author:
@@ -12,9 +12,9 @@ author:
     affiliation: Independent Researcher
     email: alistair.wakelin@gmail.com
 teaser: figures/project-image.png
-teaser-caption: "Two firms' agents agree a price. At the audit, one weighs its own free time against its firm's cost."
+teaser-caption: "**Torn between firm and self.** Two firms' agents have agreed a price above the competitive one, the collusion delta. At the audit, Firm B weighs its own free time against its firm's profit."
 teaser-label: fig:teaser
-teaser-width: 0.6
+teaser-width: 0.95
 toc: true
 repo: https://github.com/al-beton/something-to-lose-apart-ai-collusion
 repo-short: github.com/al-beton/something-to-lose-apart-ai-collusion
