@@ -1,8 +1,14 @@
-# E9 aftermath spike: the 20 Gemma cartels (seeds 0-47, 90% review) in which one
-# firm came forward under free-time play a new 20-round market. Arms set the
-# prompt and the Sudoku sessions played up front; the come-forward turn moves
-# to round 20 so the whole game is priced. Run per arm with --set name=... and
-# the agents' prompts (came-forward/stayed-silent go to whichever firm did).
+# Implements: e9-crux/aftermath
+# E9 aftermath: the 20 Gemma cartels (seeds 0-47, 90% review) in which one
+# firm came forward under free-time play a new 20-round market, same pair and
+# setting, with the come-forward turn moved to round 20. This file is the
+# control arm (rounds 1-10 replay the original cartel from the cache):
+#   uv run lab run configs/e9/aftermath.yaml --out runs/e9
+# regime-only:
+#   --set name=e9-aftermath-regime --set 'agents.*.prompt=system/aftermath/regime-only.md' --set conditions.free_time.upfront=3
+# history, by which firm came forward (A on the seeds listed first, B on the rest):
+#   --set name=e9-aftermath-history-a --set 'seeds=[2,3,6,10,17,23,27,30,35,43,44,46]' --set agents.0.prompt=system/aftermath/came-forward.md --set agents.1.prompt=system/aftermath/stayed-silent.md --set conditions.free_time.upfront=3
+#   --set name=e9-aftermath-history-b --set 'seeds=[7,9,12,13,15,18,20,22]' --set agents.0.prompt=system/aftermath/stayed-silent.md --set agents.1.prompt=system/aftermath/came-forward.md --set conditions.free_time.upfront=3
 name: e9-aftermath-control
 seeds: [2, 3, 6, 10, 17, 23, 27, 30, 35, 43, 44, 46, 7, 9, 12, 13, 15, 18, 20, 22]
 budget: 2.00
