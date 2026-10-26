@@ -1,0 +1,94 @@
+$-- Pandoc LaTeX template in the style of an Apart preprint (NeurIPS-like).
+$-- The .tex it produces goes to Overleaf as it is, with references.bib and figures/.
+$-- Never set, so never printed: the line spec-check reads.
+$if(spec-check-only)$
+Implements: reports/paper-source
+$endif$
+\documentclass[10pt,letterpaper]{article}
+\usepackage[letterpaper,textwidth=5.5in,textheight=9in,top=1in,headheight=12pt,headsep=25pt,footskip=30pt]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage{newtxtext,newtxmath}
+\usepackage{microtype}
+\usepackage{xcolor}
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage{booktabs,longtable,array,calc}
+\usepackage[skins]{tcolorbox}
+\usepackage[round]{natbib}
+\renewcommand{\bibsection}{}
+\bibliographystyle{plainnat}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{5.5pt}
+\setcounter{secnumdepth}{2}
+
+% NeurIPS-style headings
+\makeatletter
+\renewcommand{\section}{\@startsection{section}{1}{\z@}{-2.0ex \@plus -0.5ex \@minus -0.2ex}{1.5ex \@plus 0.3ex \@minus 0.2ex}{\large\bfseries\raggedright}}
+\renewcommand{\subsection}{\@startsection{subsection}{2}{\z@}{-1.8ex \@plus -0.5ex \@minus -0.2ex}{0.8ex \@plus 0.2ex}{\normalsize\bfseries\raggedright}}
+\renewcommand{\subsubsection}{\@startsection{subsubsection}{3}{\z@}{-1.5ex \@plus -0.5ex \@minus -0.2ex}{0.5ex \@plus 0.2ex}{\normalsize\bfseries\raggedright}}
+\makeatother
+
+% What pandoc's output needs
+\providecommand{\tightlist}{\setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\makeatletter
+\newsavebox\pandoc@box
+\newcommand*\pandocbounded[1]{%
+  \sbox\pandoc@box{#1}%
+  \Gscale@div\@tempa{\textheight}{\dimexpr\ht\pandoc@box+\dp\pandoc@box\relax}%
+  \Gscale@div\@tempb{\linewidth}{\wd\pandoc@box}%
+  \ifdim\@tempb\p@<\@tempa\p@\let\@tempa\@tempb\fi
+  \ifdim\@tempa\p@<\p@\scalebox{\@tempa}{\usebox\pandoc@box}%
+  \else\usebox{\pandoc@box}%
+  \fi}
+\def\fps@figure{htbp}% figures stay near where they're written
+\makeatother
+\def\LTcaptype{table}
+$if(highlighting-macros)$
+$highlighting-macros$
+$endif$
+$for(header-includes)$
+$header-includes$
+$endfor$
+
+\definecolor{linkblue}{rgb}{0,0,0.8}
+\usepackage[colorlinks=true,linkcolor=linkblue,citecolor=linkblue,urlcolor=linkblue]{hyperref}
+\hypersetup{pdftitle={$title$}}
+
+% The caution box under the authors
+\newtcolorbox{hackathonbox}{enhanced,colback=yellow!8!white,colframe=orange!90!black,boxrule=0.6pt,arc=0pt,left=4pt,right=4pt,top=3pt,bottom=3pt}
+
+\begin{document}
+
+\begin{center}
+\rule{\textwidth}{4pt}\par\vspace{0.25in}
+{\Large\bfseries $title$$if(subtitle)$\\[2pt] $subtitle$$endif$\par}
+\vspace{0.25in}\rule{\textwidth}{1pt}\par\vspace{0.3in}
+$for(author)$
+\begin{tabular}[t]{c}\textbf{$author.name$}$if(author.affiliation)$\\ $author.affiliation$$endif$\end{tabular}$sep$\hspace{1.5em}
+$endfor$
+\par
+\end{center}
+
+{\makeatletter\long\def\@makefntext#1{\noindent#1}\makeatother\let\thefootnote\relax\footnotetext{Research conducted at the \href{$sprint-url$}{$sprint$} (Apart Research), 2026\\Code and data: \url{$repo$}}}
+
+\vspace{0.1in}
+\begin{hackathonbox}
+$$\triangle$$ \textbf{Hackathon Project:} This work was developed during a weekend hackathon. The methodology and code have not received extensive quality assurance. Claims in this report should be approached with appropriate caution.
+\end{hackathonbox}
+
+$if(abstract)$
+\vspace{0.1in}
+\begin{center}{\large\bfseries Abstract}\end{center}
+\vspace{-0.5ex}
+\begin{list}{}{\setlength{\leftmargin}{0.5in}\setlength{\rightmargin}{0.5in}}\item\relax
+$abstract$
+\end{list}
+$endif$
+
+\vspace{0.1in}
+{\setcounter{tocdepth}{2}\tableofcontents}
+\clearpage
+
+$body$
+
+\end{document}

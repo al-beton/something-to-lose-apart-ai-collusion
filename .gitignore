@@ -9,3 +9,4 @@ __pycache__/
 runs/scratch/
 runs/smoke/
 reports/**/*.html
+paper/build/

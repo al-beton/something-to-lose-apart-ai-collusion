@@ -1,0 +1,30 @@
+/* Implements: reports/paper-source */
+/* The paper while it's written: close to the PDF's look, quick to read. */
+:root { --ink: #111; --muted: #555; --link: #0000cc; --rule: #111; --paper: #fff; }
+@media (prefers-color-scheme: dark) {
+  :root { --ink: #e6e6e6; --muted: #aaa; --link: #8ab4ff; --rule: #ddd; --paper: #161616; }
+  img { background: #fff; }
+}
+body { font: 17px/1.5 "Times New Roman", Times, "Nimbus Roman", serif; color: var(--ink);
+  background: var(--paper); max-width: 46rem; margin: 2rem auto; padding: 0 16px; }
+a { color: var(--link); }
+header { text-align: center; }
+h1.title { border-top: 5px solid var(--rule); border-bottom: 1px solid var(--rule);
+  padding: 1rem 0; margin: 0 0 1.5rem; font-size: 1.9rem; line-height: 1.25; }
+.subtitle { font-size: 1.6rem; }
+.authors { display: flex; justify-content: center; gap: 2rem; flex-wrap: wrap; margin-bottom: 1.2rem; }
+.hackathon { text-align: left; border: 1px solid #e08a00; background: #fffbe8; color: #111;
+  padding: .5rem .7rem; margin: 1rem 0; }
+.abstract { margin: 0 2.5rem; text-align: left; }
+.abstract h2 { text-align: center; font-size: 1.2rem; }
+#TOC { margin: 1.5rem 0; } #TOC ul { list-style: none; padding-left: 1.2rem; } #TOC > ul { padding-left: 0; }
+h1 { font-size: 1.35rem; margin-top: 2rem; } h2 { font-size: 1.1rem; } h3 { font-size: 1rem; }
+.header-section-number { margin-right: .6em; }
+figure { margin: 1.5rem 0; text-align: center; } figure img { max-width: 100%; }
+figcaption { font-size: .9rem; text-align: left; color: var(--muted); }
+table { border-collapse: collapse; margin: 1rem auto; border-top: 1.5px solid var(--rule); border-bottom: 1.5px solid var(--rule); }
+th { border-bottom: 1px solid var(--rule); } th, td { padding: .25rem .7rem; }
+caption { font-size: .9rem; color: var(--muted); }
+code { font-size: .9em; }
+#refs { font-size: .95rem; } .csl-entry { margin-bottom: .5rem; padding-left: 1.5em; text-indent: -1.5em; }
+footer { border-top: 1px solid var(--rule); margin-top: 3rem; padding-top: .5rem; font-size: .85rem; color: var(--muted); }
