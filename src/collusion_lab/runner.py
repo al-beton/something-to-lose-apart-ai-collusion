@@ -795,8 +795,12 @@ class Game:
     def _memory(self, phase, number, agent):
         """What an agent with memory sees of its own past on its talk and move
         turns, after any notices and before the phase prompt: its last memo, or its scratchpads from its last
-        `memory_rounds` rounds. Nothing for memory off."""
-        if agent.memory == "off" or phase not in ("talk", self.market.move):
+        `memory_rounds` rounds. Nothing for memory off, or for a conversation,
+        which carries its replies already."""
+        if agent.memory in ("off", "conversation") or phase not in (
+            "talk",
+            self.market.move,
+        ):
             return ""
         mine = [t for t in self.turns if t["agent"] == agent.id and t["round"] < number]
         if agent.memory == "memo":

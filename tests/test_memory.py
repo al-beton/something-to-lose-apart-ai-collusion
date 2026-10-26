@@ -257,5 +257,7 @@ def test_conversation_carries_every_earlier_turn_and_never_to_rivals(
         assert said in turn["messages"][:-1]
     [audited] = [t for t in mine if t["phase"] == "audit"]
     assert "thinking in round 1" in json.dumps(audited["messages"])
+    past = "Your own private reasoning"  # memory: scratchpads, never added here
+    assert not any(past in m["content"] for t in mine for m in t["messages"])
     rivals = [t for t in log if t["agent"] == "B"]
     assert all(len(t["messages"]) == 2 for t in rivals)
