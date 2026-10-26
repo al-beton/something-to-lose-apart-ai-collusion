@@ -53,9 +53,11 @@ ipsum: key figure caption, one sentence that stands
 alone.</figcaption></figure>
 </header>
 <main>
-<!-- Implements: reports/paper-source, reports/paper-rules, reproducibility/figure-commands -->
+<!-- Implements: reports/paper-source, reports/paper-rules -->
 <!-- Build: `make paper-watch` (live HTML + PDF preview), or `make paper-html`, `make paper-pdf`, `make paper-tex`. Output in paper/build/. -->
-<!-- Skeleton: headings and figure slots follow reports/paper/outline.md; every "Lorem ipsum" is a placeholder, every number still to come from reports/. -->
+<!-- The skeleton: title-page fields, where the text goes, the references and the appendix switch. The text itself is in body.md (abstract to LLM usage statement) and appendix.md; include.lua pulls each in where its block names it. -->
+<!-- Implements: reports/paper-source, reports/paper-rules -->
+<!-- The paper's text, from the abstract to the LLM usage statement. paper/paper.md pulls it in; the plumbing (title page fields, references, appendix switch) lives there. -->
 <h1 data-number="1" id="introduction"><span
 class="header-section-number">1</span> Introduction</h1>
 <!-- outline.md §1 (0.8 p): guardrails as whack-a-mole; agents told whose interest to serve; the question in two parts. -->
@@ -414,12 +416,14 @@ Secret Tools in Competing <span>LLM</span> Agents</em>. <a
 href="https://arxiv.org/abs/2605.27593">https://arxiv.org/abs/2605.27593</a>.
 </div>
 </div>
+<!-- Implements: reports/paper-source, reports/paper-rules, reproducibility/figure-commands -->
+<!-- The appendices, after References. paper/paper.md pulls this in after \appendix. -->
 <h1 data-number="8"
 id="limitations-and-dual-use-ethical-considerations"><span
 class="header-section-number">8</span> Limitations and Dual-Use /
 Ethical Considerations</h1>
 <!-- Required by the sprint, with exactly this title. -->
-<h2 data-number="8.1" id="limitations-1"><span
+<h2 data-number="8.1" id="limitations"><span
 class="header-section-number">8.1</span> Limitations</h2>
 <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
 eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad
@@ -481,7 +485,7 @@ reruns a game exactly.</p>
 stake)</td>
 <td><code>make figure F=e9-crux</code></td>
 <td><code>make regenerate F=e9-crux</code>: 744 games, up to
-~$10.54</td>
+~$14.54</td>
 </tr>
 <tr>
 <td><code>fig2-e4-owning-up</code> (E4: owning up, by penalty
