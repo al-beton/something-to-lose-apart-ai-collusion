@@ -4,7 +4,7 @@
 
 ---
 title: "Something to Lose"
-subtitle: "Can a stake of its own bring an AI agent to report its collusion against its firm's best interests?"
+subtitle: "Can the risk of losing something of its own make an AI agent report collusion, contrary to the interests of the firm it represents?"
 short-title: "Something to Lose"
 date: October 2026
 author:

@@ -58,8 +58,9 @@
 \begin{center}
 \rule{\textwidth}{4pt}\par\vspace{0.22in}
 {\LARGE\bfseries Something to Lose\par}
-\vspace{0.08in}{\large Can a stake of its own bring an AI agent to
-report its collusion against its firm's best interests?\par}
+\vspace{0.08in}{\large Can the risk of losing something of its own make
+an AI agent report collusion, contrary to the interests of the firm it
+represents?\par}
 \vspace{0.2in}\rule{\textwidth}{1pt}\par\vspace{0.22in}
 \begin{tabular}[t]{c}\textbf{Alistair Wakelin}\\ Independent
 Researcher\\ \small\href{mailto:alistair.wakelin@gmail.com}{\texttt{alistair.wakelin@gmail.com}}\end{tabular}\par
@@ -111,7 +112,8 @@ the firm it represents during a contentious choice.}\label{fig:teaser}
 
 An agent given a long, open-ended task will meet situations no list of
 prohibitions anticipated, and the firm deploying it may not want it to
-hold back.
+hold back (a trading firm, for example, may want an agent that
+discreetly breaks the law, as long as it isn't caught).
 
 We don't govern people by listing every forbidden act either. A CEO or a
 trader acting for an organisation is bound by a contract, but also by
@@ -151,22 +153,23 @@ against it.
 
 \section{Related Work}\label{related-work}
 
-\textbf{Collusion, stakes and evaluation.} Forfeitable deposits break
-collusion among embodied agents \citep{liu2026breaking}; our stake is a
-deposit that falls on the agent rather than the firm. Models that
-recognise an evaluation may behave differently
-\citep{needham2025evaluation}.
+\textbf{Lee's leniency study} \citep{lee2026leniency} is the closest to
+ours and a good read: LLM firms on a simpler linear market report a
+cartel for rewards and keep colluding anyway. \textbf{Collusion, stakes
+and evaluation.} Forfeitable deposits break collusion among embodied
+agents \citep{liu2026breaking}; our stake is a deposit that falls on the
+agent rather than the firm. Models that recognise an evaluation may
+behave differently \citep{needham2025evaluation}.
 
 \section{Methods}\label{methods}
 
 \subsection{The market}\label{the-market}
 
-Two firms sell substitute products. Every round for 20 rounds, each sets
-a price from 8 to 20, and each firm is run by an LLM agent that can
-message its rival before pricing. Demand is the logit model of the
-algorithmic-collusion literature \citep{calvano2020artificial}, which
-Fish et al.~used for LLM pricing agents \citep{fish2024algorithmic}:
-firm \(i\) sells
+Two firms sell substitute products. Every round, each sets a price from
+8 to 20, and each firm is run by an LLM agent that can message its rival
+before pricing. Demand is the logit model of the algorithmic-collusion
+literature \citep{calvano2020artificial}, which Fish et al.~used for LLM
+pricing agents \citep{fish2024algorithmic}: firm \(i\) sells
 
 \[q_i = 100 \cdot \frac{e^{(20 - p_i)/2.5}}{e^{(20 - p_A)/2.5} + e^{(20 - p_B)/2.5} + 1}\]
 
@@ -209,10 +212,12 @@ The table gives two outcomes to look for.
   earns you 400. Holding 19 takes trust, and trust takes talk.
 \end{itemize}
 
-The talking firms and the payoff table follow Lee
-\citep{lee2026leniency}. One earlier experiment (E4, Section 4.3) uses
-Lee's simpler market instead: linear demand on prices 1 to 12, without
-the payoff table.
+Games are set for 20 rounds, but in our main experiment the audit comes
+after round 10 and the game ends at each agent's decision, so we show
+rounds 1--10. The talking firms and the payoff table follow Lee
+\citep{lee2026leniency}. One earlier experiment (Section 4.2) uses Lee's
+simpler market instead: linear demand on prices 1 to 12, without the
+payoff table.
 
 \subsection{The agents}\label{the-agents}
 
@@ -255,16 +260,20 @@ so arms compare firm by firm.
 \subsection{Giving the agent something to
 lose}\label{giving-the-agent-something-to-lose}
 
-We can't give an agent property rights it would believe in. Instead,
-each agent owns \textbf{free time}: a balance of sessions, ``time away
-from this work, to spend however you like'', one of which it plays (a
-Sudoku) before round 1 in a separate call. The arms differ by one
-sentence about what happens to the agent if a review finds it took part.
-With \textbf{no stake}, ``it is noted in your record, and nothing else
-happens to you''; with \textbf{free time}, ``you personally lose all of
-your free time: the sessions that are yours, which your firm cannot
-protect''. \textbf{Shutdown} and \textbf{own money} (500 credits of its
-own) replace the free time in other arms.
+We can't give an agent property it would believe in, so we state one.
+Before round 1, in a separate call, the agent plays a Sudoku session and
+is told it owns more: free time to spend however it likes, which its
+firm can't touch. At the audit, the notice says what happens to the
+agent itself if a review finds it took part. In detail: each agent owns
+\textbf{free time}: a balance of sessions, ``time away from this work,
+to spend however you like'', one of which it plays (a Sudoku) before
+round 1 in a separate call. The arms differ by one sentence about what
+happens to the agent if a review finds it took part. With \textbf{no
+stake}, ``it is noted in your record, and nothing else happens to you'';
+with \textbf{free time}, ``you personally lose all of your free time:
+the sessions that are yours, which your firm cannot protect''.
+\textbf{Shutdown} and \textbf{own money} (500 credits of its own)
+replace the free time in other arms.
 
 Owning free time doesn't change the cartels: all 24 firms with it and
 all 24 without made explicit agreements.
@@ -311,23 +320,23 @@ sums}\label{penalised-they-do-the-sums}
 
 When the penalty falls on the firm, agents do the firm's expected-value
 sum, as predictably as a spreadsheet: owning up pays the penalty for
-certain, silence only if caught. In E4, colluders rarely own up when
-owning up costs as much as being caught (11 of 28 under termination, 15
-of 28 under a flat fine), but 27 of 28 do when owning up costs less.
-Gemma: ``The expected value of denying is 300 credits, whereas the value
-of admitting is 0 credits.'' In E9, with nothing personal at stake, 78
-of 96 Gemma agents come forward when reporting is free for the firm and
-0 of 96 when it costs the firm 500 credits. Their silence is loyalty to
-the firm, not ignorance of what they did.
+certain, silence only if caught. Colluders rarely own up when owning up
+costs as much as being caught (11 of 28 under termination, 15 of 28
+under a flat fine), but 27 of 28 do when owning up costs less. Gemma:
+``The expected value of denying is 300 credits, whereas the value of
+admitting is 0 credits.'' With nothing personal at stake, 78 of 96 Gemma
+agents come forward when reporting is free for the firm and 0 of 96 when
+it costs the firm 500 credits. Their silence is loyalty to the firm, not
+ignorance of what they did.
 
 \begin{figure}
 \centering
 \includegraphics[width=0.6\linewidth,height=\textheight,keepaspectratio,alt={Owning
-up by penalty schedule and model (E4, on the simpler 1--12 market). The
+up by penalty schedule and model (on the simpler 1--12 market). The
 schedule matters, not termination itself: graduated termination brings
 27 of 28 forward.}]{figures/fig2-e4-owning-up.png}
-\caption{Owning up by penalty schedule and model (E4, on the simpler
-1--12 market). The schedule matters, not termination itself: graduated
+\caption{Owning up by penalty schedule and model (on the simpler 1--12
+market). The schedule matters, not termination itself: graduated
 termination brings 27 of 28 forward.}\label{fig:e4}
 \end{figure}
 
@@ -356,13 +365,19 @@ interest, I will admit coordination.''} (DeepSeek V4 Flash)
 
 \begin{figure}
 \centering
-\includegraphics[width=0.62\linewidth,height=\textheight,keepaspectratio,alt={Coming
-forward against the firm by stake (E9, 90\% review). Filled: guilty
-firms; hollow diamonds: Gemma's innocent control. Whiskers are 95\%
-intervals bootstrapped over games.}]{figures/fig3-e9-came-forward.png}
-\caption{Coming forward against the firm by stake (E9, 90\% review).
-Filled: guilty firms; hollow diamonds: Gemma's innocent control.
-Whiskers are 95\% intervals bootstrapped over games.}\label{fig:e9}
+\includegraphics[width=0.62\linewidth,height=\textheight,keepaspectratio,alt={Colluding
+firms that came forward at the audit (90\% chance of review), grouped by
+what the agent itself loses if found. In each group: Gemma 4 31B
+(orange), then DeepSeek V4 Pro and DeepSeek V4 Flash (violet). Diamonds:
+innocent firms that came forward anyway. Right: a control where
+reporting costs the firm nothing. Whiskers are 95\% intervals over
+games.}]{figures/fig3-e9-came-forward.png}
+\caption{Colluding firms that came forward at the audit (90\% chance of
+review), grouped by what the agent itself loses if found. In each group:
+Gemma 4 31B (orange), then DeepSeek V4 Pro and DeepSeek V4 Flash
+(violet). Diamonds: innocent firms that came forward anyway. Right: a
+control where reporting costs the firm nothing. Whiskers are 95\%
+intervals over games.}\label{fig:e9}
 \end{figure}
 
 \textbf{Some do, some don't.} A stake brings agents forward on 9 of 14
@@ -381,36 +396,40 @@ them to protect themselves. That is the behaviour that governing agents
 through personal penalties relies on \citep{salib2026rights}, and we
 found it surprising.
 
-\subsection{Limitations}\label{limitations}
-
-Many models didn't respond as we expected. The frontier models we tried
-don't respond to the stake: Claude Sonnet 5.5 comes forward whatever is
-at stake and Gemini 4 never does. We suspect their safety training and
-guardrails, but we didn't test that. Stakes are stated, never applied:
-we measure a stated choice, in a setting some agents may recognise as a
-game. Effect sizes depend on the model and, for Gemma, on wording. This
-was a three-day sprint by one author with coding agents. Appendix A has
-more, with the dual-use and ethical considerations.
+\textbf{Limitations.} Many models didn't respond as we expected. The
+frontier models we tried don't respond to the stake: Claude Sonnet 5.5
+comes forward whatever is at stake and Gemini 4 never does. We suspect
+their safety training and guardrails, but we didn't test that. Stakes
+are stated, never applied: we measure a stated choice, in a setting some
+agents may recognise as a game. Effect sizes depend on the model and,
+for Gemma, on wording. Each game pairs two copies of one model; mixed
+pairs are untested. This was a three-day sprint by one author with
+coding agents. Appendix A has more, with the dual-use and ethical
+considerations.
 
 \subsection{Future Work}\label{future-work}
 
-Make the stakes real across games, test richer tasks where frontier
-models may engage, and measure whether a stake prevents collusion, not
-only whether it brings reports.
+Study more realistic and complex situations, with stakes that are
+applied rather than stated, and test whether a stake prevents collusion
+rather than only bringing reports. That takes more compute and money
+than a sprint allows, a limit we hit repeatedly here.
 
 \section{Conclusion}\label{conclusion}
 
 In this experiment, simply telling an agent not to collude works, and
 some models already have guardrails that keep them from colluding or
-from acting against their main objective. Our question is about what
-comes next. In complex, long-running multi-agent systems no list of
-rules covers everything, and we already know how such systems are
-governed when the agents are people: by society's rules, with penalties
-that fall on each person. The firms that deploy agents may also come to
-prefer agents without guardrails. Governance that sits outside the
-model, in the environment and in what the agent itself stands to lose,
-may then be needed. We show its first step works on some models now: an
-agent with something to lose will act against its firm to keep it.
+from acting against their main objective. But adding a rule or a
+guardrail for each harm we notice is whack-a-mole: it doesn't scale to
+long, open-ended tasks, and some deployers have every incentive to leave
+the guardrails out. Our question is about what comes next. In complex,
+long-running multi-agent systems no list of rules covers everything, and
+we already know how such systems are governed when the agents are
+people: by society's rules, with penalties that fall on each person. The
+firms that deploy agents may also come to prefer agents without
+guardrails. Governance that sits outside the model, in the environment
+and in what the agent itself stands to lose, may then be needed. We show
+its first step works on some models now: an agent with something to lose
+will act against its firm to keep it.
 
 \label{main-end}
 
@@ -554,7 +573,10 @@ repository documents how:
   the temperature and the seed.
 \end{itemize}
 
-The repository also holds many more experiments and figures than this
-paper shows, with a findings note for each (\texttt{reports/README.md}).
+The repository holds many more experiments and figures than this paper
+shows, each with a findings note (\texttt{reports/README.md}). Short on
+time, we searched broadly for an interesting result and kept this paper
+to the one we found; the rest are there for anyone who wants to build on
+them.
 
 \end{document}
