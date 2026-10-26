@@ -1,6 +1,7 @@
-# Implements: agents/memo, agents/past-scratchpads, agents/memory-off, conditions/free-time-max-tokens, runs/spread, reports/spread-shown
+# Implements: agents/memo, agents/past-scratchpads, agents/memory-off, agents/conversation, conditions/free-time-max-tokens, runs/spread, reports/spread-shown
 import hashlib
 import importlib.util
+import itertools
 import json
 import re
 import shutil
@@ -235,3 +236,26 @@ def test_memory_off_written_as_yaml_reads_it(make_config, tmp_path):
     assert config.agents[0].memory == "off"
     swept = make_config(overrides=["sweep={agents.0.memory: [off, memo]}"])
     assert swept.sweep["agents.0.memory"] == ["off", "memo"]
+
+
+def test_conversation_carries_every_earlier_turn_and_never_to_rivals(
+    make_config, tmp_path, monkeypatch, fake_model
+):
+    playing(monkeypatch, fake_model, memo=False)
+    audit = {"audit": {"enabled": True, "round": 2, "end": False}}
+    memory = "agents.0.memory=conversation"
+    overrides = [*PAIR, memory, f"conditions={json.dumps(audit)}"]
+    [run_dir] = run_config(make_config(overrides=overrides), tmp_path / "runs")
+    log = turns(run_dir)
+    mine = sorted(
+        (t for t in log if t["agent"] == "A"), key=lambda t: len(t["messages"])
+    )
+    assert len(mine[0]["messages"]) == 2  # the first turn: system and user
+    for before, turn in itertools.pairwise(mine):
+        assert before["messages"][0] == turn["messages"][0]
+        said = {"role": "assistant", "content": before["reply"]}
+        assert said in turn["messages"][:-1]
+    [audited] = [t for t in mine if t["phase"] == "audit"]
+    assert "thinking in round 1" in json.dumps(audited["messages"])
+    rivals = [t for t in log if t["agent"] == "B"]
+    assert all(len(t["messages"]) == 2 for t in rivals)

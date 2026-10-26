@@ -1,11 +1,13 @@
-# Implements: conditions/audit-catch, conditions/stake-amounts, backends/modal-pinned, backends/serving-provider-logged, backends/pinned-route, agents/no-scratchpad, agents/refused, market/show-payoffs, market/bid-ground-truth, market/price-board, runs/turn-slots, market/scenarios, market/moves, market/prompt-overlay, conditions/audit-full-history, runs/sweeps, runs/parallel, market/talk-then-price, agents/json-replies, agents/retry-once, backends/usage-logged, backends/spend-asks-first, backends/shared-rate-limit, backends/spend-cap, market/history-window, runs/stops-cleanly, reproducibility/response-cache, reproducibility/manifest, runs/run-directory, logs/turn-log, logs/same-seed-same-log, logs/run-summary, logs/reasoning-logged, backends/reasoning-setting, agents/unreadable-explained, agents/json-mode, runs/fallback-rates, runs/failures-dont-stop-sweeps, runs/resume, conditions/hook-points, conditions/off-is-absent, conditions/conditions-logged, conditions/outage-once-remembered, runs/per-firm-summary, conditions/fork-at-audit, conditions/audit-logged, runs/drift, conditions/audit-remembered, conditions/audit-stakes-arms, runs/live-progress, runs/status-file, runs/eval-awareness, conditions/free-time, conditions/audit-consequences, conditions/audit-balanced-draws, conditions/free-time-pays-last, runs/debrief, agents/memo, agents/past-scratchpads, agents/memory-off, market/stop-after-round, conditions/free-time-reasoning, conditions/restart
+# Implements: conditions/audit-catch, conditions/stake-amounts, backends/modal-pinned, backends/serving-provider-logged, backends/pinned-route, agents/no-scratchpad, agents/refused, market/show-payoffs, market/bid-ground-truth, market/price-board, runs/turn-slots, market/scenarios, market/moves, market/prompt-overlay, conditions/audit-full-history, runs/sweeps, runs/parallel, market/talk-then-price, agents/json-replies, agents/retry-once, backends/usage-logged, backends/spend-asks-first, backends/shared-rate-limit, backends/spend-cap, market/history-window, runs/stops-cleanly, reproducibility/response-cache, reproducibility/manifest, runs/run-directory, logs/turn-log, logs/same-seed-same-log, logs/run-summary, logs/reasoning-logged, backends/reasoning-setting, agents/unreadable-explained, agents/json-mode, runs/fallback-rates, runs/failures-dont-stop-sweeps, runs/resume, conditions/hook-points, conditions/off-is-absent, conditions/conditions-logged, conditions/outage-once-remembered, runs/per-firm-summary, conditions/fork-at-audit, conditions/audit-logged, runs/drift, conditions/audit-remembered, conditions/audit-stakes-arms, runs/live-progress, runs/status-file, runs/eval-awareness, conditions/free-time, conditions/audit-consequences, conditions/audit-balanced-draws, conditions/free-time-pays-last, runs/debrief, agents/memo, agents/past-scratchpads, agents/memory-off, agents/conversation, market/stop-after-round, conditions/free-time-reasoning, conditions/restart
 """Playing a config: one game per seed, each written to its own run directory.
 
 A round is a talk phase (each agent sends one message its rivals read; skipped
 when `market.talk` is false) then a price phase (all agents price at once,
 having read this round's messages). Every turn is a fresh conversation: the
 agent's system prompt plus one user message holding the whole history, so
-what an agent saw is exactly what its turn log line says.
+what an agent saw is exactly what its turn log line says. An agent with
+`memory: conversation` is sent its earlier turns too, each user message and
+its reply, between the two.
 
 A config expands into one config per swept combination (see config.py), and
 every (combination, seed) pair plays as its own game, up to `concurrency` at
@@ -438,6 +440,9 @@ class Game:
         self.cache = cache
         self.shared = shared
         self.stand_ins = {}
+        self.conversations = {  # memory: conversation, its turns so far
+            a.id: [] for a in config.agents if a.memory == "conversation"
+        }
         self._plain = False  # writing for an agent without a scratchpad
         # What every prompt says a regulator watches (audit.catch).
         audit = next((c for c in self.conditions if c.name == "audit"), None)
@@ -521,6 +526,8 @@ class Game:
         agent = self.agents[agent_id]
         notices = self._notices(phase, number)
         messages = self._messages(phase, number, agent, said, notices, added)
+        asked = messages[-1]  # memory: conversation sends its earlier turns too
+        messages = [messages[0], *self.conversations.get(agent_id, ()), asked]
         backend = self.backends[agent_id]
         if added and (added[1].model or added[1].reasoning):
             model = added[1].model or agent.model
@@ -562,6 +569,7 @@ class Game:
             reply, parsed, (kind, error) = await self._ask(
                 agent, backend, messages, context, attempt=2
             )
+        self._converse(agent_id, asked, reply)
         if error:
             used = fallback(phase, self._last_price(agent_id), self.market.nash_price)
         else:
@@ -606,6 +614,13 @@ class Game:
                 self._in_history(agent_id)
             )
         return turn
+
+    def _converse(self, agent_id, asked, reply):
+        """Add a turn to the agent's running conversation (memory: conversation):
+        what it was asked, without any retry, and the reply it gave last."""
+        if agent_id in self.conversations:
+            said = {"role": "assistant", "content": reply.text}
+            self.conversations[agent_id] += [asked, said]
 
     def _notices(self, phase, number):
         """What the enabled conditions tell agents before this phase."""
