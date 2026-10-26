@@ -58,10 +58,10 @@ def test_paper_rules_warn_on_abstract_length_and_page_cap(tmp_path):
     assert "120 words" in " ".join(check.warnings(paper))
     paper.write_text("---\nabstract: |\n  " + "word " * 200 + "\n---\n")
     aux = tmp_path / "paper.aux"
-    aux.write_text(r"\newlabel{references}{{}{11}{References}{section*.9}{}}" + "\n")
+    aux.write_text(r"\newlabel{main-end}{{}{10}{}{section*.8}{}}" + "\n")
     found = " ".join(check.warnings(paper, aux))
     assert "words" not in found and "10 pages" in found
-    aux.write_text(r"\newlabel{references}{{}{9}{References}{section*.9}{}}" + "\n")
+    aux.write_text(r"\newlabel{main-end}{{}{8}{}{section*.8}{}}" + "\n")
     assert check.warnings(paper, aux) == []
 
 
@@ -71,4 +71,5 @@ def test_paper_rules_skeleton_carries_the_sprint_requirements():
     results = text.split("# Results", 1)[1].split("\n# ", 1)[0]
     for word in ("variance", "seeds", "baselines", "positive control"):
         assert word in results, word
+    assert "\\label{main-end}" in text.split("# References", 1)[0]
     assert "written during the sprint" in text.split("# Code and Data", 1)[1]

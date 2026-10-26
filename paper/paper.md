@@ -79,6 +79,10 @@ Closest to ours: @lee2026leniency, @liu2026breaking and @zeng2026voluntary; on r
 
 <!-- How LLMs helped, and that every claim and result was verified. Apart encourages the final text to be written mainly by the team. -->
 
+```{=latex}
+\label{main-end}
+```
+
 # References {.unnumbered}
 
 ::: {#refs}

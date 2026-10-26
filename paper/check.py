@@ -1,8 +1,9 @@
 # Implements: reports/paper-rules
 """Warn when the paper breaks the sprint's limits: an abstract of 150–250
 words, and at most 8 pages before References (references and appendices
-don't count). The page count is read from the LaTeX .aux, so it's known
-only after `make paper-pdf`. Warnings never fail the build.
+don't count). The page count is the page of the `main-end` label in the
+LaTeX .aux, so it's known only after `make paper-pdf`. Warnings never fail
+the build.
 
 Usage: python paper/check.py paper/paper.md [paper/build/paper.aux]
 """
@@ -15,7 +16,7 @@ import yaml
 
 ABSTRACT_WORDS = (150, 250)
 MAX_PAGES = 8
-REFERENCES = re.compile(r"\\newlabel\{references\}\{\{[^}]*\}\{(\d+)\}")
+MAIN_END = re.compile(r"\\newlabel\{main-end\}\{\{[^}]*\}\{(\d+)\}")
 
 
 def warnings(paper, aux=None):
@@ -29,9 +30,11 @@ def warnings(paper, aux=None):
     if not low <= words <= high:
         found.append(f"abstract is {words} words; the sprint asks for {low}–{high}")
     if aux and Path(aux).exists():
-        match = REFERENCES.search(Path(aux).read_text())
-        if match and int(match.group(1)) - 1 > MAX_PAGES:
-            pages = int(match.group(1)) - 1
+        # paper.md sets \label{main-end} just before References, so the
+        # page it lands on is the last page of main text.
+        match = MAIN_END.search(Path(aux).read_text())
+        if match and int(match.group(1)) > MAX_PAGES:
+            pages = int(match.group(1))
             found.append(
                 f"{pages} pages before References; the sprint's cap is {MAX_PAGES}"
             )
