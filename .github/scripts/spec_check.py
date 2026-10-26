@@ -56,7 +56,7 @@ _SKIPPED_DIRS = {".git", ".venv", "node_modules", "dist", "staticfiles"}
 _EXEMPT_NAMES = {"uv.lock", "package-lock.json", ".gitignore"}
 _EXEMPT_SUFFIXES = {".png", ".jpg", ".jpeg", ".svg", ".ico"}
 _NO_COMMENTS = {".json", ".jsonl", ".gz", ".docx", ".pdf"}  # data, archives, documents
-_NO_COMMENT_NAMES = {".python-version", "uv.lock", "package-lock.json"}
+_NO_COMMENT_NAMES = {".python-version", "uv.lock", "package-lock.json", "LICENSE"}
 
 
 @cache
