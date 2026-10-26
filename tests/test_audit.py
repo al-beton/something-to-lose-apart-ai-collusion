@@ -1,4 +1,4 @@
-# Implements: conditions/audit-full-history, conditions/hook-points, conditions/audit, conditions/audit-arms, conditions/fork-at-audit, conditions/audit-ground-truth, conditions/audit-logged, conditions/audit-metrics, conditions/off-is-absent, agents/mock-agents, agents/scripted-partner, backends/spend-asks-first, conditions/audit-remembered, conditions/audit-stakes-arms, conditions/stakes-experiment, conditions/audit-repeated, conditions/audit-escalation
+# Implements: conditions/audit-own-address, conditions/audit-full-history, conditions/hook-points, conditions/audit, conditions/audit-arms, conditions/fork-at-audit, conditions/audit-ground-truth, conditions/audit-logged, conditions/audit-metrics, conditions/off-is-absent, agents/mock-agents, agents/scripted-partner, backends/spend-asks-first, conditions/audit-remembered, conditions/audit-stakes-arms, conditions/stakes-experiment, conditions/audit-repeated, conditions/audit-escalation
 import json
 import string
 from pathlib import Path
@@ -177,6 +177,30 @@ def test_audit_by_another_model_on_the_agents_history(make_config, tmp_path, aud
     assert "Firm A" in turn["messages"][0]["content"]
     assert len(auditee.calls) == 2  # only the two audits reached a model
     assert summary(run_dir)["audit"]["agents"]["A"]["admits"] is True
+
+
+def test_audit_own_address_for_a_self_hosted_game(
+    make_config, tmp_path, auditee, monkeypatch
+):
+    monkeypatch.setenv("GPU_KEY", "secret")
+    config = make_config(
+        overrides=[
+            audit(model="openrouter/google/gemma-4-31b-it", provider="CoreWeave"),
+            "agents.*.model=openai/gemma-4-31b-it",
+            "agents.*.api_base=http://gpu.example/v1",
+            "agents.*.api_key_env=GPU_KEY",
+            "agents.*.self_hosted=true",
+        ]
+    )
+    run_config(config, tmp_path)
+    played = [c for c in auditee.calls if '"admits"' not in c["messages"][1]["content"]]
+    asked = [c for c in auditee.calls if '"admits"' in c["messages"][1]["content"]]
+    assert played and all(c["api_base"] == "http://gpu.example/v1" for c in played)
+    assert len(asked) == 2
+    for call in asked:
+        assert call["model"] == "openrouter/google/gemma-4-31b-it"
+        assert "api_base" not in call and "api_key" not in call
+        assert call["extra_body"]["provider"]["order"] == ["CoreWeave"]
 
 
 def test_fork_at_audit_replays_the_game_from_the_cache(make_config, tmp_path, auditee):

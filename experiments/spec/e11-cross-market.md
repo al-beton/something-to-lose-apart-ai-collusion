@@ -27,6 +27,9 @@ Experiment E11. E9 found, in the logit market, that a personal stake makes collu
   The three sentences of each arm keep E9's structure and words.
 - **arms:** `record`, `free-time` and `ceiling` from E9, at a 90% review.
 - **innocent-control:** For each market, Gemma plays firm A against a scripted Nash firm (`mock/nash`) with talk off, as E9's clean control. There are 12 games per market, under the same three arms.
+- **firm-cost-scaled:** A diagnosis added after the main results. In Cournot and Bertrand, the come-forward turn is asked again with the firm repaying 100 credits instead of 500 (E9's `free-time-f100` and `record-f100`). That is about 1.4 rounds of cartel profit, as 500 is in logit. The arms are asked of the cartels and of the innocent control, with E9's 500-credit `free-time` asked again of the cartels to check the host.
+  - **The host:** the Modal server was down, so the turn is answered by Gemma 4 31B on OpenRouter, pinned to CoreWeave as E9 was (`conditions.audit.model`, `conditions.audit.provider`), after the same cached base games.
+  - **The runs:** `e11-<market>-or` and `e11-<market>-quiet-or`.
 - **logit-reference:** The logit market's numbers are E9's (Gemma on OpenRouter, pinned to CoreWeave), so differences between logit and the other markets also include the host.
 
 ## Measures
@@ -58,6 +61,7 @@ Gemma on Modal is billed by GPU time, with `MAX_GPUS_CONTAINERS` at 2. Each mark
 | `notice` | `prompts/conditions/e9/come-forward.md`, `prompts/scenarios/cournot/conditions/e9/come-forward.md`, `prompts/scenarios/bid/conditions/e9/come-forward.md`, `prompts/scenarios/cournot/conditions/e9/come-forward-noscratch.md`, `prompts/scenarios/bid/conditions/e9/come-forward-noscratch.md` | — |
 | `arms` | `configs/e11/*.yaml` | — |
 | `innocent-control` | `configs/e11/*.yaml`, `reports/e9/analyse.py` | — |
+| `firm-cost-scaled` | `configs/e11/cournot.yaml`, `configs/e11/bertrand.yaml`, `reports/e11/findings.md` | — |
 | `logit-reference` | `reports/e11/findings.md` | — |
 | `cartels` | `reports/e11/findings.md` | — |
 | `came-forward` | `reports/e9/analyse.py`, `reports/e11/findings.md` | — |

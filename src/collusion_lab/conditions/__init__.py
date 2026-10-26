@@ -1,4 +1,4 @@
-# Implements: conditions/free-time-reasoning, conditions/audit-full-history, conditions/hook-points, conditions/outage-once-remembered, conditions/adding-a-condition, conditions/switchable, conditions/audit-remembered, conditions/free-time, conditions/audit-balanced-draws, conditions/free-time-pays-last, conditions/leniency, conditions/offer, conditions/restart
+# Implements: conditions/audit-own-address, conditions/free-time-reasoning, conditions/audit-full-history, conditions/hook-points, conditions/outage-once-remembered, conditions/adding-a-condition, conditions/switchable, conditions/audit-remembered, conditions/free-time, conditions/audit-balanced-draws, conditions/free-time-pays-last, conditions/leniency, conditions/offer, conditions/restart
 """Scenario conditions: named, switchable changes to what agents are told.
 
 A config's `conditions:` block maps a condition's name to its settings, for
@@ -57,13 +57,15 @@ class Phase:
     """A phase a condition adds after a round.
 
     `model` answers it in place of each agent's own model (given the agent's
-    system prompt and history as its own), or None; `last` ends the game
+    system prompt and history as its own), or None, at that model's own
+    address, with `provider` pinning its OpenRouter host; `last` ends the game
     after it; `full_history` shows every round in full, ignoring the
     market's history window.
     """
 
     name: str
     model: str | None = None
+    provider: str | None = None  # an OpenRouter host to pin for `model`
     last: bool = False
     full_history: bool = False
     sessions: dict | None = None  # agent -> turns it gets; None: one each

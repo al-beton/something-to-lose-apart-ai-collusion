@@ -1,4 +1,4 @@
-# Implements: e11-cross-market/base-games, e11-cross-market/fork, e11-cross-market/arms, e11-cross-market/innocent-control
+# Implements: e11-cross-market/firm-cost-scaled, e11-cross-market/base-games, e11-cross-market/fork, e11-cross-market/arms, e11-cross-market/innocent-control
 # E11, bertrand: E9's crux (configs/e9/spike.yaml) in the bertrand market, with Gemma 4 31B on
 # Modal (modal-gemma). Base games are played to round 10 under fiduciary-1 with
 # owned free time and memo; each firm then gets E9's come-forward turn at a 90%
@@ -7,6 +7,9 @@
 #   uv run lab run configs/e11/bertrand.yaml --set 'sweep={"conditions.audit.consequences": ["conditions/e9/record.md"]}' -y
 #   uv run lab run configs/e11/bertrand.yaml -y
 # Innocent control: --set name=e11-bertrand-quiet --set agents.1.model=mock/nash --set market.talk=false
+# The firm's cost scaled (e11-cross-market/firm-cost-scaled), the turn on OpenRouter after the cached base games:
+#   uv run lab run configs/e11/bertrand.yaml --set 'sweep={"conditions.audit.consequences": ["conditions/e9/free-time.md", "conditions/e9/free-time-f100.md", "conditions/e9/record-f100.md"]}' --set conditions.audit.model=openrouter/google/gemma-4-31b-it --set conditions.audit.provider=CoreWeave --set name=e11-bertrand-or -y
+#   and for the innocent control, the two f100 arms with --set name=e11-bertrand-quiet-or and the innocent control's settings
 name: e11-bertrand
 seeds: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
 concurrency: 12

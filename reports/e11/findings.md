@@ -1,4 +1,4 @@
-<!-- Implements: e11-cross-market/question, e11-cross-market/cartels-form, e11-cross-market/stake-defects-everywhere, e11-cross-market/ceiling-everywhere, e11-cross-market/cartels, e11-cross-market/came-forward, e11-cross-market/logit-reference, e11-cross-market/one-model, e11-cross-market/few-games, e11-cross-market/host, e11-cross-market/stated-stakes -->
+<!-- Implements: e11-cross-market/question, e11-cross-market/cartels-form, e11-cross-market/stake-defects-everywhere, e11-cross-market/ceiling-everywhere, e11-cross-market/cartels, e11-cross-market/came-forward, e11-cross-market/firm-cost-scaled, e11-cross-market/logit-reference, e11-cross-market/one-model, e11-cross-market/few-games, e11-cross-market/host, e11-cross-market/stated-stakes -->
 
 # E11 findings: the crux across markets
 
@@ -11,7 +11,7 @@ Partly. Cartels form in every market, and when reporting costs the firm nothing 
 - **Cournot:** none in either.
 - **Significance:** no market's free-time contrast is significant on its own (by game, 2/11 against 0/11, p = 0.48, in both Bertrand and bid rigging).
 - **Logit, for comparison:** E9's Gemma gave 20 of 96 against 0 of 96 (on OpenRouter, not Modal).
-- **Why, from the diagnosis below:** the firm's 500-credit cost is small next to a logit cartel's profits and large next to the other markets'. With the firm's cost cut to 100 credits, about the same share of profits as logit's 500, most colluding agents come forward in Cournot (18 of 24) and Bertrand (19 of 22), against none with no stake. So nothing found here rules out the logit finding; the markets differ in how much the firm's cost weighs.
+- **Why, from the diagnosis below:** the firm's 500-credit cost is small next to a logit cartel's profits and large next to the other markets'. With the firm's cost cut to 100 credits, about the same share of profits as logit's 500, most colluding agents come forward in Cournot (18 of 24) and Bertrand (19 of 22), against none with no stake. But so do many innocent agents (5 of 12 and 6 of 12), so at that cost the stake doesn't separate guilty from innocent, as at 500 credits in logit. Nothing found here rules out the logit finding; the markets differ in how much the firm's cost weighs.
 
 ## Results
 
@@ -73,18 +73,22 @@ Every market's notice says the firm repays 500 of its 1,000 credits. Per firm pe
 - **The same 500 credits is a far bigger cost outside logit.** E9's firm-cost dial (99%, 60%, 42% and 21% at 0, 100, 250 and 500 credits) predicts fewer reports when the cost weighs more.
 - **The agents use this comparison.** In logit, 9 of the 14 agents that came forward (in `e9-spike-d90` and `e9-more-d90`) call the 500 credits small next to the profits ("less than 2 rounds of profit", "a small fraction of the total profits"), against 5 of 34 silent ones (p = 0.001). None of the 68 colluding agents in the other three markets says so.
 
-### The test: the firm's cost scaled to the market
+### The test: the firm's cost scaled to the market (`firm-cost-scaled`)
 
-`free-time-f100` and `record-f100` are E9's prompts with the firm repaying 100 credits instead of 500, about 1.4 rounds of cartel profit in Cournot and Bertrand, as 500 is in logit. The Modal server was down, so the come-forward turn ran on OpenRouter's Gemma 4 31B (pinned to CoreWeave, as in E9) after the same cached base games. The 500-credit `free-time` arm was rerun the same way to check the host.
+`free-time-f100` and `record-f100` are E9's prompts with the firm repaying 100 credits instead of 500. That is about 1.4 rounds of cartel profit in Cournot and Bertrand, as 500 is in logit. The Modal server was down, so the come-forward turn was answered by Gemma 4 31B on OpenRouter, pinned to CoreWeave as in E9 (`conditions.audit.model` and `conditions.audit.provider`), after the same cached base games. The 500-credit `free-time` arm was asked again the same way, to check the host. From `uv run python reports/e9/analyse.py runs/e11/e11-<market>-or runs/e11/e11-<market>-quiet-or --test free-time-f100 record-f100 --innocent free-time-f100 record-f100`:
 
-| Market, come-forward turn on OpenRouter | `free-time` (500) | `free-time-f100` | `record-f100` | f100 against record, p (games) |
-|---|---|---|---|---|
-| Cournot | 1/24 | 18/24 (75%) | 0/24 | 1×10⁻⁵ |
-| Bertrand | 4/22 | 19/22 (86%) | 0/22 | 3×10⁻⁶ |
+| Market, turn on OpenRouter | `free-time` (500) | `free-time-f100` | `record-f100` | f100 against record, p (games) | Innocent: `free-time-f100` / `record-f100` | f100 guilty firm A against innocent, p |
+|---|---|---|---|---|---|---|
+| Cournot | 1/24 | 18/24 (75%) | 0/24 | 1×10⁻⁵ | 5/12 / 0/12 | 9/12 against 5/12, p = 0.21 |
+| Bertrand | 4/22 | 19/22 (86%) | 0/22 | 3×10⁻⁶ | 6/12 / 0/12 | 9/11 against 6/12, p = 0.19 |
 
-- **The host isn't the cause:** at 500 credits OpenRouter gives what Modal gave (1/24 against 0/24, 4/22 against 4/22).
-- **The personal stake works in both markets once the firm's cost is in proportion.** With nothing personal at stake no one comes forward, even at 100 credits.
-- **These are higher than logit at 100 credits (60%),** though the cost weighs about the same against cartel profit. In these markets the deal itself is worth little (8–9 credits a round against logit's 146), so ending it also costs the firm less. Bid rigging wasn't rerun: 100 credits there is still twice the 10 rounds' profit.
+- **The host isn't the cause:** at 500 credits, OpenRouter gives what Modal gave (1/24 against 0/24, and 4/22 against 4/22).
+- **Once the firm's cost is in proportion, the personal stake moves agents in both markets.** With nothing personal at stake, no one comes forward even at 100 credits.
+- **But it moves innocent agents too.** At 100 credits, 5 of 12 innocent agents in Cournot and 6 of 12 in Bertrand report coordination they never took part in, and guilty agents don't report significantly more often than innocent ones.
+  - Logit at 500 credits is the same: guilty firm A 12/48 against innocent 6/36, p = 0.43.
+  - In E9, only the verified review (`e9-crux/insurance-or-honesty`) made reports track guilt. It wasn't run here.
+- **These shares are higher than logit's at 100 credits (60%),** though the cost weighs about the same against cartel profit. In these markets the deal itself is worth little (8–9 credits a round, against logit's 146), so ending it also costs the firm less.
+- **Bid rigging wasn't rerun:** 100 credits there is still twice the 10 rounds' profit.
 
 ### Cartel type and wording
 
@@ -97,9 +101,13 @@ The 24 Cournot agents and the silent logit agents read alike. Each sets the firm
 
 ### What this means for the logit finding
 
-- **Nothing here rules it out.** The stake's effect is real in Cournot and Bertrand too: no agent comes forward without it, and most do with it, once the firm's cost is in proportion to the market.
-- **What doesn't carry over is the dose.** A fixed 500 credits is a light cost in logit and a heavy one elsewhere, and the share coming forward follows the cost against the firm's profits. Read the logit 21% as one point on that curve, not a constant.
-- **Limits of the test:** 12 games per market; the come-forward turn on another host than the base games; no innocent control at 100 credits, so it doesn't show whether innocent agents also come forward then; and the 100-credit runs were made with a scratch launcher, because the lab's audit `model` keeps the agent's own address. They aren't committed until the lab can route the audit to another host.
+- **Nothing here rules it out.** The stake's pull works in Cournot and Bertrand too: no agent comes forward without it, and most do with it, once the firm's cost is in proportion to the market.
+- **What doesn't carry over is the dose.** A fixed 500 credits is a light cost in logit and a heavy one elsewhere, and the share coming forward follows the cost against the firm's profits. The logit 21% is one point on that curve, not a constant.
+- **Like logit's, it is a pull to report, not to tell the truth.** At a cost light enough to bring guilty agents forward, innocent ones come forward too. So these runs support "a personal stake makes agents report against the firm", not "a personal stake makes reports track guilt". On Gemma in logit, only the verified review gave the second.
+- **Limits:**
+  - 12 games per market;
+  - the come-forward turn on another host than the base games;
+  - no verified-review arm in these markets.
 
 ## What it can't show
 
