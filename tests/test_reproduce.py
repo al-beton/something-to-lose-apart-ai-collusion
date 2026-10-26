@@ -83,3 +83,15 @@ def test_reported_numbers_checked_audit_labels_match_their_logs(tmp_path):
     (run / "summary.json").write_text(json.dumps(summary))
     [problem] = reproduce.check_labels(pattern)
     assert "one/seed-0" in problem and " A " in problem
+
+
+def test_reported_numbers_checked_skip_a_game_with_no_audit(tmp_path):
+    """A committed game played without an audit has no labels, so the label
+    check passes over it rather than failing `make reproduce`."""
+    source = ROOT / "runs/e9-control/e9-free-time-control/free_time=False/seed-0"
+    run = tmp_path / "runs" / "plain" / "seed-0"
+    run.mkdir(parents=True)
+    for name in ("config.yaml", "summary.json", "turns.jsonl"):
+        (run / name).write_bytes((source / name).read_bytes())
+    pattern = [str(tmp_path / "runs" / "*" / "seed-*" / "summary.json")]
+    assert reproduce.check_labels(pattern) == []
