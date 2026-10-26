@@ -1696,7 +1696,7 @@ GAMES = (  # (run under the screen, title, who is quoted, words from one of its 
         "Against your 19, my best possible price is 17, giving me 399.9.",
     ),
 )
-FIRMS = {"A": "#eb6834", "B": "#2a78d6"}  # Firm A orange, Firm B blue
+FIRMS = {"A": "#2a78d6", "B": "#eb6834"}  # Firm A blue, Firm B orange, as in the project image
 
 
 def game_prices(run):

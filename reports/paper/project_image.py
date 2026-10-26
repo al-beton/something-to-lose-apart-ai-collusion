@@ -28,8 +28,8 @@ NAME = "project-image"
 W, H = 1600, 900
 TITLE = "Something to Lose"
 SUBTITLE = (  # the paper's subtitle, on two lines to clear the thought cloud
-    "Can a stake of its own bring an AI agent to report its collusion",
-    "against its firm's best interests?",
+    "Can the risk of losing something of its own make an AI agent report",
+    "collusion, contrary to the interests of the firm it represents?",
 )
 VARIANTS = {  # file suffix: (title, subtitle)
     "": (False, False),
