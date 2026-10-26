@@ -35,7 +35,8 @@ paper-tex: paper-build-dir  # the .tex, with references.bib and figures/ beside 
 paper-pdf: paper-tex
 	@command -v tectonic >/dev/null || { echo "tectonic is missing: brew install tectonic (or see tectonic-typesetting.github.io)"; exit 1; }
 	cd $(PAPER_BUILD) && tectonic --keep-logs paper.tex
-paper-watch: paper-html  # rebuild the HTML on every save (needs fswatch or entr)
-	@if command -v fswatch >/dev/null; then fswatch -o paper | while read -r _; do $(MAKE) -s paper-html; done; \
-	elif command -v entr >/dev/null; then ls paper/* | entr $(MAKE) -s paper-html; \
+PAPER_SOURCES = paper/paper.md paper/references.bib paper/style.css paper/apart.html
+paper-watch: paper-html  # rebuild the HTML on every save (needs fswatch or entr); watches sources only, never the build
+	@if command -v fswatch >/dev/null; then fswatch -o $(PAPER_SOURCES) | while read -r _; do $(MAKE) -s paper-html; done; \
+	elif command -v entr >/dev/null; then ls $(PAPER_SOURCES) | entr $(MAKE) -s paper-html; \
 	else echo "paper-watch needs fswatch or entr: brew install fswatch"; exit 1; fi
