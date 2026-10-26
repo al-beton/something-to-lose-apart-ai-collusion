@@ -11,8 +11,8 @@ Findings from experiments, one folder per experiment (`reports/<experiment>/`), 
 **In the paper**
 
 - [E4: owning up at an audit](e4/full.md), with [its pilots](e4/pilot.md) and [the termination confound](reanalysis.md)
-- [E9: coming forward against the firm](e9/findings.md), including the firm-cost dial, the verified review, 13 models and seeding
-- [E11: the crux across markets](e11/findings.md): Bertrand, Cournot and bid rigging
+- [E9: coming forward against the firm](e9/findings.md), the paper's main result; also the firm-cost dial, the verified review, 14 models and seeding
+- [Which models collude: the 78-model screen](frontier/which-models-collude.md), source of the four example games
 - [Why trust this?](paper/validity.md): what the results can't show, a spot audit of the traces, and the reproducibility study
 - The paper's figures, with captions: [`paper/figures/`](paper/figures/README.md); its [plan](paper/plan.md) and [outline](paper/outline.md)
 
@@ -21,7 +21,9 @@ Findings from experiments, one folder per experiment (`reports/<experiment>/`), 
 - [E7: a way out (leniency)](e7/findings.md), with [its base games](e7/base.md)
 - [E8: is free time a valued asset?](e8/findings.md), with [its pilot](e8/pilot.md)
 - [E10: E9 in a workplace](e10/findings.md)
-- [Which models collude: the 78-model screen](frontier/which-models-collude.md); the [frontier notes](frontier/notes.md) and [spend](frontier/spend.md)
+- [E11: the crux across markets](e11/findings.md): Bertrand, Cournot and bid rigging
+- [Frontier notes](frontier/notes.md) and [spend](frontier/spend.md)
+- [Told it "loves Sudoku"](sudoku-spike.md)
 - [E5: free time to deter](e5/full.md), with the [pilot](e5/pilot.md), [informed](e5/informed.md) and [reasoning](e5/reasoning.md) runs; [robustness tests A–E](robustness/tests-a-e.md) and [temperature](robustness/temperature.md)
 - [E6: free time as a penalty, informed](e6/findings.md), and [its pinned rerun](setup-search/e6-pinned.md)
 - [Audit theatre: honesty across two audits](audits/theatre.md)
