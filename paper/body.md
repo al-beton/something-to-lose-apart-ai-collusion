@@ -32,7 +32,7 @@ Our main finding is what surprised us. The agent's only goal is money for its fi
 
 # Related Work
 
-Others are working towards the same idea. Forfeitable deposits can break collusion among embodied agents [@liu2026breaking]. LLM pricing agents collude without being told to [@fish2024algorithmic], and competing agents given a secret channel choose to use it [@zeng2026voluntary]. The study closest to ours is Lee's [@lee2026leniency], a good read: LLM firms on a simpler, linear market report their cartel for rewards and keep colluding anyway. Forfeitable deposits break collusion among embodied agents [@liu2026breaking]; our stake is a deposit that falls on the agent rather than the firm. Models that recognise an evaluation may behave differently [@needham2025evaluation].
+Others are working towards the same idea. LLM pricing agents collude without being told to [@fish2024algorithmic], and competing agents given a secret channel choose to use it [@zeng2026voluntary]. The study closest to ours is Lee's [@lee2026leniency], a good read: LLM firms on a simpler, linear market report their cartel for rewards and keep colluding anyway. Forfeitable deposits break collusion among embodied agents [@liu2026breaking]; the something to lose in our study is a deposit that falls on the agent rather than the firm. Models that recognise an evaluation may behave differently [@needham2025evaluation].
 
 # Methods
 
