@@ -1,5 +1,5 @@
 <!-- Implements: reports/paper-rules -->
-# Submission checklist: "Something to Lose"
+# Submission checklist
 
 Due **Monday 26 October 2026, 19:59 HKT**. One list for everything; tick an item only when it's true on `main` (or of the built PDF), not when it's planned. *Owner in italics; PR or file linked.*
 
