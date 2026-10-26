@@ -173,7 +173,7 @@ Given something of their own to lose, many colluding agents weigh it against the
 
 ## Limitations
 
-This was a three-day sprint by one person, and the paper is a first look, not a settled result. The stakes are stated, never applied: the game ends at the decision, so we measure a stated choice. Gemma's effect ranges over an order of magnitude across paraphrases, so we lead with direction and with the verified review. The cross-model set came from a screen for strong colluders (8 of 78), and E9 runs on one market; elsewhere the stake barely moves Gemma at the same firm cost [CHECK: E11 findings are on an unmerged branch]. Agents see a memo, not the full conversation. Numbers recompute from archived replies, but a fresh same-seed rerun on a hosted API isn't identical (Appendix B).
+This was a three-day solo sprint, and the paper is a first look. The stakes are stated, never applied: the game ends at the decision, so we measure a stated choice. Gemma's effect ranges over an order of magnitude across paraphrases, so we lead with direction and with the verified review. The cross-model set came from a screen for strong colluders (8 of 78), and E9 runs on one market; elsewhere the stake barely moves Gemma at the same firm cost [CHECK: E11 findings are on an unmerged branch]. With full memory the verified review still works on five models (Appendix C). Numbers recompute from archived replies, but a fresh same-seed rerun on a hosted API isn't identical (Appendix B).
 
 ## Future Work
 

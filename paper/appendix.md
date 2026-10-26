@@ -33,6 +33,15 @@ The agents' "free time" is a device: a balance of Sudoku sessions played in sepa
 
 # Additional Results
 
+## With the whole conversation in memory
+
+E9's agents are stateless: each turn sees a summary and a memo. We reran E9 with each agent carrying its whole conversation, from its round-0 free-time session to the decision, on five models. <!-- src: reports/e9/conversation.md (PR 315) -->
+
+- **Under the verified review,** colluding agents come forward more than with no stake on all five models (p ≤ 0.002 by game), and no innocent agent does (0 of 60).
+- **Under the plain free-time stake,** DeepSeek V4 Flash (17/24), Mercury 3 (23/24) and GLM 5.3 Flash (23/24) come forward; Gemma 4 31B (3/72) and HY3 (0/16) hardly do. Memory leaves three models as they were and quiets two.
+- **With no personal stake,** none of 160 colluding agents come forward.
+- **The firm's cost:** DeepSeek V4 Flash, Mercury 3 and GLM 5.3 Flash cost the firm 750 credits about as readily as 250, and mostly stop at 1,000, its whole budget.
+
 <!-- src: reports/frontier/which-models-collude.md, reports/e4/full.md, reports/e9/findings.md "What ran", reports/e7/findings.md -->
 
 | Experiment | Market | Models | Games | Question |
