@@ -3,8 +3,12 @@
 Implements: reports/paper-project-image
 
 `uv run python reports/paper/project_image.py [--out DIR]` (default
-`reports/paper/figures`) writes `project-image.svg`, and `project-image.png`
-(1600 x 900) when Chrome or Chromium is installed to render it. It is a
+`reports/paper/figures`) writes four variants, each as `.svg` and as `.png`
+(1600 x 900) when Chrome or Chromium is installed to render it:
+`project-image` with no text above the drawing (the paper's Figure 1),
+`project-image-title`, `project-image-subtitle` and
+`project-image-title-subtitle`, which add the paper's title, its subtitle, or
+both, for the sprint submission's card. It is a
 drawing, not data, made with Fig 1's helpers (`fig1_round.py`): the two firms
 are Fig 1's robots in grey, each in a cap of its firm's colour, either side of
 the market's price line (1-11, Nash 6, joint profit 9, the E5 and E9 market),
@@ -23,7 +27,16 @@ HERE = Path(__file__).resolve().parent
 NAME = "project-image"
 W, H = 1600, 900
 TITLE = "Something to Lose"
-QUESTION = "Can a personal cost keep AI agents aligned?"
+SUBTITLE = (  # the paper's subtitle, on two lines to clear the thought cloud
+    "Can a stake of its own bring an AI agent to report its collusion",
+    "against its firm's best interests?",
+)
+VARIANTS = {  # file suffix: (title, subtitle)
+    "": (False, False),
+    "-title": (True, False),
+    "-subtitle": (False, True),
+    "-title-subtitle": (True, True),
+}
 GREY, SOFT_GREY, DARK_GREY = "#b9bcc2", "#eef0f2", "#8d9199"
 
 
@@ -154,7 +167,7 @@ def firm(x, y, colour, letter):
     )
 
 
-def figure():
+def figure(title=False, subtitle=False):
     bx = 1180  # the thought cloud's centre
     parts = [
         f'<rect width="{W}" height="{H}" fill="white"/>',
@@ -170,9 +183,15 @@ def figure():
         cloud(bx, 180, 290, 200),
         F.page(bx - 65, 140, 130, B),
         F.text(bx, 125, "Leisure time at risk", 26, INK, weight="bold"),
-        F.text(80, 110, TITLE, 64, INK, anchor="start", weight="bold"),
-        F.text(82, 160, QUESTION, 24, MUTED, anchor="start"),
     ]
+    if title:
+        parts.append(F.text(80, 110, TITLE, 64, INK, anchor="start", weight="bold"))
+    if subtitle:
+        y, size, colour = (160, 26, MUTED) if title else (100, 32, INK)
+        for i, words in enumerate(SUBTITLE):
+            parts.append(
+                F.text(82, y + i * size * 1.35, words, size, colour, anchor="start")
+            )
     body = "\n".join(parts)
     return (
         f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {W} {H}" '
@@ -185,12 +204,13 @@ def main(argv=None):
     parser.add_argument("--out", default=str(HERE / "figures"))
     out = Path(parser.parse_args(argv).out)
     out.mkdir(parents=True, exist_ok=True)
-    svg = out / f"{NAME}.svg"
-    svg.write_text(figure())
-    print(
-        f"Wrote {svg}"
-        + ("" if F.png(svg, scale=1, size=(W, H)) else "; no Chrome, so no PNG")
-    )
+    for suffix, (title, subtitle) in VARIANTS.items():
+        svg = out / f"{NAME}{suffix}.svg"
+        svg.write_text(figure(title, subtitle))
+        print(
+            f"Wrote {svg}"
+            + ("" if F.png(svg, scale=1, size=(W, H)) else "; no Chrome, so no PNG")
+        )
     return 0
 
 

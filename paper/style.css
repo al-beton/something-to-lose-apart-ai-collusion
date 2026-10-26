@@ -29,7 +29,7 @@ h1 { font-size: 1.2em; margin: 1.4em 0 .6em; } h2 { font-size: 1em; margin: 1.2e
 .header-section-number { margin-right: .9em; }
 figure { margin: 1em 0; text-align: center; } figure img { max-width: 100%; }
 figcaption, caption { font-size: .9em; text-align: left; color: var(--muted); margin-top: .3em; }
-figure.teaser img { width: 85%; }
+figure.teaser img { width: 100%; }
 table { border-collapse: collapse; margin: .8em auto; border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule); }
 th { border-bottom: .5px solid var(--rule); font-weight: normal; } th, td { padding: .15em .5em; }
 caption { caption-side: top; margin-bottom: .3em; }
