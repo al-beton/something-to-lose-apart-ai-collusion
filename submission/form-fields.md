@@ -7,11 +7,9 @@ Every number below comes from a committed findings file: `reports/e9/findings.md
 
 ## Project title (required)
 
-Choose one, and keep it the same as the paper's title (`paper/paper.md`). Resubmitting with the same title is how you update the form later.
+Keep it the same as the paper's title and subtitle (`paper/paper.md`). Resubmitting with the same title is how you update the form later.
 
-1. **Something to Lose: A Personal Stake Brings Colluding AI Agents Forward** (recommended)
-2. Something to Lose: Governing LLM Agents Through What They Own
-3. Something to Lose: Colluding AI Agents Report Their Cartel When It Costs Them, Not Their Firm
+**Something to Lose: Can the risk of losing something of its own make an AI agent report collusion, contrary to the interests of the firm it represents?**
 
 ## Project summary (required)
 

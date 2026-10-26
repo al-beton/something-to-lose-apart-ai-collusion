@@ -30,7 +30,7 @@ def test_paper_project_image_shows_the_idea(tmp_path):
         assert said in svg
     # The paper's Figure 1 carries no text above the drawing; the card variants
     # add the paper's title, its subtitle, or both.
-    assert image.TITLE not in svg and "report its collusion" not in svg
+    assert image.TITLE not in svg and "contrary to the interests" not in svg
     for suffix, title, subtitle in (
         ("-title", True, False),
         ("-subtitle", False, True),
@@ -38,7 +38,7 @@ def test_paper_project_image_shows_the_idea(tmp_path):
     ):
         variant = (tmp_path / f"{image.NAME}{suffix}.svg").read_text()
         assert (image.TITLE in variant) == title
-        assert ("report its collusion" in variant) == subtitle
+        assert ("contrary to the interests" in variant) == subtitle
         assert 'viewBox="0 0 1600 900"' in variant  # the card stays 16:9
     # Each cap wears its firm's colour, as on Fig 1.
     assert image.A in svg and image.B in svg
