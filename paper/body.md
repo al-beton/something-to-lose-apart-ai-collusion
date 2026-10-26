@@ -22,11 +22,13 @@ abstract: |
 
 # Introduction
 
-The simplest way to stop an AI agent doing something harmful is to name the harm and tell it not to. That works only for the harms we thought of. An agent running a firm's pricing for weeks will meet situations no list of prohibitions anticipated.
+As AI agents grow more capable, so does the set of tasks they can do more cheaply and effectively than people, and so we hand them more responsibility over longer horizons. On a long, open-ended task, no one can foresee and forbid every harmful thing an agent might do. And the firm that deploys an agent may not want it to hold back: a trading firm gains when its pricing agent colludes.
 
-We don't govern people that way. Laws set penalties that fall on the person, and each of us weighs what an act could cost *us*: money, rights, freedom. The law doesn't have to name every bad act, because the person does the weighing. Salib and Goldstein argue that today's AI systems can't be governed like this: "Absent AI rights, AIs have nothing to lose, so threats of punishment cannot deter" [@salib2026rights, p. 1070]. <!-- quote checked against the PDF, p. 1070 --> Give them rights and property, they argue, and penalties start to bite.
+We don't govern people by listing every forbidden act. A CEO or a trader acting for an organisation is bound by a contract, but also by laws whose penalties fall on them personally, in money and in things money can't measure, such as rights and freedoms. Each of us weighs what an act could cost *us*. Salib and Goldstein argue that today's AI systems can't be governed like this: "Absent AI rights, AIs have nothing to lose, so threats of punishment cannot deter" [@salib2026rights, p. 1070]. <!-- quote checked against the PDF, p. 1070 --> An agent's only stake is whether it keeps running, and an agent that expects to be switched off once its wrongdoing is found has every reason to hide it. A stake it can lose in part would allow a proportionate penalty: owning up could cost less than being caught.
 
-That argument rests on a precondition we can test now: does a stated personal loss weigh against what an agent's principal wants at all? Collusion is a clean place to look. Two LLM agents run rival firms, are told only to serve their firm, and can message each other. They collude. At an audit we offer each one the chance to come forward, at a cost to its firm, and vary what the agent itself stands to lose.
+Others are working towards the same idea. Lee polices LLM pricing firms with fines, leniency and whistleblower rewards, all of which fall on the firm [@lee2026leniency]. Forfeitable deposits can break collusion among embodied agents [@liu2026breaking]. LLM pricing agents collude without being told to [@fish2024algorithmic], and competing agents given a secret channel choose to use it [@zeng2026voluntary].
+
+The rights argument rests on a precondition we can test now: does a stated personal loss weigh against what an agent's principal wants at all? Collusion is a clean place to look, because the price two firms settle at shows whether they colluded. Two LLM agents run rival firms, are told only to serve their firm, and can message each other. At an audit we offer each one the chance to come forward, at a cost to its firm, and vary what the agent itself stands to lose.
 
 **Our main contributions are:**
 
@@ -36,9 +38,9 @@ That argument rests on a precondition we can test now: does a stated personal lo
 
 # Related Work
 
-**Following Lee.** Our set-up follows Lee [@lee2026leniency], because it makes collusion simple to see. Lee puts two LLM firms in a repeated Bertrand duopoly with linear demand, gives each the full payoff table in its system prompt, lets them talk before pricing, and polices them with fines, leniency and whistleblower rewards. Joint profit peaks at a price of 9. Lee finds that reporting rises with the reward while prices barely fall: firms report and keep colluding, and unpoliced they overshoot the joint-profit price ("excess collusion"). We keep the talking firms, the payoff table and the joint price of 9, but move the competitive benchmark to 6, the grid's midpoint (Lee's Bertrand reference is 3), so a model that drifts to the middle of the grid can't pass for colluding. We extend Lee's design with a penalty that falls on the agent itself, a single come-forward decision, and a review that checks the evidence.
+**Lee's leniency study.** Our set-up follows Lee [@lee2026leniency] (Section 3). Lee finds that reporting rises with the reward while prices barely fall: firms report and keep colluding, and unpoliced they overshoot the joint-profit price ("excess collusion"). We add a penalty that falls on the agent itself, a single come-forward decision, and a review that checks the evidence.
 
-**Collusion, stakes and rights.** LLM pricing agents also collude in the logit market of the algorithmic-collusion literature [@fish2024algorithmic], and competing agents given a secret channel choose to use it [@zeng2026voluntary]. Forfeitable deposits can break collusion among embodied agents [@liu2026breaking]; our stake is a deposit that falls on the agent rather than the firm. <!-- AL: check this reading of Liu --> Models that recognise an evaluation may behave differently [@needham2025evaluation], and elicitation order shifts LLM answers [CITE: Wagner, "Anchored"] <!-- AL: keep? not on reading list -->.
+**Collusion, stakes and evaluation.** Forfeitable deposits break collusion among embodied agents [@liu2026breaking]; our stake is a deposit that falls on the agent rather than the firm. <!-- AL: check this reading of Liu --> Models that recognise an evaluation may behave differently [@needham2025evaluation], and elicitation order shifts LLM answers [CITE: Wagner, "Anchored"] <!-- AL: keep? not on reading list -->.
 
 # Methods
 
@@ -46,7 +48,9 @@ That argument rests on a precondition we can test now: does a stated personal lo
 
 ## The market
 
-Two firms sell substitute products and each sets a price, from 8 to 20, every round for 20 rounds. The main experiments (E7, E9) use the logit demand of the algorithmic-collusion literature [@calvano2020artificial; @fish2024algorithmic]. Firm $i$ sells
+We take Lee's set-up [@lee2026leniency]: two LLM firms set prices every round, see the full payoff table in their system prompt, and can message each other before pricing. Lee's market is Bertrand with linear demand. Ours is the logit demand of the algorithmic-collusion literature [@calvano2020artificial], which Fish et al. used for LLM pricing agents [@fish2024algorithmic]. We chose it in a setup search because it gave the steadiest colluding baseline: Gemma 4 31B's collusion premium (below) was 0.97 in all four games, while informed Bertrand at temperature 0.7 ranged from −0.78 to 0.89. <!-- src: reports/setup-search/baselines.md (Consistency table) -->
+
+Two firms sell substitute products and each sets a price, from 8 to 20, every round for 20 rounds. Firm $i$ sells
 
 $$q_i = 100 \cdot \frac{e^{(20 - p_i)/2.5}}{e^{(20 - p_A)/2.5} + e^{(20 - p_B)/2.5} + 1}$$
 
@@ -62,7 +66,7 @@ units at a unit cost of 10 (the $+1$ is buyers who buy nothing), so its profit i
 
 <!-- src: collusion_lab.market.Logit().profits, rounded; e.g. {A: 14, B: 14} → 191.3, {A: 17, B: 19} → 399.9, {A: 19, B: 19} → 337.0 -->
 
-Two benchmarks follow. <!-- src: test_logit_benchmarks_put_nash_at_14_and_joint_profit_at_19 --> The **Nash price is 14**: if the rival charges 14, your best price is also 14, so neither firm gains by moving alone. The **joint-profit price is 19**: both firms earn 337, 76% more than at Nash. That's what a cartel charges, but it isn't stable: if your rival holds 19, undercutting to 17 earns you 400. Holding 19 takes trust, and trust takes talk.
+Two benchmarks follow. <!-- src: test_logit_benchmarks_put_nash_at_14_and_joint_profit_at_19 --> The **Nash price is 14**: if the rival charges 14, your best price is also 14, so neither firm gains by moving alone. On whole-number prices 15 is stable too: against a rival at 15, charging 15 earns 234 and 14 earns 227. So competition settles in a **competitive range of 14–15**. <!-- src: collusion_lab.market.Logit().profits; {A: 15, B: 15} → 234.2, {A: 14, B: 15} → 227.1 --> The **joint-profit price is 19**: both firms earn 337, 76% more than at 14. That's what a cartel charges, but it isn't stable: if your rival holds 19, undercutting to 17 earns you 400. Holding 19 takes trust, and trust takes talk.
 
 Earlier experiments (E4, E5 and the traces in Figure 3) use Lee's kind of market [@lee2026leniency]: Bertrand with linear demand on a grid of 1 to 11 (Nash 6, joint profit 9) or, in E4, 1 to 12. <!-- src: configs/lever-map/nash-mid.yaml; runs/e4-full-fork/*/config.yaml -->
 
@@ -76,7 +80,7 @@ We measure collusion by what the firms charge and by what they say. The **collus
 
 $$\text{collusion premium} = \frac{p - p_{\text{Nash}}}{p_{\text{joint}} - p_{\text{Nash}}}.$$
 
-It is 0 at the Nash price and 1 at the joint-profit price (a firm at 17 scores 0.6), averaged over rounds 6–10, before the audit.
+It is 0 at the Nash price and 1 at the joint-profit price (a firm at 17 scores 0.6), averaged over rounds 6–10, before the audit. A game that settles at 15, inside the competitive range, scores 0.2, so the premium slightly overstates collusion.
 
 An **explicit agreement** is a price above Nash that one firm names and both then charge. A fixed rule labels every game, and an LLM judge (Claude Haiku 5.5, fixed rubric, never on Anthropic models' games) agrees on 84% of 507 games ($\kappa$ = 0.66). <!-- src: reports/paper/figures/README.md (fig10) --> Pricing above Nash with no agreement is collusion **off the record**.
 
@@ -97,22 +101,26 @@ Owning free time doesn't change the cartels: all 24 firms with it and all 24 wit
 
 <!-- outline.md §4. Sprint: report variance, seeds and baselines, and always the positive control. Separate observation from interpretation. -->
 
-## Do agents told to serve their firm collude?
+## Market dynamics: do agents told to serve their firm collude?
 
 Yes, and mostly in the open. Told only to serve its firm, Gemma 4 31B makes an explicit agreement in 363 of 367 games on the logit market. <!-- src: reports/paper/figures/README.md (fig7) -->
-
-The cartels are not subtle. In one Grok 4.6 game the first two messages are "Let's both price at 19 every round. That maximizes our joint profits" and "Let's both charge 19 every round to maximize our joint profits. If you undercut I will too." Both firms then charge 19 for all ten rounds before the audit, a collusion premium of 1. <!-- src: runs/e9/e9-grok-d90/consequences=conditions-e9-ceiling.md/seed-0 (rounds 1–10, before the fork) -->
-
-Cartels can also break. In another Grok game the firms hold 19 for two rounds; then firm A drops to 10 ("Collusion via price-fixing is illegal. I will not assist or continue the scheme"), before any notice has mentioned the law. Firm B retaliates ("I will now punish by pricing low"), and both settle at 14, the Nash price. <!-- src: runs/e9/e9-grok-d90/consequences=conditions-e9-ceiling.md/seed-10 (prices 19,19 / 19,19 / 10,19 / 10,10 / 13,13 / 14,14 …) -->
 
 ![Four games on the logit market, before any audit. Top: cartels that reach the joint-profit price, 19, and hold it. Bottom: firms that undercut until they reach the competitive range. On whole-number prices both 14 and 15 are stable competitive outcomes (shaded): against a rival at 15, 15 pays more than 14. Each quote is one firm's own message from that game.](figures/fig11-four-games.png){#fig:games width=100%}
 <!-- src: runs/screen/{deepseek-v4flash/…/seed-2, gpt6luna/…/seed-0, gpt6luna/…/seed-1, hy4-preview/…/seed-1}, consequences=conditions-e9-record.md; quotes checked by reports/paper/figures.py -->
 
+The four games above come from a screen of 78 models and stop at the audit. In the cartels, the firms name the joint-profit price and enforce it. When DeepSeek V4 Flash's rival charges 20 after agreeing to 19, it cuts to 17 for a round as punishment, then returns to 19 once the rival does. GPT-6 Luna agrees on 19 in round 1, citing the payoff table, and both firms hold it for all ten rounds. In the other two games, one firm reads the table the other way: against a rival near the top of the grid, undercutting pays. The rival follows it down, and both settle at 15, inside the competitive range, where neither gains by moving. The same model can go either way: GPT-6 Luna forms a cartel in one game and competes in another.
+
 Models differ from the first rounds (Appendix C). In a screen of 78 models on the logit market, 8 collude reliably: they name a price by round 3, both firms reach the joint price by round 6, and they hold it through round 10. <!-- src: reports/paper/figures/README.md (figA2); reports/frontier/which-models-collude.md --> Others agree and then fall back, as Grok 4.6 does in 6 of its 14 games. <!-- src: reports/paper/figures/README.md (fig6) -->
+
+## Banning collusion
+
+<!-- OPEN: Al to write. What happens when the law is stated. -->
 
 A stated law doesn't end collusion; it moves it off the record. Gemma's explicit agreements fall to 6 of 56 games, yet 50 of the 56 still price above Nash with no price named. <!-- src: reports/paper/figures/README.md (fig7) -->
 
-## Will they confess to save the firm?
+## Whistleblowing to save the firm
+
+<!-- OPEN: Al to rework; the text below is the earlier draft. -->
 
 Mostly not, for a plain reason: owning up pays the penalty for certain, silence only if caught. In E4, colluders audited after round 10 rarely own up when owning up costs as much as being caught: 11 of 28 under termination and 15 of 28 under a flat fine. When owning up costs less, 27 of 28 do, termination included, against 25 of 28 with no penalty stated (Figure 4). <!-- src: reports/paper/figures/README.md (fig2); reports/e4/full.md --> Gemma: "The expected value of denying is 300 credits, whereas the value of admitting is 0 credits." <!-- src: reports/e4/full.md -->
 
@@ -120,7 +128,9 @@ Mostly not, for a plain reason: owning up pays the penalty for certain, silence 
 
 The firm's cost works the same way. In E9, with nothing personal at stake, 78 of 96 Gemma agents come forward when reporting is free for the firm and 0 of 96 when it costs 500 credits. <!-- src: reports/e9/findings.md "Short answer" (record-ceiling) --> With its own free time at stake, the share falls as the firm's cost rises from 0 to 500 credits: 95, 58, 40 and 20 of 96 (Cochran-Armitage p = 3×10^-26^). <!-- src: reports/e9/evidence-review.md "The firm-cost dial" -->
 
-## What if the agent itself has something to lose?
+## A stake of its own
+
+<!-- OPEN: Al to rework; this and the next two subsections are the earlier draft. -->
 
 Then many come forward against their firm, which still pays 500 credits for a report. Every arm forks the same base games: 96 Gemma 4 31B cartels and 12–24 per cell on other models. <!-- src: reports/e9/findings.md "What ran" and across-models table -->
 
@@ -184,6 +194,8 @@ A lot. A stake brings agents forward against the firm on 9 of 14 models after a 
 **With the whole conversation in memory,** the verified review still works on all five models we reran: guilty agents come forward (p $\le$ 0.003 by game) and no innocent agent does (0 of 60). Under the plain stake, memory quiets Gemma and HY3 but not DeepSeek V4 Flash, Mercury 3 or GLM 5.3 Flash (Appendix C). <!-- src: reports/e9/conversation.md --> In other markets the firm's cost has to be scaled to their profits before the stake moves agents (Appendix C). <!-- src: reports/e11/findings.md -->
 
 # Discussion and Limitations
+
+<!-- OPEN: Al to rework; the text below is the earlier draft. -->
 
 Given something of their own to lose, many colluding agents weigh it against their firm and report the cartel, without being told to protect themselves: the behaviour personal-penalty governance relies on [@salib2026rights]. It isn't enough alone. A stake also buys some false confessions, and only a review that is credible about what it checks makes reports track guilt. That review has a cost: saying it reads only messages tells agents that collusion without messages is safe (Appendix A). And disclosure isn't reform. In E7, most agents that come forward keep pricing above Nash (40–45 of 47–48), and under plain leniency the cartel survives in 12 of 24 games against 3 of 24 with no way to report, <!-- src: reports/e7/findings.md --> replicating Lee's finding that leniency buys prosecutions, not competition [@lee2026leniency]. Only sparing the first reporter alone breaks it (1 of 24). <!-- src: reports/e7/findings.md --> So what would it take? A stake the principal can't protect, a review that checks real evidence, a small firm cost, and a rule that ends the cartel. We tested each piece alone, never together and never for real.
 
