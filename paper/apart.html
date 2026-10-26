@@ -23,13 +23,13 @@ $for(author)$
 <div class="author"><strong>$author.name$</strong>$if(author.affiliation)$<br>$author.affiliation$$endif$$if(author.email)$<br><a class="mono" href="mailto:$author.email$">$author.email$</a>$endif$</div>
 $endfor$
 </div>
-$if(teaser)$
-<figure class="teaser"><img src="$teaser$" alt=""><figcaption>$teaser-caption$</figcaption></figure>
-$endif$
 $if(abstract)$
 <section class="abstract"><h2>Abstract</h2>
 $abstract$
 </section>
+$endif$
+$if(teaser)$
+<figure class="teaser"><img src="$teaser$" alt=""><figcaption>$teaser-caption$</figcaption></figure>
 $endif$
 </header>
 $if(toc)$
