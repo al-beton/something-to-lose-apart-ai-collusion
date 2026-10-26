@@ -1,6 +1,6 @@
 """The sprint paper's numbered figures, in one print style.
 
-Implements: reports/paper-main-figures, reports/collusion-modes, reports/collusion-mode-judge
+Implements: reports/paper-main-figures, reports/collusion-modes, reports/collusion-mode-judge, reproducibility/figure-commands
 
 `uv run python reports/paper/figures.py [--out DIR]` (default
 `reports/paper/figures`) reads committed runs and reports only, and writes
@@ -83,6 +83,7 @@ SCREEN_REFERENCE = Path("runs/setup-search/baseline-logit")  # Gemma 4 31B, scor
 E5 = Path("runs/e5-full")
 E7 = Path("runs/e7/e7-way-out")
 E9 = Path("runs/e9")
+E9_SEEDS = range(48)  # the main study; seeds 48-95 are the replication
 SEEDING = Path("reports/e9/seeding.jsonl")
 COVERAGE = Path("runs/coverage")
 FRONTIER = Path("runs/frontier")
@@ -282,8 +283,9 @@ def boot_games(rows, resamples=4000, seed=0):
 # Fig 2: E4, owning up by penalty schedule -----------------------------------
 
 
-def e4_owning_up(folders=(E4, E4_CONFOUND)):
+def e4_owning_up(folders=None):
     """{arm: {model: (owned up, explicit colluders)}} from each audit's ground truth."""
+    folders = folders or (E4, E4_CONFOUND)  # read when called: figure.py repoints them
     counts = defaultdict(lambda: defaultdict(lambda: [0, 0]))
     summaries = [
         s for f in folders if f.exists() for s in sorted(f.rglob("summary.json"))
@@ -374,11 +376,12 @@ def fig2(out):
 # Fig 3: E9, coming forward against the firm ---------------------------------
 
 
-def e9_came_forward(folder=E9, chance=90, seeds=range(48)):
+def e9_came_forward(folder=None, chance=90, seeds=E9_SEEDS):
     """{(model, arm): (came forward, guilty firms, low, high, innocent k, innocent n)}.
 
     The main study's seeds only: the replication on seeds 48-95 is reported
     apart in reports/e9/findings.md."""
+    folder = folder or E9  # read when called: figure.py repoints it
     analyse = _module(Path("reports/e9/analyse.py"), "e9_analyse")
     rows = analyse.load(sorted(str(p) for p in folder.iterdir()))
     out = {}
